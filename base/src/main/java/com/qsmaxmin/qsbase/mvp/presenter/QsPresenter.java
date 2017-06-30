@@ -15,7 +15,7 @@ public class QsPresenter<V extends QsIView> {
     private boolean isAttach;
     private V       mView;
 
-    public String getTag() {
+    public String initTag() {
         return getClass().getSimpleName();
     }
 
@@ -46,7 +46,7 @@ public class QsPresenter<V extends QsIView> {
      * 自定义异常处理
      */
     public final void methodError(QsException exception) {
-        L.e(getTag(), "methodError ：" + exception.getMessage());
+        L.e(initTag(), "methodError ：" + exception.getMessage());
         if (mView != null) {
             if (mView.isOpenViewState()) {
                 mView.showErrorView();
