@@ -1,0 +1,59 @@
+apply plugin: 'com.android.library'
+apply plugin: 'com.hujiang.android-aspectjx'
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion '25.0.3'
+
+    defaultConfig {
+        minSdkVersion 14
+        targetSdkVersion 25
+        versionCode 100
+        versionName "1.0.0"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    lintOptions {
+        quiet true
+        abortOnError false
+    }
+}
+
+aspectjx {
+    excludeJarFilter '.jar'
+    excludeJarFilter 'com.android.support'
+    excludeJarFilter 'com.github.bumptech'
+    excludeJarFilter 'org.greenrobot:eventbus'
+    excludeJarFilter 'com.jakewharton:butterknife'
+    excludeJarFilter 'org.aspectj:aspectjrt'
+    excludeJarFilter 'com.squareup.retrofit2'
+    excludeJarFilter 'com.squareup.okhttp3'
+    excludeJarFilter 'com.google.code.gson'
+    excludeJarFilter 'io.reactivex:rxandroid'
+    excludeJarFilter 'org.javassist:javassist'
+}
+
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile 'com.android.support:design:25.3.1'
+    compile 'com.android.support:recyclerview-v7:25.3.1'
+    /*Glide*/
+    compile 'com.github.bumptech.glide:glide:4.0.0-RC0'
+    /*EventBus*/
+    compile 'org.greenrobot:eventbus:3.0.0'
+    /*ButterKnife*/
+    compile 'com.jakewharton:butterknife:7.0.1'
+    /*AspectJ*/
+    compile 'org.aspectj:aspectjrt:1.8.10'
+
+    compile 'com.squareup.okhttp3:okhttp:3.8.1'
+    compile 'com.google.code.gson:gson:2.8.1'
+}
