@@ -213,6 +213,10 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         return false;
     }
 
+    @Override public boolean isDelayData() {
+        return false;
+    }
+
     @Override public void activityFinish() {
         activityFinish(false);
     }

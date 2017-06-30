@@ -231,6 +231,10 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
         return false;
     }
 
+    @Override public boolean isDelayData() {
+        return false;
+    }
+
     @Override public void activityFinish() {
         activityFinish(false);
     }
