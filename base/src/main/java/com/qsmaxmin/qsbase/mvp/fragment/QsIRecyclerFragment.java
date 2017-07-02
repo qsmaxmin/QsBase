@@ -14,7 +14,7 @@ import java.util.List;
  * @Description
  */
 
-interface QsIRecyclerFragment<D> extends QsIFragment {
+public interface QsIRecyclerFragment<D> extends QsIFragment {
 
     QsRecycleAdapterItem getRecycleAdapterItem(LayoutInflater mInflater, ViewGroup parent, int type);
 

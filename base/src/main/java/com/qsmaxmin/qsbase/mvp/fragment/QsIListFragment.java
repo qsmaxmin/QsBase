@@ -13,7 +13,7 @@ import java.util.List;
  * @Description
  */
 
-interface QsIListFragment<D> extends QsIFragment {
+public interface QsIListFragment<D> extends QsIFragment {
 
     int getHeaderLayout();
 

@@ -1,5 +1,6 @@
 apply plugin: 'com.android.library'
 apply plugin: 'com.hujiang.android-aspectjx'
+apply plugin: 'maven'
 
 android {
     compileSdkVersion 25
@@ -56,4 +57,14 @@ dependencies {
 
     compile 'com.squareup.okhttp3:okhttp:3.8.1'
     compile 'com.google.code.gson:gson:2.8.1'
+}
+
+uploadArchives {
+    repositories.mavenDeployer {
+        def deployPath = file(getProperty('aar.deployPath'))
+        repository(url: "file://${deployPath.absolutePath}")
+        pom.groupId = "com.qsmaxmin.qsbase"
+        pom.artifactId = "base"
+        pom.version = "1.0.0"
+    }
 }

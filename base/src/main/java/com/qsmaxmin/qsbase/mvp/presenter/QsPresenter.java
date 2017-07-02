@@ -4,11 +4,7 @@ import android.content.Context;
 
 import com.qsmaxmin.qsbase.common.exception.QsException;
 import com.qsmaxmin.qsbase.common.log.L;
-import com.qsmaxmin.qsbase.common.proxy.ViewHandler;
 import com.qsmaxmin.qsbase.mvp.QsIView;
-
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Proxy;
 
 /**
  * @CreateBy qsmaxmin
@@ -19,7 +15,7 @@ public class QsPresenter<V extends QsIView> {
     private boolean isAttach;
     private V       mView;
 
-    public String initTag() {
+    protected String initTag() {
         return getClass().getSimpleName();
     }
 
@@ -30,13 +26,7 @@ public class QsPresenter<V extends QsIView> {
 
     public void initPresenter(V view) {
         isAttach = true;
-        ClassLoader loader = view.getClass().getClassLoader();
-        Class<?>[] interfaces = view.getClass().getInterfaces();
-        if (interfaces.length == 0) {
-            interfaces = view.getClass().getSuperclass().getInterfaces();
-        }
-        InvocationHandler invocationHandler = new ViewHandler<>(view, this);
-        mView = (V) Proxy.newProxyInstance(loader, interfaces, invocationHandler);
+        mView = view;
     }
 
     public V getView() {

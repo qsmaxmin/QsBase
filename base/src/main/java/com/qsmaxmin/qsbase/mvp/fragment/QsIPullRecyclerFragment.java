@@ -6,5 +6,5 @@ package com.qsmaxmin.qsbase.mvp.fragment;
  * @Description
  */
 
-interface QsIPullRecyclerFragment<D> extends QsIRecyclerFragment<D> {
+public interface QsIPullRecyclerFragment<D> extends QsIRecyclerFragment<D> {
 }
