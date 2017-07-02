@@ -12,7 +12,6 @@ import android.widget.AdapterView;
 import com.qsmaxmin.qsbase.R;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.widget.listview.LoadingFooter;
-import com.qsmaxmin.qsbase.common.widget.recyclerview.EndlessRecyclerOnScrollListener;
 import com.qsmaxmin.qsbase.common.widget.recyclerview.HeaderFooterRecyclerView;
 import com.qsmaxmin.qsbase.mvp.adapter.MyRecycleViewHolder;
 import com.qsmaxmin.qsbase.mvp.adapter.QsRecycleAdapterItem;
@@ -134,15 +133,8 @@ public abstract class QsRecyclerFragment<T extends QsPresenter, D> extends QsFra
                 mRecyclerView.setLayoutManager(staggeredGridLayoutManager);
                 break;
         }
-        mRecyclerView.addOnScrollListener(mOnScrollListener);
-    }
 
-    private EndlessRecyclerOnScrollListener mOnScrollListener = new EndlessRecyclerOnScrollListener() {
-        @Override public void onLoadNextPage(View view) {
-            super.onLoadNextPage(view);
-            onRecyclerViewScrollBottom(view);
-        }
-    };
+    }
 
     /**
      * 当recyclerView滚动到底部时调用

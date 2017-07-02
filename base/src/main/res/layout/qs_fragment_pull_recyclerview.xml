@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/swipe_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/color_bg">
+
+    <com.qsmaxmin.qsbase.common.widget.recyclerview.HeaderFooterRecyclerView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@android:id/list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:overScrollMode="never"/>
+
+</com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout>

@@ -20,7 +20,6 @@ public abstract class QsPullListFragment<T extends QsPresenter, D> extends QsLis
 
     private PtrFrameLayout mPtrFrameLayout;
     private boolean canLoadingMore = true;
-    protected LoadingFooter loadingFooter;
 
     @Override public int layoutId() {
         return R.layout.qs_fragment_pull_listview;
@@ -37,7 +36,12 @@ public abstract class QsPullListFragment<T extends QsPresenter, D> extends QsLis
     }
 
     private void initPtrFrameLayout(View view) {
-        mPtrFrameLayout = (PtrFrameLayout) view.findViewById(R.id.swipe_container);
+        if (view instanceof PtrFrameLayout) {
+            mPtrFrameLayout = (PtrFrameLayout) view;
+        } else {
+            mPtrFrameLayout = (PtrFrameLayout) view.findViewById(R.id.swipe_container);
+        }
+        if (mPtrFrameLayout == null) throw new RuntimeException("PtrFrameLayout is not exit or its id not 'R.id.swipe_container' in current layout!!");
         mPtrFrameLayout.setHeaderView((View) getPtrUIHandlerView());
         mPtrFrameLayout.addPtrUIHandler(getPtrUIHandlerView());
         mPtrFrameLayout.setPtrHandler(new PtrHandler() {
@@ -67,9 +71,9 @@ public abstract class QsPullListFragment<T extends QsPresenter, D> extends QsLis
     }
 
     @Override public void setLoadingState(LoadingFooter.State state) {
-        if (loadingFooter != null) {
+        if (mLoadingFooter != null) {
             L.i(initTag(), "设置刷新尾部状态：" + state);
-            loadingFooter.setState(state);
+            mLoadingFooter.setState(state);
         }
     }
 
@@ -94,22 +98,20 @@ public abstract class QsPullListFragment<T extends QsPresenter, D> extends QsLis
         super.setData(list);
     }
 
-    protected void loadingMoreData() {
-        synchronized (this) {
-            if (loadingFooter != null) {
-                LoadingFooter.State state = loadingFooter.getState();
-                if (!canLoadingMore) {
-                    return;
-                } else if (state == LoadingFooter.State.Loading) {
-                    L.i(initTag(), "正在加载中,无需再次加载..........");
-                    return;
-                } else if (state == LoadingFooter.State.TheEnd) {
-                    L.i(initTag(), "加载完了,没有更多数据了...........");
-                    return;
-                }
-                setLoadingState(LoadingFooter.State.Loading);
-                onLoad();
+    private void loadingMoreData() {
+        if (mLoadingFooter != null) {
+            LoadingFooter.State state = mLoadingFooter.getState();
+            if (!canLoadingMore) {
+                return;
+            } else if (state == LoadingFooter.State.Loading) {
+                L.i(initTag(), "正在加载中,无需再次加载..........");
+                return;
+            } else if (state == LoadingFooter.State.TheEnd) {
+                L.i(initTag(), "加载完了,没有更多数据了...........");
+                return;
             }
+            setLoadingState(LoadingFooter.State.Loading);
+            onLoad();
         }
     }
 
