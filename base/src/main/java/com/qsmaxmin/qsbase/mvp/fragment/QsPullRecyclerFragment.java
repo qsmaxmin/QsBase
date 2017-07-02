@@ -7,6 +7,7 @@ import com.qsmaxmin.qsbase.R;
 import com.qsmaxmin.qsbase.common.aspect.ThreadPoint;
 import com.qsmaxmin.qsbase.common.aspect.ThreadType;
 import com.qsmaxmin.qsbase.common.log.L;
+import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.common.widget.listview.LoadingFooter;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrDefaultHandler;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout;
@@ -28,7 +29,7 @@ public abstract class QsPullRecyclerFragment<P extends QsPresenter, D> extends Q
     private PtrFrameLayout mPtrFrameLayout;
 
     @Override public int getFooterLayout() {
-        return R.layout.qs_loading_footer;
+        return QsHelper.getInstance().getApplication().listFooterLayoutId();
     }
 
     @Override public int layoutId() {

@@ -65,6 +65,6 @@ public abstract class QsApplication extends Application {
     }
 
     public int listFooterLayoutId() {
-        return 0;
+        return R.layout.qs_loading_footer;
     }
 }
