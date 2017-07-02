@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<j2w.team.common.widget.typefaceview.TypefaceTextView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/tv_normal_text"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:padding="10dp"
+    android:textSize="12sp"
+    android:textColor="@color/color_list_footer"
+    android:text="@string/push_loading"/>

@@ -10,7 +10,7 @@ import android.widget.ListView;
 
 import com.qsmaxmin.qsbase.R;
 import com.qsmaxmin.qsbase.common.log.L;
-import com.qsmaxmin.qsbase.common.utils.QsHelper;
+import com.qsmaxmin.qsbase.common.widget.listview.LoadingFooter;
 import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.base.InnerScroller;
 import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.base.InnerScrollerContainer;
 import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.base.OuterScroller;
@@ -25,10 +25,10 @@ import java.util.List;
  */
 public abstract class QsListFragment<P extends QsPresenter> extends QsFragment<P> implements QsIListFragment, AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener, AbsListView.OnScrollListener, InnerScrollerContainer {//
 
-    protected List        mList;
-    protected ListView    mListView;
-    protected BaseAdapter mListAdapter;
-    protected View        mFooterView;
+    protected List          mList;
+    protected ListView      mListView;
+    protected BaseAdapter   mListAdapter;
+    protected LoadingFooter mLoadingFooter;
 
     @Override public int layoutId() {
         return R.layout.qs_fragment_listview;
@@ -74,9 +74,14 @@ public abstract class QsListFragment<P extends QsPresenter> extends QsFragment<P
             View headerView = LayoutInflater.from(getActivity()).inflate(getHeaderLayout(), null, false);
             mListView.addHeaderView(headerView);
         }
-        mFooterView = LayoutInflater.from(getActivity()).inflate(getFooterLayout() == 0 ? QsHelper.getInstance().getApplication().listFooterLayoutId() : getFooterLayout(), null, false);
-        if (mFooterView != null) {
-            mListView.addFooterView(mFooterView);
+        if (getFooterLayout() != 0) {
+            View footerView = LayoutInflater.from(getActivity()).inflate(getFooterLayout(), null, false);
+            if (footerView instanceof LoadingFooter) {
+                mLoadingFooter = (LoadingFooter) footerView;
+            } else {
+                mLoadingFooter = (LoadingFooter) footerView.findViewById(R.id.loading_footer);
+            }
+            mListView.addFooterView(footerView);
         }
         mListView.setOnItemClickListener(this);
         mListView.setOnItemLongClickListener(this);

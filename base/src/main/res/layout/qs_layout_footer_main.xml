@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:id="@+id/loading_view"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="40dp"
+    android:background="@android:color/transparent"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <ViewStub
+        android:id="@+id/normal_viewstub"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent"
+        android:layout="@layout/qs_layout_footer_init"/>
+
+    <ViewStub
+        android:id="@+id/loading_viewstub"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent"
+        android:layout="@layout/qs_layout_footer_loading"/>
+
+    <ViewStub
+        android:id="@+id/end_viewstub"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent"
+        android:layout="@layout/qs_layout_footer_end"/>
+
+    <ViewStub
+        android:id="@+id/network_error_viewstub"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent"
+        android:layout="@layout/qs_layout_footer_error"/>
+
+</LinearLayout>
