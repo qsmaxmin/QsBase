@@ -10,6 +10,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 
 import com.qsmaxmin.qsbase.R;
+import com.qsmaxmin.qsbase.common.aspect.ThreadPoint;
+import com.qsmaxmin.qsbase.common.aspect.ThreadType;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.widget.listview.LoadingFooter;
 import com.qsmaxmin.qsbase.common.widget.recyclerview.HeaderFooterRecyclerView;
@@ -140,7 +142,7 @@ public abstract class QsRecyclerFragment<T extends QsPresenter, D> extends QsFra
         return mRecyclerViewAdapter;
     }
 
-    @Override public void setData(List<D> list) {
+    @Override @ThreadPoint(ThreadType.MAIN) public void setData(List<D> list) {
         synchronized (mList) {
             mList.clear();
             if (list != null && !list.isEmpty()) mList.addAll(list);
@@ -148,7 +150,7 @@ public abstract class QsRecyclerFragment<T extends QsPresenter, D> extends QsFra
         }
     }
 
-    @Override public void addData(List<D> list) {
+    @Override @ThreadPoint(ThreadType.MAIN) public void addData(List<D> list) {
         if (list != null && !list.isEmpty()) {
             synchronized (mList) {
                 mList.addAll(list);
@@ -157,7 +159,7 @@ public abstract class QsRecyclerFragment<T extends QsPresenter, D> extends QsFra
         }
     }
 
-    @Override public void addData(List<D> list, int position) {
+    @Override @ThreadPoint(ThreadType.MAIN) public void addData(List<D> list, int position) {
         if (list != null && !list.isEmpty() && position >= 0) {
             synchronized (mList) {
                 position = (position < mList.size()) ? position : mList.size();
@@ -168,7 +170,7 @@ public abstract class QsRecyclerFragment<T extends QsPresenter, D> extends QsFra
         }
     }
 
-    @Override public void delete(int position) {
+    @Override @ThreadPoint(ThreadType.MAIN) public void delete(int position) {
         synchronized (mList) {
             if (position >= 0 && position < mList.size()) {
                 if (mRecyclerViewAdapter != null) mRecyclerViewAdapter.notifyItemRemoved(position);
@@ -178,7 +180,7 @@ public abstract class QsRecyclerFragment<T extends QsPresenter, D> extends QsFra
         }
     }
 
-    @Override public void deleteAll() {
+    @Override @ThreadPoint(ThreadType.MAIN) public void deleteAll() {
         synchronized (mList) {
             mList.clear();
             updateAdapter();
@@ -189,7 +191,7 @@ public abstract class QsRecyclerFragment<T extends QsPresenter, D> extends QsFra
         return mList;
     }
 
-    @Override public void updateAdapter() {
+    @Override @ThreadPoint(ThreadType.MAIN) public void updateAdapter() {
         if (mRecyclerViewAdapter != null) {
             if (mViewAnimator != null) {
                 if (mList.isEmpty()) {

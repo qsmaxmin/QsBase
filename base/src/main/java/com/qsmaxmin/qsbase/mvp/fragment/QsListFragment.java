@@ -9,6 +9,8 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 
 import com.qsmaxmin.qsbase.R;
+import com.qsmaxmin.qsbase.common.aspect.ThreadPoint;
+import com.qsmaxmin.qsbase.common.aspect.ThreadType;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.widget.listview.LoadingFooter;
 import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.base.InnerScroller;
@@ -144,7 +146,7 @@ public abstract class QsListFragment<P extends QsPresenter, D> extends QsFragmen
     }
 
 
-    @Override public void updateAdapter() {
+    @Override @ThreadPoint(ThreadType.MAIN) public void updateAdapter() {
         if (mListAdapter != null) {
             if (mViewAnimator != null) {
                 if (mList.isEmpty()) {
