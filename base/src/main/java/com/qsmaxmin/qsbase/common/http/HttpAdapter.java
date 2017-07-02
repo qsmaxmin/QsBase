@@ -132,29 +132,33 @@ public class HttpAdapter {
             if (get != null) {
                 String path = get.value();
                 return executeGet(method, args, path);
+            } else {
+                throw new QsException(QsExceptionType.UNEXPECTED, "create(interface) the interface must has an annotation:@POST or @GET");
             }
         }
-        return null;
     }
 
     private Object executeGet(Method method, Object[] args, String path) {
         StringBuilder url = getUrl(method, path);
-        if (TextUtils.isEmpty(url)) return null;
+        if (TextUtils.isEmpty(url)) throw new QsException(QsExceptionType.UNEXPECTED, "request url is null...");
         Annotation[][] parameterAnnotations = method.getParameterAnnotations();
-        Map<String, Object> params = new HashMap<>();
+        Map<String, Object> params = null;
         for (int i = 0; i < parameterAnnotations.length; i++) {
             Annotation[] annotations = parameterAnnotations[i];
             for (Annotation annotation : annotations) {
                 if (annotation instanceof Query && args != null && i < args.length) {
+                    if (params == null) params = new HashMap<>();
                     Object arg = args[i];
                     String key = ((Query) annotation).value();
                     params.put(key, arg);
                 }
             }
         }
-        for (String key : params.keySet()) {
-            Object object = params.get(key);
-            url.append("&").append(key).append("=").append(object);
+        if (params != null) {
+            for (String key : params.keySet()) {
+                Object object = params.get(key);
+                url.append("&").append(key).append("=").append(object);
+            }
         }
 
         Request.Builder requestBuilder = new Request.Builder();
@@ -172,14 +176,25 @@ public class HttpAdapter {
 
     private Object executePost(Method method, Object[] args, String path) {
         StringBuilder url = getUrl(method, path);
-        if (TextUtils.isEmpty(url)) return null;
-        Annotation[][] parameterAnnotations = method.getParameterAnnotations();
+        if (TextUtils.isEmpty(url)) {
+            throw new QsException(QsExceptionType.UNEXPECTED, "request url is null...");
+        }
+        Annotation[][] parameterAnnotations = method.getParameterAnnotations();//参数可以有多个注解
         Object body = null;
+        HashMap<String, Object> params = null;
         for (int i = 0; i < parameterAnnotations.length; i++) {
             Annotation[] annotations = parameterAnnotations[i];
             for (Annotation annotation : annotations) {
-                if (annotation instanceof Body && args != null && i < args.length) {
-                    body = args[i];
+                if (args != null && i < args.length) {
+                    if (annotation instanceof Body) {
+                        body = args[i];
+                        break;
+                    } else if (annotation instanceof Query) {
+                        if (params == null) params = new HashMap<>();
+                        Object arg = args[i];
+                        String key = ((Query) annotation).value();
+                        params.put(key, arg);
+                    }
                 }
             }
         }
@@ -187,16 +202,20 @@ public class HttpAdapter {
         if (body != null) {
             requestBody = converter.toBody(body, body.getClass());
         }
-
+        if (params != null) {
+            for (String key : params.keySet()) {
+                Object object = params.get(key);
+                url.append("&").append(key).append("=").append(object);
+            }
+        }
         Request.Builder requestBuilder = new Request.Builder();
         requestBuilder.headers(headerBuilder.build());
         Request request = requestBuilder.tag(url.toString()).url(url.toString()).method("POST", requestBody).build();
-
         try {
             Call call = client.newCall(request);
             Response response = call.execute();
             return createResult(method, response);
-        } catch (Exception e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return null;
@@ -208,33 +227,30 @@ public class HttpAdapter {
         if (returnType == void.class) return null;
         int responseCode = response.code();
         if (responseCode < 200 || responseCode >= 300) {
-            return null;
+            throw new QsException(QsExceptionType.HTTP_ERROR, "http response code = " + responseCode);
         }
         if (returnType.equals(Response.class)) {
             return response;
         }
         ResponseBody body = response.body();
-        if (body == null) return null;
+        if (body == null) throw new QsException(QsExceptionType.HTTP_ERROR, "http response body is null!!");
         try {
             return converter.fromBody(body, returnType);
         } catch (IOException e) {
             e.printStackTrace();
+            throw new QsException(QsExceptionType.UNEXPECTED, "parse response body to json object fail");
         }
-        return null;
     }
 
     @Nullable private StringBuilder getUrl(Method method, String path) {
         if (method == null) {
-            L.e(TAG, "method is null...");
-            return null;
+            throw new QsException(QsExceptionType.UNEXPECTED, "method is null...");
         }
         if (TextUtils.isEmpty(path)) {
-            L.e(TAG, "path is null...");
-            return null;
+            throw new QsException(QsExceptionType.UNEXPECTED, "path is null...");
         }
         if (!path.startsWith("/")) {
-            L.e(TAG, "path is not start with '/'...");
-            return null;
+            throw new QsException(QsExceptionType.UNEXPECTED, "path=" + path + "  (path is not start with '/')");
         }
         String apiUrl = this.terminal;
         StringBuilder url = new StringBuilder(apiUrl);
