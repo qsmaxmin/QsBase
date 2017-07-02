@@ -6,6 +6,8 @@ import android.view.View;
 import android.widget.AbsListView;
 
 import com.qsmaxmin.qsbase.R;
+import com.qsmaxmin.qsbase.common.aspect.ThreadPoint;
+import com.qsmaxmin.qsbase.common.aspect.ThreadType;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.common.widget.listview.LoadingFooter;
@@ -62,26 +64,26 @@ public abstract class QsPullListFragment<T extends QsPresenter, D> extends QsLis
         return mPtrFrameLayout;
     }
 
-    @Override public void startRefreshing() {
+    @Override @ThreadPoint(ThreadType.MAIN) public void startRefreshing() {
         mPtrFrameLayout.autoRefresh();
     }
 
-    @Override public void stopRefreshing() {
+    @Override @ThreadPoint(ThreadType.MAIN) public void stopRefreshing() {
         mPtrFrameLayout.refreshComplete();
     }
 
-    @Override public void setLoadingState(LoadingFooter.State state) {
+    @Override @ThreadPoint(ThreadType.MAIN) public void setLoadingState(LoadingFooter.State state) {
         if (mLoadingFooter != null) {
             L.i(initTag(), "设置刷新尾部状态：" + state);
             mLoadingFooter.setState(state);
         }
     }
 
-    @Override public void openPullRefreshing() {
+    @Override @ThreadPoint(ThreadType.MAIN) public void openPullRefreshing() {
         mPtrFrameLayout.setEnabled(true);
     }
 
-    @Override public void closePullRefreshing() {
+    @Override @ThreadPoint(ThreadType.MAIN) public void closePullRefreshing() {
         mPtrFrameLayout.setEnabled(false);
     }
 
@@ -93,7 +95,7 @@ public abstract class QsPullListFragment<T extends QsPresenter, D> extends QsLis
         canLoadingMore = false;
     }
 
-    @Override public void setData(List<D> list) {
+    @Override @ThreadPoint(ThreadType.MAIN) public void setData(List<D> list) {
         mPtrFrameLayout.refreshComplete();
         super.setData(list);
     }

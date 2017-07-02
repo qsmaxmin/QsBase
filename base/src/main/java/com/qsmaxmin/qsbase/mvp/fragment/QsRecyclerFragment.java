@@ -136,12 +136,6 @@ public abstract class QsRecyclerFragment<T extends QsPresenter, D> extends QsFra
 
     }
 
-    /**
-     * 当recyclerView滚动到底部时调用
-     */
-    protected void onRecyclerViewScrollBottom(View view) {
-    }
-
     @Override public MyRecycleAdapter getAdapter() {
         return mRecyclerViewAdapter;
     }
