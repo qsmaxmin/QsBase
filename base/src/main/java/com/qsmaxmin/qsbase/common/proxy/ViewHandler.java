@@ -55,6 +55,7 @@ public class ViewHandler<V extends QsIView> implements InvocationHandler {
             L.i("ViewHandler", "getView()...View is Detach, so stop here!!");
         } else {
             try {
+                L.i("ViewHandler", "getView()...run in main thread!!");
                 return method.invoke(mView, args);
             } catch (Exception e) {
                 e.printStackTrace();
