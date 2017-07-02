@@ -3,7 +3,6 @@ package com.qsmaxmin.qsbase.mvp.fragment;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
-import com.qsmaxmin.qsbase.common.model.QsModelListAdapter;
 import com.qsmaxmin.qsbase.common.widget.recyclerview.HeaderFooterRecyclerView;
 import com.qsmaxmin.qsbase.mvp.adapter.QsRecycleAdapterItem;
 

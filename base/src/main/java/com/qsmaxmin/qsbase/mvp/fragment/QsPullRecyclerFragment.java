@@ -61,11 +61,11 @@ public abstract class QsPullRecyclerFragment<P extends QsPresenter, D> extends Q
     }
 
 
-    @Override public void requestRefresh() {
+    @Override public void startRefreshing() {
         mPtrFrameLayout.autoRefresh();
     }
 
-    @Override public void closeRefresh() {
+    @Override public void stopRefreshing() {
         mPtrFrameLayout.refreshComplete();
     }
 

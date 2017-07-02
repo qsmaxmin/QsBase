@@ -18,9 +18,9 @@ public interface QsIPullListFragment<D> extends QsIListFragment<D> {
 
     void onLoad();
 
-    void requestRefresh();
+    void startRefreshing();
 
-    void closeRefresh();
+    void stopRefreshing();
 
     void setLoadingState(LoadingFooter.State state);
 

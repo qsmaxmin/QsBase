@@ -62,11 +62,11 @@ public abstract class QsPullListFragment<T extends QsPresenter, D> extends QsLis
         return mPtrFrameLayout;
     }
 
-    @Override public void requestRefresh() {
+    @Override public void startRefreshing() {
         mPtrFrameLayout.autoRefresh();
     }
 
-    @Override public void closeRefresh() {
+    @Override public void stopRefreshing() {
         mPtrFrameLayout.refreshComplete();
     }
 
