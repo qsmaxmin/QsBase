@@ -8,9 +8,6 @@ import android.view.animation.Transformation;
 
 import java.util.Random;
 
-/**
- * Created by srain on 11/6/14.
- */
 public class StoreHouseBarItem extends Animation {
 
     public PointF midPoint;
