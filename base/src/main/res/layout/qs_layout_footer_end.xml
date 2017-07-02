@@ -7,6 +7,6 @@
     android:paddingBottom="10dp"
     android:gravity="center"
     android:textSize="12sp"
-    android:textColor="@android:color/darker_gray"
+    android:textColor="@android:color/black"
     android:paddingTop="10dp"
     android:text="没有更多了"/>
