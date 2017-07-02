@@ -3,7 +3,7 @@ package com.qsmaxmin.qsbase.mvp.fragment;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 
-import com.qsmaxmin.qsbase.mvp.adapter.QsAdapterItem;
+import com.qsmaxmin.qsbase.mvp.adapter.QsListAdapterItem;
 
 import java.util.List;
 
@@ -13,7 +13,7 @@ import java.util.List;
  * @Description
  */
 
-interface QsIListFragment extends QsIFragment {
+interface QsIListFragment<D> extends QsIFragment {
 
     int getHeaderLayout();
 
@@ -25,17 +25,19 @@ interface QsIListFragment extends QsIFragment {
 
     int getItemViewType(int position);
 
-    QsAdapterItem getQsAdapterItem(int type);
+    QsListAdapterItem getListAdapterItem(int type);
 
-    void setData(List list);
+    void setData(List<D> list);
 
-    void setData(List list, boolean bool);
+    void addData(List<D> list);
 
-    void resetAdapter();
+    void delete(int position);
+
+    void deleteAll();
+
+    List<D> getData();
 
     void updateAdapter();
-
-    void updateAdapter(boolean shouldShowEmptyView);
 
     BaseAdapter onCreateAdapter();
 

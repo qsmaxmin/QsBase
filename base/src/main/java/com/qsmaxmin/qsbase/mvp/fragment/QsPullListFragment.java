@@ -1,6 +1,7 @@
 package com.qsmaxmin.qsbase.mvp.fragment;
 
 import android.support.v4.view.ViewCompat;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AbsListView;
 
@@ -15,7 +16,7 @@ import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
 
 import java.util.List;
 
-public abstract class QsPullListFragment<T extends QsPresenter> extends QsListFragment<T> implements QsIPullListFragment {
+public abstract class QsPullListFragment<T extends QsPresenter, D> extends QsListFragment<T, D> implements QsIPullListFragment<D> {
 
     private PtrFrameLayout mPtrFrameLayout;
     private boolean canLoadingMore = true;
@@ -29,8 +30,8 @@ public abstract class QsPullListFragment<T extends QsPresenter> extends QsListFr
         return QsHelper.getInstance().getApplication().listFooterLayoutId();
     }
 
-    @Override protected View initView() {
-        View view = super.initView();
+    @Override protected View initView(LayoutInflater inflater) {
+        View view = super.initView(inflater);
         initPtrFrameLayout(view);
         return view;
     }
@@ -88,14 +89,9 @@ public abstract class QsPullListFragment<T extends QsPresenter> extends QsListFr
         canLoadingMore = false;
     }
 
-    public void setData(List list, boolean bool) {
-        super.setData(list, bool);
+    @Override public void setData(List<D> list) {
         mPtrFrameLayout.refreshComplete();
-    }
-
-    public void addData(List list) {
-        super.addData(list);
-        mPtrFrameLayout.refreshComplete();
+        super.setData(list);
     }
 
     protected void loadingMoreData() {

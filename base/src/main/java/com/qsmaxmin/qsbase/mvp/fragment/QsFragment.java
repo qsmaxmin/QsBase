@@ -66,7 +66,7 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
 
     @Nullable @Override public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        View view = initView();
+        View view = initView(inflater);
         if (isOpenEventBus() && !EventBus.getDefault().isRegistered(this)) EventBus.getDefault().register(this);
         return view;
     }
@@ -91,17 +91,17 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         ButterKnife.unbind(this);
     }
 
-    protected View initView() {
+    protected View initView(LayoutInflater inflater) {
         View rootView;
         if (isOpenViewState() && loadingLayoutId() > 0 && emptyLayoutId() > 0 && errorLayoutId() > 0) {
-            rootView = View.inflate(getContext(), R.layout.qs_activity_state, null);
+            rootView = inflater.inflate(R.layout.qs_activity_state, null);
             mViewAnimator = ButterKnife.findById(rootView, android.R.id.home);
-            View.inflate(getContext(), loadingLayoutId(), mViewAnimator);
-            View.inflate(getContext(), layoutId(), mViewAnimator);
-            View.inflate(getContext(), emptyLayoutId(), mViewAnimator);
-            View.inflate(getContext(), errorLayoutId(), mViewAnimator);
+            inflater.inflate(loadingLayoutId(), mViewAnimator);
+            inflater.inflate(layoutId(), mViewAnimator);
+            inflater.inflate(emptyLayoutId(), mViewAnimator);
+            inflater.inflate(errorLayoutId(), mViewAnimator);
         } else {
-            rootView = View.inflate(getContext(), layoutId(), null);
+            rootView = inflater.inflate(layoutId(), null);
         }
         ButterKnife.bind(this, rootView);
         return rootView;
