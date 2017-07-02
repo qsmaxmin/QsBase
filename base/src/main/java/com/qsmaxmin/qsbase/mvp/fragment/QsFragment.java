@@ -1,6 +1,8 @@
 package com.qsmaxmin.qsbase.mvp.fragment;
 
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -202,23 +204,36 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
     }
 
     @Override public int currentViewState() {
-        return 0;
+        if (isOpenViewState() && mViewAnimator != null) {
+            return mViewAnimator.getDisplayedChild();
+        }
+        return -1;
     }
 
     @Override public void intent2Activity(Class clazz) {
-        QsHelper.getInstance().intent2Activity(clazz);
+        intent2Activity(clazz, null, 0);
     }
 
     @Override public void intent2Activity(Class clazz, int requestCode) {
-        QsHelper.getInstance().intent2Activity(clazz, null, requestCode);
+        intent2Activity(clazz, null, requestCode);
     }
 
     @Override public void intent2Activity(Class clazz, Bundle bundle) {
-        QsHelper.getInstance().intent2Activity(clazz, bundle);
+        intent2Activity(clazz, bundle, 0);
     }
 
     @Override public void intent2Activity(Class clazz, Bundle bundle, int requestCode) {
-        QsHelper.getInstance().intent2Activity(clazz, bundle, requestCode);
+        Context context = getContext();
+        if (context != null && clazz != null) {
+            Intent intent = new Intent();
+            intent.setClass(context, clazz);
+            if (bundle != null) intent.putExtras(bundle);
+            if (requestCode > 0) {
+                startActivityForResult(intent, requestCode);
+            } else {
+                startActivity(intent);
+            }
+        }
     }
 
     @Override public void commitFragment(Fragment fragment) {
