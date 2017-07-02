@@ -63,4 +63,8 @@ public abstract class QsApplication extends Application {
     public int errorLayoutId() {
         return 0;
     }
+
+    public int listFooterLayoutId() {
+        return 0;
+    }
 }

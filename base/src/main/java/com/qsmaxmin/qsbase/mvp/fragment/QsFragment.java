@@ -35,9 +35,10 @@ import butterknife.ButterKnife;
 public abstract class QsFragment<P extends QsPresenter> extends Fragment implements QsIFragment {
 
     private   P              presenter;
-    protected ProgressDialog mProgressDialog;
-    private   ViewAnimator   mViewAnimator;
     private   boolean        hasInitData;
+    protected ProgressDialog mProgressDialog;
+    protected ViewAnimator   mViewAnimator;
+
 
     @Override public String initTag() {
         return getClass().getSimpleName();

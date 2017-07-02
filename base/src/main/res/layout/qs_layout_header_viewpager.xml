@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge
+    android:id="@+id/mhvp_rootView"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <j2w.team.common.widget.J2WViewPager
+        android:id="@+id/mhvp_pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <j2w.team.common.widget.headerViewpager.base.TranslatableLinearLayout
+        android:id="@+id/mhvp_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:orientation="vertical">
+
+        <j2w.team.common.widget.headerViewpager.base.SizeSensitiveLinearLayout
+            android:id="@+id/mhvp_headerCustom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"/>
+
+    </j2w.team.common.widget.headerViewpager.base.TranslatableLinearLayout>
+
+</merge>
