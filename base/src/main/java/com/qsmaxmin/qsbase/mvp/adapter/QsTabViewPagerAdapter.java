@@ -8,7 +8,6 @@ import com.qsmaxmin.qsbase.common.widget.viewpager.QsViewPager;
 import com.qsmaxmin.qsbase.mvp.QsIViewPagerABActivity;
 import com.qsmaxmin.qsbase.mvp.QsIViewPagerActivity;
 import com.qsmaxmin.qsbase.mvp.fragment.QsIViewPagerFragment;
-import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
 
 /**
  * @CreateBy qsmaxmin
@@ -18,16 +17,16 @@ import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
 
 public class QsTabViewPagerAdapter extends QsViewPagerAdapter implements PagerSlidingTabStrip.CustomTabProvider {
 
+    public QsTabViewPagerAdapter(String tag, FragmentManager fragmentManager, PagerSlidingTabStrip tabs, QsViewPager pager, QsIViewPagerFragment j2WIViewViewpagerFragment) {
+        super(tag, fragmentManager, tabs, pager, j2WIViewViewpagerFragment);
+    }
+
     public QsTabViewPagerAdapter(String tag, FragmentManager fragmentManager, PagerSlidingTabStrip tabs, QsViewPager pager, QsIViewPagerABActivity j2WIViewViewpagerABActivity) {
         super(tag, fragmentManager, tabs, pager, j2WIViewViewpagerABActivity);
     }
 
     public QsTabViewPagerAdapter(String tag, FragmentManager fragmentManager, PagerSlidingTabStrip tabs, QsViewPager pager, QsIViewPagerActivity j2WIViewViewpagerActivity) {
         super(tag, fragmentManager, tabs, pager, j2WIViewViewpagerActivity);
-    }
-
-    public QsTabViewPagerAdapter(String tag, FragmentManager fragmentManager, PagerSlidingTabStrip tabs, QsViewPager pager, QsIViewPagerFragment j2WIViewViewpagerFragment) {
-        super(tag, fragmentManager, tabs, pager, j2WIViewViewpagerFragment);
     }
 
     @Override public int getCustomTabView() {
