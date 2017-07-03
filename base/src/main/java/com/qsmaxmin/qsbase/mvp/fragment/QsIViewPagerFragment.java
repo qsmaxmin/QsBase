@@ -18,6 +18,8 @@ public interface QsIViewPagerFragment extends QsIFragment {
 
     void onPageSelected(View childAt, View oldView, int position, int oldPosition);
 
+    void initViewPager(QsModelPager[] modelPagers, int offScreenPageLimit);
+
     void onPageScrolled(int position, float positionOffset, int positionOffsetPixels);
 
     QsModelPager[] getModelPagers();

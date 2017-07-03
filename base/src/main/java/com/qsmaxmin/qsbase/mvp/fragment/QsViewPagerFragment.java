@@ -40,10 +40,10 @@ public abstract class QsViewPagerFragment<P extends QsPresenter> extends QsFragm
         pager = (QsViewPager) view.findViewById(R.id.pager);
         tabs = (PagerSlidingTabStrip) view.findViewById(android.R.id.tabs);
         initTabsValue(tabs);
-        initViewPager(getModelPagers(), pager, tabs, 3);
+        initViewPager(getModelPagers(), 3);
     }
 
-    public void initViewPager(QsModelPager[] modelPagers, QsViewPager pager, PagerSlidingTabStrip tabs, int offScreenPageLimit) {
+    @Override public void initViewPager(QsModelPager[] modelPagers, int offScreenPageLimit) {
         if (modelPagers != null) {
             adapter = getPagerAdapter(pager, tabs);
             ((QsViewPagerAdapter) adapter).setModelPagers(modelPagers);
@@ -56,7 +56,7 @@ public abstract class QsViewPagerFragment<P extends QsPresenter> extends QsFragm
     }
 
     public PagerAdapter getPagerAdapter(QsViewPager pager, PagerSlidingTabStrip tabs) {
-        return new QsViewPagerAdapter<>(initTag(), getChildFragmentManager(), tabs, pager, this);
+        return new QsViewPagerAdapter(initTag(), getChildFragmentManager(), tabs, pager, this);
     }
 
     public final void initTabsValue(PagerSlidingTabStrip tabs) {
@@ -88,6 +88,10 @@ public abstract class QsViewPagerFragment<P extends QsPresenter> extends QsFragm
     }
 
     @Override public void onPageSelected(View childAt, View oldView, int position, int oldPosition) {
+
+    }
+
+    @Override public void initTab(View view, QsModelPager modelPager) {
 
     }
 

@@ -41,10 +41,11 @@ public abstract class QsViewPagerABActivity<P extends QsPresenter> extends QsABA
         pager = (QsViewPager) view.findViewById(R.id.pager);
         tabs = (PagerSlidingTabStrip) view.findViewById(android.R.id.tabs);
         initTabsValue(tabs);
-        initViewPager(getModelPagers(), pager, tabs, 3);
+        initViewPager(getModelPagers(), 3);
     }
 
-    public void initViewPager(QsModelPager[] modelPagers, QsViewPager pager, PagerSlidingTabStrip tabs, int offScreenPageLimit) {
+
+    @Override public void initViewPager(QsModelPager[] modelPagers, int offScreenPageLimit) {
         if (modelPagers != null) {
             adapter = getPagerAdapter(pager, tabs);
             ((QsViewPagerAdapter) adapter).setModelPagers(modelPagers);
@@ -149,7 +150,6 @@ public abstract class QsViewPagerABActivity<P extends QsPresenter> extends QsABA
     protected int getTabsSelectedTitleColor() {
         return getResources().getColor(R.color.colorAccent);
     }
-
 
     protected int getTabsIndicatorColor() {
         return getResources().getColor(R.color.colorAccent);
