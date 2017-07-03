@@ -152,7 +152,7 @@ public abstract class QsViewPagerABActivity<P extends QsPresenter> extends QsABA
     }
 
     protected int getTabsIndicatorColor() {
-        return getResources().getColor(R.color.colorAccent);
+        return 0;
     }
 
     protected int getTabsTitleSize() {
