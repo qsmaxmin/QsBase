@@ -30,7 +30,7 @@ public abstract class QsDialogFragment extends DialogFragment {
             setAttribute(params);
             window.setAttributes(params);
         }
-        return inflater.inflate(dialogLayoutId(), container);
+        return getDialogView(inflater, container);
     }
 
     protected void setAttribute(WindowManager.LayoutParams params) {
@@ -39,7 +39,7 @@ public abstract class QsDialogFragment extends DialogFragment {
         params.height = WindowManager.LayoutParams.WRAP_CONTENT;
     }
 
-    protected abstract int dialogLayoutId();
-
     protected abstract int getDialogTheme();
+
+    protected abstract View getDialogView(LayoutInflater inflater, ViewGroup container);
 }
