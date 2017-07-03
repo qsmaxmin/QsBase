@@ -1,4 +1,4 @@
-package com.qsmaxmin.qsbase.mvp.fragment;
+package com.qsmaxmin.qsbase.mvp;
 
 import android.view.View;
 
@@ -8,11 +8,11 @@ import com.qsmaxmin.qsbase.mvp.model.QsModelPager;
 
 /**
  * @CreateBy qsmaxmin
- * @Date 2017/7/3 13:15
+ * @Date 2017/7/3 15:26
  * @Description
  */
 
-public interface QsIViewPagerFragment extends QsIFragment {
+public interface QsIViewPagerABActivity extends QsIABActivity {
 
     void onPageScrollStateChanged(int state);
 

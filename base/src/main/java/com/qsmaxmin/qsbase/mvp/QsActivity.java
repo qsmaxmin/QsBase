@@ -58,7 +58,8 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         super.onCreate(savedInstanceState);
         QsHelper.getInstance().getScreenHelper().pushActivity(this);
         QsHelper.getInstance().getApplication().onActivityCreate();
-        initView();
+        View view = initView();
+        setContentView(view);
         initStatusBar();
         ButterKnife.bind(this);
         if (isOpenEventBus() && !EventBus.getDefault().isRegistered(this)) EventBus.getDefault().register(this);
@@ -97,7 +98,7 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
     }
 
 
-    protected void initView() {
+    protected View initView() {
         View rootView;
         if (isOpenViewState() && loadingLayoutId() > 0 && emptyLayoutId() > 0 && errorLayoutId() > 0) {
             rootView = View.inflate(this, R.layout.qs_activity_state, null);
@@ -109,7 +110,7 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         } else {
             rootView = View.inflate(this, layoutId(), null);
         }
-        setContentView(rootView);
+        return rootView;
     }
 
     protected void initStatusBar() {

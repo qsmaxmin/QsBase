@@ -1,37 +1,37 @@
-package com.qsmaxmin.qsbase.mvp.fragment;
+package com.qsmaxmin.qsbase.mvp;
 
 import android.graphics.Color;
 import android.support.v4.view.PagerAdapter;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
-import android.view.LayoutInflater;
 import android.view.View;
 
 import com.qsmaxmin.qsbase.R;
 import com.qsmaxmin.qsbase.common.widget.viewpager.PagerSlidingTabStrip;
 import com.qsmaxmin.qsbase.common.widget.viewpager.QsViewPager;
+import com.qsmaxmin.qsbase.mvp.adapter.QsTabViewPagerAdapter;
 import com.qsmaxmin.qsbase.mvp.adapter.QsViewPagerAdapter;
 import com.qsmaxmin.qsbase.mvp.model.QsModelPager;
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
 
 /**
  * @CreateBy qsmaxmin
- * @Date 2017/7/3 13:14
+ * @Date 2017/7/3 15:15
  * @Description
  */
 
-public abstract class QsViewPagerFragment<P extends QsPresenter> extends QsFragment<P> implements QsIViewPagerFragment {
+public abstract class QsViewPagerActivity<P extends QsPresenter> extends QsActivity<P> implements QsIViewPagerActivity {
 
     private PagerAdapter         adapter;
     private QsViewPager          pager;
     private PagerSlidingTabStrip tabs;
 
     @Override public int layoutId() {
-        return R.layout.qs_fragment_viewpager;
+        return R.layout.qs_activity_viewpager;
     }
 
-    @Override protected View initView(LayoutInflater inflater) {
-        View view = super.initView(inflater);
+    @Override protected View initView() {
+        View view = super.initView();
         initViewPager(view);
         return view;
     }
@@ -56,7 +56,7 @@ public abstract class QsViewPagerFragment<P extends QsPresenter> extends QsFragm
     }
 
     public PagerAdapter getPagerAdapter(QsViewPager pager, PagerSlidingTabStrip tabs) {
-        return new QsViewPagerAdapter<>(initTag(), getChildFragmentManager(), tabs, pager, this);
+        return new QsTabViewPagerAdapter(initTag(), getSupportFragmentManager(), tabs, pager, this);
     }
 
     public final void initTabsValue(PagerSlidingTabStrip tabs) {
@@ -103,10 +103,6 @@ public abstract class QsViewPagerFragment<P extends QsPresenter> extends QsFragm
         if (0 <= index && index < childCount) {
             pager.setCurrentItem(index, bool);
         }
-    }
-
-    @Override public int getTabItemLayout() {
-        return 0;
     }
 
     @Override public PagerSlidingTabStrip getTabs() {

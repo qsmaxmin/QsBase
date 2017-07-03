@@ -63,7 +63,8 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
         super.onCreate(savedInstanceState);
         QsHelper.getInstance().getScreenHelper().pushActivity(this);
         QsHelper.getInstance().getApplication().onActivityCreate();
-        initView();
+        View view = initView();
+        setContentView(view);
         initStatusBar();
         ButterKnife.bind(this);
         if (isOpenEventBus() && !EventBus.getDefault().isRegistered(this)) EventBus.getDefault().register(this);
@@ -102,7 +103,7 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
     }
 
 
-    protected void initView() {
+    protected View initView() {
         View rootView;
         Toolbar mToolbar;
         if (isOpenViewState() && loadingLayoutId() > 0 && emptyLayoutId() > 0 && errorLayoutId() > 0) {
@@ -127,7 +128,7 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
             View.inflate(getContext(), actionbarLayoutId(), actionbarContainer);
         }
         setSupportActionBar(mToolbar);
-        setContentView(rootView);
+        return rootView;
     }
 
     protected void initStatusBar() {
