@@ -12,6 +12,7 @@ import com.qsmaxmin.qsbase.common.widget.viewpager.PagerSlidingTabStrip;
 import com.qsmaxmin.qsbase.common.widget.viewpager.QsViewPager;
 import com.qsmaxmin.qsbase.mvp.adapter.QsViewPagerAdapter;
 import com.qsmaxmin.qsbase.mvp.model.QsModelPager;
+import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
 
 /**
  * @CreateBy qsmaxmin
@@ -19,7 +20,7 @@ import com.qsmaxmin.qsbase.mvp.model.QsModelPager;
  * @Description
  */
 
-public abstract class QsViewPagerFragment extends QsFragment implements QsIViewPagerFragment {
+public abstract class QsViewPagerFragment<P extends QsPresenter> extends QsFragment<P> implements QsIViewPagerFragment {
 
     private PagerAdapter         adapter;
     private QsViewPager          pager;

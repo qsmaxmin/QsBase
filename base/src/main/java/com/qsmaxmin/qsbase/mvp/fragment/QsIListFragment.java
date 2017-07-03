@@ -25,7 +25,7 @@ public interface QsIListFragment<D> extends QsIFragment {
 
     int getItemViewType(int position);
 
-    QsListAdapterItem getListAdapterItem(int type);
+    QsListAdapterItem<D> getListAdapterItem(int type);
 
     void setData(List<D> list);
 

@@ -16,7 +16,7 @@ import java.util.List;
 
 public interface QsIRecyclerFragment<D> extends QsIFragment {
 
-    QsRecycleAdapterItem getRecycleAdapterItem(LayoutInflater mInflater, ViewGroup parent, int type);
+    QsRecycleAdapterItem<D> getRecycleAdapterItem(LayoutInflater mInflater, ViewGroup parent, int type);
 
     int getHeaderLayout();
 
