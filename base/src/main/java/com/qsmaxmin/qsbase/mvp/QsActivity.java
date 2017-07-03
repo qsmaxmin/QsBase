@@ -198,7 +198,7 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
     }
 
     @Override public void initDataWhenDelay() {
-        if (!hasInitData) {
+        if (!hasInitData && isDelayData()) {
             initData(getIntent().getExtras());
             hasInitData = true;
         }

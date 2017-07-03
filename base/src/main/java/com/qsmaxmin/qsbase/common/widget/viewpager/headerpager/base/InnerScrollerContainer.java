@@ -6,6 +6,5 @@ package com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.base;
  * @Description InnerScroller's Container,which Fragment that contains a InnerScroller must implements.
  */
 public interface InnerScrollerContainer {
-
     void setMyOuterScroller(OuterScroller outerScroller, int myPosition);
 }

@@ -122,7 +122,7 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
     }
 
     @Override public void initDataWhenDelay() {
-        if (!hasInitData) {
+        if (!hasInitData && isDelayData()) {
             initData(getArguments());
             hasInitData = true;
         }

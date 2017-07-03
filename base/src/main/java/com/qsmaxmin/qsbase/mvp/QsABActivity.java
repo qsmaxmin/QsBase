@@ -216,7 +216,7 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
     }
 
     @Override public void initDataWhenDelay() {
-        if (!hasInitData) {
+        if (!hasInitData && isDelayData()) {
             initData(getIntent().getExtras());
             hasInitData = true;
         }

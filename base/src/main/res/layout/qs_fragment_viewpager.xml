@@ -1,0 +1,18 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@null"
+    android:orientation="vertical">
+
+    <com.qsmaxmin.qsbase.common.widget.viewpager.PagerSlidingTabStrip
+        android:id="@android:id/tabs"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"/>
+
+    <com.qsmaxmin.qsbase.common.widget.viewpager.QsViewPager
+        android:id="@+id/pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+</LinearLayout>
