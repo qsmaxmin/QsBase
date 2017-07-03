@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 
 import com.qsmaxmin.qsbase.R;
@@ -120,7 +119,7 @@ public class PermissionUtils {
                     }
                 }
                 if (shouldShowDialog) {
-                    showPermissionTipsDialog(shouldShowDialogArr);
+                    showPermissionTipsDialog(activity, shouldShowDialogArr);
                 }
             }
 
@@ -130,15 +129,14 @@ public class PermissionUtils {
     /**
      * 当系统提醒请求权限的对话框勾选不再提醒时，弹出的自定义对话框
      */
-    private void showPermissionTipsDialog(ArrayList<String> showDialogPermission) {
-        if (showDialogPermission == null || showDialogPermission.size() < 1) {
+    private void showPermissionTipsDialog(Activity activity, ArrayList<String> showDialogPermission) {
+        if (activity == null || showDialogPermission == null || showDialogPermission.size() < 1) {
             return;
         }
         String message = getPermissionDialogMessage(showDialogPermission);
         if (TextUtils.isEmpty(message)) return;
         L.i(TAG, "勾选了不在提醒所以弹出自定义对话框：" + showDialogPermission.toString());
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(QsHelper.getInstance().getApplication());
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(activity);
         builder.setTitle(QsHelper.getInstance().getApplication().getString(android.R.string.dialog_alert_title))//
                 .setMessage(message)//
                 .setPositiveButton(QsHelper.getInstance().getApplication().getString(android.R.string.ok), new DialogInterface.OnClickListener() {//
@@ -150,38 +148,41 @@ public class PermissionUtils {
                 dialog.cancel();
             }
         }).show();
+
     }
 
     private String getPermissionDialogMessage(ArrayList<String> permission) {
+        if (permission == null || permission.size() < 1) return null;
         StringBuilder stringbuilder = new StringBuilder();
-        for (String str : permission) {
-            switch (str) {
+        stringbuilder.append("（");
+        for (int i = 0, size = permission.size(); i < size; i++) {
+            switch (permission.get(i)) {
                 case Manifest.permission.ACCESS_COARSE_LOCATION:
-                    stringbuilder.append(QsHelper.getInstance().getApplication().getString(R.string.request_location_permission)).append("  ");
+                    stringbuilder.append(QsHelper.getInstance().getApplication().getString(R.string.request_location_permission)).append((i == size - 1) ? "" : "，");
                     break;
                 case Manifest.permission.READ_EXTERNAL_STORAGE:
-                    stringbuilder.append(QsHelper.getInstance().getApplication().getString(R.string.request_read_external_storage_permission)).append("  ");
+                    stringbuilder.append(QsHelper.getInstance().getApplication().getString(R.string.request_read_external_storage_permission)).append((i == size - 1) ? "" : "，");
                     break;
                 case Manifest.permission.WRITE_EXTERNAL_STORAGE:
-                    stringbuilder.append(QsHelper.getInstance().getApplication().getString(R.string.request_write_external_storage_permission)).append("  ");
+                    stringbuilder.append(QsHelper.getInstance().getApplication().getString(R.string.request_write_external_storage_permission)).append((i == size - 1) ? "" : "，");
                     break;
                 case Manifest.permission.READ_CONTACTS:
-                    stringbuilder.append(QsHelper.getInstance().getApplication().getString(R.string.request_constants_permission)).append("  ");
+                    stringbuilder.append(QsHelper.getInstance().getApplication().getString(R.string.request_constants_permission)).append((i == size - 1) ? "" : "，");
                     break;
                 case Manifest.permission.CALL_PHONE:
-                    stringbuilder.append(QsHelper.getInstance().getApplication().getString(R.string.request_call_permission)).append("  ");
+                    stringbuilder.append(QsHelper.getInstance().getApplication().getString(R.string.request_call_permission)).append((i == size - 1) ? "" : "，");
                     break;
                 case Manifest.permission.CAMERA:
-                    stringbuilder.append(QsHelper.getInstance().getApplication().getString(R.string.request_camera_permission)).append("  ");
+                    stringbuilder.append(QsHelper.getInstance().getApplication().getString(R.string.request_camera_permission)).append((i == size - 1) ? "" : "，");
                     break;
                 case Manifest.permission.RECORD_AUDIO:
-                    stringbuilder.append(QsHelper.getInstance().getApplication().getString(R.string.request_record_audio_permission)).append("  ");
+                    stringbuilder.append(QsHelper.getInstance().getApplication().getString(R.string.request_record_audio_permission)).append((i == size - 1) ? "" : "，");
                     break;
                 case Manifest.permission.READ_PHONE_STATE:
-                    stringbuilder.append(QsHelper.getInstance().getApplication().getString(R.string.request_read_phone_state_permission)).append("  ");
+                    stringbuilder.append(QsHelper.getInstance().getApplication().getString(R.string.request_read_phone_state_permission)).append((i == size - 1) ? "" : "，");
                     break;
             }
         }
-        return stringbuilder.length() < 1 ? null : stringbuilder.append(QsHelper.getInstance().getApplication().getString(R.string.request_permission_end)).toString();
+        return stringbuilder.append("）").append(QsHelper.getInstance().getApplication().getString(R.string.request_permission_end)).toString();
     }
 }
