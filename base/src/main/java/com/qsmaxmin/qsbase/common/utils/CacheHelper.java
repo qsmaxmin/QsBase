@@ -4,7 +4,6 @@ package com.qsmaxmin.qsbase.common.utils;
 import android.content.Context;
 
 import com.google.gson.Gson;
-import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.model.QsModel;
 
 import java.io.BufferedReader;
@@ -60,7 +59,7 @@ public class CacheHelper {
             Gson gson = new Gson();
             return gson.fromJson(json, clazz);
         } catch (Exception e) {
-            L.e("CacheHelper", e.getMessage());
+            e.printStackTrace();
         } finally {
             StreamCloseUtils.close(fileInputStream, inputStreamReader, bufferedReader);
         }
