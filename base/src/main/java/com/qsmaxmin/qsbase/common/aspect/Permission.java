@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
  * @Date 2017/7/3 10:07
  * @Description 权限申请必备
  */
-@Retention(RetentionPolicy.CLASS)
+@Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface Permission {
     String value();

@@ -20,10 +20,6 @@ public class PermissionBuilder {
     private PermissionListener mListener;
     private Activity           mActivity;
 
-    public static PermissionBuilder getInstance() {
-        return new PermissionBuilder();
-    }
-
     public List<String> getWantPermissionArr() {
         return wantPermissionArr;
     }

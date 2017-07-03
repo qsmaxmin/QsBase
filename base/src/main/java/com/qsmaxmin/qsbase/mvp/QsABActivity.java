@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -23,6 +24,7 @@ import com.qsmaxmin.qsbase.R;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.utils.PresenterUtils;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
+import com.qsmaxmin.qsbase.common.utils.permission.PermissionUtils;
 import com.qsmaxmin.qsbase.mvp.model.QsConstants;
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
 
@@ -389,6 +391,10 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
         if (fragment != null && fragment.isAdded()) return;
         getSupportFragmentManager().beginTransaction().add(layoutId, fragment, tag).addToBackStack(null).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN).commitAllowingStateLoss();
         if (!isOpenViewState()) getSupportFragmentManager().executePendingTransactions();
+    }
+
+    @Override public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        PermissionUtils.getInstance().parsePermissionResultData(requestCode, permissions, grantResults, this);
     }
 
     private void setViewState(int showState) {
