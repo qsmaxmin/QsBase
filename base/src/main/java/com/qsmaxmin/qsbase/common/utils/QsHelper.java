@@ -69,6 +69,10 @@ public class QsHelper {
         httpAdapter = null;
     }
 
+    public CacheHelper getCacheHelper() {
+        return CacheHelper.getInstance();
+    }
+
     public void intent2Activity(Class clazz) {
         intent2Activity(clazz, null);
     }
