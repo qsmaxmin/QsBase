@@ -3,7 +3,10 @@ package com.qsmaxmin.qsbase.common.utils.permission;
 import android.Manifest;
 import android.app.Activity;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
@@ -56,6 +59,7 @@ public class PermissionUtils {
             L.e(TAG, "you has not addWantPermission(String)");
             return;
         }
+        L.i(TAG, "startRequestPermission:" + builder.toString());
         ArrayList<String> unGrantedPermission = getUnGrantedPermissionArr(builder.getWantPermissionArr());
         if (unGrantedPermission.size() > 0) {
             if (builder.getActivity() != null) {
@@ -141,6 +145,11 @@ public class PermissionUtils {
                 .setMessage(message)//
                 .setPositiveButton(QsHelper.getInstance().getApplication().getString(android.R.string.ok), new DialogInterface.OnClickListener() {//
                     @Override public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = new Intent();
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                        intent.setData(Uri.fromParts("package", QsHelper.getInstance().getApplication().getPackageName(), null));
+                        QsHelper.getInstance().getApplication().startActivity(intent);
                         dialog.cancel();
                     }
                 }).setNegativeButton(QsHelper.getInstance().getApplication().getString(android.R.string.cancel), new DialogInterface.OnClickListener() {

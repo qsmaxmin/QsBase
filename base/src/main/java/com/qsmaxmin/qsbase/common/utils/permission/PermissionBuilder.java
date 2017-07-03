@@ -82,4 +82,8 @@ public class PermissionBuilder {
          */
         void onPermissionCallback(int requestCode, boolean isGrantedAll);
     }
+
+    @Override public String toString() {
+        return "PermissionBuilder{" + "wantPermissionArr=" + wantPermissionArr + ", mIsShowCustomDialog=" + mIsShowCustomDialog + ", mRequestCode=" + mRequestCode + '}';
+    }
 }
