@@ -32,11 +32,11 @@ public abstract class QsViewPagerFragment<P extends QsPresenter> extends QsFragm
 
     @Override protected View initView(LayoutInflater inflater) {
         View view = super.initView(inflater);
-        initPagerView(view);
+        initTabAndPager(view);
         return view;
     }
 
-    protected void initPagerView(View view) {
+    protected void initTabAndPager(View view) {
         pager = (QsViewPager) view.findViewById(R.id.pager);
         tabs = (PagerSlidingTabStrip) view.findViewById(android.R.id.tabs);
         initTabsValue(tabs);
@@ -158,7 +158,6 @@ public abstract class QsViewPagerFragment<P extends QsPresenter> extends QsFragm
     protected int getTabsSelectedTitleColor() {
         return getResources().getColor(R.color.colorAccent);
     }
-
 
     protected int getTabsIndicatorColor() {
         return getResources().getColor(R.color.colorAccent);

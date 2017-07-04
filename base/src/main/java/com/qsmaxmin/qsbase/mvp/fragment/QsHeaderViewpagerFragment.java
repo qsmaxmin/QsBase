@@ -23,7 +23,7 @@ public abstract class QsHeaderViewpagerFragment<T extends QsPresenter> extends Q
         return R.layout.qs_fragment_header_viewpager;
     }
 
-    @Override protected void initPagerView(View view) {
+    @Override protected void initTabAndPager(View view) {
         if (view instanceof MagicHeaderViewPager) {
             headerViewPager = (HeaderViewPager) view;
         } else {
