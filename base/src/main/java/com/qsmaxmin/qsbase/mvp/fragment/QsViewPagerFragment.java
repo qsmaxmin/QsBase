@@ -149,7 +149,7 @@ public abstract class QsViewPagerFragment<P extends QsPresenter> extends QsFragm
     }
 
     protected int getTabsBackgroundResource() {
-        return android.R.color.transparent;
+        return android.R.color.white;
     }
 
     protected int getTabsOnClickTitleColor() {
