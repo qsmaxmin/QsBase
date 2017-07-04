@@ -69,6 +69,7 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
     @Nullable @Override public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         View view = initView(inflater);
+        ButterKnife.bind(this, view);
         if (isOpenEventBus() && !EventBus.getDefault().isRegistered(this)) EventBus.getDefault().register(this);
         return view;
     }
@@ -105,7 +106,6 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         } else {
             rootView = inflater.inflate(layoutId(), null);
         }
-        ButterKnife.bind(this, rootView);
         return rootView;
     }
 
