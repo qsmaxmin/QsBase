@@ -37,7 +37,7 @@ public abstract class QsRecyclerFragment<T extends QsPresenter, D> extends QsFra
     private final       List<D> mList              = new ArrayList<>();
 
     private   HeaderFooterRecyclerView   mRecyclerView;
-    protected MyRecycleAdapter           mRecyclerViewAdapter;
+    protected RecyclerView.Adapter       mRecyclerViewAdapter;
     protected LoadingFooter              mLoadingFooter;
     protected StaggeredGridLayoutManager staggeredGridLayoutManager;
 
@@ -53,7 +53,7 @@ public abstract class QsRecyclerFragment<T extends QsPresenter, D> extends QsFra
         return 0;
     }
 
-    @Override public MyRecycleAdapter onCreateAdapter() {
+    @Override public RecyclerView.Adapter onCreateAdapter() {
         return null;
     }
 
@@ -138,7 +138,7 @@ public abstract class QsRecyclerFragment<T extends QsPresenter, D> extends QsFra
 
     }
 
-    @Override public MyRecycleAdapter getAdapter() {
+    @Override public RecyclerView.Adapter getAdapter() {
         return mRecyclerViewAdapter;
     }
 
