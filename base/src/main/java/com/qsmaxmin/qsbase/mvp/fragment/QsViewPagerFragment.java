@@ -1,6 +1,7 @@
 package com.qsmaxmin.qsbase.mvp.fragment;
 
 import android.graphics.Color;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
@@ -28,6 +29,10 @@ public abstract class QsViewPagerFragment<P extends QsPresenter> extends QsFragm
 
     @Override public int layoutId() {
         return R.layout.qs_fragment_viewpager;
+    }
+
+    @Override public void initData(Bundle savedInstanceState) {
+
     }
 
     @Override protected View initView(LayoutInflater inflater) {
