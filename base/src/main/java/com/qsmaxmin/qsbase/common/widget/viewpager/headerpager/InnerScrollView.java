@@ -21,7 +21,7 @@ import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.help.InnerSpecial
  */
 public class InnerScrollView extends ScrollView implements InnerScroller {
 
-    public static final String TAG = "szlc[InnerListView]";
+    public static final String TAG = "InnerScrollView";
 
     public InnerScrollView(Context context) {
         super(context);
