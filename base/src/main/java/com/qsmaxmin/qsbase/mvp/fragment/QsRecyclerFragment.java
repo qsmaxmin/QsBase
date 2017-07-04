@@ -246,7 +246,7 @@ public abstract class QsRecyclerFragment<T extends QsPresenter, D> extends QsFra
         }
 
         @Override public int getItemViewType(int position) {
-            return getItemViewType(position);
+            return QsRecyclerFragment.this.getItemViewType(position);
         }
 
         @Override public int getItemCount() {
