@@ -67,7 +67,6 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
     @Nullable @Override public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         View view = initView(inflater);
-//        ButterKnife.bind(this, view);
         QsHelper.getInstance().getViewBindHelper().bind(this, view);
         if (isOpenEventBus() && !EventBus.getDefault().isRegistered(this)) EventBus.getDefault().register(this);
         return view;
@@ -90,7 +89,6 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         super.onDestroyView();
         if (presenter != null) presenter.setDetach();
         if (isOpenEventBus() && EventBus.getDefault().isRegistered(this)) EventBus.getDefault().unregister(this);
-//        ButterKnife.unbind(this);
     }
 
     protected View initView(LayoutInflater inflater) {

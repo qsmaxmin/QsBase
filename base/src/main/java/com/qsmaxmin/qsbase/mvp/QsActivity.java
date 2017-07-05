@@ -59,7 +59,6 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         View view = initView();
         setContentView(view);
         initStatusBar();
-//        ButterKnife.bind(this);
         QsHelper.getInstance().getViewBindHelper().bind(this, view);
         if (isOpenEventBus() && !EventBus.getDefault().isRegistered(this)) EventBus.getDefault().register(this);
         if (!isDelayData()) {
