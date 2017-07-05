@@ -52,6 +52,7 @@ public class InnerScrollView extends ScrollView implements InnerScroller {
 
     /**
      * （as its name）
+     *
      * @param firstVisibleItem no use for ScrollView
      */
     @Override public final void recordScrollPosition(int firstVisibleItem) {
@@ -66,7 +67,6 @@ public class InnerScrollView extends ScrollView implements InnerScroller {
 
     /**
      * (as its name)
-     * {@hide}
      */
     @Override public final void adjustEmptyHeaderHeight() {
         if (mEmptyHeader == null || mOuterScroller == null || mOuterScroller.getHeaderHeight() == 0) {
@@ -254,8 +254,6 @@ public class InnerScrollView extends ScrollView implements InnerScroller {
 
     /**
      * （as its name）
-     * <p/>
-     * {@hide}
      */
     @Override public final void triggerOuterScroll() {
         if (!mGettingScrollY && mOuterScroller != null) {
@@ -370,10 +368,6 @@ public class InnerScrollView extends ScrollView implements InnerScroller {
     protected int mLastHeaderVisibleHeight = 0;
 
 
-    /************************************************************
-     ****                  Control content                 *****
-     ************************************************************/
-
     /**
      * please use {@link #setContentView(View)} instead
      */
@@ -413,10 +407,6 @@ public class InnerScrollView extends ScrollView implements InnerScroller {
         setContentView(contentView, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
     }
 
-    /**
-     * @param contentView
-     * @param layoutParams
-     */
     public void setContentView(View contentView, LinearLayout.LayoutParams layoutParams) {
 
         if (contentView == null) {
@@ -531,7 +521,7 @@ public class InnerScrollView extends ScrollView implements InnerScroller {
             return mScrollState;
         }
 
-        public void setScrollState(ScrollState scrollState) {
+        void setScrollState(ScrollState scrollState) {
             if (scrollState != mScrollState) {
                 mScrollState = scrollState;
                 if (mOnScrollStateChangedListener != null) {
@@ -560,7 +550,7 @@ public class InnerScrollView extends ScrollView implements InnerScroller {
     /************************************************************
      * ******         ScrollState like ListView          ********
      ************************************************************/
-    enum ScrollState {
+    private enum ScrollState {
         SCROLL_STATE_IDLE,
         SCROLL_STATE_TOUCH_SCROLL
     }
@@ -660,7 +650,6 @@ public class InnerScrollView extends ScrollView implements InnerScroller {
     /**
      * @param height You may pass wrap_content, match_parent or a figure. Defaults to match_parent.
      * @param offset Height offset, positive larger and negative smaller. Defaults to 0.
-     * @return
      */
     public void setCustomEmptyViewHeight(int height, int offset) {
         getInnerViewHelper().setCustomEmptyViewHeight(height, offset);
@@ -743,8 +732,7 @@ public class InnerScrollView extends ScrollView implements InnerScroller {
 
 
         if (mContentHeight >= mOuterScroller.getContentAreaMaxVisibleHeight()) {
-            if (getAutoCompletionView() == null) {
-            } else {
+            if (getAutoCompletionView() != null) {
                 removeAutoCompletionView();
             }
         } else {
