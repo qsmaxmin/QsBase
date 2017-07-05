@@ -26,8 +26,6 @@ import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
 
 import org.greenrobot.eventbus.EventBus;
 
-import butterknife.ButterKnife;
-
 /**
  * @CreateBy qsmaxmin
  * @Date 2017/6/21 11:40
@@ -69,7 +67,8 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
     @Nullable @Override public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         View view = initView(inflater);
-        ButterKnife.bind(this, view);
+//        ButterKnife.bind(this, view);
+        QsHelper.getInstance().getViewBindHelper().bind(this, view);
         if (isOpenEventBus() && !EventBus.getDefault().isRegistered(this)) EventBus.getDefault().register(this);
         return view;
     }
@@ -91,14 +90,14 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         super.onDestroyView();
         if (presenter != null) presenter.setDetach();
         if (isOpenEventBus() && EventBus.getDefault().isRegistered(this)) EventBus.getDefault().unregister(this);
-        ButterKnife.unbind(this);
+//        ButterKnife.unbind(this);
     }
 
     protected View initView(LayoutInflater inflater) {
         View rootView;
         if (isOpenViewState() && loadingLayoutId() > 0 && emptyLayoutId() > 0 && errorLayoutId() > 0) {
             rootView = inflater.inflate(R.layout.qs_activity_state, null);
-            mViewAnimator = ButterKnife.findById(rootView, android.R.id.home);
+            mViewAnimator = (ViewAnimator) rootView.findViewById(android.R.id.home);
             inflater.inflate(loadingLayoutId(), mViewAnimator);
             inflater.inflate(layoutId(), mViewAnimator);
             inflater.inflate(emptyLayoutId(), mViewAnimator);

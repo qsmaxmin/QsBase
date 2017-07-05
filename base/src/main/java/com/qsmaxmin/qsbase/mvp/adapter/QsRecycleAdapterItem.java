@@ -6,7 +6,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Interpolator;
 
-import butterknife.ButterKnife;
+import com.qsmaxmin.qsbase.common.utils.QsHelper;
+
 
 /**
  * @CreateBy qsmaxmin
@@ -68,7 +69,8 @@ public abstract class QsRecycleAdapterItem<T> {
 
         MyViewHolder(View itemView) {
             super(itemView);
-            ButterKnife.bind(QsRecycleAdapterItem.this, itemView);
+            QsHelper.getInstance().getViewBindHelper().bind(QsRecycleAdapterItem.this,itemView);
+//            ButterKnife.bind(QsRecycleAdapterItem.this, itemView);
         }
 
         @Override public void onBindData(T s, int position, int totalCount) {

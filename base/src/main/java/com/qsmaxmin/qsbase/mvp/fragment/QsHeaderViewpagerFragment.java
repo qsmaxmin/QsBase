@@ -4,6 +4,7 @@ import android.util.TypedValue;
 import android.view.View;
 
 import com.qsmaxmin.qsbase.R;
+import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.HeaderViewPager;
 import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.base.MagicHeaderViewPager;
 import com.qsmaxmin.qsbase.mvp.model.QsModelPager;
@@ -41,6 +42,12 @@ public abstract class QsHeaderViewpagerFragment<T extends QsPresenter> extends Q
             adapter.setModelPagers(modelPagers);
             pager.setPageMargin((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4, getResources().getDisplayMetrics()));
             pager.setOffscreenPageLimit(offScreenPageLimit);
+            if (getHeaderLayout() > 0) {
+                View header = View.inflate(getContext(), getHeaderLayout(), null);
+                headerViewPager.addHeaderView(header);
+//                ButterKnife.bind(this, header);
+                QsHelper.getInstance().getViewBindHelper().bind(this,header);
+            }
             headerViewPager.setPagerAdapter(adapter);
         }
     }

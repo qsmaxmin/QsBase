@@ -7,4 +7,5 @@ package com.qsmaxmin.qsbase.mvp.fragment;
  */
 
 public interface QsIHeaderViewPagerFragment extends QsIViewPagerFragment {
+    int getHeaderLayout();
 }

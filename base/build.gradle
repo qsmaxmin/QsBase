@@ -1,6 +1,9 @@
 apply plugin: 'com.android.library'
 apply plugin: 'com.hujiang.android-aspectjx'
 apply plugin: 'maven'
+//apply plugin: 'com.jakewharton.butterknife'
+//apply plugin: 'android-apt'
+
 
 android {
     compileSdkVersion 25
@@ -51,10 +54,11 @@ dependencies {
     /*EventBus*/
     compile 'org.greenrobot:eventbus:3.0.0'
     /*ButterKnife*/
-    compile 'com.jakewharton:butterknife:7.0.1'
+    //    compile 'com.jakewharton:butterknife:7.0.1'
+//    compile 'com.jakewharton:butterknife:8.6.0'
+//    apt 'com.jakewharton:butterknife-compiler:8.6.0'
     /*AspectJ*/
     compile 'org.aspectj:aspectjrt:1.8.10'
-
     compile 'com.squareup.okhttp3:okhttp:3.8.1'
     compile 'com.google.code.gson:gson:2.8.1'
 }
