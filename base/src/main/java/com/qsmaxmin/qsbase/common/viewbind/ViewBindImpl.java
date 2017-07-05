@@ -70,7 +70,6 @@ public final class ViewBindImpl implements ViewBind {
         injectObject(handler, clazz.getSuperclass(), finder);
         Field[] fields = clazz.getDeclaredFields();
         if (fields != null && fields.length > 0) {
-            L.i("ViewBindImpl", handler.getClass().getSimpleName() + "  fields length:" + fields.length);
             for (Field field : fields) {
                 Class<?> fieldType = field.getType();
                 if (
@@ -99,7 +98,6 @@ public final class ViewBindImpl implements ViewBind {
 
         Method[] methods = clazz.getDeclaredMethods();
         if (methods != null && methods.length > 0) {
-            L.i("ViewBindImpl", handler.getClass().getSimpleName() + "  methods length:" + methods.length);
             for (Method method : methods) {
                 if (Modifier.isStatic(method.getModifiers())) {
                     continue;
