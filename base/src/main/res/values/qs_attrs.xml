@@ -2,19 +2,19 @@
 <resources>
 
     <!-- viewpager -->
-    <declare-styleable name="J2WPagerSlidingTabStripStyle">
-        <attr name="pstsIndicatorColor" format="color"/>
-        <attr name="pstsUnderlineColor" format="color"/>
-        <attr name="pstsDividerColor" format="color"/>
-        <attr name="pstsSelectedTextColor" format="color"/>
-        <attr name="pstsIndicatorHeight" format="dimension"/>
-        <attr name="pstsUnderlineHeight" format="dimension"/>
-        <attr name="pstsDividerPadding" format="dimension"/>
-        <attr name="pstsTabPaddingLeftRight" format="dimension"/>
-        <attr name="pstsScrollOffset" format="dimension"/>
-        <attr name="pstsTabBackground" format="reference"/>
-        <attr name="pstsShouldExpand" format="boolean"/>
-        <attr name="pstsTextAllCaps" format="boolean"/>
+    <declare-styleable name="PagerSlidingTabStrip">
+        <attr name="psts_IndicatorColor" format="color"/>
+        <attr name="psts_UnderlineColor" format="color"/>
+        <attr name="psts_DividerColor" format="color"/>
+        <attr name="psts_SelectedTextColor" format="color"/>
+        <attr name="psts_IndicatorHeight" format="dimension"/>
+        <attr name="psts_UnderlineHeight" format="dimension"/>
+        <attr name="psts_DividerPadding" format="dimension"/>
+        <attr name="psts_TabPaddingLeftRight" format="dimension"/>
+        <attr name="psts_ScrollOffset" format="dimension"/>
+        <attr name="psts_TabBackground" format="reference"/>
+        <attr name="psts_ShouldExpand" format="boolean"/>
+        <attr name="psts_TextAllCaps" format="boolean"/>
     </declare-styleable>
 
     <!--PtrFrameLayout-->
@@ -27,5 +27,26 @@
         <attr name="ptr_duration_to_close_header" format="integer"/>
         <attr name="ptr_pull_to_fresh" format="boolean"/>
         <attr name="ptr_keep_header_when_refresh" format="boolean"/>
+    </declare-styleable>
+
+    <!--QsInfiniteIndicator-->
+    <declare-styleable name="CirclePageIndicator">
+        <attr name="cpi_Centered"/>
+        <attr name="cpi_SelectedColor" format="color"/>
+        <attr name="cpi_UnSelectedColor" format="color"/>
+        <attr name="cpi_SelectedDrawable" format="reference"/>
+        <attr name="cpi_StrokeWidth" format="dimension"/>
+        <attr name="cpi_Radius" format="dimension"/>
+        <attr name="cpi_ItemMarginRatio" format="float"/>
+        <attr name="cpi_SelectedWidthRatio" format="float"/>
+        <attr name="cpi_Transform_mode">
+            <enum name="normal" value="1"/>
+            <enum name="translate" value="2"/>
+            <enum name="scale" value="3"/>
+        </attr>
+        <attr name="cpi_IsSnap" format="boolean"/>
+        <attr name="cpi_StrokeColor" format="color"/>
+        <attr name="android:orientation"/>
+        <attr name="android:background"/>
     </declare-styleable>
 </resources>

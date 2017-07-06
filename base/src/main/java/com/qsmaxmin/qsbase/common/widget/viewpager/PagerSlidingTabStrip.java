@@ -158,28 +158,25 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
         // get system attrs (android:textSize and android:textColor)
 
         TypedArray a = context.obtainStyledAttributes(attrs, ATTRS);
-
         tabTextSize = a.getDimensionPixelSize(0, tabTextSize);
         tabTextColor = a.getColor(1, tabTextColor);
-
         a.recycle();
 
         // get custom attrs
+        a = context.obtainStyledAttributes(attrs, R.styleable.PagerSlidingTabStrip);
 
-        a = context.obtainStyledAttributes(attrs, R.styleable.J2WPagerSlidingTabStripStyle);
-
-        indicatorColor = a.getColor(R.styleable.J2WPagerSlidingTabStripStyle_pstsIndicatorColor, indicatorColor);
-        underlineColor = a.getColor(R.styleable.J2WPagerSlidingTabStripStyle_pstsUnderlineColor, underlineColor);
-        dividerColor = a.getColor(R.styleable.J2WPagerSlidingTabStripStyle_pstsDividerColor, dividerColor);
-        indicatorHeight = a.getDimensionPixelSize(R.styleable.J2WPagerSlidingTabStripStyle_pstsIndicatorHeight, indicatorHeight);
-        underlineHeight = a.getDimensionPixelSize(R.styleable.J2WPagerSlidingTabStripStyle_pstsUnderlineHeight, underlineHeight);
-        dividerPadding = a.getDimensionPixelSize(R.styleable.J2WPagerSlidingTabStripStyle_pstsDividerPadding, dividerPadding);
-        tabPadding = a.getDimensionPixelSize(R.styleable.J2WPagerSlidingTabStripStyle_pstsTabPaddingLeftRight, tabPadding);
-        tabBackgroundResId = a.getResourceId(R.styleable.J2WPagerSlidingTabStripStyle_pstsTabBackground, tabBackgroundResId);
-        shouldExpand = a.getBoolean(R.styleable.J2WPagerSlidingTabStripStyle_pstsShouldExpand, shouldExpand);
-        scrollOffset = a.getDimensionPixelSize(R.styleable.J2WPagerSlidingTabStripStyle_pstsScrollOffset, scrollOffset);
-        textAllCaps = a.getBoolean(R.styleable.J2WPagerSlidingTabStripStyle_pstsTextAllCaps, textAllCaps);
-        selectedTabTextColor = a.getColor(R.styleable.J2WPagerSlidingTabStripStyle_pstsSelectedTextColor, Color.parseColor("#51A3FF"));
+        indicatorColor = a.getColor(R.styleable.PagerSlidingTabStrip_psts_IndicatorColor, indicatorColor);
+        underlineColor = a.getColor(R.styleable.PagerSlidingTabStrip_psts_UnderlineColor, underlineColor);
+        dividerColor = a.getColor(R.styleable.PagerSlidingTabStrip_psts_DividerColor, dividerColor);
+        indicatorHeight = a.getDimensionPixelSize(R.styleable.PagerSlidingTabStrip_psts_IndicatorHeight, indicatorHeight);
+        underlineHeight = a.getDimensionPixelSize(R.styleable.PagerSlidingTabStrip_psts_UnderlineHeight, underlineHeight);
+        dividerPadding = a.getDimensionPixelSize(R.styleable.PagerSlidingTabStrip_psts_DividerPadding, dividerPadding);
+        tabPadding = a.getDimensionPixelSize(R.styleable.PagerSlidingTabStrip_psts_TabPaddingLeftRight, tabPadding);
+        tabBackgroundResId = a.getResourceId(R.styleable.PagerSlidingTabStrip_psts_TabBackground, tabBackgroundResId);
+        shouldExpand = a.getBoolean(R.styleable.PagerSlidingTabStrip_psts_ShouldExpand, shouldExpand);
+        scrollOffset = a.getDimensionPixelSize(R.styleable.PagerSlidingTabStrip_psts_ScrollOffset, scrollOffset);
+        textAllCaps = a.getBoolean(R.styleable.PagerSlidingTabStrip_psts_TextAllCaps, textAllCaps);
+        selectedTabTextColor = a.getColor(R.styleable.PagerSlidingTabStrip_psts_SelectedTextColor, Color.parseColor("#51A3FF"));
         a.recycle();
 
         rectPaint = new Paint();

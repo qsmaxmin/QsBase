@@ -15,6 +15,7 @@ import java.util.concurrent.CountDownLatch;
  * @CreateBy qsmaxmin
  * @Date 17/7/2  上午10:26
  * @Description
+ * @deprecated
  */
 
 public class ViewHandler<V extends QsIView> implements InvocationHandler {
