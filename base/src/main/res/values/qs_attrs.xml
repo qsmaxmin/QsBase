@@ -29,9 +29,9 @@
         <attr name="ptr_keep_header_when_refresh" format="boolean"/>
     </declare-styleable>
 
-    <!--QsInfiniteIndicator-->
+    <!--CirclePageIndicator-->
     <declare-styleable name="CirclePageIndicator">
-        <attr name="cpi_Centered"/>
+        <attr name="cpi_Centered" format="boolean"/>
         <attr name="cpi_SelectedColor" format="color"/>
         <attr name="cpi_UnSelectedColor" format="color"/>
         <attr name="cpi_SelectedDrawable" format="reference"/>

@@ -12,9 +12,9 @@ import android.view.animation.Interpolator;
 import java.lang.reflect.Field;
 
 /**
- * create by skyJC 使用方式 1.继承 InfiniteStatePagerAdapter 2.写一个fragment
- * 3.setAdapter 4.startAutoScroll() 5.从布局 找到 InfiniteCirclePageIndicator
- * 6.setSnap(true) 7.setViewPager
+ * @CreateBy qsmaxmin
+ * @Date 2017-7-6 12:37:16
+ * @Description 自动轮播，支持无限轮播
  */
 public final class AutoScrollViewPager extends ViewPager {
 
@@ -34,19 +34,20 @@ public final class AutoScrollViewPager extends ViewPager {
     private             double                 swipeScrollFactor           = 1.0;
     private             boolean                isAutoScroll                = false;
     private             boolean                isStopByTouch               = false;
-    private             float                  touchX                      = 0f;
     private             float                  downX                       = 0f;
     private             CustomDurationScroller scroller                    = null;
     public static final int                    SCROLL_WHAT                 = 0;
     private             boolean                infinitePagesEnabled        = true;
 
-    private Handler              handler;
+    private Handler handler;
 
     @Override public void setAdapter(PagerAdapter adapter) {
-        InfinitePagerAdapter infinitePagerAdapter = new InfinitePagerAdapter((InfiniteStatePagerAdapter) adapter);
-        infinitePagerAdapter.enableInfinitePages(infinitePagesEnabled);
-        super.setAdapter(infinitePagerAdapter);
-        ((InfiniteStatePagerAdapter) adapter).indicator.setOnPageChangeListener(infinitePagerAdapter);
+        if (!(adapter instanceof InfinitePagerAdapter)) {
+            throw new RuntimeException("setAdapter(..) this adapter must be instance of InfinitePagerAdapter");
+        }
+        InfinitePagerAdapter infinitePagerAdapter = (InfinitePagerAdapter) adapter;
+        infinitePagerAdapter.enableInfinite(infinitePagesEnabled);
+        super.setAdapter(adapter);
         setCurrentItem(0);
     }
 
@@ -62,18 +63,18 @@ public final class AutoScrollViewPager extends ViewPager {
 
     }
 
-    public void enableInfinitePages(boolean enable) {
+    public void setEnableInfinite(boolean enable) {
         infinitePagesEnabled = enable;
         if (getAdapter() instanceof InfinitePagerAdapter) {
             InfinitePagerAdapter infAdapter = (InfinitePagerAdapter) getAdapter();
-            infAdapter.enableInfinitePages(infinitePagesEnabled);
+            infAdapter.enableInfinite(infinitePagesEnabled);
         }
     }
 
     private int getOffsetAmount() {
         if (getAdapter() instanceof InfinitePagerAdapter) {
-            InfinitePagerAdapter infAdapter = (InfinitePagerAdapter) getAdapter();
-            return infAdapter.getRealCount() * 100;
+            InfinitePagerAdapter adapter = (InfinitePagerAdapter) getAdapter();
+            return adapter.getRealCount() * 100;
         } else {
             return 0;
         }
@@ -204,7 +205,7 @@ public final class AutoScrollViewPager extends ViewPager {
 
     private boolean dispatchTouchEventByScrollMode(MotionEvent ev) {
         if (slideBorderMode == SLIDE_BORDER_MODE_TO_PARENT || slideBorderMode == SLIDE_BORDER_MODE_CYCLE) {
-            touchX = ev.getX();
+            float touchX = ev.getX();
             if (ev.getAction() == MotionEvent.ACTION_DOWN) {
                 downX = touchX;
             }

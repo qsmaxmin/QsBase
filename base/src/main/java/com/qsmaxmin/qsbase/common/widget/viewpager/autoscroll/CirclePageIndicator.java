@@ -44,15 +44,15 @@ import static android.graphics.Paint.ANTI_ALIAS_FLAG;
  */
 public class CirclePageIndicator extends View implements PageIndicator {
 
-    private final Paint mPaintUnSelectedFill = new Paint(ANTI_ALIAS_FLAG);
-    private final Paint mPaintStroke         = new Paint(ANTI_ALIAS_FLAG);
-    private final Paint mPaintSelectedFill   = new Paint(ANTI_ALIAS_FLAG);
-    ArrayList<Indicator> indicators = new ArrayList<>();
+    private final Paint                mPaintUnSelectedFill = new Paint(ANTI_ALIAS_FLAG);
+    private final Paint                mPaintStroke         = new Paint(ANTI_ALIAS_FLAG);
+    private final Paint                mPaintSelectedFill   = new Paint(ANTI_ALIAS_FLAG);
+    private       ArrayList<Indicator> indicators           = new ArrayList<>();
+    private ViewPager.OnPageChangeListener mListener;
     private int                            transformMode;
     private float                          mRadius;
     private Drawable                       fillDrawable;
     private ViewPager                      mViewPager;
-    private ViewPager.OnPageChangeListener mListener;
     private int                            mCurrentPage;
     private int                            mSnapPage;
     private float                          mPageOffset;
@@ -379,18 +379,14 @@ public class CirclePageIndicator extends View implements PageIndicator {
 
     @Override public void onPageScrollStateChanged(int state) {
         mScrollState = state;
-        if (mListener != null) {
-            mListener.onPageScrollStateChanged(state);
-        }
+        if (mListener != null) mListener.onPageScrollStateChanged(state);
     }
 
     @Override public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
         mCurrentPage = ((InfinitePagerAdapter) mViewPager.getAdapter()).getVirtualPosition(position);
         mPageOffset = positionOffset;
         invalidate();
-        if (mListener != null) {
-            mListener.onPageScrolled(position, positionOffset, positionOffsetPixels);
-        }
+        if (mListener != null) mListener.onPageScrolled(position, positionOffset, positionOffsetPixels);
     }
 
     @Override public void onPageSelected(int position) {
@@ -399,9 +395,7 @@ public class CirclePageIndicator extends View implements PageIndicator {
             mSnapPage = mCurrentPage;
             invalidate();
         }
-        if (mListener != null) {
-            mListener.onPageSelected(position);
-        }
+        if (mListener != null) mListener.onPageSelected(position);
     }
 
     @Override public void setOnPageChangeListener(ViewPager.OnPageChangeListener listener) {
