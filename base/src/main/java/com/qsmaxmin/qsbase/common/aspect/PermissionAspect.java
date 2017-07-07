@@ -1,9 +1,7 @@
 package com.qsmaxmin.qsbase.common.aspect;
 
 import android.support.v4.app.FragmentActivity;
-import android.text.TextUtils;
 
-import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.common.utils.permission.PermissionBuilder;
 import com.qsmaxmin.qsbase.common.utils.permission.PermissionUtils;
@@ -11,9 +9,6 @@ import com.qsmaxmin.qsbase.common.utils.permission.PermissionUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-
-import java.util.ArrayList;
-import java.util.Collections;
 
 /**
  * @CreateBy qsmaxmin
@@ -35,20 +30,15 @@ public class PermissionAspect {
      * 在子线程中请求权限
      */
     private void startRequestPermission(final ProceedingJoinPoint joinPoint, Permission permission) {
-        final String value = permission.value();
-        String[] values = permission.values();
-
-        ArrayList<String> arrayList = new ArrayList<>();
-
-        if (TextUtils.isEmpty(value) && values.length < 1) {
+        String[] values = permission.value();
+        if (values.length < 1) {
             return;
         }
-        if (!TextUtils.isEmpty(value)) arrayList.add(value);
-        if (values.length > 0) Collections.addAll(arrayList, values);
+
         FragmentActivity activity = QsHelper.getInstance().getScreenHelper().currentActivity();
-        if (!arrayList.isEmpty() && activity != null) {
+        if (activity != null) {
             PermissionBuilder builder = PermissionUtils.getInstance().createBuilder();
-            for (String permissionStr : arrayList) {
+            for (String permissionStr : values) {
                 builder.addWantPermission(permissionStr);
             }
             builder.setActivity(activity)//

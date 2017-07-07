@@ -1,5 +1,6 @@
 package com.qsmaxmin.qsbase.mvp.fragment;
 
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -40,7 +41,7 @@ public interface QsIRecyclerFragment<D> extends QsIFragment {
 
     void updateAdapter();
 
-    QsRecyclerFragment.MyRecycleAdapter onCreateAdapter();
+    RecyclerView.Adapter onCreateAdapter();
 
-    QsRecyclerFragment.MyRecycleAdapter getAdapter();
+    RecyclerView.Adapter getAdapter();
 }

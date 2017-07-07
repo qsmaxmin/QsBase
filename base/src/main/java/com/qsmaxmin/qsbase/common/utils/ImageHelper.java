@@ -20,7 +20,7 @@ import com.bumptech.glide.load.model.GlideUrl;
  * @Description 图片加载帮助类
  */
 
-class ImageHelper {
+public class ImageHelper {
     private static ImageHelper helper;
 
     private ImageHelper() {

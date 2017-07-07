@@ -8,6 +8,7 @@ import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.widget.viewpager.PagerSlidingTabStrip;
 import com.qsmaxmin.qsbase.common.widget.viewpager.QsViewPager;
 import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.base.InnerScrollerContainer;
@@ -27,11 +28,11 @@ import com.qsmaxmin.qsbase.mvp.model.QsModelPager;
  */
 
 public class QsViewPagerAdapter extends PagerAdapter implements OuterPagerAdapter, ViewPager.OnPageChangeListener {
-
-    private View oldView          = null;
-    private int  oldPosition      = -1;
-    private int  currentPageIndex = -1;        // 当前page索引（切换之前）
-    private int  replacePosition  = -1;        // 替换标识
+    private static final String TAG              = "QsViewPagerAdapter";
+    private              View   oldView          = null;
+    private              int    oldPosition      = -1;
+    private              int    currentPageIndex = -1;        // 当前page索引（切换之前）
+    private              int    replacePosition  = -1;        // 替换标识
 
     private   OuterScroller          mOuterScroller;
     private   FragmentManager        fragmentManager;
@@ -148,6 +149,7 @@ public class QsViewPagerAdapter extends PagerAdapter implements OuterPagerAdapte
         pager.setObjectForPosition(fragment.getView(), position);
 
         if (mOuterScroller != null && fragment instanceof InnerScrollerContainer) {
+            L.i(TAG, "activate header viewpager... current fragment is:" + fragment.getClass().getSimpleName());
             ((InnerScrollerContainer) fragment).setMyOuterScroller(mOuterScroller, position);
         }
         return fragment.getView();

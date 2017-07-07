@@ -33,8 +33,6 @@ import org.greenrobot.eventbus.EventBus;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
-import butterknife.ButterKnife;
-
 /**
  * @CreateBy qsmaxmin
  * @Date 2017/6/20 16:40
@@ -66,7 +64,7 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
         View view = initView();
         setContentView(view);
         initStatusBar();
-        ButterKnife.bind(this);
+        QsHelper.getInstance().getViewBindHelper().bind(this, view);
         if (isOpenEventBus() && !EventBus.getDefault().isRegistered(this)) EventBus.getDefault().register(this);
         if (!isDelayData()) {
             hasInitData = true;
@@ -108,23 +106,23 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
         Toolbar mToolbar;
         if (isOpenViewState() && loadingLayoutId() > 0 && emptyLayoutId() > 0 && errorLayoutId() > 0) {
             rootView = View.inflate(this, R.layout.qs_activity_ab_state, null);
-            mViewAnimator = ButterKnife.findById(rootView, android.R.id.home);
-            mToolbar = ButterKnife.findById(rootView, R.id.toolbar);
+            mViewAnimator = (ViewAnimator) rootView.findViewById(android.R.id.home);
+            mToolbar = (Toolbar) rootView.findViewById(R.id.toolbar);
             View.inflate(this, loadingLayoutId(), mViewAnimator);
             View.inflate(this, layoutId(), mViewAnimator);
             View.inflate(this, emptyLayoutId(), mViewAnimator);
             View.inflate(this, errorLayoutId(), mViewAnimator);
         } else {
             rootView = View.inflate(this, R.layout.qs_activity_ab, null);
-            mToolbar = ButterKnife.findById(rootView, R.id.toolbar);
-            ViewGroup mainView = ButterKnife.findById(rootView, android.R.id.home);
+            mToolbar = (Toolbar) rootView.findViewById(R.id.toolbar);//android.R.id.home
+            ViewGroup mainView = (ViewGroup) rootView.findViewById(android.R.id.home);
             View.inflate(this, layoutId(), mainView);
         }
         if (Build.VERSION.SDK_INT >= 21) {
             mToolbar.setElevation(0);
         }
         if (actionbarLayoutId() > 0) {
-            ViewGroup actionbarContainer = ButterKnife.findById(mToolbar, R.id.vg_toolbar);
+            ViewGroup actionbarContainer = (ViewGroup) mToolbar.findViewById(R.id.vg_toolbar);
             View.inflate(getContext(), actionbarLayoutId(), actionbarContainer);
         }
         setSupportActionBar(mToolbar);

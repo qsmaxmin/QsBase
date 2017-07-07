@@ -1,6 +1,5 @@
 package com.qsmaxmin.qsbase.common.widget.viewpager.headerpager;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.database.DataSetObserver;
 import android.graphics.Canvas;
@@ -33,9 +32,26 @@ import java.util.List;
  */
 public class InnerListView extends ListView implements InnerScroller, AbsListView.OnScrollListener {
 
-    public static final String TAG = "szlc[InnerListView]";
+    public static final    String          TAG                            = "InnerListView";
+    private                IntegerVariable mEmptyHeaderHeight             = new IntegerVariable(0);
+    private                boolean         mGettingScrollY                = false;
+    protected              int             mItemPosition                  = ORIGIN_ITEM_POSITION;
+    protected static final int             ORIGIN_ITEM_POSITION           = -1;
+    protected static final int             ORIGIN_ITEM_MARGIN_TOP_2HEADER = 0;
+    protected              int             mItemMarginTop2Header          = ORIGIN_ITEM_MARGIN_TOP_2HEADER;
+    private                DataStatus      mDataStatus                    = DataStatus.IDLE;
+    protected              int             mLastHeaderVisibleHeight       = 0;
+    private                int             mScrollState                   = SCROLL_STATE_IDLE;
 
+    private LinearLayout                    mHeaderContainerCompat;
+    private InnerScrollListener             mInnerScrollListener;
+    private OnScrollListener                mOnScrollListener;
+    private View                            mReceiveView;
+    private int                             mVisibleHeaderCount;
+    private boolean                         mPreDataSetObserverRegistered;
     private InflateFirstItemIfNeededAdapter mInnerAdapter;
+    private boolean                         mRendered;
+
 
     public InnerListView(Context context) {
         super(context);
@@ -67,15 +83,8 @@ public class InnerListView extends ListView implements InnerScroller, AbsListVie
         checkScrollModeCompat();
     }
 
-    // Go into effect on device SDK >= Android 3.0
-    @TargetApi(Build.VERSION_CODES.GINGERBREAD) private void checkScrollModeCompat() {
-        if (!needCompatScrollMode()) {
-            setOverScrollMode(OVER_SCROLL_NEVER);
-        }
-    }
-
-    private static boolean needCompatScrollMode() {
-        return Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB;
+    private void checkScrollModeCompat() {
+        setOverScrollMode(OVER_SCROLL_NEVER);
     }
 
     private void initEmptyHeader() {
@@ -87,25 +96,16 @@ public class InnerListView extends ListView implements InnerScroller, AbsListVie
         return getListViewScrollY();
     }
 
-    /************************************************************
-     * *********         Interaction with Outer        *********
-     ************************************************************/
     @Override public final void onScroll(final AbsListView absListView, final int firstVisibleItem, final int visibleItemCount, final int totalItemCount) {
         if (!mAttached || mOuterScroller == null || mBlockMeasure) {
             return;
         }
-
         if (mIndex == mOuterScroller.getCurrentInnerScrollerIndex()) {
             triggerOuterScroll();
             recordScrollPosition(firstVisibleItem);
         }
     }
 
-    private boolean mGettingScrollY = false;
-
-    /**
-     * Trigger Outer Scroller
-     */
     @Override public final void triggerOuterScroll() {
         if (!mGettingScrollY && mOuterScroller != null) {
             mGettingScrollY = true;
@@ -125,20 +125,10 @@ public class InnerListView extends ListView implements InnerScroller, AbsListVie
         }
     }
 
-    private boolean mRendered;
-
-    /**
-     * Based on onSizeChanged() at the first time.
-     */
     private void onRender() {
         adjustEmptyHeaderHeight();
     }
 
-    private IntegerVariable mEmptyHeaderHeight = new IntegerVariable(0);
-
-    /**
-     * (as its name)
-     */
     @Override public final void adjustEmptyHeaderHeight() {
         if (mEmptyHeader == null || mOuterScroller == null || mOuterScroller.getHeaderHeight() == 0) {
             return;
@@ -154,23 +144,6 @@ public class InnerListView extends ListView implements InnerScroller, AbsListVie
         }
     }
 
-    /************************************************************
-     * ***     save and restore position related to mhvp     ****
-     ************************************************************/
-
-    // item positon
-    protected              int mItemPosition        = ORIGIN_ITEM_POSITION;
-    protected static final int ORIGIN_ITEM_POSITION = -1;
-
-    // first item's marginTop to magic header
-    protected              int mItemMarginTop2Header          = ORIGIN_ITEM_MARGIN_TOP_2HEADER;
-    protected static final int ORIGIN_ITEM_MARGIN_TOP_2HEADER = 0;
-
-    protected int mLastHeaderVisibleHeight = 0;
-
-    /**
-     * （as its name）
-     */
     public final void recordScrollPosition(int firstVisibleItem) {
         mLastHeaderVisibleHeight = mOuterScroller.getHeaderVisibleHeight();
         if (getChildAt(0) != null) {
@@ -181,9 +154,6 @@ public class InnerListView extends ListView implements InnerScroller, AbsListVie
         }
     }
 
-    /**
-     * Scroll only responding to Magic Header's change.
-     */
     public final void performScroll(final int itemMariginTop2Header) {
 
         if (!mAttached || mOuterScroller == null) {
@@ -201,11 +171,6 @@ public class InnerListView extends ListView implements InnerScroller, AbsListVie
         }
     }
 
-    /**
-     * Method performScroll() usually produce substantial scroll action, unable to be frequently called.
-     * While this method syncScroll() has verification inside, will not directly produce scrolling,
-     * and can be frequently called.
-     */
     @Override public final void syncScroll() {
         if (!mAttached || mOuterScroller == null) {
             return;
@@ -215,10 +180,6 @@ public class InnerListView extends ListView implements InnerScroller, AbsListVie
         }
 
     }
-
-    /********************
-     * Outer Settings
-     ******************/
 
     protected OuterScroller mOuterScroller;
     private int mIndex = -1;
@@ -265,9 +226,6 @@ public class InnerListView extends ListView implements InnerScroller, AbsListVie
         });
     }
 
-    /*************************************************************
-     * ****               Touch event receiver              *****
-     *************************************************************/
     public View getReceiveView() {
         return mReceiveView == null ? this : mReceiveView;
     }
@@ -275,13 +233,6 @@ public class InnerListView extends ListView implements InnerScroller, AbsListVie
     public void setReceiveView(View receiveView) {
         this.mReceiveView = receiveView;
     }
-
-    private View mReceiveView;
-
-    /************************************************************
-     * ****            Header counts management            *****
-     ************************************************************/
-    int mVisibleHeaderCount;
 
     @Override public void addHeaderView(View v, Object data, boolean isSelectable) {
         if (needCompatHeaderAddition() && mHeaderContainerCompat != null && mHeaderContainerCompat != v) {
@@ -304,17 +255,11 @@ public class InnerListView extends ListView implements InnerScroller, AbsListVie
         return getHeaderViewsCount() - mVisibleHeaderCount;
     }
 
-    /**
-     * Call this method on refresh state changed, to ensure there's no response to touch event,
-     * to avoid going into abnormal state.
-     */
     public void onRefresh(boolean isRefreshing) {
         if (mOuterScroller != null) {
             mOuterScroller.updateRefreshState(isRefreshing);
         }
     }
-
-    private int mScrollState = SCROLL_STATE_IDLE;
 
     @Override public final void onScrollStateChanged(AbsListView view, int scrollState) {
         this.mScrollState = scrollState;
@@ -331,24 +276,11 @@ public class InnerListView extends ListView implements InnerScroller, AbsListVie
         }
     }
 
-    /************************************************************
-     * ***             OnScrollListener Decoration          ****
-     ************************************************************/
     @Override public void setOnScrollListener(OnScrollListener l) {
         mInnerScrollListener = new InnerScrollListener(l);
         super.setOnScrollListener(mInnerScrollListener);
     }
 
-    private InnerScrollListener mInnerScrollListener;
-
-    /**
-     * Listener set by others
-     **/
-    OnScrollListener mOnScrollListener;
-
-    /**
-     * Decorate scroll listener.
-     */
     private class InnerScrollListener implements OnScrollListener {
 
         InnerScrollListener(OnScrollListener onScrollListener) {
@@ -370,9 +302,6 @@ public class InnerListView extends ListView implements InnerScroller, AbsListVie
         }
     }
 
-    /**
-     * ListView also creates a decorator, so we can only place this decorator in middle.
-     */
     private class InflateFirstItemIfNeededAdapter extends BaseAdapter {
         ListAdapter mAdapter;
 
@@ -443,9 +372,6 @@ public class InnerListView extends ListView implements InnerScroller, AbsListVie
             return mAdapter.getViewTypeCount() + 2;
         }
 
-        /**
-         * Get the origin decorated adapter.
-         */
         public ListAdapter getAdapter() {
             return mAdapter;
         }
@@ -496,21 +422,14 @@ public class InnerListView extends ListView implements InnerScroller, AbsListVie
                 return viewEmptyFirst;
             }
 
-            // Empty Completion View
             if (isAutoCompletion(position, innerTempCount)) {
                 if (mDataStatus != DataStatus.CHANGING) {
                     convertView = configureAutoEmptyCompletionView(getGapHeight(position));
                 } else {
-                    // If just on notifyDataSetChanged(), the heights are not correct cuz children
-                    // are still old ones and also they haven't been placed in the right way.
-                    // So we can only give a large enough height for safety to avoid scroll-range-too-small risk;
-                    // After refresh, heights can be calculated correctly then.
                     mDataStatus = DataStatus.IDLE;
                     convertView = configureAutoEmptyCompletionView(mOuterScroller.getContentAreaMaxVisibleHeight());
                     post(new Runnable() {
                         @Override public void run() {
-                            //Children new but heights old.
-                            // So remeasure them to get right heights.
                             reMeasureHeights();
                             configureAutoEmptyCompletionView(getGapHeight(position));
                         }
@@ -542,26 +461,14 @@ public class InnerListView extends ListView implements InnerScroller, AbsListVie
     }
 
     @Override public void setAdapter(ListAdapter adapter) {
-        if (mNeedMaintainPositionWhenSetAdapter) {
-            setBlockMeasure(true);
-            setVisibility(INVISIBLE);
-        }
-
-        // 数据状态置为改变中
+        setBlockMeasure(true);
+        setVisibility(INVISIBLE);
         mDataStatus = DataStatus.CHANGING;
-
-        if (mInnerAdapter != null) {
-            unRegisterPreDataSetObserver(mInnerAdapter.getAdapter());
-        }
-
+        if (mInnerAdapter != null) unRegisterPreDataSetObserver(mInnerAdapter.getAdapter());
         mInnerAdapter = new InflateFirstItemIfNeededAdapter(adapter);
         super.setAdapter(mInnerAdapter);
-
         registerPreDataSetObserver(adapter);
-
-        if (mNeedMaintainPositionWhenSetAdapter) {
-            onSetAdapterSuccess();
-        }
+        onSetAdapterSuccess();
     }
 
     private void onSetAdapterSuccess() {
@@ -580,9 +487,6 @@ public class InnerListView extends ListView implements InnerScroller, AbsListVie
         safelyPost(runnable);
     }
 
-    /*********************
-     * About observer
-     ******************/
     private void unRegisterPreDataSetObserver(ListAdapter adapter) {
         if (adapter != null && mPreDataSetObserverRegistered) {
             adapter.unregisterDataSetObserver(mPreDataSetObserver);
@@ -602,10 +506,7 @@ public class InnerListView extends ListView implements InnerScroller, AbsListVie
         CHANGING
     }
 
-    // Only used and maintained for content auto completion view.
-    private DataStatus mDataStatus = DataStatus.IDLE;
 
-    boolean mPreDataSetObserverRegistered;
     DataSetObserver mPreDataSetObserver = new DataSetObserver() {
         @Override public void onChanged() {
             mDataStatus = DataStatus.CHANGING;
@@ -618,16 +519,6 @@ public class InnerListView extends ListView implements InnerScroller, AbsListVie
         }
     };
 
-    /**
-     * Note that if you use :
-     * ```
-     * if( ListView.getAdapter() == null) {
-     * ...
-     * }
-     * ```
-     * to do sth., you have to realize in other ways, cuz ListView.getAdapter() may
-     * be always not null.
-     */
     @Override public ListAdapter getAdapter() {
         return super.getAdapter();
     }
@@ -636,9 +527,6 @@ public class InnerListView extends ListView implements InnerScroller, AbsListVie
         return mInnerAdapter;
     }
 
-    /************************************************************
-     * **************        View Lifecycle       **************
-     ************************************************************/
     boolean mAttached    = false;
     boolean mHasDetached = false;
 
@@ -652,22 +540,17 @@ public class InnerListView extends ListView implements InnerScroller, AbsListVie
         }
     }
 
-    /**
-     * (as its name). Its implementation has been changed to a more safe one.
-     */
     private void reMeasureHeights() {
         old_FirstVisiblePosition = old_LastVisiblePosition = 0;
         getInnerScrollY();
     }
 
     private void onReAttached() {
-        // Directly call won't go into effect, so call it in the next loop.
         Runnable runnable = new Runnable() {
             @Override public void run() {
                 performScroll(mItemMarginTop2Header);
                 if (isBlockMeasure()) {
                     setVisibility(VISIBLE);
-                    // must switch this state when attaching
                     if (mAttached) {
                         setBlockMeasure(false);
                     }
@@ -679,11 +562,8 @@ public class InnerListView extends ListView implements InnerScroller, AbsListVie
 
     private void safelyPost(Runnable runnable) {
         if (mAttached || !mHasDetached) {
-            // Used by normal setAdapter():  mAttatched not sure && mHasDetached = false，
-            // and during attched:  mAttached = true && mHasDetached not sure.
             post(runnable);
         } else {
-            // For setAdapter() during detached status after attached
             runnable.run();
         }
     }
@@ -693,10 +573,6 @@ public class InnerListView extends ListView implements InnerScroller, AbsListVie
         mAttached = false;
         super.onDetachedFromWindow();
     }
-
-    /*************************************************************
-     * **          Implements scroll related methods          ***
-     *************************************************************/
 
     @Override public void scrollToTop() {
         setSelection(0);
@@ -715,9 +591,6 @@ public class InnerListView extends ListView implements InnerScroller, AbsListVie
         return mScrollState != SCROLL_STATE_IDLE;
     }
 
-    /*************************************************************
-     * ***********       Drawing optimization       *************
-     *************************************************************/
     @Override public void draw(Canvas canvas) {
         final int restoreCount = canvas.save();
         if (mOuterScroller != null) {
@@ -726,13 +599,6 @@ public class InnerListView extends ListView implements InnerScroller, AbsListVie
         super.draw(canvas);
         canvas.restoreToCount(restoreCount);
     }
-
-    private final boolean mNeedMaintainPositionWhenSetAdapter = true;
-
-    /*****
-     * Support addHeaderView() after setAdapter() in SDK <= 4.2
-     *************/
-    private LinearLayout mHeaderContainerCompat;
 
     private void checkHeaderAdditionIfNeeded() {
         if (needCompatHeaderAddition()) {
@@ -750,9 +616,6 @@ public class InnerListView extends ListView implements InnerScroller, AbsListVie
         return Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2;
     }
 
-    /*********************************************************************
-     * ***         Customize empty content view and its height        ****
-     *********************************************************************/
     private InnerSpecialViewHelper mEmptyViewHelper;
 
     private InnerSpecialViewHelper getEmptyViewHelper() {
@@ -766,11 +629,6 @@ public class InnerListView extends ListView implements InnerScroller, AbsListVie
         getEmptyViewHelper().setCustomEmptyView(emptyView);
     }
 
-    /**
-     * Note: the sum of height and offset is always no more than outScroller's contentAreaMaxVisibleHeight for safety.
-     * @param height You may pass wrap_content, match_parent or a figure. Defaults to match_parent.
-     * @param offset Height offset, positive larger and negative smaller. Defaults to 0.
-     */
     @Override public void setCustomEmptyViewHeight(int height, int offset) {
         getEmptyViewHelper().setCustomEmptyViewHeight(height, offset);
     }
@@ -787,9 +645,6 @@ public class InnerListView extends ListView implements InnerScroller, AbsListVie
         return getEmptyViewHelper().getInnerEmptyViewSafely();
     }
 
-    /*********************************************************************
-     * **          Content auto completion view and its height        ***
-     *********************************************************************/
     @Override public void setContentAutoCompletionColor(int color) {
         getEmptyViewHelper().setContentAutoCompletionColor(color);
     }
@@ -825,19 +680,12 @@ public class InnerListView extends ListView implements InnerScroller, AbsListVie
         return autoEmptyCompletion;
     }
 
-    /**
-     * （as its name）
-     */
     private int getGapHeight(int position) {
         List<IntegerVariable> heights = getHeightsSafely();
         int heightSum = getItemHeightSum(position, heights);
         int itemAreaHeight = mOuterScroller.getContentAreaMaxVisibleHeight();
         return Math.max(0, itemAreaHeight - heightSum - mEmptyViewHelper.getContentAutoCompletionViewOffset());
     }
-
-    /***************
-     * ListView items' heights management
-     *****************/
 
     ArrayList<IntegerVariable> heights;
 

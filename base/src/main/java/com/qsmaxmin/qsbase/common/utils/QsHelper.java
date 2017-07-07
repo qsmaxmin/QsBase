@@ -9,6 +9,8 @@ import android.support.v4.app.FragmentManager;
 import com.qsmaxmin.qsbase.QsApplication;
 import com.qsmaxmin.qsbase.common.http.HttpAdapter;
 import com.qsmaxmin.qsbase.common.threadpoll.QsThreadPollHelper;
+import com.qsmaxmin.qsbase.common.viewbind.ViewBind;
+import com.qsmaxmin.qsbase.common.viewbind.ViewBindImpl;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -20,6 +22,7 @@ import org.greenrobot.eventbus.EventBus;
 
 public class QsHelper {
     private HttpAdapter httpAdapter;
+    private ViewBind    viewBind;
 
     private static QsHelper helper = new QsHelper();
 
@@ -102,5 +105,15 @@ public class QsHelper {
         if (fragmentManager != null) {
             fragmentManager.beginTransaction().add(dialogFragment, dialogFragment.getClass().getSimpleName()).commitAllowingStateLoss();
         }
+    }
+
+
+    public ViewBind getViewBindHelper() {
+        if (viewBind == null) {
+            synchronized (QsHelper.class) {
+                if (viewBind == null) viewBind =  new ViewBindImpl();
+            }
+        }
+        return viewBind;
     }
 }

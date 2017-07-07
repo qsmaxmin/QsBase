@@ -13,6 +13,7 @@ import com.qsmaxmin.qsbase.R;
 import com.qsmaxmin.qsbase.common.aspect.ThreadPoint;
 import com.qsmaxmin.qsbase.common.aspect.ThreadType;
 import com.qsmaxmin.qsbase.common.log.L;
+import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.common.widget.listview.LoadingFooter;
 import com.qsmaxmin.qsbase.common.widget.recyclerview.HeaderFooterRecyclerView;
 import com.qsmaxmin.qsbase.mvp.adapter.MyRecycleViewHolder;
@@ -21,8 +22,6 @@ import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import butterknife.ButterKnife;
 
 /**
  * @CreateBy qsmaxmin
@@ -37,7 +36,7 @@ public abstract class QsRecyclerFragment<T extends QsPresenter, D> extends QsFra
     private final       List<D> mList              = new ArrayList<>();
 
     private   HeaderFooterRecyclerView   mRecyclerView;
-    protected MyRecycleAdapter           mRecyclerViewAdapter;
+    protected RecyclerView.Adapter       mRecyclerViewAdapter;
     protected LoadingFooter              mLoadingFooter;
     protected StaggeredGridLayoutManager staggeredGridLayoutManager;
 
@@ -53,7 +52,7 @@ public abstract class QsRecyclerFragment<T extends QsPresenter, D> extends QsFra
         return 0;
     }
 
-    @Override public MyRecycleAdapter onCreateAdapter() {
+    @Override public RecyclerView.Adapter onCreateAdapter() {
         return null;
     }
 
@@ -81,8 +80,8 @@ public abstract class QsRecyclerFragment<T extends QsPresenter, D> extends QsFra
             View headerView = inflater.inflate(getHeaderLayout(), null);
             if (headerView != null) {
                 mRecyclerView.addHeaderView(headerView);
-                L.i(initTag(), ".........  buttonKnife 注解：" + headerView);
-                ButterKnife.bind(this, headerView);
+//                ButterKnife.bind(this, headerView);
+                QsHelper.getInstance().getViewBindHelper().bind(this, headerView);
             }
         }
         if (getFooterLayout() > 0) {
@@ -138,7 +137,7 @@ public abstract class QsRecyclerFragment<T extends QsPresenter, D> extends QsFra
 
     }
 
-    @Override public MyRecycleAdapter getAdapter() {
+    @Override public RecyclerView.Adapter getAdapter() {
         return mRecyclerViewAdapter;
     }
 
@@ -246,7 +245,7 @@ public abstract class QsRecyclerFragment<T extends QsPresenter, D> extends QsFra
         }
 
         @Override public int getItemViewType(int position) {
-            return getItemViewType(position);
+            return QsRecyclerFragment.this.getItemViewType(position);
         }
 
         @Override public int getItemCount() {

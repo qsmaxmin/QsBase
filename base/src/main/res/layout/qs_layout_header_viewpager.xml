@@ -5,24 +5,23 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <j2w.team.common.widget.J2WViewPager
+    <com.qsmaxmin.qsbase.common.widget.viewpager.QsViewPager
         android:id="@+id/mhvp_pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
-    <j2w.team.common.widget.headerViewpager.base.TranslatableLinearLayout
+    <com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.base.TranslatableLinearLayout
         android:id="@+id/mhvp_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="top"
         android:orientation="vertical">
 
-        <j2w.team.common.widget.headerViewpager.base.SizeSensitiveLinearLayout
+        <com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.base.SizeSensitiveLinearLayout
             android:id="@+id/mhvp_headerCustom"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"/>
 
-    </j2w.team.common.widget.headerViewpager.base.TranslatableLinearLayout>
-
+    </com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.base.TranslatableLinearLayout>
 </merge>

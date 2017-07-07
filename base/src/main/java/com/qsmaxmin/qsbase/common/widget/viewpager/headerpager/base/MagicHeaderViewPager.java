@@ -32,21 +32,15 @@ public abstract class MagicHeaderViewPager extends FrameLayout implements OuterS
 
     public static final String TAG = "MagicHeaderViewPager";
 
-    private TranslatableLinearLayout  mHeader;
-    private SizeSensitiveLinearLayout mCustomHeaders;
-
-    protected ViewGroup            mTabsArea;
-    private   PagerSlidingTabStrip mPagerSlidingTabStrip;
-    private   QsViewPager          mViewPager;
-
-    private PagerAdapter           mPagerAdapter;
-    // Header height excluding tabs
-    private int                    mHeaderHeightExcludeTabs;
-    // Whole header height
-    private int                    mHeaderHeight;
-    // Header's max trasition in Y direction
-    private int                    mMaxHeaderTransition;
-    private OnHeaderScrollListener mOnHeaderScrollListener;
+    private   TranslatableLinearLayout  mHeader;
+    private   SizeSensitiveLinearLayout mCustomHeaders;
+    protected ViewGroup                 mTabsViewGroup;
+    private   PagerSlidingTabStrip      mPagerSlidingTabStrip;
+    private   QsViewPager               mViewPager;
+    private   int                       mHeaderHeightExcludeTabs;
+    private   int                       mHeaderHeight;
+    private   int                       mMaxHeaderTransition;
+    private   OnHeaderScrollListener    mOnHeaderScrollListener;
 
     public MagicHeaderViewPager(Context context) {
         this(context, null);
@@ -61,8 +55,8 @@ public abstract class MagicHeaderViewPager extends FrameLayout implements OuterS
         initView();
     }
 
-    protected void setTabsArea(ViewGroup mTabsArea) {
-        this.mTabsArea = mTabsArea;
+    protected void setTabsLayout(ViewGroup tabsViewGroup) {
+        this.mTabsViewGroup = tabsViewGroup;
     }
 
     protected void setPagerSlidingTabStrip(PagerSlidingTabStrip pagerSlidingTabStrip) {
@@ -84,7 +78,7 @@ public abstract class MagicHeaderViewPager extends FrameLayout implements OuterS
         checkForbiddenMultiTouch();
         mHeader = (TranslatableLinearLayout) findViewById(R.id.mhvp_header);
         mCustomHeaders = (SizeSensitiveLinearLayout) findViewById(R.id.mhvp_headerCustom);
-        initTabsArea(mHeader);
+        initTabs(mHeader);
         initStableAreaHeight();
         mViewPager = (QsViewPager) findViewById(R.id.mhvp_pager);
         mViewPager.setOffscreenPageLimit(3);
@@ -102,9 +96,9 @@ public abstract class MagicHeaderViewPager extends FrameLayout implements OuterS
      * Initialize height of stable area.
      */
     private final void initStableAreaHeight() {
-        if (mTabsArea != null) {
+        if (mTabsViewGroup != null) {
             // calculate the height value manually set in figure
-            measureHeaderHeightIncremental(mTabsArea.getLayoutParams().height, 0, 0);
+            measureHeaderHeightIncremental(mTabsViewGroup.getLayoutParams().height, 0, 0);
         }
     }
 
@@ -157,7 +151,7 @@ public abstract class MagicHeaderViewPager extends FrameLayout implements OuterS
 
     /**
      * Initialize your tabsArea. Either findViewById or inflate is Ok.
-     * Don't forget to setTabsArea() and setPagerSlidingTabStrip() at the end.
+     * Don't forget to setTabsLayout() and setPagerSlidingTabStrip() at the end.
      * Or else they will be considered null.<br>
      * <p/>
      * e.g. code:<br>
@@ -171,25 +165,21 @@ public abstract class MagicHeaderViewPager extends FrameLayout implements OuterS
      * pagerSlidingTabStrip.setBackgroundColor(Color.WHITE);<br>
      * pagerSlidingTabStrip.setIndicatorColor(Color.BLUE);<br>
      * <br>
-     * setTabsArea(tabsArea);<br>
+     * setTabsLayout(tabsArea);<br>
      * setPagerSlidingTabStrip(pagerSlidingTabStrip);<br>
      * </blockquote>
      * }<br>
      * ```
      */
-    protected abstract void initTabsArea(LinearLayout container);
+    protected abstract void initTabs(LinearLayout container);
 
     public void setPagerAdapter(PagerAdapter pagerAdapter) {
         if (!(pagerAdapter instanceof OuterPagerAdapter)) {
-            throw new IllegalArgumentException("MagicHeaderViewPager's " + "FragmentPagerAdapter must implements interface OuterPagerAdapter!");
+            throw new IllegalArgumentException("HeaderViewPager's PagerAdapter should implements interface OuterPagerAdapter!");
         }
-
-        mPagerAdapter = pagerAdapter;
-
-        ((OuterPagerAdapter) mPagerAdapter).setPageOuterScroller(this);
-
+        ((OuterPagerAdapter) pagerAdapter).setPageOuterScroller(this);
         if (mViewPager != null) {
-            mViewPager.setAdapter(mPagerAdapter);
+            mViewPager.setAdapter(pagerAdapter);
             if (mPagerSlidingTabStrip != null) {
                 mPagerSlidingTabStrip.setViewPager(mViewPager);
             }
@@ -198,6 +188,7 @@ public abstract class MagicHeaderViewPager extends FrameLayout implements OuterS
 
     /**
      * Obtain PagerSlidingTabStrip. You may get and customize it.
+     *
      * @return
      */
     public PagerSlidingTabStrip getPagerSlidingTabStrip() {
@@ -218,8 +209,6 @@ public abstract class MagicHeaderViewPager extends FrameLayout implements OuterS
     /**
      * Synchronize Header scroll position. It can be enormously called. With many verification
      * inside, innerScrollers won't perform scroll unless necessary.
-     * <p/>
-     * {@hide}
      */
     @Override public void syncPagesPosition(int currentIndex) {
         InnerScroller innerScroller;
@@ -243,66 +232,37 @@ public abstract class MagicHeaderViewPager extends FrameLayout implements OuterS
 
     /**
      * Call back on the current innerScroller scrolls.
-     * {@hide}
      */
     @Override public void onInnerScroll(int pageIndex, int scrollY) {
         if (pageIndex != mViewPager.getCurrentItem()) {
             return;
         }
-        /* State： pagerIndex equal to mViewPager.getCurrentItem().
-        First time state switching check.*/
         if (mViewPager.getCurrentItem() != currentItem) {
             currentItem = mViewPager.getCurrentItem();
-            // The first time onScroll() called, get temp value
-            // header's current visible height
             int headerVisibleHeight = getHeaderVisibleHeight();
             mScrollYIn = scrollY;
             mHeaderStart = mHeaderHeight - headerVisibleHeight;
-            /* Once reach the top, clear its temp state. Header won't move
-            until current innerScroller scroll to first item (exclude empty header),
-            to improve user experience. */
             if (mHeaderStart == mMaxHeaderTransition) {
                 mScrollYIn = mMaxHeaderTransition;
                 mHeaderStart = mMaxHeaderTransition;
             }
             return;
-            /* The code is placed above for avoiding abnormal state when
-           tabs clicked to switch fragments, positionSelected will be called later than
-           onScroll. */
         }
 
-        // Start processing
-        // ScrollY delta
         int headerTransitionY = calcHeaderTransition(mHeaderStart, scrollY, mScrollYIn, mMaxHeaderTransition);
-        /* Once reach the top, clear its temp state. Header won't move
-        until current innerSroller scroll to first item (exclude empty header),
-        to improve user experience. */
         if (headerTransitionY == mMaxHeaderTransition) {
             mScrollYIn = mMaxHeaderTransition;
             mHeaderStart = mMaxHeaderTransition;
         }
 
-        /* Only when scroll downwards and not in the intercepting status,
-       header displacement will be recalculated. */
         if (!mHeaderIntercept && scrollY < mScrollYIn) {
-            /* Unless real scrollY reach top, namely: scrollY < headerStart, header will scroll.*/
-            /* Note: add "==", or else if headerStart is 0, scrollYIn will never be set 0.
-               So this boundary value is needed. */
             if (scrollY <= mHeaderStart) {
-                // Set scrollYIn value to headerStart
                 mScrollYIn = mHeaderStart;
-                // And recalculate displacement again
                 headerTransitionY = calcHeaderTransition(mHeaderStart, scrollY, mScrollYIn, mMaxHeaderTransition);
             } else {
-                /* If normally scroll doesn't happen, insert logic of HeaderAlwaysScrollWithInner.
-                   If switch on and point down on Header: to intercept it.
-                 */
                 if (mHeaderAlwaysScrollWithInner && mPointDownOnHeader) {
-                    if (!mHeaderIntercept) {
-                        mHeaderIntercept = true;
-                    }
+                    mHeaderIntercept = true;
                 } else {
-                    // Or else forbidden scroll
                     return;
                 }
             }
@@ -330,11 +290,6 @@ public abstract class MagicHeaderViewPager extends FrameLayout implements OuterS
 
     /**
      * （as its name）
-     * @param headerStart
-     * @param scrollY
-     * @param scrollYIn
-     * @param maxHeaderTransition max header displacement in Y
-     * @return
      */
     private int calcHeaderTransition(int headerStart, int scrollY, int scrollYIn, int maxHeaderTransition) {
         int headerTransition = headerStart + MagicHeaderUtils.calcDelta(scrollY, scrollYIn);
@@ -362,7 +317,6 @@ public abstract class MagicHeaderViewPager extends FrameLayout implements OuterS
     /**
      * Get magic header's visible height. This method has been optimized using temp value.
      * In fact some of these methods is redundant. visibleHeight + HeaderScrollY = HeaderHeight
-     * @return
      */
     @Override public int getHeaderVisibleHeight() {
         if (Math.abs(mTempScrollY - TEMP_SCROLL_Y_INIT) > 0.1) {
@@ -383,7 +337,6 @@ public abstract class MagicHeaderViewPager extends FrameLayout implements OuterS
 
     /**
      * Call back from pullToRefresh
-     * @param scrollY {@hide}
      */
     public void onInnerPullToRefreshScroll(int scrollY) {
         MagicHeaderUtils.setParamY(mHeader, scrollY, MagicHeaderUtils.TranslationMethods.LAYOUT_PARAMS);
@@ -392,7 +345,6 @@ public abstract class MagicHeaderViewPager extends FrameLayout implements OuterS
     /**
      * The second implementation of addHeaderView, which need measure whole CustomHeader.
      * Finishing adding all before render, and it will be measured automatically.
-     * @param view
      */
     public void addHeaderView(View view) {
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -401,8 +353,6 @@ public abstract class MagicHeaderViewPager extends FrameLayout implements OuterS
 
     /**
      * AddHeaderView with customized LayoutParams
-     * @param view
-     * @param lp
      */
     public final void addHeaderView(View view, LinearLayout.LayoutParams lp) {
         mCustomHeaders.addView(view, lp);
@@ -410,7 +360,7 @@ public abstract class MagicHeaderViewPager extends FrameLayout implements OuterS
 
     /**
      * AddHeaderView with customized height in Pixel
-     * @param view
+     *
      * @param height in Pixel
      */
     public final void addHeaderView(View view, int height) {
@@ -418,9 +368,6 @@ public abstract class MagicHeaderViewPager extends FrameLayout implements OuterS
         mCustomHeaders.addView(view, lp);
     }
 
-    /**
-     * @param view
-     */
     public void removeHeaderView(View view) {
         mCustomHeaders.removeView(view);
     }
@@ -441,17 +388,17 @@ public abstract class MagicHeaderViewPager extends FrameLayout implements OuterS
      * ReMeasure custom header's height.
      * Support condition: "StableArea != TabsArea".
      */
-    private final void reMeasureCustomHeader() {
+    private void reMeasureCustomHeader() {
         int stableAreaHeight = mHeaderHeight - mMaxHeaderTransition;
         int tabsHeight;
-        if (mTabsArea == null) {
+        if (mTabsViewGroup == null) {
             if (mPagerSlidingTabStrip != null) {
                 tabsHeight = mPagerSlidingTabStrip.getMeasuredHeight();
             } else {
                 tabsHeight = 0;
             }
         } else {
-            tabsHeight = mTabsArea.getMeasuredHeight();
+            tabsHeight = mTabsViewGroup.getMeasuredHeight();
         }
         if (mCustomHeaders != null) {
             mHeaderHeightExcludeTabs = mCustomHeaders.getMeasuredHeight();
@@ -462,9 +409,8 @@ public abstract class MagicHeaderViewPager extends FrameLayout implements OuterS
 
     /**
      * Method of single param will set the one value to three params.
-     * @param heightIncremental
      */
-    private final void measureHeaderHeightIncremental(int heightIncremental) {
+    private void measureHeaderHeightIncremental(int heightIncremental) {
         measureHeaderHeightIncremental(heightIncremental, heightIncremental, heightIncremental);
     }
 
@@ -473,7 +419,7 @@ public abstract class MagicHeaderViewPager extends FrameLayout implements OuterS
      * @param headerHeightExcludeTabsIncremental Incremental of area-excluding-tabs' height
      * @param maxHeaderTransitionIncremental     Incremental of max header transition
      */
-    private final void measureHeaderHeightIncremental(int headerHeightIncremental, int headerHeightExcludeTabsIncremental, int maxHeaderTransitionIncremental) {
+    private void measureHeaderHeightIncremental(int headerHeightIncremental, int headerHeightExcludeTabsIncremental, int maxHeaderTransitionIncremental) {
         if (mHeader != null) {
             mHeaderHeight += headerHeightIncremental;
         }
@@ -501,10 +447,6 @@ public abstract class MagicHeaderViewPager extends FrameLayout implements OuterS
         return INVALID_INDEX;
     }
 
-    /**
-     * @param index
-     * @param innerScroller * {@hide}
-     */
     @Override public void registerInnerScroller(int index, InnerScroller innerScroller) {
         if (innerScroller != null) {
             mInnerScrollers.put(index, innerScroller);
@@ -530,7 +472,6 @@ public abstract class MagicHeaderViewPager extends FrameLayout implements OuterS
     private float delta_X;
     private float delta_Y;
 
-
     /**
      * As holding a MotionEvent's reference is useless, using boolean instead.
      */
@@ -538,7 +479,6 @@ public abstract class MagicHeaderViewPager extends FrameLayout implements OuterS
 
     /**
      * Only two states, so using boolean to optimize.
-     * {@hide}
      */
     public boolean intercept2InnerScroller = false;
 
@@ -561,10 +501,6 @@ public abstract class MagicHeaderViewPager extends FrameLayout implements OuterS
     private boolean mProcessTouchEventMove = false;
 
 
-    /**
-     * @param event
-     * @return
-     */
     public boolean dispatchTouchEvent(final MotionEvent event) {
 
         boolean handled = false;
@@ -586,37 +522,18 @@ public abstract class MagicHeaderViewPager extends FrameLayout implements OuterS
                     mBlockChangeTempScrollY = false;
                 }
 
-                /**
-                 *  whether point down on header, judged on point down.
-                 *
-                 *  Based on peculiarity of this layout, one special judging method is provided,
-                 *   to improve execution effeciency.
-                 */
                 if (mHeader != null && downY < mHeader.getVisualBottom()) {
                     mPointDownOnHeader = true;
-                    /**
-                     *  Refresh scrollYIn and HeaderStart at TouchDown again.
-                     */
                     if (mHeaderAlwaysScrollWithInner) {
-                        /**
-                         *   If switch header always scroll with InnerScroller on,
-                         *   Refresh scrollYIn and HeaderStart
-                         */
                         updateScrollYInAndHeaderStart();
                     }
                 }
 
-                /** some phone will crash due to ViewPager's onTouch Event:
-                 / "Fatal Exception: java.lang.IllegalArgumentException
-                 / pointerIndex out of range" on Crashlytics,
-                 / so... try... catch... */
                 try {
                     handled = super.dispatchTouchEvent(event);
                 } catch (Exception iae) {
+                    iae.printStackTrace();
                 }
-                /**
-                 *  If failed, mProcessTouchEvent won't be true forever, but will be set false
-                 */
                 mProcessTouchEvent = handled;
                 break;
             case MotionEvent.ACTION_MOVE:
@@ -636,13 +553,9 @@ public abstract class MagicHeaderViewPager extends FrameLayout implements OuterS
                     y = event.getY();
                     delta_X = x - downX;
                     delta_Y = y - downY;
-                    /**
-                     *  Only intercept when touch on Header area
-                     */
                     if (mPointDownOnHeader) {
                         if (!intercept2InnerScroller && Math.abs(delta_Y) > Math.abs(delta_X) && radiusLargerThan(delta_X, delta_Y, TOUCH_CLICK_THRESHOLD)) {
                             intercept2InnerScroller = true;
-                        } else {
                         }
                     }
                 }
@@ -651,9 +564,6 @@ public abstract class MagicHeaderViewPager extends FrameLayout implements OuterS
                     View receiveInnerView;
                     receiveInnerView = getCurrentInnerView4ReceivingTouch();
                     if (receiveInnerView != null) {
-                        /**
-                         * Wanna intercept? dispatch a down first.
-                         */
                         if (mHasEventDown) {
                             MagicHeaderUtils.cancelTouchEvent(mHeader);
                             boolean result = MagicHeaderUtils.copyAndDispatchTouchEvent(receiveInnerView, event, MotionEvent.ACTION_DOWN);
@@ -671,6 +581,7 @@ public abstract class MagicHeaderViewPager extends FrameLayout implements OuterS
                 try {
                     handled = super.dispatchTouchEvent(event);
                 } catch (Exception iae) {
+                    iae.printStackTrace();
                 }
                 break;
             case MotionEvent.ACTION_UP:
@@ -688,6 +599,7 @@ public abstract class MagicHeaderViewPager extends FrameLayout implements OuterS
                 try {
                     handled = super.dispatchTouchEvent(event);
                 } catch (Exception iae) {
+                    iae.printStackTrace();
                 }
                 break;
             case MotionEvent.ACTION_CANCEL:
@@ -696,6 +608,7 @@ public abstract class MagicHeaderViewPager extends FrameLayout implements OuterS
                 try {
                     handled = super.dispatchTouchEvent(event);
                 } catch (Exception iae) {
+                    iae.printStackTrace();
                 }
                 break;
             default:
@@ -705,6 +618,7 @@ public abstract class MagicHeaderViewPager extends FrameLayout implements OuterS
                     try {
                         handled = super.dispatchTouchEvent(event);
                     } catch (Exception iae) {
+                        iae.printStackTrace();
                     }
                 }
                 break;
@@ -719,9 +633,6 @@ public abstract class MagicHeaderViewPager extends FrameLayout implements OuterS
     private void resetTempMembers() {
         InnerScroller currentScroller = getCurrentInnerScroller();
         if (currentScroller != null && currentScroller.isScrolling()) {
-            /**
-             * Extend it's lifecycle to scrollStateChanged()
-             */
         } else {
             if (mPointDownOnHeader) {
                 mPointDownOnHeader = false;
@@ -733,7 +644,6 @@ public abstract class MagicHeaderViewPager extends FrameLayout implements OuterS
 
     /**
      * Extracted method for reuse.
-     * @return
      */
     private View getCurrentInnerView4ReceivingTouch() {
         View receiveInnerView;
@@ -775,17 +685,8 @@ public abstract class MagicHeaderViewPager extends FrameLayout implements OuterS
      * Synchronize position on innerScroller stop besides touch down. Make full use of performance at leisure time.
      */
     @Override public void onInnerScrollerStop() {
-        /** This parameter's lifecycle is extended from "touchDown - touchUp"
-         to "touchDown - InnerScrollStop"  */
         if (mPointDownOnHeader) {
-            /**
-             *  On InnerScroller stop scrolling, refresh both ScrollYIn and HeaderStart again.
-             */
             if (mHeaderAlwaysScrollWithInner) {
-                /**
-                 *    If switch mHeaderAlwaysScrollWithInner on, every time touch on Header,
-                 *    renew scrollYIn and HeaderStart
-                 */
                 updateScrollYInAndHeaderStart();
             }
             mPointDownOnHeader = false;
@@ -794,7 +695,7 @@ public abstract class MagicHeaderViewPager extends FrameLayout implements OuterS
         syncPagesPosition(mViewPager.getCurrentItem());
     }
 
-    private final void updateScrollYInAndHeaderStart() {
+    private void updateScrollYInAndHeaderStart() {
         InnerScroller currentScroller = getCurrentInnerScroller();
         if (currentScroller != null
                 // v3.2.3.2: add this judgement to fix bug that:
@@ -823,9 +724,7 @@ public abstract class MagicHeaderViewPager extends FrameLayout implements OuterS
     /***********
      * Section of manually add custom stable height
      ****************/
-//    private int mCustomStableAreaHeight;
     public void addCustomStableAreaHeight(int height) {
-//        mCustomStableAreaHeight += height;
         mMaxHeaderTransition -= height;
     }
 
@@ -860,7 +759,7 @@ public abstract class MagicHeaderViewPager extends FrameLayout implements OuterS
         return ss;
     }
 
-    static class SavedState extends BaseSavedState {
+    private static class SavedState extends BaseSavedState {
         int   selectedIndex;
         float tempScrollY;
 
@@ -980,7 +879,7 @@ public abstract class MagicHeaderViewPager extends FrameLayout implements OuterS
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB) private void checkForbiddenMultiTouch() {
         if (isForbiddenMultiTouch()) {
-            if (!needSingleTouchCompat()) setMotionEventSplittingEnabled(false);
+            setMotionEventSplittingEnabled(false);
         }
     }
 
@@ -988,7 +887,7 @@ public abstract class MagicHeaderViewPager extends FrameLayout implements OuterS
      * single touch compat
      ****************/
     public static boolean needSingleTouchCompat() {
-        return Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB;
+        return false;
     }
 
     /***
@@ -1004,10 +903,8 @@ public abstract class MagicHeaderViewPager extends FrameLayout implements OuterS
     }
 
     @Override public void onPageScrollStateChanged(int arg0) {
-        // nothing
     }
 
     @Override public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-        // nothing
     }
 }

@@ -29,12 +29,12 @@ public class HeaderViewPager extends MagicHeaderViewPager {
         super(context, attrs, defStyle);
     }
 
-    @Override protected void initTabsArea(LinearLayout container) {
-        ViewGroup tabsArea = (ViewGroup) LayoutInflater.from(getContext()).inflate(R.layout.qs_layout_tabs, null);
+    @Override protected void initTabs(LinearLayout linearLayout) {
+        ViewGroup viewGroup = (ViewGroup) LayoutInflater.from(getContext()).inflate(R.layout.qs_layout_tabs, null);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, MagicHeaderUtils.dp2px(getContext(), 48));
-        container.addView(tabsArea, lp);
-        PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) tabsArea.findViewById(R.id.tabs);
-        setTabsArea(tabsArea);
+        linearLayout.addView(viewGroup, lp);
+        PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) viewGroup.findViewById(R.id.tabs);
+        setTabsLayout(viewGroup);
         setPagerSlidingTabStrip(tabs);
     }
 }

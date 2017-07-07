@@ -63,7 +63,6 @@ public abstract class QsPullRecyclerFragment<P extends QsPresenter, D> extends Q
         });
     }
 
-
     @Override @ThreadPoint(ThreadType.MAIN) public void startRefreshing() {
         mPtrFrameLayout.autoRefresh();
     }

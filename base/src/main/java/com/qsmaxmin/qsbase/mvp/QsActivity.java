@@ -31,8 +31,6 @@ import org.greenrobot.eventbus.EventBus;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
-import butterknife.ButterKnife;
-
 /**
  * @CreateBy qsmaxmin
  * @Date 2017/6/20 16:40
@@ -61,7 +59,7 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         View view = initView();
         setContentView(view);
         initStatusBar();
-        ButterKnife.bind(this);
+        QsHelper.getInstance().getViewBindHelper().bind(this, view);
         if (isOpenEventBus() && !EventBus.getDefault().isRegistered(this)) EventBus.getDefault().register(this);
         if (!isDelayData()) {
             hasInitData = true;
@@ -102,7 +100,7 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         View rootView;
         if (isOpenViewState() && loadingLayoutId() > 0 && emptyLayoutId() > 0 && errorLayoutId() > 0) {
             rootView = View.inflate(this, R.layout.qs_activity_state, null);
-            mViewAnimator = ButterKnife.findById(rootView, android.R.id.home);
+            mViewAnimator = (ViewAnimator) rootView.findViewById(android.R.id.home);
             View.inflate(this, loadingLayoutId(), mViewAnimator);
             View.inflate(this, layoutId(), mViewAnimator);
             View.inflate(this, emptyLayoutId(), mViewAnimator);
