@@ -97,7 +97,7 @@ public class ThreadAspect {
     }
 
     /**
-     * 执行原始方法，将异常映射到{@link com.qsmaxmin.qsbase.mvp.presenter.QsPresenter#methodError(Throwable)}
+     * 执行原始方法，将异常映射到{@link com.qsmaxmin.qsbase.mvp.presenter.QsPresenter#methodError(QsException)}
      */
     private void startOriginalMethod(ProceedingJoinPoint joinPoint) {
         try {
