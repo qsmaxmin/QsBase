@@ -45,7 +45,7 @@ public class ThreadAspect {
     @Around("onDefaultPoint()") public Object onDefaultExecutor(final ProceedingJoinPoint joinPoint) throws Throwable {
         QsHelper.getInstance().getThreadHelper().getHttpThreadPoll().execute(new Runnable() {
             @Override public void run() {
-                L.i("ThreadAspect", "execute in http thread...");
+                L.i("ThreadAspect", joinPoint.toShortString() + " in http thread... ");
                 startOriginalMethod(joinPoint);
             }
         });
@@ -58,7 +58,7 @@ public class ThreadAspect {
         } else {
             QsHelper.getInstance().getThreadHelper().getMainThread().execute(new Runnable() {
                 @Override public void run() {
-                    L.i("ThreadAspect", "execute in main thread...");
+                    L.i("ThreadAspect", joinPoint.toShortString() + " in main thread... ");
                     startOriginalMethod(joinPoint);
                 }
             });
@@ -69,7 +69,7 @@ public class ThreadAspect {
     @Around("onHttpPoint()") public Object onHttpExecutor(final ProceedingJoinPoint joinPoint) throws Throwable {
         QsHelper.getInstance().getThreadHelper().getHttpThreadPoll().execute(new Runnable() {
             @Override public void run() {
-                L.i("ThreadAspect", "execute in http thread...");
+                L.i("ThreadAspect", joinPoint.toShortString() + " in http thread... ");
                 startOriginalMethod(joinPoint);
             }
         });
@@ -79,7 +79,7 @@ public class ThreadAspect {
     @Around("onWorkPoint()") public Object onWorkExecutor(final ProceedingJoinPoint joinPoint) throws Throwable {
         QsHelper.getInstance().getThreadHelper().getWorkThreadPoll().execute(new Runnable() {
             @Override public void run() {
-                L.i("ThreadAspect", "execute in work thread...");
+                L.i("ThreadAspect", joinPoint.toShortString() + " in work thread... ");
                 startOriginalMethod(joinPoint);
             }
         });
@@ -89,7 +89,7 @@ public class ThreadAspect {
     @Around("onSingleWorkPoint()") public Object onSingleWorkExecutor(final ProceedingJoinPoint joinPoint) throws Throwable {
         QsHelper.getInstance().getThreadHelper().getSingleThreadPoll().execute(new Runnable() {
             @Override public void run() {
-                L.i("ThreadAspect", "execute in single work thread...");
+                L.i("ThreadAspect", joinPoint.toShortString() + " in single work thread... ");
                 startOriginalMethod(joinPoint);
             }
         });
