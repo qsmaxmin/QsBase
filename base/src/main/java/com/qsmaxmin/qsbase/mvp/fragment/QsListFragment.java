@@ -167,6 +167,9 @@ public abstract class QsListFragment<P extends QsPresenter, D> extends QsFragmen
         return mListAdapter;
     }
 
+    /**
+     * 自带adapter，如果需要重写{@link #onCreateAdapter()}
+     */
     private final class MyAdapter extends BaseAdapter {
 
         @Override public int getCount() {
