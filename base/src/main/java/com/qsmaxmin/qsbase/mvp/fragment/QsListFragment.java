@@ -108,7 +108,7 @@ public abstract class QsListFragment<P extends QsPresenter, D> extends QsFragmen
     }
 
 
-    @Override public void setData(List<D> list) {
+    @ThreadPoint(ThreadType.MAIN) @Override public void setData(List<D> list) {
         synchronized (mList) {
             mList.clear();
             if (list != null && !list.isEmpty()) mList.addAll(list);
@@ -116,7 +116,7 @@ public abstract class QsListFragment<P extends QsPresenter, D> extends QsFragmen
         }
     }
 
-    @Override public void addData(List<D> list) {
+    @ThreadPoint(ThreadType.MAIN) @Override public void addData(List<D> list) {
         if (list != null && !list.isEmpty()) {
             synchronized (mList) {
                 mList.addAll(list);
@@ -125,7 +125,7 @@ public abstract class QsListFragment<P extends QsPresenter, D> extends QsFragmen
         }
     }
 
-    @Override public void delete(int position) {
+    @ThreadPoint(ThreadType.MAIN) @Override public void delete(int position) {
         synchronized (mList) {
             if (position >= 0 && position < mList.size()) {
                 mList.remove(position);
@@ -134,7 +134,7 @@ public abstract class QsListFragment<P extends QsPresenter, D> extends QsFragmen
         }
     }
 
-    @Override public void deleteAll() {
+    @ThreadPoint(ThreadType.MAIN) @Override public void deleteAll() {
         synchronized (mList) {
             mList.clear();
             updateAdapter();
