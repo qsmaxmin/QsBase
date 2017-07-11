@@ -21,14 +21,10 @@ import java.lang.reflect.Method;
 @Aspect
 public class ThreadAspect {
 
-    private static final String POINTCUT_METHOD_DEFAULT     = "execution(@com.qsmaxmin.qsbase.common.aspect.ThreadPoint * *(..))";
     private static final String POINTCUT_METHOD_MAIN        = "execution(@com.qsmaxmin.qsbase.common.aspect.ThreadPoint(com.qsmaxmin.qsbase.common.aspect.ThreadType.MAIN) * *(..))";
     private static final String POINTCUT_METHOD_HTTP        = "execution(@com.qsmaxmin.qsbase.common.aspect.ThreadPoint(com.qsmaxmin.qsbase.common.aspect.ThreadType.HTTP) * *(..))";
     private static final String POINTCUT_METHOD_WORK        = "execution(@com.qsmaxmin.qsbase.common.aspect.ThreadPoint(com.qsmaxmin.qsbase.common.aspect.ThreadType.WORK) * *(..))";
     private static final String POINTCUT_METHOD_SINGLE_WORK = "execution(@com.qsmaxmin.qsbase.common.aspect.ThreadPoint(com.qsmaxmin.qsbase.common.aspect.ThreadType.SINGLE_WORK) * *(..))";
-
-    @Pointcut(value = POINTCUT_METHOD_DEFAULT) public void onDefaultPoint() {
-    }
 
     @Pointcut(value = POINTCUT_METHOD_MAIN) public void onMainPoint() {
     }
@@ -40,16 +36,6 @@ public class ThreadAspect {
     }
 
     @Pointcut(value = POINTCUT_METHOD_SINGLE_WORK) public void onSingleWorkPoint() {
-    }
-
-    @Around("onDefaultPoint()") public Object onDefaultExecutor(final ProceedingJoinPoint joinPoint) throws Throwable {
-        QsHelper.getInstance().getThreadHelper().getHttpThreadPoll().execute(new Runnable() {
-            @Override public void run() {
-                L.i("ThreadAspect", joinPoint.toShortString() + " in http thread... ");
-                startOriginalMethod(joinPoint);
-            }
-        });
-        return null;
     }
 
     @Around("onMainPoint()") public Object onMainExecutor(final ProceedingJoinPoint joinPoint) throws Throwable {

@@ -13,5 +13,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.CLASS)
 @Target(ElementType.METHOD)
 public @interface ThreadPoint {
-    ThreadType value() default ThreadType.HTTP;
+    ThreadType value();
 }
