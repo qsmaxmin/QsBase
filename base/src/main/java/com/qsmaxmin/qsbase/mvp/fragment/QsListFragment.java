@@ -146,8 +146,9 @@ public abstract class QsListFragment<P extends QsPresenter, D> extends QsFragmen
     }
 
 
-    @Override @ThreadPoint(ThreadType.MAIN) public void updateAdapter() {
+    @Override public void updateAdapter() {
         if (mListAdapter != null) {
+            mListAdapter.notifyDataSetChanged();
             if (mViewAnimator != null) {
                 if (mList.isEmpty()) {
                     showEmptyView();
@@ -155,7 +156,6 @@ public abstract class QsListFragment<P extends QsPresenter, D> extends QsFragmen
                     showContentView();
                 }
             }
-            mListAdapter.notifyDataSetChanged();
         }
     }
 

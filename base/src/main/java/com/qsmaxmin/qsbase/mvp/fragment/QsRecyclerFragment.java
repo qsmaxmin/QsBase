@@ -190,8 +190,9 @@ public abstract class QsRecyclerFragment<T extends QsPresenter, D> extends QsFra
         return mList;
     }
 
-    @Override @ThreadPoint(ThreadType.MAIN) public void updateAdapter() {
+    @Override public void updateAdapter() {
         if (mRecyclerViewAdapter != null) {
+            mRecyclerViewAdapter.notifyDataSetChanged();
             if (mViewAnimator != null) {
                 if (mList.isEmpty()) {
                     showEmptyView();
@@ -199,7 +200,6 @@ public abstract class QsRecyclerFragment<T extends QsPresenter, D> extends QsFra
                     showContentView();
                 }
             }
-            mRecyclerViewAdapter.notifyDataSetChanged();
         }
     }
 
