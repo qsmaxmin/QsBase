@@ -3,6 +3,7 @@ package com.qsmaxmin.qsbase.mvp.presenter;
 import android.content.Context;
 
 import com.qsmaxmin.qsbase.common.exception.QsException;
+import com.qsmaxmin.qsbase.common.exception.QsExceptionType;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.mvp.QsIView;
 
@@ -30,6 +31,7 @@ public class QsPresenter<V extends QsIView> {
     }
 
     public V getView() {
+        if (isViewDetach()) throw new QsException(QsExceptionType.CANCEL, "当前View已经销毁" + (mView == null ? "" : "：" + mView.getClass().getSimpleName()));
         return mView;
     }
 
