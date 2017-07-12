@@ -23,7 +23,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by sky on 15/2/6. ListFragment 视图
+ * @CreateBy qsmaxmin
+ * @Date 17/7/2  下午4:29
+ * @Description
  */
 public abstract class QsListFragment<P extends QsPresenter, D> extends QsFragment<P> implements QsIListFragment<D>, AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener, AbsListView.OnScrollListener, InnerScrollerContainer {
 

@@ -18,6 +18,12 @@ import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
 
 import java.util.List;
 
+/**
+ * @CreateBy qsmaxmin
+ * @Date 17/7/4  下午3:13
+ * @Description
+ */
+
 public abstract class QsPullListFragment<T extends QsPresenter, D> extends QsListFragment<T, D> implements QsIPullListFragment<D> {
 
     private PtrFrameLayout mPtrFrameLayout;

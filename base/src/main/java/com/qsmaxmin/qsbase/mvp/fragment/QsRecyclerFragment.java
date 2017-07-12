@@ -25,7 +25,7 @@ import java.util.List;
 
 /**
  * @CreateBy qsmaxmin
- * @Date 16/8/5
+ * @Date 17/7/1
  * @Description RecyclerView视图
  */
 public abstract class QsRecyclerFragment<T extends QsPresenter, D> extends QsFragment<T> implements QsIRecyclerFragment<D>, AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
