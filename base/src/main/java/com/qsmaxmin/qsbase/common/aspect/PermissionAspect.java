@@ -27,7 +27,7 @@ public class PermissionAspect {
     }
 
     /**
-     * 在子线程中请求权限
+     * 申请权限
      */
     private void startRequestPermission(final ProceedingJoinPoint joinPoint, Permission permission) {
         String[] values = permission.value();
