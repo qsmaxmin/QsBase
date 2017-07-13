@@ -8,7 +8,9 @@ import java.util.Stack;
 
 
 /**
- * Created by sky on 15/1/26. fragmentactivity管理器
+ * @CreateBy qsmaxmin
+ * @Date 2017/6/20 16:49
+ * @Description 屏幕管理帮助类
  */
 public final class ScreenHelper {
 
