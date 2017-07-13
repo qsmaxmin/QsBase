@@ -11,6 +11,7 @@ android {
         targetSdkVersion 25
         versionCode 100
         versionName "1.0.0"
+        multiDexEnabled true
     }
 
     buildTypes {
@@ -24,6 +25,10 @@ android {
     lintOptions {
         quiet true
         abortOnError false
+    }
+
+    dexOptions {
+        javaMaxHeapSize "4g"//防止编译的时候oom、GC
     }
 }
 
@@ -52,8 +57,12 @@ dependencies {
     compile 'org.greenrobot:eventbus:3.0.0'
     /*AspectJ*/
     compile 'org.aspectj:aspectjrt:1.8.10'
+    /*okHttp*/
     compile 'com.squareup.okhttp3:okhttp:3.8.1'
+    /*gson*/
     compile 'com.google.code.gson:gson:2.8.1'
+    /*64K*/
+    compile 'com.android.support:multidex:1.0.1'
 }
 
 uploadArchives {
