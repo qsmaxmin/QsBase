@@ -3,7 +3,6 @@ package com.qsmaxmin.qsbase;
 import android.app.Application;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.support.multidex.MultiDex;
 
 import com.qsmaxmin.qsbase.common.http.HttpAdapter;
 import com.qsmaxmin.qsbase.common.log.L;
@@ -16,11 +15,6 @@ import com.qsmaxmin.qsbase.common.utils.QsHelper;
  */
 
 public abstract class QsApplication extends Application {
-
-    @Override protected void attachBaseContext(Context base) {
-        super.attachBaseContext(base);
-        MultiDex.install(this);
-    }
 
     @Override public void onCreate() {
         super.onCreate();
