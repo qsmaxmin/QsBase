@@ -9,7 +9,6 @@ import android.widget.LinearLayout;
 import com.qsmaxmin.qsbase.R;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.HeaderViewPager;
-import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.base.MagicHeaderViewPager;
 import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.help.MagicHeaderUtils;
 import com.qsmaxmin.qsbase.mvp.model.QsModelPager;
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
@@ -29,7 +28,7 @@ public abstract class QsHeaderViewpagerFragment<T extends QsPresenter> extends Q
     }
 
     @Override protected void initTabAndPager(View view) {
-        if (view instanceof MagicHeaderViewPager) {
+        if (view instanceof HeaderViewPager) {
             headerViewPager = (HeaderViewPager) view;
         } else {
             headerViewPager = (HeaderViewPager) view.findViewById(R.id.pager);

@@ -7,6 +7,8 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.widget.LinearLayout;
 
+import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.HeaderViewPager;
+
 /**
  * @CreateBy QS
  * @Date 16/11/20  下午7:21
@@ -15,7 +17,7 @@ import android.widget.LinearLayout;
 public class TranslatableLinearLayout extends LinearLayout {
 
     public static final String TAG = "TranslatableLinearLayout";
-    private MagicHeaderViewPager mMagicHeaderViewPager;
+    private HeaderViewPager mHeaderViewPager;
 
     public TranslatableLinearLayout(Context context) {
         super(context);
@@ -36,12 +38,12 @@ public class TranslatableLinearLayout extends LinearLayout {
 
     private void initView() {
         if (getParent() != null) {
-            mMagicHeaderViewPager = (MagicHeaderViewPager) getParent();
+            mHeaderViewPager = (HeaderViewPager) getParent();
         }
     }
 
     @Override protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        if (mMagicHeaderViewPager != null && mMagicHeaderViewPager.isHeaderTallerThanScreen()) {
+        if (mHeaderViewPager != null && mHeaderViewPager.isHeaderTallerThanScreen()) {
             heightMeasureSpec = MeasureSpec.UNSPECIFIED;
         }
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
@@ -58,7 +60,7 @@ public class TranslatableLinearLayout extends LinearLayout {
         int visualBottom = getVisualBottom();
         switch (ev.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                if (ev.getY() < visualBottom && !mMagicHeaderViewPager.intercept2InnerScroller) {
+                if (ev.getY() < visualBottom && !mHeaderViewPager.intercept2InnerScroller) {
                     mProcessTouchEvent = true;
                     return super.dispatchTouchEvent(ev);
                 } else {
@@ -67,7 +69,7 @@ public class TranslatableLinearLayout extends LinearLayout {
                 }
             case MotionEvent.ACTION_MOVE:
                 if (mProcessTouchEvent) {
-                    if (!mMagicHeaderViewPager.intercept2InnerScroller) {
+                    if (!mHeaderViewPager.intercept2InnerScroller) {
                         return super.dispatchTouchEvent(ev);
                     } else {
                         mProcessTouchEvent = false;
@@ -77,7 +79,7 @@ public class TranslatableLinearLayout extends LinearLayout {
                     return false;
                 }
             case MotionEvent.ACTION_UP:
-                return mProcessTouchEvent && !mMagicHeaderViewPager.intercept2InnerScroller && super.dispatchTouchEvent(ev);
+                return mProcessTouchEvent && !mHeaderViewPager.intercept2InnerScroller && super.dispatchTouchEvent(ev);
             case MotionEvent.ACTION_CANCEL:
                 if (mProcessTouchEvent) {
                     mProcessTouchEvent = false;
