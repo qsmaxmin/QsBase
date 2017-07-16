@@ -32,6 +32,11 @@ public abstract class QsHeaderViewpagerFragment<T extends QsPresenter> extends Q
         }
         pager = headerViewPager.getViewPager();
         tabs = headerViewPager.getPagerSlidingTabStrip();
+        if (getHeaderLayout() > 0) {
+            View header = View.inflate(getContext(), getHeaderLayout(), null);
+            headerViewPager.addHeaderView(header);
+            QsHelper.getInstance().getViewBindHelper().bind(this,header);
+        }
         initTabsValue(tabs);
         initViewPager(getModelPagers(), 3);
     }
@@ -42,12 +47,6 @@ public abstract class QsHeaderViewpagerFragment<T extends QsPresenter> extends Q
             adapter.setModelPagers(modelPagers);
             pager.setPageMargin((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4, getResources().getDisplayMetrics()));
             pager.setOffscreenPageLimit(offScreenPageLimit);
-            if (getHeaderLayout() > 0) {
-                View header = View.inflate(getContext(), getHeaderLayout(), null);
-                headerViewPager.addHeaderView(header);
-//                ButterKnife.bind(this, header);
-                QsHelper.getInstance().getViewBindHelper().bind(this,header);
-            }
             headerViewPager.setPagerAdapter(adapter);
         }
     }
