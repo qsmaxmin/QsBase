@@ -14,4 +14,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface Permission {
     String[] value() default {};
+
+    boolean needCallback() default false;
 }

@@ -29,7 +29,8 @@ public class PermissionAspect {
     /**
      * 申请权限
      */
-    private void startRequestPermission(final ProceedingJoinPoint joinPoint, Permission permission) {
+    private void startRequestPermission(final ProceedingJoinPoint joinPoint, final Permission permission) {
+        if (permission == null) return;
         String[] values = permission.value();
         if (values.length < 1) {
             return;
@@ -50,6 +51,17 @@ public class PermissionAspect {
                                     joinPoint.proceed();
                                 } catch (Throwable throwable) {
                                     throwable.printStackTrace();
+                                }
+                            }
+                            if (permission.needCallback()) {
+                                Object[] args = joinPoint.getArgs();
+                                if (args != null) {
+                                    for (Object object : args) {
+                                        if (object instanceof PermissionBuilder.PermissionListener) {
+                                            ((PermissionBuilder.PermissionListener) object).onPermissionCallback(requestCode, isGrantedAll);
+                                            break;
+                                        }
+                                    }
                                 }
                             }
                         }
