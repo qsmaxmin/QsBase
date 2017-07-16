@@ -9,7 +9,6 @@ import android.widget.LinearLayout;
 import com.qsmaxmin.qsbase.R;
 import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.base.MagicHeaderViewPager;
 import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.help.MagicHeaderUtils;
-import com.qsmaxmin.qsbase.common.widget.viewpager.PagerSlidingTabStrip;
 
 /**
  * @CreateBy QS
@@ -30,11 +29,6 @@ public class HeaderViewPager extends MagicHeaderViewPager {
     }
 
     @Override protected void initTabs(LinearLayout linearLayout) {
-        ViewGroup viewGroup = (ViewGroup) LayoutInflater.from(getContext()).inflate(R.layout.qs_layout_tabs, null);
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, MagicHeaderUtils.dp2px(getContext(), 48));
-        linearLayout.addView(viewGroup, lp);
-        PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) viewGroup.findViewById(R.id.tabs);
-        setTabsLayout(viewGroup);
-        setPagerSlidingTabStrip(tabs);
+
     }
 }

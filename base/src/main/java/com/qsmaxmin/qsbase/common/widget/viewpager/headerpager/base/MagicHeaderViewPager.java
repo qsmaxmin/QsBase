@@ -52,17 +52,16 @@ public abstract class MagicHeaderViewPager extends FrameLayout implements OuterS
 
     public MagicHeaderViewPager(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        initView();
     }
 
-    protected void setTabsLayout(ViewGroup tabsViewGroup) {
+    public void setTabsLayout(ViewGroup tabsViewGroup) {
         this.mTabsViewGroup = tabsViewGroup;
+        if (tabsViewGroup instanceof PagerSlidingTabStrip) {
+            mPagerSlidingTabStrip = (PagerSlidingTabStrip) tabsViewGroup;
+        } else {
+            mPagerSlidingTabStrip = (PagerSlidingTabStrip) tabsViewGroup.findViewById(R.id.tabs);
+        }
     }
-
-    protected void setPagerSlidingTabStrip(PagerSlidingTabStrip pagerSlidingTabStrip) {
-        mPagerSlidingTabStrip = pagerSlidingTabStrip;
-    }
-
 
     /**
      * Get Inner ViewPager. Unless special settings, get it as least as possible.
@@ -72,13 +71,17 @@ public abstract class MagicHeaderViewPager extends FrameLayout implements OuterS
         return mViewPager;
     }
 
-    protected void initView() {
+    public void initView() {
         LayoutInflater.from(getContext()).inflate(R.layout.qs_layout_header_viewpager, this, true);
         setClipChildren(false);
         checkForbiddenMultiTouch();
         mHeader = (TranslatableLinearLayout) findViewById(R.id.mhvp_header);
+        if (mTabsViewGroup != null) {
+            mHeader.addView(mTabsViewGroup);
+        } else {
+            throw new RuntimeException("there is not have PagerSlidingTabStrip with id=R.id.tabs");
+        }
         mCustomHeaders = (SizeSensitiveLinearLayout) findViewById(R.id.mhvp_headerCustom);
-        initTabs(mHeader);
         initStableAreaHeight();
         mViewPager = (QsViewPager) findViewById(R.id.mhvp_pager);
         mViewPager.setOffscreenPageLimit(3);
@@ -188,7 +191,6 @@ public abstract class MagicHeaderViewPager extends FrameLayout implements OuterS
 
     /**
      * Obtain PagerSlidingTabStrip. You may get and customize it.
-     *
      * @return
      */
     public PagerSlidingTabStrip getPagerSlidingTabStrip() {
@@ -360,7 +362,6 @@ public abstract class MagicHeaderViewPager extends FrameLayout implements OuterS
 
     /**
      * AddHeaderView with customized height in Pixel
-     *
      * @param height in Pixel
      */
     public final void addHeaderView(View view, int height) {

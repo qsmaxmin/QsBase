@@ -1,12 +1,16 @@
 package com.qsmaxmin.qsbase.mvp.fragment;
 
 import android.util.TypedValue;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import com.qsmaxmin.qsbase.R;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.HeaderViewPager;
 import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.base.MagicHeaderViewPager;
+import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.help.MagicHeaderUtils;
 import com.qsmaxmin.qsbase.mvp.model.QsModelPager;
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
 
@@ -30,15 +34,26 @@ public abstract class QsHeaderViewpagerFragment<T extends QsPresenter> extends Q
         } else {
             headerViewPager = (HeaderViewPager) view.findViewById(R.id.pager);
         }
-        pager = headerViewPager.getViewPager();
-        tabs = headerViewPager.getPagerSlidingTabStrip();
+        ViewGroup tabView = createTabView();
+        if (tabView == null) throw new RuntimeException("tabView should not be null!!");
+        headerViewPager.setTabsLayout(tabView);
+        headerViewPager.initView();
         if (getHeaderLayout() > 0) {
             View header = View.inflate(getContext(), getHeaderLayout(), null);
             headerViewPager.addHeaderView(header);
-            QsHelper.getInstance().getViewBindHelper().bind(this,header);
+            QsHelper.getInstance().getViewBindHelper().bind(this, header);
         }
+        pager = headerViewPager.getViewPager();
+        tabs = headerViewPager.getPagerSlidingTabStrip();
         initTabsValue(tabs);
         initViewPager(getModelPagers(), 3);
+    }
+
+    @Override public ViewGroup createTabView() {
+        ViewGroup viewGroup = (ViewGroup) LayoutInflater.from(getContext()).inflate(R.layout.qs_layout_tabs, null);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, MagicHeaderUtils.dp2px(getContext(), 48));
+        viewGroup.setLayoutParams(lp);
+        return viewGroup;
     }
 
     @Override public void initViewPager(QsModelPager[] modelPagers, int offScreenPageLimit) {

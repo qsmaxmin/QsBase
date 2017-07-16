@@ -1,5 +1,7 @@
 package com.qsmaxmin.qsbase.mvp.fragment;
 
+import android.view.ViewGroup;
+
 /**
  * @CreateBy qsmaxmin
  * @Date 2017/7/4 11:08
@@ -8,4 +10,6 @@ package com.qsmaxmin.qsbase.mvp.fragment;
 
 public interface QsIHeaderViewPagerFragment extends QsIViewPagerFragment {
     int getHeaderLayout();
+
+    ViewGroup createTabView();
 }
