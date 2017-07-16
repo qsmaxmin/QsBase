@@ -15,5 +15,5 @@ import java.lang.annotation.Target;
 public @interface Permission {
     String[] value() default {};
 
-    boolean needCallback() default false;
+    boolean forceGoOn() default false;
 }

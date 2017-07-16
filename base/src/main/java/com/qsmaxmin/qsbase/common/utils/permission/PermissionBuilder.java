@@ -16,9 +16,9 @@ public class PermissionBuilder {
     private List<String> wantPermissionArr   = new ArrayList<>();
     private boolean      mIsShowCustomDialog = true;
 
-    private int                mRequestCode;
-    private PermissionListener mListener;
-    private Activity           mActivity;
+    private int                        mRequestCode;
+    private PermissionCallbackListener mListener;
+    private Activity                   mActivity;
 
     public List<String> getWantPermissionArr() {
         return wantPermissionArr;
@@ -38,11 +38,11 @@ public class PermissionBuilder {
         return this;
     }
 
-    public PermissionListener getListener() {
+    public PermissionCallbackListener getListener() {
         return mListener;
     }
 
-    public PermissionBuilder setListener(PermissionListener listener) {
+    public PermissionBuilder setListener(PermissionCallbackListener listener) {
         this.mListener = listener;
         return this;
     }
@@ -71,17 +71,6 @@ public class PermissionBuilder {
         PermissionUtils.getInstance().startRequestPermission(this);
     }
 
-    /**
-     * 权限回调接口
-     */
-    public interface PermissionListener {
-        /**
-         * 申请权限的回调
-         *
-         * @param isGrantedAll 是否全部同意
-         */
-        void onPermissionCallback(int requestCode, boolean isGrantedAll);
-    }
 
     @Override public String toString() {
         return "PermissionBuilder{" + "wantPermissionArr=" + wantPermissionArr + ", mIsShowCustomDialog=" + mIsShowCustomDialog + ", mRequestCode=" + mRequestCode + '}';

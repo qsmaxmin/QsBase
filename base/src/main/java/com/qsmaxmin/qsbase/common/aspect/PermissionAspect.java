@@ -2,8 +2,10 @@ package com.qsmaxmin.qsbase.common.aspect;
 
 import android.support.v4.app.FragmentActivity;
 
+import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.common.utils.permission.PermissionBuilder;
+import com.qsmaxmin.qsbase.common.utils.permission.PermissionCallbackListener;
 import com.qsmaxmin.qsbase.common.utils.permission.PermissionUtils;
 
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -44,25 +46,16 @@ public class PermissionAspect {
             }
             builder.setActivity(activity)//
                     .setShowCustomDialog(true)//
-                    .setListener(new PermissionBuilder.PermissionListener() {
+                    .setListener(new PermissionCallbackListener() {
                         @Override public void onPermissionCallback(int requestCode, boolean isGrantedAll) {
-                            if (isGrantedAll) {
+                            if (permission.forceGoOn() || isGrantedAll) {
                                 try {
                                     joinPoint.proceed();
                                 } catch (Throwable throwable) {
                                     throwable.printStackTrace();
                                 }
-                            }
-                            if (permission.needCallback()) {
-                                Object[] args = joinPoint.getArgs();
-                                if (args != null) {
-                                    for (Object object : args) {
-                                        if (object instanceof PermissionBuilder.PermissionListener) {
-                                            ((PermissionBuilder.PermissionListener) object).onPermissionCallback(requestCode, isGrantedAll);
-                                            break;
-                                        }
-                                    }
-                                }
+                            }else{
+                                L.e("PermissionAspect","current permission is not allow, you can set @Permission(forceGoOn = true), it will run the method whether permission is granted!!");
                             }
                         }
                     });
