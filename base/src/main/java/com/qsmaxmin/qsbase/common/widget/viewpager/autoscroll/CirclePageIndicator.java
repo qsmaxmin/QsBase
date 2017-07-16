@@ -45,7 +45,7 @@ import static android.graphics.Paint.ANTI_ALIAS_FLAG;
 public class CirclePageIndicator extends View implements PageIndicator {
 
     private final Paint                mPaintUnSelectedFill = new Paint(ANTI_ALIAS_FLAG);
-    private final Paint                mPaintStroke         = new Paint(ANTI_ALIAS_FLAG);
+    private final Paint                mPaintOutside        = new Paint(ANTI_ALIAS_FLAG);
     private final Paint                mPaintSelectedFill   = new Paint(ANTI_ALIAS_FLAG);
     private       ArrayList<Indicator> indicators           = new ArrayList<>();
     private ViewPager.OnPageChangeListener mListener;
@@ -59,6 +59,7 @@ public class CirclePageIndicator extends View implements PageIndicator {
     private int                            mScrollState;
     private boolean                        mCentered;
     private float                          strokeWidth;
+    private float                          outsideSize;
     private Path                           path;
     private float                          longOffset;
     private float                          centerY;
@@ -79,7 +80,7 @@ public class CirclePageIndicator extends View implements PageIndicator {
         final Resources res = getResources();
         final int defaultPageColor = res.getColor(android.R.color.white);
         final int defaultFillColor = res.getColor(R.color.colorAccent);
-        final int defaultStrokeColor = res.getColor(android.R.color.darker_gray);
+        final int defaultOutsideColor = res.getColor(android.R.color.darker_gray);
         final float defaultRadius = res.getDisplayMetrics().density * 3;
         final boolean defaultCentered = true;
 
@@ -92,9 +93,10 @@ public class CirclePageIndicator extends View implements PageIndicator {
         mPaintUnSelectedFill.setColor(a.getColor(R.styleable.CirclePageIndicator_cpi_UnSelectedColor, defaultPageColor));
         mPaintUnSelectedFill.setStrokeWidth(strokeWidth);
 
-        mPaintStroke.setStyle(Style.STROKE);
-        mPaintStroke.setColor(a.getColor(R.styleable.CirclePageIndicator_cpi_StrokeColor, defaultStrokeColor));
-        mPaintStroke.setStrokeWidth(strokeWidth);
+        mPaintOutside.setStyle(Style.STROKE);
+        mPaintOutside.setColor(a.getColor(R.styleable.CirclePageIndicator_cpi_OutsideColor, defaultOutsideColor));
+        outsideSize = a.getDimension(R.styleable.CirclePageIndicator_cpi_OutsideSize, 1);
+        mPaintOutside.setStrokeWidth(outsideSize);
 
         mPaintSelectedFill.setStyle(strokeWidth == 0 ? Style.FILL : Style.STROKE);
         mPaintSelectedFill.setColor(a.getColor(R.styleable.CirclePageIndicator_cpi_SelectedColor, defaultFillColor));
@@ -139,23 +141,23 @@ public class CirclePageIndicator extends View implements PageIndicator {
     }
 
 
-    public void setStrokeColor(int strokeColor) {
-        mPaintStroke.setColor(strokeColor);
+    public void setOutsideColor(int outsideColor) {
+        mPaintOutside.setColor(outsideColor);
         invalidate();
     }
 
-    public int getStrokeColor() {
-        return mPaintStroke.getColor();
+    public int getOutsideColor() {
+        return mPaintOutside.getColor();
     }
 
-    public void setStrokeWidth(float strokeWidth) {
-        this.strokeWidth = strokeWidth;
-        mPaintStroke.setStrokeWidth(strokeWidth);
+    public void setOutsideWidth(float outsideWidth) {
+        this.outsideSize = outsideWidth;
+        mPaintOutside.setStrokeWidth(outsideWidth);
         invalidate();
     }
 
     public float getStrokeWidth() {
-        return mPaintStroke.getStrokeWidth();
+        return mPaintOutside.getStrokeWidth();
     }
 
     public void setRadius(float radius) {
@@ -261,13 +263,13 @@ public class CirclePageIndicator extends View implements PageIndicator {
 
             if (rightX != leftX) {
                 canvas.drawRoundRect(getRectF(leftX - mRadius, centerY - mRadius, rightX + mRadius, centerY + mRadius), mRadius, mRadius, mPaintSelectedFill);
-                if (strokeWidth > 0) {
-                    canvas.drawRoundRect(getRectF(leftX - mRadius + strokeWidth / 2, centerY - mRadius + strokeWidth / 2, rightX + mRadius - strokeWidth / 2, centerY + mRadius - strokeWidth / 2), mRadius, mRadius, mPaintStroke);
+                if (outsideSize > 0) {
+                    canvas.drawRoundRect(getRectF(leftX - mRadius + strokeWidth / 2, centerY - mRadius + strokeWidth / 2, rightX + mRadius - strokeWidth / 2, centerY + mRadius - strokeWidth / 2), mRadius, mRadius, mPaintOutside);
                 }
             } else {
                 canvas.drawCircle(leftX, centerY, mRadius, mPaintSelectedFill);
-                if (strokeWidth > 0) {
-                    canvas.drawCircle(leftX, centerY, mRadius - strokeWidth / 2, mPaintStroke);
+                if (outsideSize > 0) {
+                    canvas.drawCircle(leftX, centerY, mRadius - strokeWidth / 2, mPaintOutside);
                 }
             }
         }
@@ -291,8 +293,8 @@ public class CirclePageIndicator extends View implements PageIndicator {
         for (int iLoop = 0; iLoop < count; iLoop++) {
             float dX = longOffset + (iLoop * centerMargin);
             canvas.drawCircle(dX, centerY, strokeWidth > 0 ? mRadius - strokeWidth / 2 : mRadius, mPaintUnSelectedFill);
-            if (strokeWidth > 0) {
-                canvas.drawCircle(dX, centerY, mRadius - strokeWidth / 2, mPaintStroke);
+            if (outsideSize > 0) {
+                canvas.drawCircle(dX, centerY, mRadius - strokeWidth / 2, mPaintOutside);
             }
         }
     }
@@ -306,8 +308,8 @@ public class CirclePageIndicator extends View implements PageIndicator {
             fillDrawable.draw(canvas);
         } else {
             canvas.drawCircle(dX, centerY, strokeWidth > 0 ? mRadius - strokeWidth / 2 : mRadius, mPaintSelectedFill);
-            if (strokeWidth > 0) {
-                canvas.drawCircle(dX, centerY, mRadius - strokeWidth / 2, mPaintStroke);
+            if (outsideSize > 0) {
+                canvas.drawCircle(dX, centerY, mRadius - strokeWidth / 2, mPaintOutside);
             }
         }
     }
@@ -330,8 +332,8 @@ public class CirclePageIndicator extends View implements PageIndicator {
             float left = dX - (selectedWidth / 2) - mRadius;
             float right = dX + (selectedWidth / 2) + mRadius;
             canvas.drawRoundRect(getRectF(left, centerY - mRadius, right, centerY + mRadius), mRadius, mRadius, mPaintSelectedFill);
-            if (strokeWidth > 0) {
-                canvas.drawRoundRect(getRectF(left + strokeWidth / 2, centerY - mRadius + strokeWidth / 2, right - strokeWidth / 2, centerY + mRadius - strokeWidth / 2), mRadius, mRadius, mPaintStroke);
+            if (outsideSize > 0) {
+                canvas.drawRoundRect(getRectF(left + strokeWidth / 2, centerY - mRadius + strokeWidth / 2, right - strokeWidth / 2, centerY + mRadius - strokeWidth / 2), mRadius, mRadius, mPaintOutside);
             }
         }
     }
@@ -412,7 +414,6 @@ public class CirclePageIndicator extends View implements PageIndicator {
 
     /**
      * Determines the width of this view
-     *
      * @param measureSpec A measureSpec packed into an int
      * @return The width of the view, honoring constraints from measureSpec
      */
@@ -439,7 +440,6 @@ public class CirclePageIndicator extends View implements PageIndicator {
 
     /**
      * Determines the height of this view
-     *
      * @param measureSpec A measureSpec packed into an int
      * @return The height of the view, honoring constraints from measureSpec
      */

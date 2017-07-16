@@ -45,7 +45,8 @@
             <enum name="scale" value="3"/>
         </attr>
         <attr name="cpi_IsSnap" format="boolean"/>
-        <attr name="cpi_StrokeColor" format="color"/>
+        <attr name="cpi_OutsideColor" format="color"/>
+        <attr name="cpi_OutsideSize" format="dimension"/>
         <attr name="android:orientation"/>
         <attr name="android:background"/>
     </declare-styleable>
