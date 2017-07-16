@@ -52,7 +52,9 @@ dependencies {
     compile 'org.greenrobot:eventbus:3.0.0'
     /*AspectJ*/
     compile 'org.aspectj:aspectjrt:1.8.10'
+    /*okHttp*/
     compile 'com.squareup.okhttp3:okhttp:3.8.1'
+    /*gson*/
     compile 'com.google.code.gson:gson:2.8.1'
 }
 

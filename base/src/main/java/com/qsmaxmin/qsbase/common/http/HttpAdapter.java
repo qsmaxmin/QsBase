@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import com.qsmaxmin.qsbase.common.aspect.Body;
 import com.qsmaxmin.qsbase.common.aspect.GET;
 import com.qsmaxmin.qsbase.common.aspect.POST;
+import com.qsmaxmin.qsbase.common.aspect.PUT;
 import com.qsmaxmin.qsbase.common.aspect.Query;
 import com.qsmaxmin.qsbase.common.exception.QsException;
 import com.qsmaxmin.qsbase.common.exception.QsExceptionType;
@@ -123,20 +124,25 @@ public class HttpAdapter {
     }
 
     public Object startRequest(Method method, Object[] args) {
-        POST post = method.getAnnotation(POST.class);
-        if (post != null) {
-            String path = post.value();
-            return executePost(method, args, path);
+        Annotation[] annotations = method.getAnnotations();
+        if (annotations.length != 1) {
+            throw new QsException(QsExceptionType.UNEXPECTED, "the method:" + method.getName() + " must have one annotation!! @GET @POST or @PUT");
+        }
+        Annotation annotation = annotations[0];
+        if (annotation instanceof POST) {
+            String path = ((POST) annotation).value();
+            return executeWithBody(method, args, path, "POST");
+        } else if (annotation instanceof GET) {
+            String path = ((GET) annotation).value();
+            return executeGet(method, args, path);
+        } else if (annotation instanceof PUT) {
+            String path = ((PUT) annotation).value();
+            return executeWithBody(method, args, path, "PUT");
         } else {
-            GET get = method.getAnnotation(GET.class);
-            if (get != null) {
-                String path = get.value();
-                return executeGet(method, args, path);
-            } else {
-                throw new QsException(QsExceptionType.UNEXPECTED, "create(interface) the interface must has an annotation:@POST or @GET");
-            }
+            throw new QsException(QsExceptionType.UNEXPECTED, "create(interface) the interface must has an annotation:@PUT @POST or @GET");
         }
     }
+
 
     private Object executeGet(Method method, Object[] args, String path) {
         StringBuilder url = getUrl(method, path);
@@ -174,7 +180,7 @@ public class HttpAdapter {
         return null;
     }
 
-    private Object executePost(Method method, Object[] args, String path) {
+    private Object executeWithBody(Method method, Object[] args, String path, String type) {
         StringBuilder url = getUrl(method, path);
         if (TextUtils.isEmpty(url)) {
             throw new QsException(QsExceptionType.UNEXPECTED, "request url is null...");
@@ -210,7 +216,7 @@ public class HttpAdapter {
         }
         Request.Builder requestBuilder = new Request.Builder();
         requestBuilder.headers(headerBuilder.build());
-        Request request = requestBuilder.tag(url.toString()).url(url.toString()).method("POST", requestBody).build();
+        Request request = requestBuilder.tag(url.toString()).url(url.toString()).method(type, requestBody).build();
         try {
             Call call = client.newCall(request);
             Response response = call.execute();

@@ -22,7 +22,7 @@ public abstract class QsApplication extends Application {
         QsHelper.getInstance().init(this);
     }
 
-    protected abstract boolean isLogOpen();
+    public abstract boolean isLogOpen();
 
     public abstract void initHttpAdapter(HttpAdapter httpAdapter);
 
