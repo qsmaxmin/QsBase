@@ -51,6 +51,13 @@ public class HttpAdapter {
         QsHelper.getInstance().getApplication().initHttpAdapter(this);
     }
 
+    public OkHttpClient getHttpClient() {
+        if (client == null) {
+            initDefaults();
+        }
+        return client;
+    }
+
     /**
      * 获取默认值
      */
