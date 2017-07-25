@@ -13,7 +13,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -137,6 +136,9 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
     }
 
     protected boolean isStatusBarLowVersionDarkIcon() {
+        if ("meizu".equals(Build.MANUFACTURER.toLowerCase())) {
+            return true;
+        }
         return Build.VERSION.SDK_INT < Build.VERSION_CODES.M && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
     }
 
@@ -164,9 +166,7 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
     }
 
     private void setStatusBarIconDarkColor(boolean dark) {
-        String manufacturer = Build.MANUFACTURER;
-        if (TextUtils.isEmpty(manufacturer)) return;
-        switch (manufacturer.toLowerCase()) {
+        switch (Build.MANUFACTURER.toLowerCase()) {
             case "xiaomi":
                 try {
                     Class<? extends Window> clazz = getWindow().getClass();

@@ -7,8 +7,19 @@ package com.qsmaxmin.qsbase.mvp.model;
  */
 
 public class QsConstants {
-    public static final int VIEW_STATE_LOADING = 0;
-    public static final int VIEW_STATE_CONTENT = 1;
-    public static final int VIEW_STATE_EMPTY   = 2;
-    public static final int VIEW_STATE_ERROR   = 3;
+    private QsConstants() {
+    }
+
+    /**
+     * 请求token的http线程锁
+     */
+    public static final Object HTTP_THREAD_LOCKER = new Object();
+    /**
+     * View状态布局
+     */
+    public static final int    VIEW_STATE_LOADING = 0;
+    public static final int    VIEW_STATE_CONTENT = 1;
+    public static final int    VIEW_STATE_EMPTY   = 2;
+    public static final int    VIEW_STATE_ERROR   = 3;
+
 }
