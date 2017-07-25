@@ -21,6 +21,8 @@ import android.view.WindowManager;
 import android.widget.ViewAnimator;
 
 import com.qsmaxmin.qsbase.R;
+import com.qsmaxmin.qsbase.common.aspect.ThreadPoint;
+import com.qsmaxmin.qsbase.common.aspect.ThreadType;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.utils.PresenterUtils;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
@@ -270,14 +272,14 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
         loading(message, true);
     }
 
-    @Override public void loading(String message, boolean cancelAble) {
+    @ThreadPoint(ThreadType.MAIN) @Override public void loading(String message, boolean cancelAble) {
         if (mProgressDialog == null) mProgressDialog = QsHelper.getInstance().getApplication().getCommonProgressDialog(getContext());
         mProgressDialog.setMessage(message);
         mProgressDialog.setCancelable(cancelAble);
         mProgressDialog.show();
     }
 
-    @Override public void loadingClose() {
+    @ThreadPoint(ThreadType.MAIN) @Override public void loadingClose() {
         if (mProgressDialog != null && mProgressDialog.isShowing()) mProgressDialog.cancel();
     }
 
@@ -341,7 +343,7 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
         commitFragment(layoutId, fragment, fragment.getClass().getSimpleName());
     }
 
-    @Override public void commitFragment(int layoutId, Fragment fragment, String tag) {
+    @ThreadPoint(ThreadType.MAIN) @Override public void commitFragment(int layoutId, Fragment fragment, String tag) {
         if (fragment != null && fragment.isAdded()) {
             return;
         }
@@ -361,7 +363,7 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
         commitFragment(old, layoutId, fragment, fragment.getClass().getSimpleName());
     }
 
-    @Override public void commitFragment(Fragment old, int layoutId, Fragment fragment, String tag) {
+    @ThreadPoint(ThreadType.MAIN) @Override public void commitFragment(Fragment old, int layoutId, Fragment fragment, String tag) {
         if (layoutId == 0) return;
         if (fragment != null && fragment.isAdded()) return;
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
@@ -374,7 +376,7 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
         commitBackStackFragment(fragment, fragment.getClass().getSimpleName());
     }
 
-    @Override public void commitBackStackFragment(Fragment fragment, String tag) {
+    @ThreadPoint(ThreadType.MAIN) @Override public void commitBackStackFragment(Fragment fragment, String tag) {
         if (fragment != null && fragment.isAdded()) return;
         getSupportFragmentManager().beginTransaction().add(android.R.id.custom, fragment, tag).addToBackStack(null).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN).commitAllowingStateLoss();
         if (!isOpenViewState()) getSupportFragmentManager().executePendingTransactions();
@@ -385,7 +387,7 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
 
     }
 
-    @Override public void commitBackStackFragment(int layoutId, Fragment fragment, String tag) {
+    @ThreadPoint(ThreadType.MAIN) @Override public void commitBackStackFragment(int layoutId, Fragment fragment, String tag) {
         if (layoutId == 0) return;
         if (fragment != null && fragment.isAdded()) return;
         getSupportFragmentManager().beginTransaction().add(layoutId, fragment, tag).addToBackStack(null).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN).commitAllowingStateLoss();
@@ -396,7 +398,7 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
         PermissionUtils.getInstance().parsePermissionResultData(requestCode, permissions, grantResults, this);
     }
 
-    private void setViewState(int showState) {
+    @ThreadPoint(ThreadType.MAIN) private void setViewState(int showState) {
         L.i(initTag(), "setViewState() showState=" + showState);
         if (!isOpenViewState()) {
             L.i(initTag(), "当前activity没有打开状态模式! isOpenViewState() = false");
