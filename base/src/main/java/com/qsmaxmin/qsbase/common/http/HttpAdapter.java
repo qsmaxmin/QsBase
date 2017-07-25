@@ -11,8 +11,10 @@ import com.qsmaxmin.qsbase.common.aspect.Query;
 import com.qsmaxmin.qsbase.common.exception.QsException;
 import com.qsmaxmin.qsbase.common.exception.QsExceptionType;
 import com.qsmaxmin.qsbase.common.log.L;
+import com.qsmaxmin.qsbase.common.model.QsModel;
 import com.qsmaxmin.qsbase.common.proxy.HttpHandler;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
+import com.qsmaxmin.qsbase.mvp.model.QsConstants;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -23,7 +25,6 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
-import okhttp3.Headers;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -39,16 +40,12 @@ import okhttp3.ResponseBody;
 public class HttpAdapter {
     private static final String TAG     = "HttpAdapter";
     private final static int    timeOut = 30;
-
-    private String          terminal;
-    private GsonConverter   converter;
-    private OkHttpClient    client;
-    private Headers.Builder headerBuilder;
+    private GsonConverter converter;
+    private OkHttpClient  client;
 
 
     public HttpAdapter() {
         initDefaults();
-        QsHelper.getInstance().getApplication().initHttpAdapter(this);
     }
 
     public OkHttpClient getHttpClient() {
@@ -74,32 +71,12 @@ public class HttpAdapter {
         }
     }
 
-    public HttpAdapter setTerminal(String terminal) {
-        if (!TextUtils.isEmpty(terminal)) {
-            if (terminal.endsWith("/")) {
-                terminal = terminal.substring(0, terminal.length() - 1);
-            }
-            this.terminal = terminal;
-        } else {
-            throw new RuntimeException("terminal is null...");
-        }
-        return this;
+    private HttpBuilder getHttpBuilder() {
+        HttpBuilder httpBuilder = new HttpBuilder();
+        QsHelper.getInstance().getApplication().initHttpAdapter(httpBuilder);
+        return httpBuilder;
     }
 
-    public HttpAdapter addHeader(String key, String value) {
-        if (!TextUtils.isEmpty(key) && !TextUtils.isEmpty(value)) {
-            if (headerBuilder == null) {
-                synchronized (this) {
-                    if (headerBuilder == null) {
-                        headerBuilder = new Headers.Builder();
-                        headerBuilder.add("Content-Type", "application/json");
-                    }
-                }
-            }
-            headerBuilder.add(key, value);
-        }
-        return this;
-    }
 
     /**
      * 创建代理
@@ -152,7 +129,8 @@ public class HttpAdapter {
 
 
     private Object executeGet(Method method, Object[] args, String path) {
-        StringBuilder url = getUrl(method, path);
+        HttpBuilder httpBuilder = getHttpBuilder();
+        StringBuilder url = getUrl(httpBuilder.getTerminal(), path);
         if (TextUtils.isEmpty(url)) throw new QsException(QsExceptionType.UNEXPECTED, "request url is null...");
         Annotation[][] parameterAnnotations = method.getParameterAnnotations();
         Map<String, Object> params = null;
@@ -175,12 +153,12 @@ public class HttpAdapter {
         }
 
         Request.Builder requestBuilder = new Request.Builder();
-        requestBuilder.headers(headerBuilder.build());
+        requestBuilder.headers(httpBuilder.getHeaderBuilder().build());
         Request request = requestBuilder.tag(url.toString()).url(url.toString()).method("GET", null).build();
         try {
             Call call = client.newCall(request);
             Response response = call.execute();
-            return createResult(method, response);
+            return createResult(method, response, args);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -188,7 +166,8 @@ public class HttpAdapter {
     }
 
     private Object executeWithBody(Method method, Object[] args, String path, String type) {
-        StringBuilder url = getUrl(method, path);
+        HttpBuilder httpBuilder = getHttpBuilder();
+        StringBuilder url = getUrl(httpBuilder.getTerminal(), path);
         if (TextUtils.isEmpty(url)) {
             throw new QsException(QsExceptionType.UNEXPECTED, "request url is null...");
         }
@@ -222,12 +201,12 @@ public class HttpAdapter {
             }
         }
         Request.Builder requestBuilder = new Request.Builder();
-        requestBuilder.headers(headerBuilder.build());
+        requestBuilder.headers(httpBuilder.getHeaderBuilder().build());
         Request request = requestBuilder.tag(url.toString()).url(url.toString()).method(type, requestBody).build();
         try {
             Call call = client.newCall(request);
             Response response = call.execute();
-            return createResult(method, response);
+            return createResult(method, response, args);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -235,7 +214,7 @@ public class HttpAdapter {
     }
 
 
-    private Object createResult(Method method, Response response) {
+    private Object createResult(Method method, Response response, Object[] args) {
         Class<?> returnType = method.getReturnType();
         if (returnType == void.class) return null;
         int responseCode = response.code();
@@ -248,25 +227,32 @@ public class HttpAdapter {
         ResponseBody body = response.body();
         if (body == null) throw new QsException(QsExceptionType.HTTP_ERROR, "http response body is null!!");
         try {
-            return converter.fromBody(body, returnType);
+            Object result = converter.fromBody(body, returnType);
+            if (result instanceof QsModel && ((QsModel) result).status == 401) {
+                synchronized (QsConstants.HTTP_THREAD_LOCKER) {
+                    try {
+                        QsConstants.HTTP_THREAD_LOCKER.wait(30000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    startRequest(method, args);
+                }
+            }
+            return result;
         } catch (IOException e) {
             e.printStackTrace();
             throw new QsException(QsExceptionType.UNEXPECTED, "parse response body to json object fail");
         }
     }
 
-    @Nullable private StringBuilder getUrl(Method method, String path) {
-        if (method == null) {
-            throw new QsException(QsExceptionType.UNEXPECTED, "method is null...");
-        }
+    @Nullable private StringBuilder getUrl(String terminal, String path) {
         if (TextUtils.isEmpty(path)) {
             throw new QsException(QsExceptionType.UNEXPECTED, "path is null...");
         }
         if (!path.startsWith("/")) {
             throw new QsException(QsExceptionType.UNEXPECTED, "path=" + path + "  (path is not start with '/')");
         }
-        String apiUrl = this.terminal;
-        StringBuilder url = new StringBuilder(apiUrl);
+        StringBuilder url = new StringBuilder(terminal);
         url.append(path);
         L.i(TAG, "请求路径:" + url.toString());
         return url;

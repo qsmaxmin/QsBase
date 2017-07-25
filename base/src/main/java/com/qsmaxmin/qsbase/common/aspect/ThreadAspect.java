@@ -61,7 +61,7 @@ public class ThreadAspect {
                     startOriginalMethod(joinPoint);
                 } else {
                     synchronized (QsConstants.HTTP_THREAD_LOCKER) {
-                        L.e("ThreadAspect", joinPoint.toShortString() + " in http thread... (token is disable, so wait 30s)");
+                        L.e("ThreadAspect", joinPoint.toShortString() + " in http thread... (token is disable, so wait at most 30s)");
                         try {
                             QsConstants.HTTP_THREAD_LOCKER.wait(30000);
                         } catch (QsException | InterruptedException e) {

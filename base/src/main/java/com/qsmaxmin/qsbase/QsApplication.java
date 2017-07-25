@@ -4,7 +4,7 @@ import android.app.Application;
 import android.app.ProgressDialog;
 import android.content.Context;
 
-import com.qsmaxmin.qsbase.common.http.HttpAdapter;
+import com.qsmaxmin.qsbase.common.http.HttpBuilder;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
 
@@ -24,7 +24,7 @@ public abstract class QsApplication extends Application {
 
     public abstract boolean isLogOpen();
 
-    public abstract void initHttpAdapter(HttpAdapter httpAdapter);
+    public abstract void initHttpAdapter(HttpBuilder builder);
 
     public void onActivityCreate() {
 

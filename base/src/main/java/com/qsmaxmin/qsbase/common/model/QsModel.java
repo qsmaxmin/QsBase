@@ -7,5 +7,8 @@ package com.qsmaxmin.qsbase.common.model;
  */
 
 public class QsModel {
-    public QsModel(){}
+    public QsModel() {
+    }
+
+    public int status;
 }
