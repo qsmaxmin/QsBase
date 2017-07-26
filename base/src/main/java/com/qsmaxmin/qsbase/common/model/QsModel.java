@@ -10,5 +10,7 @@ public class QsModel {
     public QsModel() {
     }
 
-    public int status;
+    public boolean isTokenAvailable() {
+        return true;
+    }
 }

@@ -5,7 +5,6 @@ import android.os.Looper;
 import com.qsmaxmin.qsbase.common.exception.QsException;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
-import com.qsmaxmin.qsbase.mvp.model.QsConstants;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -56,20 +55,8 @@ public class ThreadAspect {
     @Around("onHttpPoint()") public Object onHttpExecutor(final ProceedingJoinPoint joinPoint) throws Throwable {
         QsHelper.getInstance().getThreadHelper().getHttpThreadPoll().execute(new Runnable() {
             @Override public void run() {
-                if (QsHelper.getInstance().getApplication().isTokenAvailable()) {
-                    L.i("ThreadAspect", joinPoint.toShortString() + " in http thread... (token is available)");
-                    startOriginalMethod(joinPoint);
-                } else {
-                    synchronized (QsConstants.HTTP_THREAD_LOCKER) {
-                        L.e("ThreadAspect", joinPoint.toShortString() + " in http thread... (token is disable, so wait at most 30s)");
-                        try {
-                            QsConstants.HTTP_THREAD_LOCKER.wait(30000);
-                        } catch (QsException | InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        startOriginalMethod(joinPoint);
-                    }
-                }
+                L.i("ThreadAspect", joinPoint.toShortString() + " in http thread... (token is available)");
+                startOriginalMethod(joinPoint);
             }
         });
         return null;

@@ -14,7 +14,6 @@ import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.model.QsModel;
 import com.qsmaxmin.qsbase.common.proxy.HttpHandler;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
-import com.qsmaxmin.qsbase.mvp.model.QsConstants;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -87,7 +86,6 @@ public class HttpAdapter {
         HttpHandler handler = new HttpHandler(this);
         return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class<?>[]{clazz}, handler);
     }
-
 
     /**
      * 判断是否是一个接口
@@ -228,14 +226,12 @@ public class HttpAdapter {
         if (body == null) throw new QsException(QsExceptionType.HTTP_ERROR, "http response body is null!!");
         try {
             Object result = converter.fromBody(body, returnType);
-            if (result instanceof QsModel && ((QsModel) result).status == 401) {
-                synchronized (QsConstants.HTTP_THREAD_LOCKER) {
-                    try {
-                        QsConstants.HTTP_THREAD_LOCKER.wait(30000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    startRequest(method, args);
+            if (result instanceof QsModel && !((QsModel) result).isTokenAvailable()) {
+                L.e(TAG, "method:" + method.getName() + "  token is disable......  so waiting  method(application.onTokenDisable) execution complete!");
+                if (QsHelper.getInstance().getApplication().onTokenDisable()) {
+                    /*如果token不可用，则废弃当前请求结果，让实现类自己去处理token过期问题，
+                    根据处理后的返回值决定是否重新请求并返回新的请求结果*/
+                    return startRequest(method, args);
                 }
             }
             return result;

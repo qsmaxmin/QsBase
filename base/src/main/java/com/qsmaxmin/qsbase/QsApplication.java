@@ -68,13 +68,7 @@ public abstract class QsApplication extends Application {
         return R.layout.qs_loading_footer;
     }
 
-    /**
-     * 当前线程是HTTP时，检查token是否可用
-     * 供项目集成时使用，用户可以根据自己的token状态返回true或者false
-     * 当返回true时将不影响程序正常使用
-     * 当返回false时，HTTP线程将进入wait状态，直到被notify
-     */
-    public boolean isTokenAvailable() {
-        return true;
+    public boolean onTokenDisable() {
+        return false;
     }
 }
