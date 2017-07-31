@@ -71,6 +71,7 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         super.onCreate(savedInstanceState);
         View view = initView(inflater);
         QsHelper.getInstance().getViewBindHelper().bind(this, view);
+        view.setOnTouchListener(this);
         if (isOpenEventBus() && !EventBus.getDefault().isRegistered(this)) EventBus.getDefault().register(this);
         return view;
     }
