@@ -319,8 +319,8 @@ public abstract class QsProperties {
             File file = new File(propertyFilePath, mPropertiesFileName + EXTENSION);
             if (!file.exists()) {
                 boolean success = file.createNewFile();
+                L.e(initTag(), "create new file isSuccess:" + success);
                 if (!success) {
-                    L.e(initTag(), "create new file fail.....");
                     return;
                 }
             }

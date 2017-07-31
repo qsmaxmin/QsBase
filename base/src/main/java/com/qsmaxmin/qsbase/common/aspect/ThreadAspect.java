@@ -55,7 +55,7 @@ public class ThreadAspect {
     @Around("onHttpPoint()") public Object onHttpExecutor(final ProceedingJoinPoint joinPoint) throws Throwable {
         QsHelper.getInstance().getThreadHelper().getHttpThreadPoll().execute(new Runnable() {
             @Override public void run() {
-                L.i("ThreadAspect", joinPoint.toShortString() + " in http thread... (token is available)");
+                L.i("ThreadAspect", joinPoint.toShortString() + " in http thread... ");
                 startOriginalMethod(joinPoint);
             }
         });

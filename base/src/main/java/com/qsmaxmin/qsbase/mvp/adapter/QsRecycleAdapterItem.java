@@ -70,7 +70,6 @@ public abstract class QsRecycleAdapterItem<T> {
         MyViewHolder(View itemView) {
             super(itemView);
             QsHelper.getInstance().getViewBindHelper().bind(QsRecycleAdapterItem.this,itemView);
-//            ButterKnife.bind(QsRecycleAdapterItem.this, itemView);
         }
 
         @Override public void onBindData(T s, int position, int totalCount) {
