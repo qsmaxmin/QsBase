@@ -16,6 +16,8 @@ public interface QsIFragment extends QsIView {
 
     void setActivityTitle(Object value, int code);
 
+    boolean shouldInterceptTouchEvent();
+
     int emptyLayoutId();
 
     int loadingLayoutId();

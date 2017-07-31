@@ -12,6 +12,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ViewAnimator;
@@ -34,7 +35,7 @@ import org.greenrobot.eventbus.EventBus;
  * @Description
  */
 
-public abstract class QsFragment<P extends QsPresenter> extends Fragment implements QsIFragment {
+public abstract class QsFragment<P extends QsPresenter> extends Fragment implements QsIFragment, View.OnTouchListener {
 
     private   P              presenter;
     private   boolean        hasInitData;
@@ -319,5 +320,13 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
                 }
             });
         }
+    }
+
+    @Override public boolean onTouch(View v, MotionEvent event) {
+        return shouldInterceptTouchEvent();
+    }
+
+    @Override public boolean shouldInterceptTouchEvent() {
+        return true;
     }
 }
