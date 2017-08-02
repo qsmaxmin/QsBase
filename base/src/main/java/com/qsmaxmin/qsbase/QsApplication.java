@@ -1,12 +1,11 @@
 package com.qsmaxmin.qsbase;
 
 import android.app.Application;
-import android.app.ProgressDialog;
-import android.content.Context;
 
 import com.qsmaxmin.qsbase.common.http.HttpBuilder;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
+import com.qsmaxmin.qsbase.common.widget.dialog.QsProgressDialog;
 
 /**
  * @CreateBy qsmaxmin
@@ -48,8 +47,8 @@ public abstract class QsApplication extends Application {
     /**
      * 公共progressDialog
      */
-    public ProgressDialog getCommonProgressDialog(Context context) {
-        return new ProgressDialog(context);
+    public QsProgressDialog getCommonProgressDialog() {
+        return null;
     }
 
     public int loadingLayoutId() {

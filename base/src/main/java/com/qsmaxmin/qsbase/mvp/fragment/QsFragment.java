@@ -1,6 +1,5 @@
 package com.qsmaxmin.qsbase.mvp.fragment;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -23,6 +22,7 @@ import com.qsmaxmin.qsbase.common.aspect.ThreadType;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.utils.PresenterUtils;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
+import com.qsmaxmin.qsbase.common.widget.dialog.QsProgressDialog;
 import com.qsmaxmin.qsbase.mvp.QsIABActivity;
 import com.qsmaxmin.qsbase.mvp.model.QsConstants;
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
@@ -37,10 +37,10 @@ import org.greenrobot.eventbus.EventBus;
 
 public abstract class QsFragment<P extends QsPresenter> extends Fragment implements QsIFragment, View.OnTouchListener {
 
-    private   P              presenter;
-    private   boolean        hasInitData;
-    protected ProgressDialog mProgressDialog;
-    protected ViewAnimator   mViewAnimator;
+    private   P                presenter;
+    private   boolean          hasInitData;
+    protected QsProgressDialog mProgressDialog;
+    protected ViewAnimator     mViewAnimator;
 
 
     @Override public String initTag() {
@@ -178,14 +178,18 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
     }
 
     @ThreadPoint(ThreadType.MAIN) @Override public void loading(String message, boolean cancelAble) {
-        if (mProgressDialog == null) mProgressDialog = QsHelper.getInstance().getApplication().getCommonProgressDialog(getContext());
-        mProgressDialog.setMessage(message);
-        mProgressDialog.setCancelable(cancelAble);
-        mProgressDialog.show();
+        if (mProgressDialog == null) mProgressDialog = QsHelper.getInstance().getApplication().getCommonProgressDialog();
+        if (mProgressDialog != null) {
+            mProgressDialog.setMessage(message);
+            mProgressDialog.setCancelable(cancelAble);
+            QsHelper.getInstance().commitDialogFragment(mProgressDialog);
+        } else {
+            L.e(initTag(), "you should override the method 'Application.getCommonProgressDialog' and return a dialog when called the method : loading(...) ");
+        }
     }
 
     @ThreadPoint(ThreadType.MAIN) @Override public void loadingClose() {
-        if (mProgressDialog != null && mProgressDialog.isShowing()) mProgressDialog.cancel();
+        if (mProgressDialog != null) mProgressDialog.dismissAllowingStateLoss();
     }
 
     @Override public void showLoadingView() {
