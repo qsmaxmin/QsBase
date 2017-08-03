@@ -12,9 +12,15 @@
         android:layout_weight="1"
         android:background="@null"/>
 
+    <View
+        android:layout_width="match_parent"
+        android:background="@android:color/darker_gray"
+        android:layout_height="1px"/>
+
     <com.qsmaxmin.qsbase.common.widget.viewpager.PagerSlidingTabStrip
         android:id="@android:id/tabs"
         android:layout_width="match_parent"
+        android:background="@android:color/white"
         android:layout_height="50dp"/>
 
 </LinearLayout>

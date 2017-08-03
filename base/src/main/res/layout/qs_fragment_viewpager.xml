@@ -8,7 +8,13 @@
     <com.qsmaxmin.qsbase.common.widget.viewpager.PagerSlidingTabStrip
         android:id="@android:id/tabs"
         android:layout_width="match_parent"
-        android:layout_height="50dp"/>
+        android:layout_height="50dp"
+        android:background="@android:color/white"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="@android:color/darker_gray"/>
 
     <com.qsmaxmin.qsbase.common.widget.viewpager.QsViewPager
         android:id="@+id/pager"
