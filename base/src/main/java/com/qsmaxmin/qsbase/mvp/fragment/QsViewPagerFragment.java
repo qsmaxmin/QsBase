@@ -11,6 +11,7 @@ import android.view.View;
 import com.qsmaxmin.qsbase.R;
 import com.qsmaxmin.qsbase.common.widget.viewpager.PagerSlidingTabStrip;
 import com.qsmaxmin.qsbase.common.widget.viewpager.QsViewPager;
+import com.qsmaxmin.qsbase.mvp.adapter.QsTabViewPagerAdapter;
 import com.qsmaxmin.qsbase.mvp.adapter.QsViewPagerAdapter;
 import com.qsmaxmin.qsbase.mvp.model.QsModelPager;
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
@@ -61,7 +62,11 @@ public abstract class QsViewPagerFragment<P extends QsPresenter> extends QsFragm
     }
 
     protected QsViewPagerAdapter createPagerAdapter(QsViewPager pager, PagerSlidingTabStrip tabs) {
-        return new QsViewPagerAdapter(initTag(), getChildFragmentManager(), tabs, pager, this);
+        if (getTabItemLayout() > 0) {
+            return new QsTabViewPagerAdapter(initTag(), getChildFragmentManager(), tabs, pager, this);
+        } else {
+            return new QsViewPagerAdapter(initTag(), getChildFragmentManager(), tabs, pager, this);
+        }
     }
 
     public final void initTabsValue(PagerSlidingTabStrip tab) {
