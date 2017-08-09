@@ -1,6 +1,7 @@
 package com.qsmaxmin.qsbase.common.utils;
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
@@ -111,9 +112,17 @@ public class QsHelper {
     public ViewBind getViewBindHelper() {
         if (viewBind == null) {
             synchronized (QsHelper.class) {
-                if (viewBind == null) viewBind =  new ViewBindImpl();
+                if (viewBind == null) viewBind = new ViewBindImpl();
             }
         }
         return viewBind;
+    }
+
+    public String getString(int resId) {
+        return getApplication().getString(resId);
+    }
+
+    public Drawable getDrawable(int resId) {
+        return getApplication().getResources().getDrawable(resId);
     }
 }
