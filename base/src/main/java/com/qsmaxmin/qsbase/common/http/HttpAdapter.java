@@ -38,7 +38,7 @@ import okhttp3.ResponseBody;
 
 public class HttpAdapter {
     private static final String TAG     = "HttpAdapter";
-    private final static int    timeOut = 30;
+    private final static int    timeOut = 10;
     private GsonConverter converter;
     private OkHttpClient  client;
 
