@@ -40,7 +40,7 @@ class GsonConverter {
         this.mediaType = MediaType.parse("application/json; charset=" + charset.name());
     }
 
-    Object fromBody(ResponseBody body, Type type) throws IOException {
+    Object fromBody(ResponseBody body, Type type, String methodName) throws IOException {
         if (body == null) return null;
         Charset charset = this.charset;
         MediaType mediaType = body.contentType();
@@ -59,7 +59,7 @@ class GsonConverter {
                     result.append(line).append("\n");
                 }
                 String json = result.toString();
-                L.i(TAG, result.toString());
+                L.i(TAG, "method:" + methodName + "response ok  Json:" + result.toString());
                 return gson.fromJson(json, type);
             } finally {
                 StreamCloseUtils.close(inputStreamReader, is, bufferedReader);

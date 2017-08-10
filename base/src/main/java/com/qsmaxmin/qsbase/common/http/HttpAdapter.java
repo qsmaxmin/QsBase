@@ -222,7 +222,7 @@ public class HttpAdapter {
         }
         ResponseBody body = response.body();
         if (body == null) throw new QsException(QsExceptionType.HTTP_ERROR, "http response error... response body is null!!");
-        Object result = converter.fromBody(body, returnType);
+        Object result = converter.fromBody(body, returnType, method.getName());
         if (result instanceof QsModel && !((QsModel) result).isTokenAvailable()) {
             L.e(TAG, "token is disable...... method:" + method.getName() + "  so waiting  method(application.onTokenDisable) execution complete!");
             if (QsHelper.getInstance().getApplication().onTokenDisable()) {
