@@ -92,7 +92,7 @@ public class HttpAdapter {
      */
     private static <T> void validateIsInterface(Class<T> service) {
         if (service == null || !service.isInterface()) {
-            throw new QsException(QsExceptionType.UNEXPECTED, String.valueOf(service) + "，该类不是接口！");
+            throw new QsException(QsExceptionType.UNEXPECTED, String.valueOf(service) + " is not interface！");
         }
     }
 
@@ -101,14 +101,14 @@ public class HttpAdapter {
      */
     private static <T> void validateIsExtendInterface(Class<T> service) {
         if (service.getInterfaces().length > 0) {
-            throw new QsException(QsExceptionType.UNEXPECTED, "接口不能继承其它接口");
+            throw new QsException(QsExceptionType.UNEXPECTED, String.valueOf(service) + " can not extend interface!!");
         }
     }
 
     public Object startRequest(Method method, Object[] args) {
         Annotation[] annotations = method.getAnnotations();
         if (annotations.length != 1) {
-            throw new QsException(QsExceptionType.UNEXPECTED, "the method:" + method.getName() + " must have one annotation!! @GET @POST or @PUT");
+            throw new QsException(QsExceptionType.UNEXPECTED, "Annotation error... the method:" + method.getName() + " must have one annotation!! @GET @POST or @PUT");
         }
         Annotation annotation = annotations[0];
         if (annotation instanceof POST) {
@@ -121,7 +121,7 @@ public class HttpAdapter {
             String path = ((PUT) annotation).value();
             return executeWithBody(method, args, path, "PUT");
         } else {
-            throw new QsException(QsExceptionType.UNEXPECTED, "create(interface) the interface must has an annotation:@PUT @POST or @GET");
+            throw new QsException(QsExceptionType.UNEXPECTED, "Annotation error... the method:" + method.getName() + "create(Object.class) the method must has an annotation:@PUT @POST or @GET");
         }
     }
 
@@ -129,7 +129,7 @@ public class HttpAdapter {
     private Object executeGet(Method method, Object[] args, String path) {
         HttpBuilder httpBuilder = getHttpBuilder();
         StringBuilder url = getUrl(httpBuilder.getTerminal(), path);
-        if (TextUtils.isEmpty(url)) throw new QsException(QsExceptionType.UNEXPECTED, "request url is null...");
+        if (TextUtils.isEmpty(url)) throw new QsException(QsExceptionType.UNEXPECTED, "url error... method:" + method.getName() + "  request url is null...");
         Annotation[][] parameterAnnotations = method.getParameterAnnotations();
         Map<String, Object> params = null;
         for (int i = 0; i < parameterAnnotations.length; i++) {
@@ -157,17 +157,16 @@ public class HttpAdapter {
             Call call = client.newCall(request);
             Response response = call.execute();
             return createResult(method, response, args);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (IOException e) {
+            throw new QsException(QsExceptionType.HTTP_ERROR, e.getMessage());
         }
-        return null;
     }
 
     private Object executeWithBody(Method method, Object[] args, String path, String type) {
         HttpBuilder httpBuilder = getHttpBuilder();
         StringBuilder url = getUrl(httpBuilder.getTerminal(), path);
         if (TextUtils.isEmpty(url)) {
-            throw new QsException(QsExceptionType.UNEXPECTED, "request url is null...");
+            throw new QsException(QsExceptionType.UNEXPECTED, "url error... method:" + method.getName() + "  request url is null...");
         }
         Annotation[][] parameterAnnotations = method.getParameterAnnotations();//参数可以有多个注解
         Object body = null;
@@ -206,47 +205,41 @@ public class HttpAdapter {
             Response response = call.execute();
             return createResult(method, response, args);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new QsException(QsExceptionType.HTTP_ERROR, e.getMessage());
         }
-        return null;
     }
 
 
-    private Object createResult(Method method, Response response, Object[] args) {
+    private Object createResult(Method method, Response response, Object[] args) throws IOException {
         Class<?> returnType = method.getReturnType();
         if (returnType == void.class) return null;
         int responseCode = response.code();
         if (responseCode < 200 || responseCode >= 300) {
-            throw new QsException(QsExceptionType.HTTP_ERROR, "http response code = " + responseCode);
+            throw new QsException(QsExceptionType.HTTP_ERROR, "http error... method:" + method.getName() + "  http response code = " + responseCode);
         }
         if (returnType.equals(Response.class)) {
             return response;
         }
         ResponseBody body = response.body();
-        if (body == null) throw new QsException(QsExceptionType.HTTP_ERROR, "http response body is null!!");
-        try {
-            Object result = converter.fromBody(body, returnType);
-            if (result instanceof QsModel && !((QsModel) result).isTokenAvailable()) {
-                L.e(TAG, "method:" + method.getName() + "  token is disable......  so waiting  method(application.onTokenDisable) execution complete!");
-                if (QsHelper.getInstance().getApplication().onTokenDisable()) {
+        if (body == null) throw new QsException(QsExceptionType.HTTP_ERROR, "http response error... response body is null!!");
+        Object result = converter.fromBody(body, returnType);
+        if (result instanceof QsModel && !((QsModel) result).isTokenAvailable()) {
+            L.e(TAG, "token is disable...... method:" + method.getName() + "  so waiting  method(application.onTokenDisable) execution complete!");
+            if (QsHelper.getInstance().getApplication().onTokenDisable()) {
                     /*如果token不可用，则废弃当前请求结果，让实现类自己去处理token过期问题，
                     根据处理后的返回值决定是否重新请求并返回新的请求结果*/
-                    return startRequest(method, args);
-                }
+                return startRequest(method, args);
             }
-            return result;
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new QsException(QsExceptionType.UNEXPECTED, "parse response body to json object fail");
         }
+        return result;
     }
 
     @Nullable private StringBuilder getUrl(String terminal, String path) {
         if (TextUtils.isEmpty(path)) {
-            throw new QsException(QsExceptionType.UNEXPECTED, "path is null...");
+            throw new QsException(QsExceptionType.UNEXPECTED, "url path error... path is null...");
         }
         if (!path.startsWith("/")) {
-            throw new QsException(QsExceptionType.UNEXPECTED, "path=" + path + "  (path is not start with '/')");
+            throw new QsException(QsExceptionType.UNEXPECTED, "url path error... path=" + path + "  (path is not start with '/')");
         }
         StringBuilder url = new StringBuilder(terminal);
         url.append(path);
