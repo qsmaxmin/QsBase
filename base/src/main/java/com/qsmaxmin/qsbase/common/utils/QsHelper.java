@@ -3,6 +3,10 @@ package com.qsmaxmin.qsbase.common.utils;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.annotation.ColorRes;
+import android.support.annotation.DimenRes;
+import android.support.annotation.DrawableRes;
+import android.support.annotation.StringRes;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -118,11 +122,23 @@ public class QsHelper {
         return viewBind;
     }
 
-    public String getString(int resId) {
+    public String getString(@StringRes int resId) {
         return getApplication().getString(resId);
     }
 
-    public Drawable getDrawable(int resId) {
+    public String getString(@StringRes int resId, Object... formatArgs) {
+        return getApplication().getString(resId, formatArgs);
+    }
+
+    public Drawable getDrawable(@DrawableRes int resId) {
         return getApplication().getResources().getDrawable(resId);
+    }
+
+    public int getColor(@ColorRes int resId) {
+        return getApplication().getResources().getColor(resId);
+    }
+
+    public float getDimension(@DimenRes int resId) {
+        return getApplication().getResources().getDimension(resId);
     }
 }
