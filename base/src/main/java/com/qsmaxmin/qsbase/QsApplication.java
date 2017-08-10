@@ -1,6 +1,8 @@
 package com.qsmaxmin.qsbase;
 
+import android.app.Activity;
 import android.app.Application;
+import android.support.v4.app.FragmentActivity;
 
 import com.qsmaxmin.qsbase.common.http.HttpBuilder;
 import com.qsmaxmin.qsbase.common.log.L;
@@ -25,23 +27,22 @@ public abstract class QsApplication extends Application {
 
     public abstract void initHttpAdapter(HttpBuilder builder);
 
-    public void onActivityCreate() {
-
+    public void onActivityCreate(Activity activity) {
     }
 
-    public void onActivityStart() {
+    public void onActivityStart(Activity activity) {
     }
 
-    public void onActivityResume() {
+    public void onActivityResume(Activity activity) {
     }
 
-    public void onActivityPause() {
+    public void onActivityPause(Activity activity) {
     }
 
-    public void onActivityStop() {
+    public void onActivityStop(Activity activity) {
     }
 
-    public void onActivityDestroy() {
+    public void onActivityDestroy(Activity activity) {
     }
 
     /**

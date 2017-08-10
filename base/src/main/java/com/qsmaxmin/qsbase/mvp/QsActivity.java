@@ -57,7 +57,7 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         QsHelper.getInstance().getScreenHelper().pushActivity(this);
-        QsHelper.getInstance().getApplication().onActivityCreate();
+        QsHelper.getInstance().getApplication().onActivityCreate(this);
         View view = initView();
         setContentView(view);
         initStatusBar();
@@ -71,29 +71,29 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
 
     @Override protected void onStart() {
         super.onStart();
-        QsHelper.getInstance().getApplication().onActivityStart();
+        QsHelper.getInstance().getApplication().onActivityStart(this);
     }
 
     @Override protected void onResume() {
         super.onResume();
-        QsHelper.getInstance().getApplication().onActivityResume();
+        QsHelper.getInstance().getApplication().onActivityResume(this);
     }
 
     @Override protected void onPause() {
         super.onPause();
-        QsHelper.getInstance().getApplication().onActivityPause();
+        QsHelper.getInstance().getApplication().onActivityPause(this);
     }
 
     @Override protected void onStop() {
         super.onStop();
-        QsHelper.getInstance().getApplication().onActivityStop();
+        QsHelper.getInstance().getApplication().onActivityStop(this);
     }
 
     @Override protected void onDestroy() {
         super.onDestroy();
         if (presenter != null) presenter.setDetach();
         if (isOpenEventBus() && EventBus.getDefault().isRegistered(this)) EventBus.getDefault().unregister(this);
-        QsHelper.getInstance().getApplication().onActivityDestroy();
+        QsHelper.getInstance().getApplication().onActivityDestroy(this);
         QsHelper.getInstance().getScreenHelper().popActivity(this);
     }
 
