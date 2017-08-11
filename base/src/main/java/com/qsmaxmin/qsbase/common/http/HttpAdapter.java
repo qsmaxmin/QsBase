@@ -38,8 +38,9 @@ import okhttp3.ResponseBody;
  */
 
 public class HttpAdapter {
-    private static final String TAG     = "HttpAdapter";
-    private final static int    timeOut = 10;
+    private static final String TAG          = "HttpAdapter";
+    private static final String PATH_REPLACE = "\\{\\S\\S*}";
+    private final static int    timeOut      = 10;
     private GsonConverter converter;
     private OkHttpClient  client;
 
@@ -130,7 +131,7 @@ public class HttpAdapter {
 
     private Object executeGet(Method method, Object[] args, String path) {
         HttpBuilder httpBuilder = getHttpBuilder();
-        StringBuilder url = getUrl(httpBuilder.getTerminal(), path, method,args);
+        StringBuilder url = getUrl(httpBuilder.getTerminal(), path, method, args);
         if (TextUtils.isEmpty(url)) throw new QsException(QsExceptionType.UNEXPECTED, "url error... method:" + method.getName() + "  request url is null...");
         Annotation[][] parameterAnnotations = method.getParameterAnnotations();
         Map<String, Object> params = null;
@@ -244,17 +245,24 @@ public class HttpAdapter {
             throw new QsException(QsExceptionType.UNEXPECTED, "url path error... method:" + method.getName() + "  path=" + path + "  (path is not start with '/')");
         }
         Annotation[][] annotations = method.getParameterAnnotations();
-        for (int i=0;i<annotations.length;i++) {
+        if (annotations.length != args.length) {
+            throw new QsException(QsExceptionType.UNEXPECTED, "params error method:" + method.getName() + " params have to have one annotation, such as @Query @Path");
+        }
+        for (int i = 0; i < annotations.length; i++) {
             Annotation[] annotationArr = annotations[i];
-            for (Annotation annotation : annotationArr) {
-                if (annotation instanceof Path) {
-                    if(i<args.length){
-                        Object arg = args[i];
-                        String sss = "sfksf/sdssf/{fontId}/dfdfdsaaa/{userId}";
-                        String abcd="^s{s/d}";
+            if (annotationArr.length != 1) {
+                throw new QsException(QsExceptionType.UNEXPECTED, "params error method:" + method.getName() + " params have to have one annotation, but there is more than one !");
+            }
+            Annotation ann = annotationArr[0];
+            if (ann instanceof Path) {
+                StringBuilder stringBuilder = new StringBuilder();
+                String[] split = path.split(PATH_REPLACE);
+                for (int index = 0; index < split.length; index++) {
+                    if (index < args.length) {
+                        stringBuilder.append(split[index]).append(args[i]);
                     }
-                    break;
                 }
+                path = stringBuilder.toString();
             }
         }
         StringBuilder url = new StringBuilder(terminal);
