@@ -91,7 +91,7 @@ public class ThreadAspect {
         } catch (final QsException e0) {
             try {
                 final Object target = joinPoint.getTarget();
-                final Method methodError = target.getClass().getMethod("methodError", Throwable.class);
+                final Method methodError = target.getClass().getMethod("methodError", QsException.class);
                 if (methodError != null) QsHelper.getInstance().getThreadHelper().getMainThread().execute(new Runnable() {
                     @Override public void run() {
                         try {
