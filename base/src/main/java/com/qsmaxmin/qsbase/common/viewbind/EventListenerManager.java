@@ -49,44 +49,37 @@ final class EventListenerManager {
     private final static DoubleKeyValueMap<ViewInfo, Class<?>, Object> listenerCache = new DoubleKeyValueMap<>();
 
 
-    static void addEventMethod(ViewFinder finder, ViewInfo info, OnClick annotation, Object handler, String className, Method method) {
-        View view = finder.findViewByInfo(info);
-        if (view != null) {
-            Class<?> listenerType = annotation.type();
-            String listenerSetter = annotation.setter();
-            if (TextUtils.isEmpty(listenerSetter)) {
-                listenerSetter = "set" + listenerType.getSimpleName();
-            }
-            String methodName = annotation.method();
-            boolean addNewMethod = false;
-            Object listener = listenerCache.get(info, listenerType);
-            DynamicHandler dynamicHandler;
-            if (listener != null) {
-                dynamicHandler = (DynamicHandler) Proxy.getInvocationHandler(listener);
-                addNewMethod = handler.equals(dynamicHandler.getHandler());
-                if (addNewMethod) {
-                    dynamicHandler.addMethod(methodName, method);
+    static void addEventMethod(ViewFinder finder, ViewInfo info, OnClick annotation, Object handler, Method method) {
+        try {
+            View view = finder.findViewByInfo(info);
+            if (view != null) {
+                Class<?> listenerType = annotation.type();
+                String listenerSetter = annotation.setter();
+                if (TextUtils.isEmpty(listenerSetter)) {
+                    listenerSetter = "set" + listenerType.getSimpleName();
                 }
+                String methodName = annotation.method();
+                boolean addNewMethod = false;
+                Object listener = listenerCache.get(info, listenerType);
+                DynamicHandler dynamicHandler;
+                if (listener != null) {
+                    dynamicHandler = (DynamicHandler) Proxy.getInvocationHandler(listener);
+                    addNewMethod = handler.equals(dynamicHandler.getHandler());
+                    if (addNewMethod) {
+                        dynamicHandler.addMethod(methodName, method);
+                    }
+                }
+                if (!addNewMethod) {
+                    dynamicHandler = new DynamicHandler(handler);
+                    dynamicHandler.addMethod(methodName, method);
+                    listener = Proxy.newProxyInstance(listenerType.getClassLoader(), new Class<?>[]{listenerType}, dynamicHandler);
+                    listenerCache.put(info, listenerType, listener);
+                }
+                Method setEventListenerMethod = view.getClass().getMethod(listenerSetter, listenerType);
+                setEventListenerMethod.invoke(view, listener);
             }
-            if (!addNewMethod) {
-                dynamicHandler = new DynamicHandler(handler);
-                dynamicHandler.addMethod(methodName, method);
-                listener = Proxy.newProxyInstance(listenerType.getClassLoader(), new Class<?>[]{listenerType}, dynamicHandler);
-                listenerCache.put(info, listenerType, listener);
-            }
-            Method setEventListenerMethod = null;
-            try {
-                setEventListenerMethod = view.getClass().getMethod(listenerSetter, listenerType);
-            } catch (NoSuchMethodException e) {
-                e.printStackTrace();
-            }
-            try {
-                if (setEventListenerMethod != null) setEventListenerMethod.invoke(view, listener);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } else {
-            throw new RuntimeException("Invalid @OnClick class name:" + className + "  method name:" + method.getName() + "." + info.value);
+        } catch (Throwable ex) {
+            ex.printStackTrace();
         }
     }
 

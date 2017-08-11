@@ -80,16 +80,16 @@ public final class ViewBindImpl implements ViewBind {
                 }
                 Bind bind = field.getAnnotation(Bind.class);
                 if (bind != null) {
-                    View view = finder.findViewById(bind.value(), bind.parentId());
-                    if (view != null) {
-                        field.setAccessible(true);
-                        try {
+                    try {
+                        View view = finder.findViewById(bind.value(), bind.parentId());
+                        if (view != null) {
+                            field.setAccessible(true);
                             field.set(handler, view);
-                        } catch (IllegalAccessException e) {
-                            e.printStackTrace();
+                        } else {
+                            throw new RuntimeException("Invalid @Bind for " + clazz.getSimpleName() + "." + field.getName());
                         }
-                    } else {
-                        throw new RuntimeException("Invalid @Bind for " + clazz.getSimpleName() + "." + field.getName());
+                    } catch (Throwable ex) {
+                        ex.printStackTrace();
                     }
                 }
             }
@@ -103,18 +103,22 @@ public final class ViewBindImpl implements ViewBind {
                 }
                 OnClick annotation = method.getAnnotation(OnClick.class);
                 if (annotation != null) {
-                    int[] values = annotation.value();
-                    int[] parentIds = annotation.parentId();
-                    int parentIdsLen = parentIds.length;
-                    for (int i = 0; i < values.length; i++) {
-                        int value = values[i];
-                        if (value > 0) {
-                            ViewInfo info = new ViewInfo();
-                            info.value = value;
-                            info.parentId = parentIdsLen > i ? parentIds[i] : 0;
-                            method.setAccessible(true);
-                            EventListenerManager.addEventMethod(finder, info, annotation, handler, clazz.getSimpleName(), method);
+                    try {
+                        int[] values = annotation.value();
+                        int[] parentIds = annotation.parentId();
+                        int parentIdsLen = parentIds.length;
+                        for (int i = 0; i < values.length; i++) {
+                            int value = values[i];
+                            if (value > 0) {
+                                ViewInfo info = new ViewInfo();
+                                info.value = value;
+                                info.parentId = parentIdsLen > i ? parentIds[i] : 0;
+                                method.setAccessible(true);
+                                EventListenerManager.addEventMethod(finder, info, annotation, handler, method);
+                            }
                         }
+                    } catch (Throwable ex) {
+                        ex.printStackTrace();
                     }
                 }
             }
