@@ -39,7 +39,7 @@ import okhttp3.ResponseBody;
 
 public class HttpAdapter {
     private static final String TAG          = "HttpAdapter";
-    private static final String PATH_REPLACE = "\\{\\S\\S*}";
+    private static final String PATH_REPLACE = "\\{\\w*\\}";
     private final static int    timeOut      = 10;
     private GsonConverter converter;
     private OkHttpClient  client;
@@ -257,9 +257,17 @@ public class HttpAdapter {
             if (ann instanceof Path) {
                 StringBuilder stringBuilder = new StringBuilder();
                 String[] split = path.split(PATH_REPLACE);
+                Object arg = args[i];
+                if (!(arg instanceof String[])) {
+                    throw new QsException(QsExceptionType.UNEXPECTED, "params error method:" + method.getName() + " @Path annotation only fix String[] arg !");
+                }
+                String[] param = (String[]) arg;
+                if (split.length - param.length > 1) {
+                    throw new QsException(QsExceptionType.UNEXPECTED, "params error method:" + method.getName() + "the path with '{xx}' is more than @Path annotation arg length!");
+                }
                 for (int index = 0; index < split.length; index++) {
-                    if (index < args.length) {
-                        stringBuilder.append(split[index]).append(args[i]);
+                    if (index < param.length) {
+                        stringBuilder.append(split[index]).append(param[index]);
                     }
                 }
                 path = stringBuilder.toString();
