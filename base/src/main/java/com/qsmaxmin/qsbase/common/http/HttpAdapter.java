@@ -7,6 +7,7 @@ import com.qsmaxmin.qsbase.common.aspect.Body;
 import com.qsmaxmin.qsbase.common.aspect.GET;
 import com.qsmaxmin.qsbase.common.aspect.POST;
 import com.qsmaxmin.qsbase.common.aspect.PUT;
+import com.qsmaxmin.qsbase.common.aspect.Path;
 import com.qsmaxmin.qsbase.common.aspect.Query;
 import com.qsmaxmin.qsbase.common.exception.QsException;
 import com.qsmaxmin.qsbase.common.exception.QsExceptionType;
@@ -113,6 +114,7 @@ public class HttpAdapter {
         Annotation annotation = annotations[0];
         if (annotation instanceof POST) {
             String path = ((POST) annotation).value();
+
             return executeWithBody(method, args, path, "POST");
         } else if (annotation instanceof GET) {
             String path = ((GET) annotation).value();
@@ -128,7 +130,7 @@ public class HttpAdapter {
 
     private Object executeGet(Method method, Object[] args, String path) {
         HttpBuilder httpBuilder = getHttpBuilder();
-        StringBuilder url = getUrl(httpBuilder.getTerminal(), path, method.getName());
+        StringBuilder url = getUrl(httpBuilder.getTerminal(), path, method,args);
         if (TextUtils.isEmpty(url)) throw new QsException(QsExceptionType.UNEXPECTED, "url error... method:" + method.getName() + "  request url is null...");
         Annotation[][] parameterAnnotations = method.getParameterAnnotations();
         Map<String, Object> params = null;
@@ -158,13 +160,13 @@ public class HttpAdapter {
             Response response = call.execute();
             return createResult(method, response, args);
         } catch (IOException e) {
-            throw new QsException(QsExceptionType.HTTP_ERROR,  "IOException... method:" + method.getName() +e.getMessage());
+            throw new QsException(QsExceptionType.HTTP_ERROR, "IOException... method:" + method.getName() + e.getMessage());
         }
     }
 
     private Object executeWithBody(Method method, Object[] args, String path, String type) {
         HttpBuilder httpBuilder = getHttpBuilder();
-        StringBuilder url = getUrl(httpBuilder.getTerminal(), path, method.getName());
+        StringBuilder url = getUrl(httpBuilder.getTerminal(), path, method, args);
         if (TextUtils.isEmpty(url)) {
             throw new QsException(QsExceptionType.UNEXPECTED, "url error... method:" + method.getName() + "  request url is null...");
         }
@@ -234,12 +236,26 @@ public class HttpAdapter {
         return result;
     }
 
-    @Nullable private StringBuilder getUrl(String terminal, String path, String methodName) {
+    @Nullable private StringBuilder getUrl(String terminal, String path, Method method, Object[] args) {
         if (TextUtils.isEmpty(path)) {
-            throw new QsException(QsExceptionType.UNEXPECTED, "url path error... method:" + methodName + "  path is null...");
+            throw new QsException(QsExceptionType.UNEXPECTED, "url path error... method:" + method.getName() + "  path is null...");
         }
         if (!path.startsWith("/")) {
-            throw new QsException(QsExceptionType.UNEXPECTED, "url path error... method:" + methodName + "  path=" + path + "  (path is not start with '/')");
+            throw new QsException(QsExceptionType.UNEXPECTED, "url path error... method:" + method.getName() + "  path=" + path + "  (path is not start with '/')");
+        }
+        Annotation[][] annotations = method.getParameterAnnotations();
+        for (int i=0;i<annotations.length;i++) {
+            Annotation[] annotationArr = annotations[i];
+            for (Annotation annotation : annotationArr) {
+                if (annotation instanceof Path) {
+                    if(i<args.length){
+                        Object arg = args[i];
+                        String sss = "sfksf/sdssf/{fontId}/dfdfdsaaa/{userId}";
+                        String abcd="^s{s/d}";
+                    }
+                    break;
+                }
+            }
         }
         StringBuilder url = new StringBuilder(terminal);
         url.append(path);
