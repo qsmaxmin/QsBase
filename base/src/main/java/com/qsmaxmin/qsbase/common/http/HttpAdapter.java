@@ -128,7 +128,7 @@ public class HttpAdapter {
 
     private Object executeGet(Method method, Object[] args, String path) {
         HttpBuilder httpBuilder = getHttpBuilder();
-        StringBuilder url = getUrl(httpBuilder.getTerminal(), path);
+        StringBuilder url = getUrl(httpBuilder.getTerminal(), path, method.getName());
         if (TextUtils.isEmpty(url)) throw new QsException(QsExceptionType.UNEXPECTED, "url error... method:" + method.getName() + "  request url is null...");
         Annotation[][] parameterAnnotations = method.getParameterAnnotations();
         Map<String, Object> params = null;
@@ -158,13 +158,13 @@ public class HttpAdapter {
             Response response = call.execute();
             return createResult(method, response, args);
         } catch (IOException e) {
-            throw new QsException(QsExceptionType.HTTP_ERROR, e.getMessage());
+            throw new QsException(QsExceptionType.HTTP_ERROR,  "IOException... method:" + method.getName() +e.getMessage());
         }
     }
 
     private Object executeWithBody(Method method, Object[] args, String path, String type) {
         HttpBuilder httpBuilder = getHttpBuilder();
-        StringBuilder url = getUrl(httpBuilder.getTerminal(), path);
+        StringBuilder url = getUrl(httpBuilder.getTerminal(), path, method.getName());
         if (TextUtils.isEmpty(url)) {
             throw new QsException(QsExceptionType.UNEXPECTED, "url error... method:" + method.getName() + "  request url is null...");
         }
@@ -205,7 +205,7 @@ public class HttpAdapter {
             Response response = call.execute();
             return createResult(method, response, args);
         } catch (IOException e) {
-            throw new QsException(QsExceptionType.HTTP_ERROR, e.getMessage());
+            throw new QsException(QsExceptionType.HTTP_ERROR, "IOException...  method:" + method.getName() + " message:" + e.getMessage());
         }
     }
 
@@ -221,7 +221,7 @@ public class HttpAdapter {
             return response;
         }
         ResponseBody body = response.body();
-        if (body == null) throw new QsException(QsExceptionType.HTTP_ERROR, "http response error... response body is null!!");
+        if (body == null) throw new QsException(QsExceptionType.HTTP_ERROR, "http response error... method:" + method.getName() + "  response body is null!!");
         Object result = converter.fromBody(body, returnType, method.getName());
         if (result instanceof QsModel && !((QsModel) result).isTokenAvailable()) {
             L.e(TAG, "token is disable...... method:" + method.getName() + "  so waiting  method(application.onTokenDisable) execution complete!");
@@ -234,12 +234,12 @@ public class HttpAdapter {
         return result;
     }
 
-    @Nullable private StringBuilder getUrl(String terminal, String path) {
+    @Nullable private StringBuilder getUrl(String terminal, String path, String methodName) {
         if (TextUtils.isEmpty(path)) {
-            throw new QsException(QsExceptionType.UNEXPECTED, "url path error... path is null...");
+            throw new QsException(QsExceptionType.UNEXPECTED, "url path error... method:" + methodName + "  path is null...");
         }
         if (!path.startsWith("/")) {
-            throw new QsException(QsExceptionType.UNEXPECTED, "url path error... path=" + path + "  (path is not start with '/')");
+            throw new QsException(QsExceptionType.UNEXPECTED, "url path error... method:" + methodName + "  path=" + path + "  (path is not start with '/')");
         }
         StringBuilder url = new StringBuilder(terminal);
         url.append(path);
