@@ -68,7 +68,10 @@ public abstract class QsProperties {
                 try {
                     String stringBuilder = mPropertiesFileName + EXTENSION;
                     File file = new File(propertyFilePath, stringBuilder);
-                    if (!file.exists()) L.i(initTag(), "create properties file:" + file.getAbsolutePath());
+                    if (!file.exists()) {
+                        boolean success = file.createNewFile();
+                        L.i(initTag(), "create properties file " + (success ? "success" : "fail") + " !  file:" + file.getAbsolutePath());
+                    }
                     in = new BufferedInputStream(new FileInputStream(file));
                     mProperties.load(in);
                 } catch (Exception e) {
