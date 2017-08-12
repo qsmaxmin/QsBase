@@ -215,17 +215,22 @@ public class HttpAdapter {
 
     private Object createResult(Method method, Response response, Object[] args) throws IOException {
         Class<?> returnType = method.getReturnType();
-        if (returnType == void.class) return null;
+        if (returnType == void.class || response == null) return null;
         int responseCode = response.code();
         if (responseCode < 200 || responseCode >= 300) {
+            response.close();
             throw new QsException(QsExceptionType.HTTP_ERROR, "http error... method:" + method.getName() + "  http response code = " + responseCode);
         }
         if (returnType.equals(Response.class)) {
             return response;
         }
         ResponseBody body = response.body();
-        if (body == null) throw new QsException(QsExceptionType.HTTP_ERROR, "http response error... method:" + method.getName() + "  response body is null!!");
+        if (body == null) {
+            response.close();
+            throw new QsException(QsExceptionType.HTTP_ERROR, "http response error... method:" + method.getName() + "  response body is null!!");
+        }
         Object result = converter.fromBody(body, returnType, method.getName());
+        response.close();
         if (result instanceof QsModel && !((QsModel) result).isTokenAvailable()) {
             L.e(TAG, "token is disable...... method:" + method.getName() + "  so waiting  method(application.onTokenDisable) execution complete!");
             if (QsHelper.getInstance().getApplication().onTokenDisable()) {
