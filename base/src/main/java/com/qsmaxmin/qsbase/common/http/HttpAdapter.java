@@ -68,6 +68,7 @@ public class HttpAdapter {
             builder.connectTimeout(timeOut, TimeUnit.SECONDS);
             builder.readTimeout(timeOut, TimeUnit.SECONDS);
             builder.writeTimeout(timeOut, TimeUnit.SECONDS);
+            builder.retryOnConnectionFailure(false);
             client = builder.build();
         }
     }
