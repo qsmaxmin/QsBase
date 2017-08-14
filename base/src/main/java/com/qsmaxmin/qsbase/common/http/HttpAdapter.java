@@ -199,7 +199,8 @@ public class HttpAdapter {
         if (body != null) {
             requestBody = converter.toBody(body, body.getClass());
         }
-        if (params != null) {
+        if (params != null && params.size() > 0) {
+            url.append("?");
             for (String key : params.keySet()) {
                 Object object = params.get(key);
                 url.append("&").append(key).append("=").append(object);
