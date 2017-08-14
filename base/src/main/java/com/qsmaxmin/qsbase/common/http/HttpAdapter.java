@@ -12,7 +12,6 @@ import com.qsmaxmin.qsbase.common.aspect.Query;
 import com.qsmaxmin.qsbase.common.exception.QsException;
 import com.qsmaxmin.qsbase.common.exception.QsExceptionType;
 import com.qsmaxmin.qsbase.common.log.L;
-import com.qsmaxmin.qsbase.common.model.QsModel;
 import com.qsmaxmin.qsbase.common.proxy.HttpHandler;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
 
@@ -223,6 +222,9 @@ public class HttpAdapter {
         Class<?> returnType = method.getReturnType();
         if (returnType == void.class || response == null) return null;
         int responseCode = response.code();
+
+        QsHelper.getInstance().getApplication().onCommonHttpResponse(response);
+
         if (responseCode < 200 || responseCode >= 300) {
             response.close();
             throw new QsException(QsExceptionType.HTTP_ERROR, "http error... method:" + method.getName() + "  http response code = " + responseCode);
@@ -237,14 +239,6 @@ public class HttpAdapter {
         }
         Object result = converter.fromBody(body, returnType, method.getName());
         response.close();
-        if (result instanceof QsModel && !((QsModel) result).isTokenAvailable()) {
-            L.e(TAG, "token is disable...... method:" + method.getName() + "  so waiting  method(application.onTokenDisable) execution complete!");
-            if (QsHelper.getInstance().getApplication().onTokenDisable()) {
-                    /*如果token不可用，则废弃当前请求结果，让实现类自己去处理token过期问题，
-                    根据处理后的返回值决定是否重新请求并返回新的请求结果*/
-                return startRequest(method, args);
-            }
-        }
         return result;
     }
 

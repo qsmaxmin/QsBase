@@ -2,12 +2,13 @@ package com.qsmaxmin.qsbase;
 
 import android.app.Activity;
 import android.app.Application;
-import android.support.v4.app.FragmentActivity;
 
 import com.qsmaxmin.qsbase.common.http.HttpBuilder;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.common.widget.dialog.QsProgressDialog;
+
+import okhttp3.Response;
 
 /**
  * @CreateBy qsmaxmin
@@ -68,7 +69,6 @@ public abstract class QsApplication extends Application {
         return R.layout.qs_loading_footer;
     }
 
-    public boolean onTokenDisable() {
-        return false;
+    public void onCommonHttpResponse(Response response) {
     }
 }
