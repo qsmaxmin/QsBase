@@ -149,7 +149,8 @@ public class HttpAdapter {
                 }
             }
         }
-        if (params != null) {
+        if (params != null && params.size() > 0) {
+            url.append("?");
             for (String key : params.keySet()) {
                 Object object = params.get(key);
                 url.append("&").append(key).append("=").append(object);
