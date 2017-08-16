@@ -6,6 +6,7 @@ import com.qsmaxmin.qsbase.common.exception.QsException;
 import com.qsmaxmin.qsbase.common.exception.QsExceptionType;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.mvp.QsIView;
+import com.qsmaxmin.qsbase.mvp.model.QsConstants;
 
 /**
  * @CreateBy qsmaxmin
@@ -31,7 +32,17 @@ public class QsPresenter<V extends QsIView> {
     }
 
     public V getView() {
-        if (isViewDetach()) throw new QsException(QsExceptionType.CANCEL, "当前View已经销毁" + (mView == null ? "" : "：" + mView.getClass().getSimpleName()));
+        if (mView == null || isViewDetach()) {
+            String threadName = Thread.currentThread().getName();
+            switch (threadName) {
+                case QsConstants.NAME_HTTP_THREAD:
+                case QsConstants.NAME_WORK_THREAD:
+                case QsConstants.NAME_SINGLE_THREAD:
+                    throw new QsException(QsExceptionType.CANCEL, "current thread:" + threadName + " execute " + getClass().getSimpleName() + ".getView() return null, maybe view" + (mView == null ? "" : "(" + mView.getClass().getSimpleName() + ")") + "is destroy...");
+                default:
+                    throw new QsException(QsExceptionType.CANCEL, "当前线程:" + threadName + "执行" + getClass().getSimpleName() + ".getView()方法返回null, 因为View层" + (mView == null ? "" : "(" + mView.getClass().getSimpleName() + ")") + "销毁了，为了规避这种风险，请不要在Presenter里面通过非@ThreadPoint注解的方式创建线程并在该线程中调用getView()方法...");
+            }
+        }
         return mView;
     }
 
