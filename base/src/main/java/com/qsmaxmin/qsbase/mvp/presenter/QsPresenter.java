@@ -14,15 +14,15 @@ import com.qsmaxmin.qsbase.mvp.model.QsConstants;
  * @Description
  */
 public class QsPresenter<V extends QsIView> {
-    private   boolean isAttach;
-    protected V       mView;
+    private boolean isAttach;
+    private V       mView;
 
     protected String initTag() {
         return getClass().getSimpleName();
     }
 
     public Context getContext() {
-        if (mView != null && !isViewDetach()) return mView.getContext();
+        if (!isViewDetach()) return mView.getContext();
         return null;
     }
 
@@ -32,7 +32,7 @@ public class QsPresenter<V extends QsIView> {
     }
 
     public V getView() {
-        if (mView == null || isViewDetach()) {
+        if (isViewDetach()) {
             String threadName = Thread.currentThread().getName();
             switch (threadName) {
                 case QsConstants.NAME_HTTP_THREAD:
@@ -51,7 +51,7 @@ public class QsPresenter<V extends QsIView> {
     }
 
     public boolean isViewDetach() {
-        return !isAttach;
+        return !isAttach || mView == null;
     }
 
 
@@ -60,7 +60,7 @@ public class QsPresenter<V extends QsIView> {
      */
     public void methodError(QsException exception) {
         L.e(initTag(), "methodError ：" + exception.getMessage());
-        if (mView != null) {
+        if (!isViewDetach()) {
             if (mView.isOpenViewState()) {
                 mView.showErrorView();
             } else {
