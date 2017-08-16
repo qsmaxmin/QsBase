@@ -14,8 +14,8 @@ import com.qsmaxmin.qsbase.mvp.model.QsConstants;
  * @Description
  */
 public class QsPresenter<V extends QsIView> {
-    private   boolean isAttach;
-    protected V       mView;
+    private boolean isAttach;
+    private V       mView;
 
     protected String initTag() {
         return getClass().getSimpleName();
