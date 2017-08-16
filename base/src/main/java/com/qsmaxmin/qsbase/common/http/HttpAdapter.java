@@ -4,7 +4,10 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import com.qsmaxmin.qsbase.common.aspect.Body;
+import com.qsmaxmin.qsbase.common.aspect.DELETE;
 import com.qsmaxmin.qsbase.common.aspect.GET;
+import com.qsmaxmin.qsbase.common.aspect.HEAD;
+import com.qsmaxmin.qsbase.common.aspect.PATCH;
 import com.qsmaxmin.qsbase.common.aspect.POST;
 import com.qsmaxmin.qsbase.common.aspect.PUT;
 import com.qsmaxmin.qsbase.common.aspect.Path;
@@ -113,23 +116,40 @@ public class HttpAdapter {
             throw new QsException(QsExceptionType.UNEXPECTED, "Annotation error... the method:" + method.getName() + " must have one annotation!! @GET @POST or @PUT");
         }
         Annotation annotation = annotations[0];
+        if (annotation == null) {
+            throw new QsException(QsExceptionType.UNEXPECTED, "Annotation error... the method:" + method.getName() + "create(Object.class) the method must has an annotation,such as:@PUT @POST or @GET...");
+        }
         if (annotation instanceof POST) {
             String path = ((POST) annotation).value();
-
             return executeWithBody(method, args, path, "POST");
+
         } else if (annotation instanceof GET) {
             String path = ((GET) annotation).value();
-            return executeGet(method, args, path);
+            return executeWithoutBody(method, args, path, "GET");
+
         } else if (annotation instanceof PUT) {
             String path = ((PUT) annotation).value();
             return executeWithBody(method, args, path, "PUT");
+
+        } else if (annotation instanceof DELETE) {
+            String path = ((DELETE) annotation).value();
+            return executeWithBody(method, args, path, "DELETE");
+
+        } else if (annotation instanceof HEAD) {
+            String path = ((HEAD) annotation).value();
+            return executeWithoutBody(method, args, path, "HEAD");
+
+        } else if (annotation instanceof PATCH) {
+            String path = ((PATCH) annotation).value();
+            return executeWithBody(method, args, path, "PATCH");
+
         } else {
-            throw new QsException(QsExceptionType.UNEXPECTED, "Annotation error... the method:" + method.getName() + "create(Object.class) the method must has an annotation:@PUT @POST or @GET");
+            throw new QsException(QsExceptionType.UNEXPECTED, "Annotation error... the method:" + method.getName() + "create(Object.class) the method must has an annotation, such as:@PUT @POST or @GET...");
         }
     }
 
 
-    private Object executeGet(Method method, Object[] args, String path) {
+    private Object executeWithoutBody(Method method, Object[] args, String path, String requestType) {
         HttpBuilder httpBuilder = getHttpBuilder();
         StringBuilder url = getUrl(httpBuilder.getTerminal(), path, method, args);
         if (TextUtils.isEmpty(url)) throw new QsException(QsExceptionType.UNEXPECTED, "url error... method:" + method.getName() + "  request url is null...");
@@ -149,15 +169,16 @@ public class HttpAdapter {
             }
         }
         if (params != null && params.size() > 0) {
-            url.append("?");
+            int i = 0;
             for (String key : params.keySet()) {
                 Object object = params.get(key);
-                url.append("&").append(key).append("=").append(object);
+                url.append(i == 0 ? "?" : "&").append(key).append("=").append(object);
+                i++;
             }
         }
         Request.Builder requestBuilder = new Request.Builder();
         requestBuilder.headers(httpBuilder.getHeaderBuilder().build());
-        Request request = requestBuilder.tag(url.toString()).url(url.toString()).method("GET", null).build();
+        Request request = requestBuilder.tag(url.toString()).url(url.toString()).method(requestType, null).build();
         try {
             Call call = client.newCall(request);
             Response response = call.execute();
@@ -167,7 +188,7 @@ public class HttpAdapter {
         }
     }
 
-    private Object executeWithBody(Method method, Object[] args, String path, String type) {
+    private Object executeWithBody(Method method, Object[] args, String path, String requestType) {
         HttpBuilder httpBuilder = getHttpBuilder();
         StringBuilder url = getUrl(httpBuilder.getTerminal(), path, method, args);
         if (TextUtils.isEmpty(url)) {
@@ -199,15 +220,16 @@ public class HttpAdapter {
             requestBody = converter.toBody(body, body.getClass());
         }
         if (params != null && params.size() > 0) {
-            url.append("?");
+            int i = 0;
             for (String key : params.keySet()) {
                 Object object = params.get(key);
-                url.append("&").append(key).append("=").append(object);
+                url.append(i == 0 ? "?" : "&").append(key).append("=").append(object);
+                i++;
             }
         }
         Request.Builder requestBuilder = new Request.Builder();
         requestBuilder.headers(httpBuilder.getHeaderBuilder().build());
-        Request request = requestBuilder.tag(url.toString()).url(url.toString()).method(type, requestBody).build();
+        Request request = requestBuilder.tag(url.toString()).url(url.toString()).method(requestType, requestBody).build();
         try {
             Call call = client.newCall(request);
             Response response = call.execute();
