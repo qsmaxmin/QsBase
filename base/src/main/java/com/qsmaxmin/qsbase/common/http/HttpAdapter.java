@@ -155,20 +155,22 @@ public class HttpAdapter {
     }
 
     public void cancelRequest(Object tag) {
-        L.e(TAG, "request cancel request tag=" + tag);
         if (client != null && tag != null) {
             Dispatcher dispatcher = client.dispatcher();
             synchronized (this) {
                 List<Call> queuedCalls = dispatcher.queuedCalls();
                 for (Call call : queuedCalls) {
-                    if (call != null && call.request() != null && tag == call.request().tag()) {
-                        L.e(TAG, "cancel queued request success... tag=" + tag + "  url=" + call.request().url());
+                    Request request = call.request();
+                    if (tag.equals(request.tag())) {
+                        L.e(TAG, "cancel queued request success... tag=" + tag + "  url=" + request.url());
                         call.cancel();
                     }
                 }
+
                 List<Call> runningCalls = dispatcher.runningCalls();
                 for (Call call : runningCalls) {
-                    if (call != null && call.request() != null && tag == call.request().tag()) {
+                    Request request = call.request();
+                    if (tag.equals(request.tag())) {
                         L.e(TAG, "cancel running request ... tag=" + tag + "  url=" + call.request().url());
                         call.cancel();
                     }
