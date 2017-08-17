@@ -4,7 +4,7 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import com.qsmaxmin.qsbase.common.aspect.Body;
-import com.qsmaxmin.qsbase.common.aspect.DELETES;
+import com.qsmaxmin.qsbase.common.aspect.DELETE;
 import com.qsmaxmin.qsbase.common.aspect.GET;
 import com.qsmaxmin.qsbase.common.aspect.HEAD;
 import com.qsmaxmin.qsbase.common.aspect.PATCH;
@@ -137,8 +137,8 @@ public class HttpAdapter {
             String path = ((PUT) annotation).value();
             return executeWithOkHttp(method, args, path, tag, "PUT");
 
-        } else if (annotation instanceof DELETES) {
-            String path = ((DELETES) annotation).value();
+        } else if (annotation instanceof DELETE) {
+            String path = ((DELETE) annotation).value();
             return executeWithOkHttp(method, args, path, tag, "DELETE");
 
         } else if (annotation instanceof HEAD) {
