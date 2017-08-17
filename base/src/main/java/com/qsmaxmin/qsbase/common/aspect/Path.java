@@ -10,7 +10,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 /**
  * @CreateBy qsmaxmin
  * @Date 2017/8/11 18:23
- * @Description
+ * @Description 参数占位替代
  */
 @Documented
 @Target(PARAMETER)
