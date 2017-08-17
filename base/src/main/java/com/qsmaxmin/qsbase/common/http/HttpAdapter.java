@@ -156,8 +156,8 @@ public class HttpAdapter {
 
     public void cancelRequest(Object tag) {
         if (client != null && tag != null) {
-            Dispatcher dispatcher = client.dispatcher();
-            synchronized (this) {
+            synchronized (client.dispatcher()) {
+                Dispatcher dispatcher = client.dispatcher();
                 List<Call> queuedCalls = dispatcher.queuedCalls();
                 for (Call call : queuedCalls) {
                     Request request = call.request();
