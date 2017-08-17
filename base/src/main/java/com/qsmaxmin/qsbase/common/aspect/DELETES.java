@@ -15,6 +15,6 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Documented
 @Target(PARAMETER)
 @Retention(RUNTIME)
-public @interface DELETE {
+public @interface DELETES {
     String value();
 }
