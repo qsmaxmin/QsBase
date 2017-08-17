@@ -5,6 +5,7 @@ import android.content.Context;
 import com.qsmaxmin.qsbase.common.exception.QsException;
 import com.qsmaxmin.qsbase.common.exception.QsExceptionType;
 import com.qsmaxmin.qsbase.common.log.L;
+import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.mvp.QsIView;
 import com.qsmaxmin.qsbase.mvp.model.QsConstants;
 
@@ -48,12 +49,39 @@ public class QsPresenter<V extends QsIView> {
 
     public void setDetach() {
         isAttach = false;
+        cancelHttpRequest();
     }
+
 
     public boolean isViewDetach() {
         return !isAttach || mView == null;
     }
 
+    /**
+     * 发起http请求
+     */
+    protected <T> T createHttpRequest(Class<T> clazz) {
+        return createHttpRequest(clazz, true);
+    }
+
+    protected <T> T createHttpRequest(Class<T> clazz, boolean shouldCancelWhenViewDestroy) {
+        if (shouldCancelWhenViewDestroy) {
+            return QsHelper.getInstance().getHttpHelper().create(clazz, getClass().getSimpleName());
+        } else {
+            return QsHelper.getInstance().getHttpHelper().create(clazz);
+        }
+    }
+
+    /**
+     * 取消由当前presenter发起的http请求
+     */
+    protected void cancelHttpRequest() {
+        try {
+            QsHelper.getInstance().getHttpHelper().cancelRequest(getClass().getSimpleName());
+        } catch (Exception e) {
+            L.e(initTag(), "cancel http request failed :" + e.getMessage());
+        }
+    }
 
     /**
      * 自定义异常处理

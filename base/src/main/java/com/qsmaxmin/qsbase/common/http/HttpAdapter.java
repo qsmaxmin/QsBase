@@ -24,6 +24,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
@@ -83,13 +84,17 @@ public class HttpAdapter {
     }
 
 
+    public <T> T create(Class<T> clazz) {
+        return create(clazz, null);
+    }
+
     /**
      * 创建代理
      */
-    public <T> T create(Class<T> clazz) {
+    public <T> T create(Class<T> clazz, Object tag) {
         validateIsInterface(clazz);
         validateIsExtendInterface(clazz);
-        HttpHandler handler = new HttpHandler(this);
+        HttpHandler handler = new HttpHandler(this, tag);
         return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class<?>[]{clazz}, handler);
     }
 
@@ -111,7 +116,7 @@ public class HttpAdapter {
         }
     }
 
-    public Object startRequest(Method method, Object[] args) {
+    public Object startRequest(Method method, Object[] args, Object tag) {
         Annotation[] annotations = method.getAnnotations();
         if (annotations.length != 1) {
             throw new QsException(QsExceptionType.UNEXPECTED, "Annotation error... the method:" + method.getName() + " must have one annotation!! @GET @POST or @PUT");
@@ -122,27 +127,27 @@ public class HttpAdapter {
         }
         if (annotation instanceof POST) {
             String path = ((POST) annotation).value();
-            return executeWithOkHttp(method, args, path, "POST");
+            return executeWithOkHttp(method, args, path, tag, "POST");
 
         } else if (annotation instanceof GET) {
             String path = ((GET) annotation).value();
-            return executeWithOkHttp(method, args, path, "GET");
+            return executeWithOkHttp(method, args, path, tag, "GET");
 
         } else if (annotation instanceof PUT) {
             String path = ((PUT) annotation).value();
-            return executeWithOkHttp(method, args, path, "PUT");
+            return executeWithOkHttp(method, args, path, tag, "PUT");
 
         } else if (annotation instanceof DELETE) {
             String path = ((DELETE) annotation).value();
-            return executeWithOkHttp(method, args, path, "DELETE");
+            return executeWithOkHttp(method, args, path, tag, "DELETE");
 
         } else if (annotation instanceof HEAD) {
             String path = ((HEAD) annotation).value();
-            return executeWithOkHttp(method, args, path, "HEAD");
+            return executeWithOkHttp(method, args, path, tag, "HEAD");
 
         } else if (annotation instanceof PATCH) {
             String path = ((PATCH) annotation).value();
-            return executeWithOkHttp(method, args, path, "PATCH");
+            return executeWithOkHttp(method, args, path, tag, "PATCH");
 
         } else {
             throw new QsException(QsExceptionType.UNEXPECTED, "Annotation error... the method:" + method.getName() + "create(Object.class) the method must has an annotation, such as:@PUT @POST or @GET...");
@@ -150,22 +155,28 @@ public class HttpAdapter {
     }
 
     public void cancelRequest(Object tag) {
-        Dispatcher dispatcher = client.dispatcher();
-        synchronized (this) {
-            for (Call call : dispatcher.queuedCalls()) {
-                if (tag.equals(call.request().tag())) {
-                    call.cancel();
+        if (client != null && tag != null) {
+            Dispatcher dispatcher = client.dispatcher();
+            synchronized (this) {
+                List<Call> queuedCalls = dispatcher.queuedCalls();
+                for (Call call : queuedCalls) {
+                    if (call != null && call.request() != null && tag == call.request().tag()) {
+                        L.e(TAG, "cancel queued request ... tag=" + tag + "  url=" + call.request().url());
+                        call.cancel();
+                    }
                 }
-            }
-            for (Call call : dispatcher.runningCalls()) {
-                if (tag.equals(call.request().tag())) {
-                    call.cancel();
+                List<Call> runningCalls = dispatcher.runningCalls();
+                for (Call call : runningCalls) {
+                    if (call != null && call.request() != null && tag == call.request().tag()) {
+                        L.e(TAG, "cancel running request ... tag=" + tag + "  url=" + call.request().url());
+                        call.cancel();
+                    }
                 }
             }
         }
     }
 
-    private Object executeWithOkHttp(Method method, Object[] args, String path, String requestType) {
+    private Object executeWithOkHttp(Method method, Object[] args, String path, Object tag, String requestType) {
         Annotation[][] annotations = method.getParameterAnnotations();//参数可以有多个注解，但这里是不允许的
 
         checkParamsAnnotation(annotations, args, method.getName());
@@ -218,7 +229,8 @@ public class HttpAdapter {
         }
         Request.Builder requestBuilder = new Request.Builder();
         requestBuilder.headers(httpBuilder.getHeaderBuilder().build());
-        Request request = requestBuilder.tag(url.toString()).url(url.toString()).method(requestType, requestBody).build();
+        if (tag != null) requestBuilder.tag(tag);
+        Request request = requestBuilder.url(url.toString()).method(requestType, requestBody).build();
         try {
             Call call = client.newCall(request);
             Response response = call.execute();
