@@ -8,6 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.LinearLayout;
+import android.widget.ViewAnimator;
 
 import com.qsmaxmin.qsbase.R;
 import com.qsmaxmin.qsbase.common.aspect.ThreadPoint;
@@ -61,9 +63,35 @@ public abstract class QsRecyclerFragment<T extends QsPresenter, D> extends QsFra
     }
 
     @Override protected View initView(LayoutInflater inflater) {
-        View view = super.initView(inflater);
-        initRecycleView(inflater, view);
-        return view;
+        View rootView;
+        if (isOpenViewState() && loadingLayoutId() > 0 && emptyLayoutId() > 0 && errorLayoutId() > 0) {
+            rootView = inflater.inflate(R.layout.qs_list_fragment_state, null);
+            if (rootView instanceof LinearLayout) {
+                initTopBottomView((LinearLayout) rootView, inflater);
+            }
+            mViewAnimator = (ViewAnimator) rootView.findViewById(android.R.id.home);
+            inflater.inflate(loadingLayoutId(), mViewAnimator);
+            inflater.inflate(layoutId(), mViewAnimator);
+            inflater.inflate(emptyLayoutId(), mViewAnimator);
+            inflater.inflate(errorLayoutId(), mViewAnimator);
+        } else {
+            rootView = inflater.inflate(layoutId(), null);
+            if (rootView instanceof LinearLayout) {
+                initTopBottomView((LinearLayout) rootView, inflater);
+            }
+        }
+        initRecycleView(inflater, rootView);
+        return rootView;
+    }
+
+    protected void initTopBottomView(LinearLayout layout, LayoutInflater inflater) {
+        if (getTopLayout() > 0) {
+            layout.addView(inflater.inflate(getTopLayout(), null), 0);
+        }
+        if (getBottomLayout() > 0) {
+            int childCount = layout.getChildCount();
+            layout.addView(inflater.inflate(getBottomLayout(), null), childCount);
+        }
     }
 
     /**

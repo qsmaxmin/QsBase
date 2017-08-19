@@ -23,6 +23,10 @@ public interface QsIRecyclerFragment<D> extends QsIFragment {
 
     int getFooterLayout();
 
+    int getTopLayout();
+
+    int getBottomLayout();
+
     HeaderFooterRecyclerView getRecyclerView();
 
     int getItemViewType(int position);

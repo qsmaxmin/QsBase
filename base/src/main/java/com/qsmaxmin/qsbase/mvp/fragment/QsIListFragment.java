@@ -19,6 +19,10 @@ public interface QsIListFragment<D> extends QsIFragment {
 
     int getFooterLayout();
 
+    int getTopLayout();
+
+    int getBottomLayout();
+
     ListView getListView();
 
     int getViewTypeCount();
