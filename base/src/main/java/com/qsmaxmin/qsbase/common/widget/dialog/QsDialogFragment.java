@@ -42,4 +42,8 @@ public abstract class QsDialogFragment extends DialogFragment {
     protected abstract int getDialogTheme();
 
     protected abstract View getDialogView(LayoutInflater inflater, ViewGroup container);
+
+    protected String initTag() {
+        return getClass().getSimpleName();
+    }
 }

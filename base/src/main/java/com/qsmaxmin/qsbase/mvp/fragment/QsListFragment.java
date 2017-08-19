@@ -73,9 +73,7 @@ public abstract class QsListFragment<P extends QsPresenter, D> extends QsFragmen
         View rootView;
         if (isOpenViewState() && loadingLayoutId() > 0 && emptyLayoutId() > 0 && errorLayoutId() > 0) {
             rootView = inflater.inflate(R.layout.qs_list_fragment_state, null);
-            if (rootView instanceof LinearLayout) {
-                initTopBottomView((LinearLayout) rootView, inflater);
-            }
+            if (getTopLayout() > 0 || getBottomLayout() > 0) initTopBottomView(rootView, inflater);
             mViewAnimator = (ViewAnimator) rootView.findViewById(android.R.id.home);
             inflater.inflate(loadingLayoutId(), mViewAnimator);
             inflater.inflate(layoutId(), mViewAnimator);
@@ -83,21 +81,23 @@ public abstract class QsListFragment<P extends QsPresenter, D> extends QsFragmen
             inflater.inflate(errorLayoutId(), mViewAnimator);
         } else {
             rootView = inflater.inflate(layoutId(), null);
-            if (rootView instanceof LinearLayout) {
-                initTopBottomView((LinearLayout) rootView, inflater);
-            }
+            if (getTopLayout() > 0 || getBottomLayout() > 0) initTopBottomView(rootView, inflater);
         }
         initListView(inflater, rootView);
         return rootView;
     }
 
-    protected void initTopBottomView(LinearLayout layout, LayoutInflater inflater) {
-        if (getTopLayout() > 0) {
-            layout.addView(inflater.inflate(getTopLayout(), null), 0);
-        }
-        if (getBottomLayout() > 0) {
-            int childCount = layout.getChildCount();
-            layout.addView(inflater.inflate(getBottomLayout(), null), childCount);
+    protected void initTopBottomView(View rootView, LayoutInflater inflater) {
+        if (rootView instanceof LinearLayout) {
+            if (getTopLayout() > 0) {
+                ((LinearLayout) rootView).addView(inflater.inflate(getTopLayout(), null), 0);
+            }
+            if (getBottomLayout() > 0) {
+                int childCount = ((LinearLayout) rootView).getChildCount();
+                ((LinearLayout) rootView).addView(inflater.inflate(getBottomLayout(), null), childCount);
+            }
+        } else {
+            L.e(initTag(), "layoutId() root must be LinearLayout when getTopLayout() or getBottomLayout() is overwrite !");
         }
     }
 
