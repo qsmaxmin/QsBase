@@ -49,6 +49,14 @@ public abstract class QsListFragment<P extends QsPresenter, D> extends QsFragmen
         return 0;
     }
 
+    @Override public int getTopLayout() {
+        return 0;
+    }
+
+    @Override public int getBottomLayout() {
+        return 0;
+    }
+
     @Override public ListView getListView() {
         return mListView;
     }

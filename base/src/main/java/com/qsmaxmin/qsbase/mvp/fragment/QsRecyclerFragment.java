@@ -54,6 +54,14 @@ public abstract class QsRecyclerFragment<T extends QsPresenter, D> extends QsFra
         return 0;
     }
 
+    @Override public int getTopLayout() {
+        return 0;
+    }
+
+    @Override public int getBottomLayout() {
+        return 0;
+    }
+
     @Override public RecyclerView.Adapter onCreateAdapter() {
         return null;
     }
