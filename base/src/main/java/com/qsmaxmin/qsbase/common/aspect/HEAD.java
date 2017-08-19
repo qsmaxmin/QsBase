@@ -9,11 +9,12 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * @CreateBy qsmaxmin
- * @Date 2017/8/11 18:23
- * @Description 参数占位替代
+ * @Date 2017/8/16 9:11
+ * @Description
  */
 @Documented
 @Target(PARAMETER)
 @Retention(RUNTIME)
-public @interface Path {
+public @interface HEAD {
+    String value();
 }

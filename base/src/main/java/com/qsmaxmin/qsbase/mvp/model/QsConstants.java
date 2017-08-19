@@ -18,4 +18,11 @@ public class QsConstants {
     public static final int VIEW_STATE_EMPTY   = 2;
     public static final int VIEW_STATE_ERROR   = 3;
 
+    /**
+     * 线程名称
+     */
+    public static final String NAME_HTTP_THREAD   = "HttpThreadPoll";
+    public static final String NAME_WORK_THREAD   = "WorkThreadPoll";
+    public static final String NAME_SINGLE_THREAD = "SingleThreadPoll";
+
 }

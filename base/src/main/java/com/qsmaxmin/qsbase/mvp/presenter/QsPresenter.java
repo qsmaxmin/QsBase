@@ -5,7 +5,9 @@ import android.content.Context;
 import com.qsmaxmin.qsbase.common.exception.QsException;
 import com.qsmaxmin.qsbase.common.exception.QsExceptionType;
 import com.qsmaxmin.qsbase.common.log.L;
+import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.mvp.QsIView;
+import com.qsmaxmin.qsbase.mvp.model.QsConstants;
 
 /**
  * @CreateBy qsmaxmin
@@ -21,7 +23,7 @@ public class QsPresenter<V extends QsIView> {
     }
 
     public Context getContext() {
-        if (mView != null && !isViewDetach()) return mView.getContext();
+        if (!isViewDetach()) return mView.getContext();
         return null;
     }
 
@@ -31,25 +33,62 @@ public class QsPresenter<V extends QsIView> {
     }
 
     public V getView() {
-        if (isViewDetach()) throw new QsException(QsExceptionType.CANCEL, "当前View已经销毁" + (mView == null ? "" : "：" + mView.getClass().getSimpleName()));
+        if (isViewDetach()) {
+            String threadName = Thread.currentThread().getName();
+            switch (threadName) {
+                case QsConstants.NAME_HTTP_THREAD:
+                case QsConstants.NAME_WORK_THREAD:
+                case QsConstants.NAME_SINGLE_THREAD:
+                    throw new QsException(QsExceptionType.CANCEL, "current thread:" + threadName + " execute " + getClass().getSimpleName() + ".getView() return null, maybe view" + (mView == null ? "" : "(" + mView.getClass().getSimpleName() + ")") + "is destroy...");
+                default:
+                    throw new QsException(QsExceptionType.CANCEL, "当前线程:" + threadName + "执行" + getClass().getSimpleName() + ".getView()方法返回null, 因为View层" + (mView == null ? "" : "(" + mView.getClass().getSimpleName() + ")") + "销毁了，为了规避这种风险，请不要在Presenter里面通过非@ThreadPoint注解的方式创建线程并在该线程中调用getView()方法...");
+            }
+        }
         return mView;
     }
 
     public void setDetach() {
         isAttach = false;
+        cancelHttpRequest();
     }
+
 
     public boolean isViewDetach() {
-        return !isAttach;
+        return !isAttach || mView == null;
     }
 
+    /**
+     * 发起http请求
+     */
+    protected <T> T createHttpRequest(Class<T> clazz) {
+        return createHttpRequest(clazz, true);
+    }
+
+    protected <T> T createHttpRequest(Class<T> clazz, boolean shouldCancelWhenViewDestroy) {
+        if (shouldCancelWhenViewDestroy) {
+            return QsHelper.getInstance().getHttpHelper().create(clazz, getClass().getSimpleName());
+        } else {
+            return QsHelper.getInstance().getHttpHelper().create(clazz);
+        }
+    }
+
+    /**
+     * 取消由当前presenter发起的http请求
+     */
+    protected void cancelHttpRequest() {
+        try {
+            QsHelper.getInstance().getHttpHelper().cancelRequest(getClass().getSimpleName());
+        } catch (Exception e) {
+            L.e(initTag(), "cancel http request failed :" + e.getMessage());
+        }
+    }
 
     /**
      * 自定义异常处理
      */
     public void methodError(QsException exception) {
         L.e(initTag(), "methodError ：" + exception.getMessage());
-        if (mView != null) {
+        if (!isViewDetach()) {
             if (mView.isOpenViewState()) {
                 mView.showErrorView();
             } else {

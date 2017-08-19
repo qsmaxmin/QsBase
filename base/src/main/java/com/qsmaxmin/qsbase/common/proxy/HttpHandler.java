@@ -14,17 +14,15 @@ public class HttpHandler implements InvocationHandler {
     private static final String TAG = "HttpHandler";
 
     private final HttpAdapter adapter;
+    private final Object      tag;
 
-    public HttpHandler(HttpAdapter adapter) {
+    public HttpHandler(HttpAdapter adapter, Object tag) {
         this.adapter = adapter;
+        this.tag = tag;
     }
 
     @Override public Object invoke(Object proxy, Method method, final Object[] args) throws Throwable {
-        if (method.getDeclaringClass() == Object.class) {
-            L.i(TAG, "直接执行: " + method.getName());
-            return method.invoke(this, args);
-        }
         L.i(TAG, "网络请求代理方法：" + method.getName());
-        return adapter.startRequest(method, args);
+        return adapter.startRequest(method, args, tag);
     }
 }
