@@ -8,6 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.LinearLayout;
+import android.widget.ViewAnimator;
 
 import com.qsmaxmin.qsbase.R;
 import com.qsmaxmin.qsbase.common.aspect.ThreadPoint;
@@ -52,6 +54,14 @@ public abstract class QsRecyclerFragment<T extends QsPresenter, D> extends QsFra
         return 0;
     }
 
+    @Override public int getTopLayout() {
+        return 0;
+    }
+
+    @Override public int getBottomLayout() {
+        return 0;
+    }
+
     @Override public RecyclerView.Adapter onCreateAdapter() {
         return null;
     }
@@ -61,9 +71,35 @@ public abstract class QsRecyclerFragment<T extends QsPresenter, D> extends QsFra
     }
 
     @Override protected View initView(LayoutInflater inflater) {
-        View view = super.initView(inflater);
-        initRecycleView(inflater, view);
-        return view;
+        View rootView;
+        if (isOpenViewState() && loadingLayoutId() > 0 && emptyLayoutId() > 0 && errorLayoutId() > 0) {
+            rootView = inflater.inflate(R.layout.qs_list_fragment_state, null);
+            if (getTopLayout() > 0 || getBottomLayout() > 0) initTopBottomView(rootView, inflater);
+            mViewAnimator = (ViewAnimator) rootView.findViewById(android.R.id.home);
+            inflater.inflate(loadingLayoutId(), mViewAnimator);
+            inflater.inflate(layoutId(), mViewAnimator);
+            inflater.inflate(emptyLayoutId(), mViewAnimator);
+            inflater.inflate(errorLayoutId(), mViewAnimator);
+        } else {
+            rootView = inflater.inflate(layoutId(), null);
+            if (getTopLayout() > 0 || getBottomLayout() > 0) initTopBottomView(rootView, inflater);
+        }
+        initRecycleView(inflater, rootView);
+        return rootView;
+    }
+
+    protected void initTopBottomView(View rootView, LayoutInflater inflater) {
+        if (rootView instanceof LinearLayout) {
+            if (getTopLayout() > 0) {
+                ((LinearLayout) rootView).addView(inflater.inflate(getTopLayout(), null), 0);
+            }
+            if (getBottomLayout() > 0) {
+                int childCount = ((LinearLayout) rootView).getChildCount();
+                ((LinearLayout) rootView).addView(inflater.inflate(getBottomLayout(), null), childCount);
+            }
+        } else {
+            L.e(initTag(), "layoutId() root must be LinearLayout when getTopLayout() or getBottomLayout() is overwrite !");
+        }
     }
 
     /**

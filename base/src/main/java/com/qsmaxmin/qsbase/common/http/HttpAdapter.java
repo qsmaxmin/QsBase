@@ -297,6 +297,8 @@ public class HttpAdapter {
                 for (int index = 0; index < split.length; index++) {
                     if (index < param.length) {
                         stringBuilder.append(split[index]).append(param[index]);
+                    } else {
+                        stringBuilder.append(split[index]);
                     }
                 }
                 path = stringBuilder.toString();
