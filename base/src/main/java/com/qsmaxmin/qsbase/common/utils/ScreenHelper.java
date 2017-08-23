@@ -62,12 +62,13 @@ public final class ScreenHelper {
      */
     public void popActivity(FragmentActivity activity) {
         if (activity != null) {
-            fragmentActivities.remove(activity);
             L.i(TAG, "activity出栈:" + activity.getClass().getSimpleName() + "   当前栈大小：" + fragmentActivities.size());
+            activity.finish();
+            fragmentActivities.remove(activity);
         } else {
             L.e(TAG, "popActivity 传入的参数为空!");
         }
-        if (fragmentActivities.size() < 1) {
+        if (fragmentActivities.size() <= 0) {
             QsHelper.getInstance().getImageHelper().clearMemoryCache();
             QsHelper.getInstance().getThreadHelper().shutdown();
         }
@@ -75,20 +76,14 @@ public final class ScreenHelper {
 
     /**
      * 退出堆栈中所有Activity, 当前的Activity除外
-     *
      * @param clazz 当前活动窗口
      */
     public void popAllActivityExceptMain(Class clazz) {
         while (true) {
             FragmentActivity activity = currentActivity();
-            if (activity != null) {
-                if (!activity.getClass().equals(clazz)) {
-                    popActivity(activity);
-                    activity.finish();
-                } else {
-                    break;
-                }
-            }
+            if (activity == null) break;
+            if (activity.getClass().equals(clazz)) break;
+            popActivity(activity);
         }
     }
 }
