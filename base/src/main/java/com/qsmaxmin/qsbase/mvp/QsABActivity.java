@@ -1,7 +1,6 @@
 package com.qsmaxmin.qsbase.mvp;
 
 import android.annotation.TargetApi;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
