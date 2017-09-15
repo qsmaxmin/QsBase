@@ -103,11 +103,15 @@ public class ImageHelper {
         }
 
         public RequestBuilder<Drawable> load(String url) {
-            return manager.load(new MyGlideUrl(url));
+            return manager.load(url);
         }
 
-        public RequestBuilder<Drawable> load(Object url) {
-            return manager.load(url);
+        public RequestBuilder<Drawable> load(Object object) {
+            return manager.load(object);
+        }
+
+        public RequestBuilder<Drawable> loadIgnoreParamsKey(String url) {
+            return manager.load(new MyGlideUrl(url));
         }
     }
 
