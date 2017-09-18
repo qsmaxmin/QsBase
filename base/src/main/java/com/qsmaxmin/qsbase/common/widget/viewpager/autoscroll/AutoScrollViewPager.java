@@ -46,9 +46,8 @@ public final class AutoScrollViewPager extends ViewPager {
             throw new RuntimeException("setAdapter(..) this adapter must be instance of InfinitePagerAdapter");
         }
         InfinitePagerAdapter infinitePagerAdapter = (InfinitePagerAdapter) adapter;
-        infinitePagerAdapter.enableInfinite(infinitePagesEnabled);
+        infinitePagesEnabled = infinitePagerAdapter.isEnableInfinite();
         super.setAdapter(adapter);
-        setCurrentItem(0);
     }
 
 
@@ -60,7 +59,6 @@ public final class AutoScrollViewPager extends ViewPager {
             item = getOffsetAmount() + (item % getAdapter().getCount());
         }
         super.setCurrentItem(item);
-
     }
 
     public void setEnableInfinite(boolean enable) {

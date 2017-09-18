@@ -80,6 +80,10 @@ public class InfinitePagerAdapter extends PagerAdapter {
         infinitePagesEnabled = enable;
     }
 
+    public boolean isEnableInfinite() {
+        return infinitePagesEnabled;
+    }
+
     @Override public int getCount() {
         if (infinitePagesEnabled) {
             return Integer.MAX_VALUE;
