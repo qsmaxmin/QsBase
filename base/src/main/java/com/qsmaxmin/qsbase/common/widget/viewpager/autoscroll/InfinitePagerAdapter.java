@@ -99,7 +99,7 @@ public class InfinitePagerAdapter extends PagerAdapter {
 
     @Override public Object instantiateItem(ViewGroup container, final int position) {
         final int virtualPosition = getVirtualPosition(position);
-        L.i("InfinitePagerAdapter", "instantiateItem... position:" + virtualPosition);
+        L.i("InfinitePagerAdapter", "instantiateItem... position:" + virtualPosition + " totalCount:" + getCount());
         FrameLayout frameLayout = new FrameLayout(container.getContext());
         final ImageView view = getImageView(container.getContext());
         final ImageView holderImage = new ImageView(container.getContext());
