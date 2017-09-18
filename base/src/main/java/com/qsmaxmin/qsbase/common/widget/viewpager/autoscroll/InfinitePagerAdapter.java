@@ -110,21 +110,23 @@ public class InfinitePagerAdapter extends PagerAdapter {
         frameLayout.addView(view);
         if (placeholder > 0) {
             holderImage.setImageDrawable(container.getContext().getResources().getDrawable(placeholder));
-            QsHelper.getInstance().getImageHelper().createRequest(container.getContext()).load(urls.get(virtualPosition)).listener(new RequestListener<Drawable>() {
-                @Override public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                    view.setVisibility(View.GONE);
-                    holderImage.setVisibility(View.VISIBLE);
-                    return false;
-                }
+            if (virtualPosition < urls.size()) {
+                QsHelper.getInstance().getImageHelper().createRequest(container.getContext()).load(urls.get(virtualPosition)).listener(new RequestListener<Drawable>() {
+                    @Override public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                        view.setVisibility(View.GONE);
+                        holderImage.setVisibility(View.VISIBLE);
+                        return false;
+                    }
 
-                @Override public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                    view.setVisibility(View.VISIBLE);
-                    holderImage.setVisibility(View.GONE);
-                    return false;
-                }
-            }).into(view);
+                    @Override public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                        view.setVisibility(View.VISIBLE);
+                        holderImage.setVisibility(View.GONE);
+                        return false;
+                    }
+                }).into(view);
+            }
         } else {
-            QsHelper.getInstance().getImageHelper().createRequest(container.getContext()).load(urls.get(virtualPosition)).into(view);
+            if (virtualPosition < urls.size()) QsHelper.getInstance().getImageHelper().createRequest(container.getContext()).load(urls.get(virtualPosition)).into(view);
         }
         if (listener != null) {
             view.setOnClickListener(new View.OnClickListener() {
