@@ -441,6 +441,7 @@ public class PtrFrameLayout extends ViewGroup {
 
     /**
      * please DO REMEMBER resume the hook
+     *
      * @param hook
      */
 
@@ -550,6 +551,7 @@ public class PtrFrameLayout extends ViewGroup {
 
     /**
      * Detect whether is refreshing.
+     *
      * @return
      */
     public boolean isRefreshing() {
@@ -603,6 +605,7 @@ public class PtrFrameLayout extends ViewGroup {
 
     /**
      * Do real refresh work. If there is a hook, execute the hook first.
+     *
      * @param ignoreHook
      */
     private void notifyUIRefreshComplete(boolean ignoreHook) {
@@ -677,6 +680,7 @@ public class PtrFrameLayout extends ViewGroup {
 
     /**
      * If @param enable has been set to true. The user can perform next PTR at once.
+     *
      * @param enable
      */
     public void setEnabledNextPtrAtOnce(boolean enable) {
@@ -693,6 +697,7 @@ public class PtrFrameLayout extends ViewGroup {
 
     /**
      * The content view will now move when {@param pinContent} set to true.
+     *
      * @param pinContent
      */
     public void setPinContent(boolean pinContent) {
@@ -705,6 +710,7 @@ public class PtrFrameLayout extends ViewGroup {
 
     /**
      * It's useful when working with viewpager.
+     *
      * @param disable
      */
     public void disableWhenHorizontalMove(boolean disable) {
@@ -713,6 +719,7 @@ public class PtrFrameLayout extends ViewGroup {
 
     /**
      * loading will last at least for so long
+     *
      * @param time
      */
     public void setLoadingMinTime(int time) {
@@ -721,6 +728,7 @@ public class PtrFrameLayout extends ViewGroup {
 
     /**
      * Not necessary any longer. Once moved, cancel event will be sent to child.
+     *
      * @param yes
      */
     @Deprecated public void setInterceptEventWhileWorking(boolean yes) {
@@ -763,6 +771,7 @@ public class PtrFrameLayout extends ViewGroup {
 
     /**
      * The duration to return back to the refresh position
+     *
      * @param duration
      */
     public void setDurationToClose(int duration) {
@@ -775,6 +784,7 @@ public class PtrFrameLayout extends ViewGroup {
 
     /**
      * The duration to close time
+     *
      * @param duration
      */
     public void setDurationToCloseHeader(int duration) {
@@ -826,16 +836,19 @@ public class PtrFrameLayout extends ViewGroup {
     }
 
     public void setHeaderView(View header) {
-        if (mHeaderView != null && header != null && mHeaderView != header) {
-            removeView(mHeaderView);
+        if (header != null) {
+            if (mHeaderView != null && mHeaderView != header) {
+                removeView(mHeaderView);
+            }
+
+            ViewGroup.LayoutParams lp = header.getLayoutParams();
+            if (lp == null) {
+                lp = new LayoutParams(-1, -2);
+                header.setLayoutParams(lp);
+            }
+            mHeaderView = header;
+            addView(header);
         }
-        ViewGroup.LayoutParams lp = header.getLayoutParams();
-        if (lp == null) {
-            lp = new LayoutParams(-1, -2);
-            header.setLayoutParams(lp);
-        }
-        mHeaderView = header;
-        addView(header);
     }
 
     @Override protected boolean checkLayoutParams(ViewGroup.LayoutParams p) {
