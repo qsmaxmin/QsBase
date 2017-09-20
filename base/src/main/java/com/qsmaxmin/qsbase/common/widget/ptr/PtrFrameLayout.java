@@ -288,11 +288,7 @@ public class PtrFrameLayout extends ViewGroup {
                 mPtrIndicator.onMove(e.getX(), e.getY());
                 float offsetX = mPtrIndicator.getOffsetX();
                 float offsetY = mPtrIndicator.getOffsetY();
-                if (mDisableWhenHorizontalMove && !mPreventForHorizontal && Math.abs(offsetX) > Math.abs(offsetY) * Math.sqrt(3)) {
-                    if (mPtrIndicator.isInStartPosition()) {
-                        mPreventForHorizontal = true;
-                    }
-                }
+                mPreventForHorizontal = mDisableWhenHorizontalMove && (Math.abs(offsetX) > Math.abs(offsetY) * 1.2f) && mPtrIndicator.isInStartPosition();
                 if (mPreventForHorizontal) {
                     return dispatchTouchEventSupper(e);
                 }

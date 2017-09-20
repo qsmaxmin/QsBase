@@ -182,13 +182,11 @@ public class PtrIndicator {
     }
 
     public float getLastPercent() {
-        final float oldPercent = mHeaderHeight == 0 ? 0 : mLastPos * 1f / mHeaderHeight;
-        return oldPercent;
+        return mHeaderHeight == 0 ? 0 : mLastPos * 1f / mHeaderHeight;
     }
 
     public float getCurrentPercent() {
-        final float currentPercent = mHeaderHeight == 0 ? 0 : mCurrentPos * 1f / mHeaderHeight;
-        return currentPercent;
+        return mHeaderHeight == 0 ? 0 : mCurrentPos * 1f / mHeaderHeight;
     }
 
     public boolean willOverTop(int to) {
