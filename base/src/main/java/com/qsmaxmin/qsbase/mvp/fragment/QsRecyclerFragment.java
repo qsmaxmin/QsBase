@@ -129,6 +129,7 @@ public abstract class QsRecyclerFragment<T extends QsPresenter, D> extends QsFra
                     mLoadingFooter = (LoadingFooter) footerView.findViewById(R.id.loading_footer);
                 }
                 mRecyclerView.addFooterView(footerView);
+                QsHelper.getInstance().getViewBindHelper().bind(this, footerView);
             }
         }
 
