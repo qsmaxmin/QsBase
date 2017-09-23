@@ -116,7 +116,6 @@ public abstract class QsRecyclerFragment<T extends QsPresenter, D> extends QsFra
             View headerView = inflater.inflate(getHeaderLayout(), null);
             if (headerView != null) {
                 mRecyclerView.addHeaderView(headerView);
-//                ButterKnife.bind(this, headerView);
                 QsHelper.getInstance().getViewBindHelper().bind(this, headerView);
             }
         }
