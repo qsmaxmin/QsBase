@@ -115,6 +115,7 @@ public class HeaderFooterRecyclerAdapter extends RecyclerView.Adapter {
 
         HeaderOrFooterView(View itemView) {
             super(itemView);
+            itemView.setLayoutParams(new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
             this.view = itemView;
         }
 
