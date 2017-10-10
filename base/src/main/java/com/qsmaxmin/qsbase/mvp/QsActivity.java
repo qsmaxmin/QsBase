@@ -1,20 +1,14 @@
 package com.qsmaxmin.qsbase.mvp;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
-import android.text.TextUtils;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.ViewAnimator;
 
 import com.qsmaxmin.qsbase.R;
@@ -29,9 +23,6 @@ import com.qsmaxmin.qsbase.mvp.model.QsConstants;
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
 
 import org.greenrobot.eventbus.EventBus;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 
 /**
  * @CreateBy qsmaxmin
@@ -60,7 +51,6 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         QsHelper.getInstance().getApplication().onActivityCreate(this);
         View view = initView();
         setContentView(view);
-        initStatusBar();
         QsHelper.getInstance().getViewBindHelper().bind(this, view);
         if (isOpenEventBus() && !EventBus.getDefault().isRegistered(this)) EventBus.getDefault().register(this);
         if (!isDelayData()) {
@@ -111,79 +101,6 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
             rootView = View.inflate(this, layoutId(), null);
         }
         return rootView;
-    }
-
-    protected void initStatusBar() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) setTranslucentStatus(true);
-        if (isStatusBarLowVersionDarkIcon()) setStatusBarIconDarkColor(true);
-    }
-
-    protected boolean isStatusBarLowVersionDarkIcon() {
-        return Build.VERSION.SDK_INT < Build.VERSION_CODES.M && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
-    }
-
-    @TargetApi(Build.VERSION_CODES.KITKAT) private void setTranslucentStatus(boolean on) {
-        Window window = getWindow();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
-            } else {
-                window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
-            }
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.setStatusBarColor(Color.TRANSPARENT);
-        } else {
-            WindowManager.LayoutParams winParams = window.getAttributes();
-            final int bits = WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS;
-            if (on) {
-                winParams.flags |= bits;
-            } else {
-                winParams.flags &= ~bits;
-            }
-            window.setAttributes(winParams);
-        }
-    }
-
-    private void setStatusBarIconDarkColor(boolean dark) {
-        String manufacturer = Build.MANUFACTURER;
-        if (TextUtils.isEmpty(manufacturer)) return;
-        switch (manufacturer.toLowerCase()) {
-            case "xiaomi":
-                try {
-                    Class<? extends Window> clazz = getWindow().getClass();
-                    int darkModeFlag;
-                    Class<?> layoutParams = Class.forName("android.view.MiuiWindowManager$LayoutParams");
-                    Field field = layoutParams.getField("EXTRA_FLAG_STATUS_BAR_DARK_MODE");
-                    darkModeFlag = field.getInt(layoutParams);
-                    Method extraFlagField = clazz.getMethod("setExtraFlags", int.class, int.class);
-                    extraFlagField.invoke(getWindow(), dark ? darkModeFlag : 0, darkModeFlag);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                break;
-
-            case "meizu":
-                try {
-                    WindowManager.LayoutParams lp = getWindow().getAttributes();
-                    Field darkFlag = WindowManager.LayoutParams.class.getDeclaredField("MEIZU_FLAG_DARK_STATUS_BAR_ICON");
-                    Field meiZuFlags = WindowManager.LayoutParams.class.getDeclaredField("meizuFlags");
-                    darkFlag.setAccessible(true);
-                    meiZuFlags.setAccessible(true);
-                    int bit = darkFlag.getInt(null);
-                    int value = meiZuFlags.getInt(lp);
-                    if (dark) {
-                        value |= bit;
-                    } else {
-                        value &= ~bit;
-                    }
-                    meiZuFlags.setInt(lp, value);
-                    getWindow().setAttributes(lp);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                break;
-        }
     }
 
     @Override public P getPresenter() {
