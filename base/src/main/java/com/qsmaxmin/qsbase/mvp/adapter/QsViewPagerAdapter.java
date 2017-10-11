@@ -116,7 +116,7 @@ public class QsViewPagerAdapter extends PagerAdapter implements OuterPagerAdapte
 
     @Override public void destroyItem(ViewGroup container, int position, Object object) {
         this.container = container;
-        container.removeView(viewPagerData[position].fragment.getView());
+        if (position < viewPagerData.length && viewPagerData[position].fragment != null) container.removeView(viewPagerData[position].fragment.getView());
     }
 
     @Override public boolean isViewFromObject(View view, Object object) {
