@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <dimen name="qs_toolbar_top_padding">25dp</dimen>
-    <dimen name="qs_toolbar_height">75dp</dimen>
-</resources>

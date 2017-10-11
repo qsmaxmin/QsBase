@@ -116,7 +116,6 @@ public abstract class QsRecyclerFragment<T extends QsPresenter, D> extends QsFra
             View headerView = inflater.inflate(getHeaderLayout(), null);
             if (headerView != null) {
                 mRecyclerView.addHeaderView(headerView);
-//                ButterKnife.bind(this, headerView);
                 QsHelper.getInstance().getViewBindHelper().bind(this, headerView);
             }
         }
@@ -129,6 +128,7 @@ public abstract class QsRecyclerFragment<T extends QsPresenter, D> extends QsFra
                     mLoadingFooter = (LoadingFooter) footerView.findViewById(R.id.loading_footer);
                 }
                 mRecyclerView.addFooterView(footerView);
+                QsHelper.getInstance().getViewBindHelper().bind(this, footerView);
             }
         }
 

@@ -17,6 +17,5 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/color_toolbar_bg"
-        android:gravity="center_vertical"
-        android:paddingTop="@dimen/qs_toolbar_top_padding"/>
+        android:gravity="center_vertical"/>
 </android.support.v7.widget.Toolbar>
