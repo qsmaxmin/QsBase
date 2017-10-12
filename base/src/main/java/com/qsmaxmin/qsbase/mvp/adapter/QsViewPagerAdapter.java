@@ -167,8 +167,10 @@ public class QsViewPagerAdapter extends PagerAdapter implements OuterPagerAdapte
             oldView = tabs.tabsContainer.getChildAt(0);
             oldPosition = position;
         }
-        viewPagerData[currentPageIndex].fragment.onPause();
-        if (viewPagerData[position].fragment.isAdded()) {
+
+        if (currentPageIndex < viewPagerData.length) viewPagerData[currentPageIndex].fragment.onPause();
+
+        if (position < viewPagerData.length && viewPagerData[position].fragment.isAdded()) {
             ((QsFragment) viewPagerData[position].fragment).initDataWhenDelay(); // 调用延迟加载
             if (pager.getCurrentItem() == position) {
                 ((QsFragment) viewPagerData[position].fragment).onActionBar();
@@ -182,6 +184,11 @@ public class QsViewPagerAdapter extends PagerAdapter implements OuterPagerAdapte
 
         oldView = tabs.tabsContainer.getChildAt(position);
         oldPosition = position;
+    }
+
+    @Override public void notifyDataSetChanged() {
+        currentPageIndex = -1;
+        super.notifyDataSetChanged();
     }
 
     @Override public void onPageScrollStateChanged(int state) {
