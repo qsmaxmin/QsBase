@@ -20,12 +20,6 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * Created with IntelliJ IDEA.
- * User: wyouflf
- * Date: 13-6-19
- * Time: PM 1:18
- */
 public class DoubleKeyValueMap<K1, K2, V> {
 
     private final ConcurrentHashMap<K1, ConcurrentHashMap<K2, V>> k1_k2V_map;

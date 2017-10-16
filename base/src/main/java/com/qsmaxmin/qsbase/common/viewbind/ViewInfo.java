@@ -1,10 +1,5 @@
 package com.qsmaxmin.qsbase.common.viewbind;
 
-/**
- * Author: wyouflf
- * Date: 13-12-5
- * Time: 下午11:25
- */
 final class ViewInfo {
     public int value;
     public int parentId;

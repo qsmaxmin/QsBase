@@ -3,11 +3,6 @@ package com.qsmaxmin.qsbase.common.viewbind;
 import android.app.Activity;
 import android.view.View;
 
-/**
- * Author: wyouflf
- * Date: 13-9-9
- * Time: 下午12:29
- */
  final class ViewFinder {
 
     private View view;
