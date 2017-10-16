@@ -47,7 +47,7 @@ class HttpConverter {
                     result.append(line).append("\n");
                 }
                 String json = result.toString();
-                L.i(TAG, "method:" + methodName + "response ok  Json:" + result.toString());
+                L.i(TAG, "method:" + methodName + " response ok  Json:" + result.toString());
                 return gson.fromJson(json, type);
             } finally {
                 StreamCloseUtils.close(inputStreamReader, is, bufferedReader);

@@ -39,9 +39,9 @@ public class QsPresenter<V extends QsIView> {
                 case QsConstants.NAME_HTTP_THREAD:
                 case QsConstants.NAME_WORK_THREAD:
                 case QsConstants.NAME_SINGLE_THREAD:
-                    throw new QsException(QsExceptionType.CANCEL, "current thread:" + threadName + " execute " + getClass().getSimpleName() + ".getView() return null, maybe view" + (mView == null ? "" : "(" + mView.getClass().getSimpleName() + ")") + "is destroy...");
+                    throw new QsException(QsExceptionType.CANCEL, null, "current thread:" + threadName + " execute " + getClass().getSimpleName() + ".getView() return null, maybe view" + (mView == null ? "" : "(" + mView.getClass().getSimpleName() + ")") + "is destroy...");
                 default:
-                    throw new QsException(QsExceptionType.CANCEL, "当前线程:" + threadName + "执行" + getClass().getSimpleName() + ".getView()方法返回null, 因为View层" + (mView == null ? "" : "(" + mView.getClass().getSimpleName() + ")") + "销毁了，为了规避这种风险，请不要在Presenter里面通过非@ThreadPoint注解的方式创建线程并在该线程中调用getView()方法...");
+                    throw new QsException(QsExceptionType.CANCEL, null, "当前线程:" + threadName + "执行" + getClass().getSimpleName() + ".getView()方法返回null, 因为View层" + (mView == null ? "" : "(" + mView.getClass().getSimpleName() + ")") + "销毁了，为了规避这种风险，请不要在Presenter里面通过非@ThreadPoint注解的方式创建线程并在该线程中调用getView()方法...");
             }
         }
         return mView;
@@ -61,15 +61,11 @@ public class QsPresenter<V extends QsIView> {
      * 发起http请求
      */
     protected <T> T createHttpRequest(Class<T> clazz) {
-        return createHttpRequest(clazz, true);
+        return createHttpRequest(clazz, getClass().getSimpleName());
     }
 
-    protected <T> T createHttpRequest(Class<T> clazz, boolean shouldCancelWhenViewDestroy) {
-        if (shouldCancelWhenViewDestroy) {
-            return QsHelper.getInstance().getHttpHelper().create(clazz, getClass().getSimpleName());
-        } else {
-            return QsHelper.getInstance().getHttpHelper().create(clazz);
-        }
+    protected <T> T createHttpRequest(Class<T> clazz, String requestTag) {
+        return QsHelper.getInstance().getHttpHelper().create(clazz, requestTag);
     }
 
     /**
