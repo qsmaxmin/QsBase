@@ -7,9 +7,6 @@ import android.widget.Toast;
 
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
 
-/**
- * Created by wungko on 15/3/17. 弱交互Toast 消息弹窗
- */
 public class QsToast {
 
     private static Toast mToast = null;
