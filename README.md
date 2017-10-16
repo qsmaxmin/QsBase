@@ -37,7 +37,7 @@ MVP架构+AOP面向切面编程，摒弃反射、代理等操作，稳定性和�
 
         dependencies {
             ...
-            compile 'com.github.qsmaxmin:QsBase:da6acbb41b'
+            compile 'com.github.qsmaxmin:QsBase:1.1.2'
         }
 
 #### step 3：自定义Application继承QsApplication
@@ -155,9 +155,9 @@ MVP架构+AOP面向切面编程，摒弃反射、代理等操作，稳定性和�
         /**
          * P层
          */
-        public class HomePresenter extends QsPresenter<MainActivity> {
+        public class MainPresenter extends QsPresenter<MainActivity> {
              @ThreadPoint(ThreadType.HTTP) public void requestData() {
-                UserHttp userHttp = QsHelper.getInstance().getHttpHelper().create(UserHttp.class);
+                UserHttp userHttp = createHttpRequest(UserHttp.class);
                 ModelUser modelUser = userHttp.requestUserData(new BaseModelReq());
                 getView().updateUI(modelUser);
              }
