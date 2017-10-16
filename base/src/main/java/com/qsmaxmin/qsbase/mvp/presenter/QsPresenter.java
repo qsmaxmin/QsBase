@@ -83,7 +83,7 @@ public class QsPresenter<V extends QsIView> {
      * 自定义异常处理
      */
     public void methodError(QsException exception) {
-        L.e(initTag(), "methodError ：" + exception.getMessage());
+        L.e(initTag(), "methodError... errorType:" + exception.getExceptionType() + " requestTag:" + exception.getRequestTag() + " errorMessage:" + exception.getMessage());
         if (!isViewDetach()) {
             if (mView.isOpenViewState()) {
                 mView.showErrorView();
