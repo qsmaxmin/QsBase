@@ -37,7 +37,7 @@ MVP架构+AOP面向切面编程，摒弃反射、代理等操作，稳定性和�
 
         dependencies {
             ...
-            compile 'com.github.qsmaxmin:QsBase:1.1.2'
+            compile 'com.github.qsmaxmin:QsBase:1.1.3'
         }
 
 #### step 3：自定义Application继承QsApplication
