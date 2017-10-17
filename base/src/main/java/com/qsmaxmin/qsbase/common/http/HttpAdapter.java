@@ -12,6 +12,7 @@ import com.qsmaxmin.qsbase.common.aspect.POST;
 import com.qsmaxmin.qsbase.common.aspect.PUT;
 import com.qsmaxmin.qsbase.common.aspect.Path;
 import com.qsmaxmin.qsbase.common.aspect.Query;
+import com.qsmaxmin.qsbase.common.aspect.TERMINAL;
 import com.qsmaxmin.qsbase.common.exception.QsException;
 import com.qsmaxmin.qsbase.common.exception.QsExceptionType;
 import com.qsmaxmin.qsbase.common.log.L;
@@ -118,36 +119,44 @@ public class HttpAdapter {
 
     public Object startRequest(Method method, Object[] args, Object requestTag) {
         Annotation[] annotations = method.getAnnotations();
-        if (annotations.length != 1) {
-            throw new QsException(QsExceptionType.UNEXPECTED, requestTag, "Annotation error... the method:" + method.getName() + " must have one annotation!! @GET @POST or @PUT");
+        if (annotations == null || annotations.length < 1) {
+            throw new QsException(QsExceptionType.UNEXPECTED, requestTag, "Annotation error... the method:" + method.getName() + " must have one annotation at least!! @GET @POST or @PUT");
         }
-        Annotation annotation = annotations[0];
-        if (annotation == null) {
+        Annotation pathAnnotation = null;
+        String terminal = null;
+        for (Annotation annotation : annotations) {
+            if (annotation instanceof TERMINAL) {
+                terminal = ((TERMINAL) annotation).value();
+            } else {
+                pathAnnotation = annotation;
+            }
+        }
+        if (pathAnnotation == null) {
             throw new QsException(QsExceptionType.UNEXPECTED, requestTag, "Annotation error... the method:" + method.getName() + " create(Object.class) the method must has an annotation,such as:@PUT @POST or @GET...");
         }
-        if (annotation instanceof POST) {
-            String path = ((POST) annotation).value();
-            return executeWithOkHttp(method, args, path, requestTag, "POST");
+        if (pathAnnotation instanceof POST) {
+            String path = ((POST) pathAnnotation).value();
+            return executeWithOkHttp(terminal, method, args, path, requestTag, "POST");
 
-        } else if (annotation instanceof GET) {
-            String path = ((GET) annotation).value();
-            return executeWithOkHttp(method, args, path, requestTag, "GET");
+        } else if (pathAnnotation instanceof GET) {
+            String path = ((GET) pathAnnotation).value();
+            return executeWithOkHttp(terminal, method, args, path, requestTag, "GET");
 
-        } else if (annotation instanceof PUT) {
-            String path = ((PUT) annotation).value();
-            return executeWithOkHttp(method, args, path, requestTag, "PUT");
+        } else if (pathAnnotation instanceof PUT) {
+            String path = ((PUT) pathAnnotation).value();
+            return executeWithOkHttp(terminal, method, args, path, requestTag, "PUT");
 
-        } else if (annotation instanceof DELETE) {
-            String path = ((DELETE) annotation).value();
-            return executeWithOkHttp(method, args, path, requestTag, "DELETE");
+        } else if (pathAnnotation instanceof DELETE) {
+            String path = ((DELETE) pathAnnotation).value();
+            return executeWithOkHttp(terminal, method, args, path, requestTag, "DELETE");
 
-        } else if (annotation instanceof HEAD) {
-            String path = ((HEAD) annotation).value();
-            return executeWithOkHttp(method, args, path, requestTag, "HEAD");
+        } else if (pathAnnotation instanceof HEAD) {
+            String path = ((HEAD) pathAnnotation).value();
+            return executeWithOkHttp(terminal, method, args, path, requestTag, "HEAD");
 
-        } else if (annotation instanceof PATCH) {
-            String path = ((PATCH) annotation).value();
-            return executeWithOkHttp(method, args, path, requestTag, "PATCH");
+        } else if (pathAnnotation instanceof PATCH) {
+            String path = ((PATCH) pathAnnotation).value();
+            return executeWithOkHttp(terminal, method, args, path, requestTag, "PATCH");
 
         } else {
             throw new QsException(QsExceptionType.UNEXPECTED, requestTag, "Annotation error... the method:" + method.getName() + "create(Object.class) the method must has an annotation, such as:@PUT @POST or @GET...");
@@ -185,13 +194,13 @@ public class HttpAdapter {
         }
     }
 
-    private Object executeWithOkHttp(Method method, Object[] args, String path, Object requestTag, String requestType) {
+    private Object executeWithOkHttp(String terminal, Method method, Object[] args, String path, Object requestTag, String requestType) {
         Annotation[][] annotations = method.getParameterAnnotations();//参数可以有多个注解，但这里是不允许的
 
         checkParamsAnnotation(annotations, args, method.getName(), requestTag);
 
         HttpBuilder httpBuilder = getHttpBuilder(requestType);
-        StringBuilder url = getUrl(httpBuilder.getTerminal(), path, method, args, requestTag);
+        StringBuilder url = getUrl(TextUtils.isEmpty(terminal) ? httpBuilder.getTerminal() : terminal, path, method, args, requestTag);
 
         if (TextUtils.isEmpty(url)) throw new QsException(QsExceptionType.UNEXPECTED, requestTag, "url error... method:" + method.getName() + "  request url is null...");
 
@@ -274,6 +283,9 @@ public class HttpAdapter {
     }
 
     @Nullable private StringBuilder getUrl(String terminal, String path, Method method, Object[] args, Object requestTag) {
+        if (TextUtils.isEmpty(terminal)) {
+            throw new QsException(QsExceptionType.UNEXPECTED, requestTag, "url terminal error... method:" + method.getName() + "  terminal is null...");
+        }
         if (TextUtils.isEmpty(path)) {
             throw new QsException(QsExceptionType.UNEXPECTED, requestTag, "url path error... method:" + method.getName() + "  path is null...");
         }
