@@ -1,7 +1,6 @@
 package com.qsmaxmin.qsbase.mvp;
 
 import android.graphics.Color;
-import android.support.v4.view.PagerAdapter;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.View;
@@ -22,7 +21,7 @@ import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
 
 public abstract class QsViewPagerActivity<P extends QsPresenter> extends QsActivity<P> implements QsIViewPagerActivity {
 
-    private PagerAdapter         adapter;
+    private QsViewPagerAdapter   adapter;
     private QsViewPager          pager;
     private PagerSlidingTabStrip tabs;
 
@@ -47,7 +46,7 @@ public abstract class QsViewPagerActivity<P extends QsPresenter> extends QsActiv
     @Override public void initViewPager(QsModelPager[] modelPagers, int offScreenPageLimit) {
         if (modelPagers != null) {
             adapter = getPagerAdapter(pager, tabs);
-            ((QsViewPagerAdapter) adapter).setModelPagers(modelPagers);
+            adapter.setModelPagers(modelPagers);
             pager.setAdapter(adapter);
             final int pageMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4, getResources().getDisplayMetrics());
             pager.setPageMargin(pageMargin);
@@ -56,7 +55,7 @@ public abstract class QsViewPagerActivity<P extends QsPresenter> extends QsActiv
         }
     }
 
-    public PagerAdapter getPagerAdapter(QsViewPager pager, PagerSlidingTabStrip tabs) {
+    public QsViewPagerAdapter getPagerAdapter(QsViewPager pager, PagerSlidingTabStrip tabs) {
         return new QsTabViewPagerAdapter(initTag(), getSupportFragmentManager(), tabs, pager, this);
     }
 
@@ -93,8 +92,8 @@ public abstract class QsViewPagerActivity<P extends QsPresenter> extends QsActiv
     }
 
     @Override public void replaceViewPageItem(QsModelPager... modelPagers) {
-        if (adapter instanceof QsViewPagerAdapter) {
-            ((QsViewPagerAdapter) adapter).replaceViewPagerDatas(modelPagers);
+        if (adapter != null) {
+            adapter.replaceViewPagerDatas(modelPagers);
             adapter.notifyDataSetChanged();
         }
     }
@@ -112,6 +111,10 @@ public abstract class QsViewPagerActivity<P extends QsPresenter> extends QsActiv
 
     @Override public QsViewPager getViewPager() {
         return pager;
+    }
+
+    @Override public QsViewPagerAdapter getViewPagerAdapter() {
+        return adapter;
     }
 
     protected boolean getTabsCurrentItemAnimation() {

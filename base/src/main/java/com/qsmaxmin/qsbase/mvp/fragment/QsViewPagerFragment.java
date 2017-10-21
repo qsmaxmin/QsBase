@@ -133,6 +133,10 @@ public abstract class QsViewPagerFragment<P extends QsPresenter> extends QsFragm
         return pager;
     }
 
+    @Override public QsViewPagerAdapter getViewPagerAdapter() {
+        return adapter;
+    }
+
     protected boolean getTabsCurrentItemAnimation() {
         return false;
     }
