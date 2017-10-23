@@ -302,10 +302,8 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
         commitBackStackFragment(fragment, fragment.getClass().getSimpleName());
     }
 
-    @ThreadPoint(ThreadType.MAIN) @Override public void commitBackStackFragment(Fragment fragment, String tag) {
-        if (fragment != null && fragment.isAdded()) return;
-        getSupportFragmentManager().beginTransaction().add(android.R.id.custom, fragment, tag).addToBackStack(null).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN).commitAllowingStateLoss();
-        if (!isOpenViewState()) getSupportFragmentManager().executePendingTransactions();
+    @Override public void commitBackStackFragment(Fragment fragment, String tag) {
+        commitBackStackFragment(android.R.id.custom, fragment, tag);
     }
 
     @Override public void commitBackStackFragment(int layoutId, Fragment fragment) {
@@ -358,11 +356,14 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
     @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
         List<Fragment> fragmentList = getSupportFragmentManager().getFragments();
         if (fragmentList != null && !fragmentList.isEmpty()) {
-            for (Fragment fragment : fragmentList) {
-                if (fragment != null && !fragment.isDetached() && fragment.isResumed() && fragment.isAdded() && fragment.isVisible() && fragment instanceof QsIFragment) {
+            int size = fragmentList.size();
+            for (int i = size - 1; i >= 0; i--) {
+                Fragment fragment = fragmentList.get(i);
+                if (fragment != null && !fragment.isDetached() && fragment.isResumed() && fragment.isAdded() && fragment instanceof QsIFragment) {
+                    L.i(initTag(), "onKeyDown... Fragment:" + fragment.getClass().getSimpleName() + "  isDetach:" + fragment.isDetached() + "  isAdded:" + fragment.isAdded() + "  isResumed:" + fragment.isResumed());
                     boolean isIntercept = ((QsIFragment) fragment).onKeyDown(keyCode, event);
                     if (isIntercept) {
-                        L.i(initTag(), "当前Fragment(" + fragment.getClass().getSimpleName() + ")已拦截onKeyDown事件...");
+                        L.i(initTag(), "onKeyDown... Fragment:" + fragment.getClass().getSimpleName() + " 已拦截onKeyDown事件...");
                         return true;
                     }
                     break;

@@ -287,10 +287,8 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         commitBackStackFragment(fragment, fragment.getClass().getSimpleName());
     }
 
-    @ThreadPoint(ThreadType.MAIN) @Override public void commitBackStackFragment(Fragment fragment, String tag) {
-        if (fragment != null && fragment.isAdded()) return;
-        getFragmentManager().beginTransaction().add(android.R.id.custom, fragment, tag).addToBackStack(null).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN).commitAllowingStateLoss();
-        if (!isOpenViewState()) getFragmentManager().executePendingTransactions();
+    @Override public void commitBackStackFragment(Fragment fragment, String tag) {
+        commitBackStackFragment(android.R.id.custom, fragment, tag);
     }
 
     @Override public void commitBackStackFragment(int layoutId, Fragment fragment) {
