@@ -8,6 +8,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ViewAnimator;
 
@@ -19,10 +20,13 @@ import com.qsmaxmin.qsbase.common.utils.PresenterUtils;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.common.utils.permission.PermissionUtils;
 import com.qsmaxmin.qsbase.common.widget.dialog.QsProgressDialog;
+import com.qsmaxmin.qsbase.mvp.fragment.QsIFragment;
 import com.qsmaxmin.qsbase.mvp.model.QsConstants;
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
 
 import org.greenrobot.eventbus.EventBus;
+
+import java.util.List;
 
 /**
  * @CreateBy qsmaxmin
@@ -323,5 +327,25 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
                 }
             });
         }
+    }
+
+    /**
+     * 将onKeyDown事件传递到当前展示的Fragment
+     */
+    @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
+        List<Fragment> fragmentList = getSupportFragmentManager().getFragments();
+        if (fragmentList != null && !fragmentList.isEmpty()) {
+            for (Fragment fragment : fragmentList) {
+                if (fragment != null && !fragment.isDetached() && fragment.isResumed() && fragment.isAdded() && fragment.isVisible() && fragment instanceof QsIFragment) {
+                    boolean isIntercept = ((QsIFragment) fragment).onKeyDown(keyCode, event);
+                    if (isIntercept) {
+                        L.i(initTag(), "当前Fragment(" + fragment.getClass().getSimpleName() + ")已拦截onKeyDown事件...");
+                        return true;
+                    }
+                    break;
+                }
+            }
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }
