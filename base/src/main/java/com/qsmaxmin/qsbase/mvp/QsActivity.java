@@ -329,6 +329,10 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         }
     }
 
+    @ThreadPoint(ThreadType.MAIN) @Override public void onBackPressed() {
+        super.onBackPressed();
+    }
+
     /**
      * 将onKeyDown事件传递到当前展示的Fragment
      */
