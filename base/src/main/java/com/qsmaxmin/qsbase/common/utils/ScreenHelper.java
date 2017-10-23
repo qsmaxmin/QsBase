@@ -54,7 +54,9 @@ public final class ScreenHelper {
         if (activity != null) {
             fragmentActivities.add(activity);
             L.i(TAG, "activity入栈:" + activity.getClass().getSimpleName() + "   当前栈大小：" + fragmentActivities.size());
-        } else L.e(TAG, "pushActivity 传入的参数为空!");
+        } else {
+            L.e(TAG, "pushActivity 传入的参数为空!");
+        }
     }
 
     /**
@@ -62,9 +64,9 @@ public final class ScreenHelper {
      */
     public void popActivity(FragmentActivity activity) {
         if (activity != null) {
-            L.i(TAG, "activity出栈:" + activity.getClass().getSimpleName() + "   当前栈大小：" + fragmentActivities.size());
             activity.finish();
             fragmentActivities.remove(activity);
+            L.i(TAG, "activity出栈:" + activity.getClass().getSimpleName() + "   当前栈大小：" + fragmentActivities.size());
         } else {
             L.e(TAG, "popActivity 传入的参数为空!");
         }
@@ -76,6 +78,7 @@ public final class ScreenHelper {
 
     /**
      * 退出堆栈中所有Activity, 当前的Activity除外
+     *
      * @param clazz 当前活动窗口
      */
     public void popAllActivityExceptMain(Class clazz) {

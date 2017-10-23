@@ -8,6 +8,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -333,5 +334,9 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
 
     @Override public boolean shouldInterceptTouchEvent() {
         return true;
+    }
+
+    @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
+        return false;
     }
 }
