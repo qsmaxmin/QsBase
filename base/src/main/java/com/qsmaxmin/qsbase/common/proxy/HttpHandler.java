@@ -8,7 +8,7 @@ import java.lang.reflect.Method;
 
 
 /**
- * Created by sky on 15/2/24. 动态代理 - 网络层
+ * 动态代理 - 网络层
  */
 public class HttpHandler implements InvocationHandler {
     private static final String TAG = "HttpHandler";
