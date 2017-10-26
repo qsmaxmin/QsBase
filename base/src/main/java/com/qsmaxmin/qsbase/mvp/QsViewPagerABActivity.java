@@ -1,6 +1,7 @@
 package com.qsmaxmin.qsbase.mvp;
 
 import android.graphics.Color;
+import android.support.v4.app.Fragment;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.View;
@@ -116,6 +117,10 @@ public abstract class QsViewPagerABActivity<P extends QsPresenter> extends QsABA
 
     @Override public QsViewPagerAdapter getViewPagerAdapter() {
         return adapter;
+    }
+
+    @Override public Fragment getCurrentFragment() {
+        return adapter.getAllData()[pager.getCurrentItem()].fragment;
     }
 
     protected boolean getTabsCurrentItemAnimation() {

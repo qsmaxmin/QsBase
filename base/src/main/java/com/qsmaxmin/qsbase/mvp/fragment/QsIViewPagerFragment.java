@@ -22,8 +22,9 @@ public interface QsIViewPagerFragment extends QsIFragment {
 
     void onPageScrolled(int position, float positionOffset, int positionOffsetPixels);
 
-
     void initViewPager(QsModelPager[] modelPagers, int offScreenPageLimit);
+
+    QsModelPager[] getModelPagers();
 
     void replaceViewPageItem(QsModelPager... modelPagers);
 
@@ -37,10 +38,7 @@ public interface QsIViewPagerFragment extends QsIFragment {
 
     int getTabItemLayout();
 
-    Fragment getCurrentFragment();
-
     void initTab(View view, QsModelPager modelPager);
 
-    QsModelPager[] getModelPagers();
-
+    Fragment getCurrentFragment();
 }

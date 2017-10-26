@@ -1,5 +1,6 @@
 package com.qsmaxmin.qsbase.mvp;
 
+import android.support.v4.app.Fragment;
 import android.view.View;
 
 import com.qsmaxmin.qsbase.common.widget.viewpager.PagerSlidingTabStrip;
@@ -19,9 +20,9 @@ public interface QsIViewPagerActivity extends QsIActivity {
 
     void onPageSelected(View childAt, View oldView, int position, int oldPosition);
 
-    void initViewPager(QsModelPager[] modelPagers, int offScreenPageLimit);
-
     void onPageScrolled(int position, float positionOffset, int positionOffsetPixels);
+
+    void initViewPager(QsModelPager[] modelPagers, int offScreenPageLimit);
 
     QsModelPager[] getModelPagers();
 
@@ -38,4 +39,6 @@ public interface QsIViewPagerActivity extends QsIActivity {
     int getTabItemLayout();
 
     void initTab(View view, QsModelPager modelPager);
+
+    Fragment getCurrentFragment();
 }
