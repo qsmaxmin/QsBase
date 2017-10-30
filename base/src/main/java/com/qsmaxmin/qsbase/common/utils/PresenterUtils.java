@@ -35,6 +35,8 @@ public final class PresenterUtils {
                 }
             }
         }
-        return (P) new QsPresenter<>();
+        presenterImpl = (P) new QsPresenter<>();
+        presenterImpl.initPresenter(iView);
+        return presenterImpl;
     }
 }
