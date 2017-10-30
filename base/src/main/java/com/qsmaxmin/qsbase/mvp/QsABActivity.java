@@ -130,7 +130,7 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
         if (presenter == null) {
             synchronized (this) {
                 if (presenter == null) {
-                    presenter = PresenterUtils.createPresenter(getClass(), this);
+                    presenter = PresenterUtils.createPresenter(this);
                     L.i(initTag(), "Presenter初始化完成...");
                 }
             }

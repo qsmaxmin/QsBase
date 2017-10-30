@@ -30,7 +30,7 @@ import java.util.List;
  * @Date 17/7/1
  * @Description RecyclerView视图
  */
-public abstract class QsRecyclerFragment<T extends QsPresenter, D> extends QsFragment<T> implements QsIRecyclerFragment<D>, AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
+public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFragment<P> implements QsIRecyclerFragment<D>, AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
 
     public static final int     TYPE_LIST          = 1 << 2;
     public static final int     TYPE_GRID          = 2 << 2;

@@ -138,7 +138,6 @@ MVP架构+AOP面向切面编程，摒弃反射、代理等操作，稳定性和�
         /**
          * V层
          */
-        @Presenter(MainPresenter.class)//Presenter业务注入
         public class MainActivity extends QsViewPagerActivity<MainPresenter> {
             initData(){
                 ...

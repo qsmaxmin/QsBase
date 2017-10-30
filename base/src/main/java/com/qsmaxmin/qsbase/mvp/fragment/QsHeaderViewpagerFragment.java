@@ -18,7 +18,7 @@ import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
  * @Description
  */
 
-public abstract class QsHeaderViewpagerFragment<T extends QsPresenter> extends QsViewPagerFragment<T> implements QsIHeaderViewPagerFragment {
+public abstract class QsHeaderViewpagerFragment<P extends QsPresenter> extends QsViewPagerFragment<P> implements QsIHeaderViewPagerFragment {
 
     protected HeaderViewPager headerViewPager;
 

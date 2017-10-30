@@ -111,7 +111,7 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         if (presenter == null) {
             synchronized (this) {
                 if (presenter == null) {
-                    presenter = PresenterUtils.createPresenter(getClass(), this);
+                    presenter = PresenterUtils.createPresenter(this);
                     L.i(initTag(), "Presenter初始化完成...");
                 }
             }

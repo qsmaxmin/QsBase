@@ -1,10 +1,11 @@
 package com.qsmaxmin.qsbase.common.utils;
 
 
-import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.mvp.QsIView;
-import com.qsmaxmin.qsbase.mvp.presenter.Presenter;
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
+
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 
 /**
  * @CreateBy qsmaxmin
@@ -15,26 +16,25 @@ public final class PresenterUtils {
     /**
      * 创建业务类
      */
-    public static <P extends QsPresenter, V extends QsIView> P createPresenter(Class paramClazz, V iView) {
-        L.i("PresenterUtils", "createPresenter()");
+    public static <P extends QsPresenter, V extends QsIView> P createPresenter(V iView) {
+        Class<? extends QsIView> viewClass = iView.getClass();
         P presenterImpl;
-        Presenter presenter = (Presenter) paramClazz.getAnnotation(Presenter.class);
-        if (presenter == null) {
-            throw new IllegalArgumentException(String.valueOf(paramClazz) + "，该类没有注入Presenter！");
+        Type genericSuperclass = viewClass.getGenericSuperclass();
+        if (genericSuperclass instanceof ParameterizedType) {
+            Type[] typeArguments = ((ParameterizedType) genericSuperclass).getActualTypeArguments();
+            if (typeArguments != null && typeArguments.length > 0) {
+                Class typeArgument = (Class) typeArguments[0];
+                try {
+                    presenterImpl = (P) typeArgument.newInstance();
+                    presenterImpl.initPresenter(iView);
+                    return presenterImpl;
+                } catch (InstantiationException e) {
+                    throw new IllegalArgumentException(String.valueOf(viewClass) + "，实例化异常！");
+                } catch (IllegalAccessException e) {
+                    throw new IllegalArgumentException(String.valueOf(viewClass) + "，访问权限异常！");
+                }
+            }
         }
-        Class clazz;
-        try {
-            clazz = Class.forName(presenter.value().getName());
-            L.i("PresenterUtils", "注入:" + clazz.getName());
-            presenterImpl = (P) clazz.newInstance();
-            presenterImpl.initPresenter(iView);
-            return presenterImpl;
-        } catch (ClassNotFoundException e) {
-            throw new IllegalArgumentException(String.valueOf(paramClazz) + "，没有找到业务类！");
-        } catch (InstantiationException e) {
-            throw new IllegalArgumentException(String.valueOf(paramClazz) + "，实例化异常！");
-        } catch (IllegalAccessException e) {
-            throw new IllegalArgumentException(String.valueOf(paramClazz) + "，访问权限异常！");
-        }
+        return (P) new QsPresenter<>();
     }
 }

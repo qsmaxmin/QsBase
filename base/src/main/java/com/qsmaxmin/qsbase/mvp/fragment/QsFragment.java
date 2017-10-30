@@ -115,7 +115,7 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         if (presenter == null) {
             synchronized (this) {
                 if (presenter == null) {
-                    presenter = PresenterUtils.createPresenter(getClass(), this);
+                    presenter = PresenterUtils.createPresenter(this);
                     L.i(initTag(), "Presenter初始化完成...");
                 }
             }
