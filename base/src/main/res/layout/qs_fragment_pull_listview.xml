@@ -1,23 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/swipe_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/color_bg"
-    android:orientation="vertical">
+    android:background="@color/color_bg">
 
-    <com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout
-        android:id="@+id/swipe_container"
+    <ListView
+        android:id="@android:id/list"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_height="match_parent"
+        android:background="@null"
+        android:divider="@null"
+        android:dividerHeight="0dp"
+        android:overScrollMode="never"/>
 
-        <ListView
-            android:id="@android:id/list"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:overScrollMode="never"/>
+</com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout>
 
-    </com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout>
-
-</LinearLayout>

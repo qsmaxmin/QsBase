@@ -5,6 +5,7 @@
     android:id="@+id/toolbar"
     android:layout_width="match_parent"
     android:layout_height="@dimen/qs_toolbar_height"
+    android:background="@null"
     app:contentInsetEnd="0dp"
     app:contentInsetLeft="0dp"
     app:contentInsetRight="0dp"
@@ -16,6 +17,6 @@
         android:id="@+id/vg_toolbar"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/color_toolbar_bg"
+        android:background="@null"
         android:gravity="center_vertical"/>
 </android.support.v7.widget.Toolbar>
