@@ -207,10 +207,6 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
         }
     }
 
-    public void setBackGround(int resId) {
-        tabsContainer.setBackgroundColor(resId);
-    }
-
     public void setRectPaintWidth(int width) {
         rectPaintWidth = width;
     }
@@ -653,17 +649,16 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 
     /**
      * 切换是否有动画
-     * @param isCurrentItemAnimation
      */
     public void setIsCurrentItemAnimation(boolean isCurrentItemAnimation) {
         this.isCurrentItemAnimation = isCurrentItemAnimation;
     }
 
-    static class SavedState extends BaseSavedState {
+    private static class SavedState extends BaseSavedState {
 
         int currentPosition;
 
-        public SavedState(Parcelable superState) {
+        SavedState(Parcelable superState) {
             super(superState);
         }
 

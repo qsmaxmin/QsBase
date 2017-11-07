@@ -126,7 +126,8 @@ public class InnerSpecialViewHelper {
     private static final int ORIGIN_AUTO_COMPLETION_COLOR = Color.TRANSPARENT;
 
     public void setContentAutoCompletionColor(int color) {
-        getContentAutoCompletionViewSafely().setBackgroundColor(mContentAutoCompletionColor = color);
+        mContentAutoCompletionColor = color;
+        getContentAutoCompletionViewSafely().setBackgroundColor(mContentAutoCompletionColor);
     }
 
     public View generateContentAutoCompletionView() {
