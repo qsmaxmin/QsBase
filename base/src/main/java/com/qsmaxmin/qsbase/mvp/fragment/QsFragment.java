@@ -99,7 +99,7 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
     protected View initView(LayoutInflater inflater) {
         View rootView;
         if (isOpenViewState() && loadingLayoutId() > 0 && emptyLayoutId() > 0 && errorLayoutId() > 0) {
-            rootView = inflater.inflate(R.layout.qs_activity_state, null);
+            rootView = inflater.inflate(rootViewLayoutId(), null);
             mViewAnimator = (ViewAnimator) rootView.findViewById(android.R.id.home);
             inflater.inflate(loadingLayoutId(), mViewAnimator);
             inflater.inflate(layoutId(), mViewAnimator);
@@ -109,6 +109,10 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
             rootView = inflater.inflate(layoutId(), null);
         }
         return rootView;
+    }
+
+    protected int rootViewLayoutId() {
+        return R.layout.qs_activity_state;
     }
 
     @Override public P getPresenter() {
