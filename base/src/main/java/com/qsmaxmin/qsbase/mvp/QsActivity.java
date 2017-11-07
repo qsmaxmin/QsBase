@@ -95,7 +95,7 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
     protected View initView() {
         View rootView;
         if (isOpenViewState() && loadingLayoutId() > 0 && emptyLayoutId() > 0 && errorLayoutId() > 0) {
-            rootView = View.inflate(this, R.layout.qs_activity_state, null);
+            rootView = View.inflate(this, rootViewLayoutId(), null);
             mViewAnimator = (ViewAnimator) rootView.findViewById(android.R.id.home);
             View.inflate(this, loadingLayoutId(), mViewAnimator);
             View.inflate(this, layoutId(), mViewAnimator);
@@ -105,6 +105,10 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
             rootView = View.inflate(this, layoutId(), null);
         }
         return rootView;
+    }
+
+    protected int rootViewLayoutId() {
+        return R.layout.qs_activity_state;
     }
 
     @Override public P getPresenter() {

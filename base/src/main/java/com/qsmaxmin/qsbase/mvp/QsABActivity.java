@@ -102,7 +102,7 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
         View rootView;
         Toolbar mToolbar;
         if (isOpenViewState() && loadingLayoutId() > 0 && emptyLayoutId() > 0 && errorLayoutId() > 0) {
-            rootView = View.inflate(this, R.layout.qs_activity_ab_state, null);
+            rootView = View.inflate(this, rootViewLayoutId(), null);
             mViewAnimator = (ViewAnimator) rootView.findViewById(android.R.id.home);
             mToolbar = (Toolbar) rootView.findViewById(R.id.toolbar);
             View.inflate(this, loadingLayoutId(), mViewAnimator);
@@ -124,6 +124,10 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
         }
         setSupportActionBar(mToolbar);
         return rootView;
+    }
+
+    protected int rootViewLayoutId() {
+        return R.layout.qs_activity_ab_state;
     }
 
     @Override public P getPresenter() {
