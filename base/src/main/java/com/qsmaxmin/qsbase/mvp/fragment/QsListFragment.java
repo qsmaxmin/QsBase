@@ -72,7 +72,7 @@ public abstract class QsListFragment<P extends QsPresenter, D> extends QsFragmen
     @Override protected View initView(LayoutInflater inflater) {
         View rootView;
         if (isOpenViewState() && loadingLayoutId() > 0 && emptyLayoutId() > 0 && errorLayoutId() > 0) {
-            rootView = inflater.inflate(R.layout.qs_list_fragment_state, null);
+            rootView = inflater.inflate(R.layout.qs_fragment_state_with_top_bottom, null);
             if (getTopLayout() > 0 || getBottomLayout() > 0) initTopBottomView(rootView, inflater);
             mViewAnimator = (ViewAnimator) rootView.findViewById(android.R.id.home);
             inflater.inflate(loadingLayoutId(), mViewAnimator);
