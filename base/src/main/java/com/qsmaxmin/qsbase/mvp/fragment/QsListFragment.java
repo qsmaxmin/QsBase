@@ -146,36 +146,40 @@ public abstract class QsListFragment<P extends QsPresenter, D> extends QsFragmen
     }
 
 
-    @ThreadPoint(ThreadType.MAIN) @Override public void setData(List<D> list) {
+    @Override public void setData(List<D> list) {
+        setData(list, true);
+    }
+
+    @Override public void setData(List<D> list, boolean showEmptyView) {
         synchronized (mList) {
             mList.clear();
             if (list != null && !list.isEmpty()) mList.addAll(list);
-            updateAdapter();
+            updateAdapter(showEmptyView);
         }
     }
 
-    @ThreadPoint(ThreadType.MAIN) @Override public void addData(List<D> list) {
+    @Override public void addData(List<D> list) {
         if (list != null && !list.isEmpty()) {
             synchronized (mList) {
                 mList.addAll(list);
-                updateAdapter();
+                updateAdapter(true);
             }
         }
     }
 
-    @ThreadPoint(ThreadType.MAIN) @Override public void delete(int position) {
+    @Override public void delete(int position) {
         synchronized (mList) {
             if (position >= 0 && position < mList.size()) {
                 mList.remove(position);
-                updateAdapter();
+                updateAdapter(true);
             }
         }
     }
 
-    @ThreadPoint(ThreadType.MAIN) @Override public void deleteAll() {
+    @Override public void deleteAll() {
         synchronized (mList) {
             mList.clear();
-            updateAdapter();
+            updateAdapter(true);
         }
     }
 
@@ -184,11 +188,11 @@ public abstract class QsListFragment<P extends QsPresenter, D> extends QsFragmen
     }
 
 
-    @Override public void updateAdapter() {
+    @ThreadPoint(ThreadType.MAIN) @Override public void updateAdapter(boolean showEmptyView) {
         if (mListAdapter != null) {
             mListAdapter.notifyDataSetChanged();
             if (mViewAnimator != null) {
-                if (mList.isEmpty()) {
+                if (mList.isEmpty() && showEmptyView) {
                     showEmptyView();
                 } else {
                     showContentView();

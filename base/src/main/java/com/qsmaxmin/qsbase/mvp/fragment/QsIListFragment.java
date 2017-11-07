@@ -33,6 +33,8 @@ public interface QsIListFragment<D> extends QsIFragment {
 
     void setData(List<D> list);
 
+    void setData(List<D> list, boolean showEmptyView);
+
     void addData(List<D> list);
 
     void delete(int position);
@@ -41,7 +43,7 @@ public interface QsIListFragment<D> extends QsIFragment {
 
     List<D> getData();
 
-    void updateAdapter();
+    void updateAdapter(boolean showEmptyView);
 
     BaseAdapter onCreateAdapter();
 

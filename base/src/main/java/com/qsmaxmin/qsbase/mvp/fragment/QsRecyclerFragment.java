@@ -177,19 +177,23 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
         return mRecyclerViewAdapter;
     }
 
-    @Override @ThreadPoint(ThreadType.MAIN) public void setData(List<D> list) {
+    @Override public void setData(List<D> list) {
+        setData(list, true);
+    }
+
+    @Override public void setData(List<D> list, boolean showEmptyView) {
         synchronized (mList) {
             mList.clear();
             if (list != null && !list.isEmpty()) mList.addAll(list);
-            updateAdapter();
+            updateAdapter(showEmptyView);
         }
     }
 
-    @Override @ThreadPoint(ThreadType.MAIN) public void addData(List<D> list) {
+    @Override public void addData(List<D> list) {
         if (list != null && !list.isEmpty()) {
             synchronized (mList) {
                 mList.addAll(list);
-                updateAdapter();
+                updateAdapter(true);
             }
         }
     }
@@ -200,7 +204,7 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
                 position = (position < mList.size()) ? position : mList.size();
                 if (mRecyclerViewAdapter != null) mRecyclerViewAdapter.notifyItemRangeInserted(position, list.size());
                 mList.addAll(position, list);
-                updateAdapter();
+                updateAdapter(true);
             }
         }
     }
@@ -210,15 +214,15 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
             if (position >= 0 && position < mList.size()) {
                 if (mRecyclerViewAdapter != null) mRecyclerViewAdapter.notifyItemRemoved(position);
                 mList.remove(position);
-                updateAdapter();
+                updateAdapter(true);
             }
         }
     }
 
-    @Override @ThreadPoint(ThreadType.MAIN) public void deleteAll() {
+    @Override public void deleteAll() {
         synchronized (mList) {
             mList.clear();
-            updateAdapter();
+            updateAdapter(true);
         }
     }
 
@@ -226,11 +230,11 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
         return mList;
     }
 
-    @Override public void updateAdapter() {
+    @ThreadPoint(ThreadType.MAIN) @Override public void updateAdapter(boolean showEmptyView) {
         if (mRecyclerViewAdapter != null) {
             mRecyclerViewAdapter.notifyDataSetChanged();
             if (mViewAnimator != null) {
-                if (mList.isEmpty()) {
+                if (mList.isEmpty() && showEmptyView) {
                     showEmptyView();
                 } else {
                     showContentView();

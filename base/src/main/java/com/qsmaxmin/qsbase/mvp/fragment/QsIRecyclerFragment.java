@@ -33,6 +33,8 @@ public interface QsIRecyclerFragment<D> extends QsIFragment {
 
     void setData(List<D> list);
 
+    void setData(List<D> list, boolean showEmptyView);
+
     List<D> getData();
 
     void addData(List<D> list);
@@ -43,7 +45,7 @@ public interface QsIRecyclerFragment<D> extends QsIFragment {
 
     void deleteAll();
 
-    void updateAdapter();
+    void updateAdapter(boolean showEmptyView);
 
     RecyclerView.Adapter onCreateAdapter();
 
