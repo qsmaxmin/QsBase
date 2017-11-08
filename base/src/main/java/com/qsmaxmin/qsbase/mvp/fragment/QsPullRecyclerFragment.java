@@ -25,8 +25,8 @@ import java.util.List;
 
 public abstract class QsPullRecyclerFragment<P extends QsPresenter, D> extends QsRecyclerFragment<P, D> implements QsIPullRecyclerFragment<D> {
 
-    private boolean canLoadingMore = true;
     private PtrFrameLayout mPtrFrameLayout;
+    private boolean canLoadingMore = true;
 
     @Override public int getFooterLayout() {
         return QsHelper.getInstance().getApplication().listFooterLayoutId();
