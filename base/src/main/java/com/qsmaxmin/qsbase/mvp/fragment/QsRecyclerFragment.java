@@ -90,7 +90,7 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
                 ((LinearLayout) rootView).addView(inflater.inflate(getBottomLayout(), null), childCount);
             }
         } else {
-            L.e(initTag(), "layoutId() root must be LinearLayout when getTopLayout() or getBottomLayout() is overwrite !");
+            L.e(initTag(), "rootViewLayoutId() root view must be LinearLayout when getTopLayout() or getBottomLayout() is overwrite, but now is:" + rootView.getClass().getSimpleName());
         }
     }
 
