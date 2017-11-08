@@ -113,7 +113,7 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
     }
 
     protected int rootViewLayoutId() {
-        return R.layout.qs_activity_state;
+        return R.layout.qs_fragment_state;
     }
 
     @Override public P getPresenter() {
