@@ -184,7 +184,6 @@ public class QsHelper {
                 ((QsFragment) fragment).enableBackgroundColor();
             }
             fragmentManager.beginTransaction().add(layoutId, fragment, tag).addToBackStack(null).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN).commitAllowingStateLoss();
-            fragmentManager.executePendingTransactions();
         }
     }
 
