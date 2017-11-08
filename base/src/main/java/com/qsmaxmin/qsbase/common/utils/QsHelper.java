@@ -8,14 +8,19 @@ import android.support.annotation.DimenRes;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.StringRes;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 
 import com.qsmaxmin.qsbase.QsApplication;
+import com.qsmaxmin.qsbase.common.aspect.ThreadPoint;
+import com.qsmaxmin.qsbase.common.aspect.ThreadType;
 import com.qsmaxmin.qsbase.common.http.HttpAdapter;
 import com.qsmaxmin.qsbase.common.threadpoll.QsThreadPollHelper;
 import com.qsmaxmin.qsbase.common.viewbind.ViewBind;
 import com.qsmaxmin.qsbase.common.viewbind.ViewBindImpl;
+import com.qsmaxmin.qsbase.mvp.fragment.QsFragment;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -100,6 +105,86 @@ public class QsHelper {
             } else {
                 activity.startActivity(intent);
             }
+        }
+    }
+
+    public void commitFragment(Fragment fragment) {
+        commitFragment(fragment, fragment.getClass().getSimpleName());
+    }
+
+    public void commitFragment(Fragment fragment, String tag) {
+        commitFragment(android.R.id.custom, fragment, tag);
+    }
+
+    public void commitFragment(int layoutId, Fragment fragment) {
+        commitFragment(layoutId, fragment, fragment.getClass().getSimpleName());
+    }
+
+    public void commitFragment(int layoutId, Fragment fragment, String tag) {
+        FragmentActivity activity = getScreenHelper().currentActivity();
+        if (activity == null) return;
+        commitFragment(activity.getSupportFragmentManager(), layoutId, fragment, tag);
+    }
+
+    @ThreadPoint(ThreadType.MAIN) public void commitFragment(FragmentManager fragmentManager, int layoutId, Fragment fragment, String tag) {
+        if (fragment != null && !fragment.isAdded() && fragmentManager != null && layoutId > 0) {
+            fragmentManager.beginTransaction().add(layoutId, fragment, tag).setTransition(FragmentTransaction.TRANSIT_NONE).commitAllowingStateLoss();
+            fragmentManager.executePendingTransactions();
+        }
+    }
+
+    public void commitFragment(Fragment old, Fragment fragment) {
+        commitFragment(old, fragment, fragment.getClass().getSimpleName());
+    }
+
+    public void commitFragment(Fragment old, Fragment fragment, String tag) {
+        commitFragment(old, android.R.id.custom, fragment, tag);
+    }
+
+    public void commitFragment(Fragment old, int layoutId, Fragment fragment) {
+        commitFragment(old, layoutId, fragment, fragment.getClass().getSimpleName());
+    }
+
+    public void commitFragment(Fragment old, int layoutId, Fragment fragment, String tag) {
+        FragmentActivity activity = getScreenHelper().currentActivity();
+        if (activity == null) return;
+        commitFragment(activity.getSupportFragmentManager(), old, layoutId, fragment, tag);
+    }
+
+    @ThreadPoint(ThreadType.MAIN) public void commitFragment(FragmentManager fragmentManager, Fragment old, int layoutId, Fragment fragment, String tag) {
+        if (layoutId > 0 && fragment != null && !fragment.isAdded() && fragmentManager != null) {
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            if (old != null) fragmentTransaction.detach(old);
+            fragmentTransaction.add(layoutId, fragment, tag).setTransition(FragmentTransaction.TRANSIT_NONE).commitAllowingStateLoss();
+        }
+    }
+
+    public void commitBackStackFragment(Fragment fragment) {
+        commitBackStackFragment(fragment, fragment.getClass().getSimpleName());
+    }
+
+    public void commitBackStackFragment(Fragment fragment, String tag) {
+        commitBackStackFragment(android.R.id.custom, fragment, tag);
+    }
+
+    public void commitBackStackFragment(int layoutId, Fragment fragment) {
+        commitBackStackFragment(layoutId, fragment, fragment.getClass().getSimpleName());
+    }
+
+    public void commitBackStackFragment(int layoutId, Fragment fragment, String tag) {
+        FragmentActivity activity = getScreenHelper().currentActivity();
+        if (activity == null) return;
+        FragmentManager fragmentManager = activity.getSupportFragmentManager();
+        commitBackStackFragment(fragmentManager, layoutId, fragment, tag);
+    }
+
+    @ThreadPoint(ThreadType.MAIN) public void commitBackStackFragment(FragmentManager fragmentManager, int layoutId, Fragment fragment, String tag) {
+        if (layoutId > 0 && fragment != null && !fragment.isAdded() && fragmentManager != null) {
+            if (fragment instanceof QsFragment) {
+                ((QsFragment) fragment).enableBackgroundColorWhenBackStack();
+            }
+            fragmentManager.beginTransaction().add(layoutId, fragment, tag).addToBackStack(null).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN).commitAllowingStateLoss();
+            fragmentManager.executePendingTransactions();
         }
     }
 

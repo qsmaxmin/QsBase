@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
-import android.widget.ViewAnimator;
 
 import com.qsmaxmin.qsbase.R;
 import com.qsmaxmin.qsbase.common.aspect.ThreadPoint;
@@ -71,21 +70,14 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
     }
 
     @Override protected View initView(LayoutInflater inflater) {
-        View rootView;
-        if (isOpenViewState() && loadingLayoutId() > 0 && emptyLayoutId() > 0 && errorLayoutId() > 0) {
-            rootView = inflater.inflate(R.layout.qs_fragment_state_with_top_bottom, null);
-            if (getTopLayout() > 0 || getBottomLayout() > 0) initTopBottomView(rootView, inflater);
-            mViewAnimator = (ViewAnimator) rootView.findViewById(android.R.id.home);
-            inflater.inflate(loadingLayoutId(), mViewAnimator);
-            inflater.inflate(layoutId(), mViewAnimator);
-            inflater.inflate(emptyLayoutId(), mViewAnimator);
-            inflater.inflate(errorLayoutId(), mViewAnimator);
-        } else {
-            rootView = inflater.inflate(layoutId(), null);
-            if (getTopLayout() > 0 || getBottomLayout() > 0) initTopBottomView(rootView, inflater);
-        }
+        View rootView = super.initView(inflater);
+        if (getTopLayout() > 0 || getBottomLayout() > 0) initTopBottomView(rootView, inflater);
         initRecycleView(inflater, rootView);
         return rootView;
+    }
+
+    @Override protected int rootViewLayoutId() {
+        return (getTopLayout() > 0 || getBottomLayout() > 0) ? R.layout.qs_fragment_state_with_top_bottom : super.rootViewLayoutId();
     }
 
     protected void initTopBottomView(View rootView, LayoutInflater inflater) {

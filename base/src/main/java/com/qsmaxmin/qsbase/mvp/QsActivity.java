@@ -7,7 +7,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentTransaction;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ViewAnimator;
@@ -254,12 +253,8 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         commitFragment(layoutId, fragment, fragment.getClass().getSimpleName());
     }
 
-    @ThreadPoint(ThreadType.MAIN) @Override public void commitFragment(int layoutId, Fragment fragment, String tag) {
-        if (fragment != null && fragment.isAdded()) {
-            return;
-        }
-        getSupportFragmentManager().beginTransaction().add(layoutId, fragment, tag).setTransition(FragmentTransaction.TRANSIT_NONE).commitAllowingStateLoss();
-        if (!isOpenViewState()) getSupportFragmentManager().executePendingTransactions();
+    @Override public void commitFragment(int layoutId, Fragment fragment, String tag) {
+        QsHelper.getInstance().commitFragment(getSupportFragmentManager(), layoutId, fragment, tag);
     }
 
     @Override public void commitFragment(Fragment old, Fragment fragment) {
@@ -274,13 +269,8 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         commitFragment(old, layoutId, fragment, fragment.getClass().getSimpleName());
     }
 
-    @ThreadPoint(ThreadType.MAIN) @Override public void commitFragment(Fragment old, int layoutId, Fragment fragment, String tag) {
-        if (layoutId == 0) return;
-        if (fragment != null && fragment.isAdded()) return;
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        if (old != null) fragmentTransaction.detach(old);
-        fragmentTransaction.add(layoutId, fragment, tag).setTransition(FragmentTransaction.TRANSIT_NONE).commitAllowingStateLoss();
-        if (!isOpenViewState()) getSupportFragmentManager().executePendingTransactions();
+    @Override public void commitFragment(Fragment old, int layoutId, Fragment fragment, String tag) {
+        QsHelper.getInstance().commitFragment(getSupportFragmentManager(), old, layoutId, fragment, tag);
     }
 
     @Override public void commitBackStackFragment(Fragment fragment) {
@@ -293,14 +283,10 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
 
     @Override public void commitBackStackFragment(int layoutId, Fragment fragment) {
         commitBackStackFragment(layoutId, fragment, fragment.getClass().getSimpleName());
-
     }
 
-    @ThreadPoint(ThreadType.MAIN) @Override public void commitBackStackFragment(int layoutId, Fragment fragment, String tag) {
-        if (layoutId == 0) return;
-        if (fragment != null && fragment.isAdded()) return;
-        getSupportFragmentManager().beginTransaction().add(layoutId, fragment, tag).addToBackStack(null).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN).commitAllowingStateLoss();
-        if (!isOpenViewState()) getSupportFragmentManager().executePendingTransactions();
+    @Override public void commitBackStackFragment(int layoutId, Fragment fragment, String tag) {
+        QsHelper.getInstance().commitBackStackFragment(getSupportFragmentManager(), layoutId, fragment, tag);
     }
 
     @Override public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {

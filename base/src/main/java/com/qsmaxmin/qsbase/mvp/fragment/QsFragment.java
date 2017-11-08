@@ -7,7 +7,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentTransaction;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -40,9 +39,9 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
 
     private   P                presenter;
     private   boolean          hasInitData;
+    private   boolean          enableBackgroundColor;
     protected QsProgressDialog mProgressDialog;
     protected ViewAnimator     mViewAnimator;
-
 
     @Override public String initTag() {
         return getClass().getSimpleName();
@@ -70,11 +69,11 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
 
     @Nullable @Override public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        View view = initView(inflater);
-        QsHelper.getInstance().getViewBindHelper().bind(this, view);
-        view.setOnTouchListener(this);
+        View rootView = initView(inflater);
+        QsHelper.getInstance().getViewBindHelper().bind(this, rootView);
+        rootView.setOnTouchListener(this);
         if (isOpenEventBus() && !EventBus.getDefault().isRegistered(this)) EventBus.getDefault().register(this);
-        return view;
+        return rootView;
     }
 
     @Override public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -97,18 +96,20 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
     }
 
     protected View initView(LayoutInflater inflater) {
-        View rootView;
+        View view;
         if (isOpenViewState() && loadingLayoutId() > 0 && emptyLayoutId() > 0 && errorLayoutId() > 0) {
-            rootView = inflater.inflate(rootViewLayoutId(), null);
-            mViewAnimator = (ViewAnimator) rootView.findViewById(android.R.id.home);
+            view = inflater.inflate(rootViewLayoutId(), null);
+            mViewAnimator = (ViewAnimator) view.findViewById(android.R.id.home);
             inflater.inflate(loadingLayoutId(), mViewAnimator);
-            inflater.inflate(layoutId(), mViewAnimator);
+            View contentView = inflater.inflate(layoutId(), mViewAnimator);
             inflater.inflate(emptyLayoutId(), mViewAnimator);
             inflater.inflate(errorLayoutId(), mViewAnimator);
+            if (enableBackgroundColor) contentView.setBackgroundColor(QsHelper.getInstance().getColor(getBackgroundColorId()));
         } else {
-            rootView = inflater.inflate(layoutId(), null);
+            view = inflater.inflate(layoutId(), null);
+            if (enableBackgroundColor) view.setBackgroundColor(QsHelper.getInstance().getColor(getBackgroundColorId()));
         }
-        return rootView;
+        return view;
     }
 
     protected int rootViewLayoutId() {
@@ -259,11 +260,7 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
     }
 
     @ThreadPoint(ThreadType.MAIN) @Override public void commitFragment(int layoutId, Fragment fragment, String tag) {
-        if (fragment != null && fragment.isAdded()) {
-            return;
-        }
-        getFragmentManager().beginTransaction().add(layoutId, fragment, tag).setTransition(FragmentTransaction.TRANSIT_NONE).commitAllowingStateLoss();
-        if (!isOpenViewState()) getFragmentManager().executePendingTransactions();
+        QsHelper.getInstance().commitFragment(getFragmentManager(), layoutId, fragment, tag);
     }
 
     @Override public void commitFragment(Fragment old, Fragment fragment) {
@@ -279,12 +276,7 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
     }
 
     @ThreadPoint(ThreadType.MAIN) @Override public void commitFragment(Fragment old, int layoutId, Fragment fragment, String tag) {
-        if (layoutId == 0) return;
-        if (fragment != null && fragment.isAdded()) return;
-        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-        if (old != null) fragmentTransaction.detach(old);
-        fragmentTransaction.add(layoutId, fragment, tag).setTransition(FragmentTransaction.TRANSIT_NONE).commitAllowingStateLoss();
-        if (!isOpenViewState()) getFragmentManager().executePendingTransactions();
+        QsHelper.getInstance().commitFragment(getFragmentManager(), old, layoutId, fragment, tag);
     }
 
     @Override public void commitBackStackFragment(Fragment fragment) {
@@ -300,10 +292,7 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
     }
 
     @ThreadPoint(ThreadType.MAIN) @Override public void commitBackStackFragment(int layoutId, Fragment fragment, String tag) {
-        if (layoutId == 0) return;
-        if (fragment != null && fragment.isAdded()) return;
-        getFragmentManager().beginTransaction().add(layoutId, fragment, tag).addToBackStack(null).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN).commitAllowingStateLoss();
-        if (!isOpenViewState()) getFragmentManager().executePendingTransactions();
+        QsHelper.getInstance().commitBackStackFragment(getFragmentManager(), layoutId, fragment, tag);
     }
 
     @ThreadPoint(ThreadType.MAIN) private void setViewState(int showState) {
@@ -328,6 +317,14 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
                 }
             });
         }
+    }
+
+    public void enableBackgroundColorWhenBackStack() {
+        this.enableBackgroundColor = true;
+    }
+
+    @Override public int getBackgroundColorId() {
+        return R.color.color_bg;
     }
 
     @Override public boolean onTouch(View v, MotionEvent event) {
