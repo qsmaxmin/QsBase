@@ -30,7 +30,7 @@ public abstract class QsPullListFragment<T extends QsPresenter, D> extends QsLis
     private boolean canLoadingMore = true;
 
     @Override public int layoutId() {
-        return R.layout.qs_fragment_pull_listview;
+        return (!isOpenViewState() && (getTopLayout() > 0 || getBottomLayout() > 0)) ? R.layout.qs_fragment_pull_listview_with_top_bottom : R.layout.qs_fragment_pull_listview;
     }
 
     @Override public int getFooterLayout() {

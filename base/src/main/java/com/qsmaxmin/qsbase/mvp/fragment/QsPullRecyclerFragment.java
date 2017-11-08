@@ -33,7 +33,7 @@ public abstract class QsPullRecyclerFragment<P extends QsPresenter, D> extends Q
     }
 
     @Override public int layoutId() {
-        return R.layout.qs_fragment_pull_recyclerview;
+        return (!isOpenViewState() && (getTopLayout() > 0 || getBottomLayout() > 0)) ? R.layout.qs_fragment_pull_recyclerview_with_top_bottom : R.layout.qs_fragment_pull_recyclerview;
     }
 
     @Override protected View initView(LayoutInflater inflater) {
