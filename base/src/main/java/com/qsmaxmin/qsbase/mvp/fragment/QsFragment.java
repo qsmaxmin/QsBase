@@ -319,7 +319,7 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         }
     }
 
-    public void enableBackgroundColorWhenBackStack() {
+    public void enableBackgroundColor() {
         this.enableBackgroundColor = true;
     }
 

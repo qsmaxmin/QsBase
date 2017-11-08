@@ -181,7 +181,7 @@ public class QsHelper {
     @ThreadPoint(ThreadType.MAIN) public void commitBackStackFragment(FragmentManager fragmentManager, int layoutId, Fragment fragment, String tag) {
         if (layoutId > 0 && fragment != null && !fragment.isAdded() && fragmentManager != null) {
             if (fragment instanceof QsFragment) {
-                ((QsFragment) fragment).enableBackgroundColorWhenBackStack();
+                ((QsFragment) fragment).enableBackgroundColor();
             }
             fragmentManager.beginTransaction().add(layoutId, fragment, tag).addToBackStack(null).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN).commitAllowingStateLoss();
             fragmentManager.executePendingTransactions();
