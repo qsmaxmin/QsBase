@@ -2,7 +2,6 @@ package com.qsmaxmin.qsbase.common.widget.viewpager.autoscroll;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.Nullable;
 import android.support.v4.view.PagerAdapter;
 import android.text.TextUtils;
 import android.view.View;
@@ -10,11 +9,8 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
-import com.bumptech.glide.load.DataSource;
-import com.bumptech.glide.load.engine.GlideException;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
 import com.qsmaxmin.qsbase.common.log.L;
+import com.qsmaxmin.qsbase.common.utils.ImageHelper;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
 
 import java.util.ArrayList;
@@ -115,19 +111,17 @@ public class InfinitePagerAdapter extends PagerAdapter {
         if (placeholder > 0) {
             holderImage.setImageDrawable(container.getContext().getResources().getDrawable(placeholder));
             if (virtualPosition < urls.size()) {
-                QsHelper.getInstance().getImageHelper().createRequest(container.getContext()).load(urls.get(virtualPosition)).listener(new RequestListener<Drawable>() {
-                    @Override public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                QsHelper.getInstance().getImageHelper().createRequest(container.getContext()).load(urls.get(virtualPosition)).into(view, new ImageHelper.ImageRequestListener() {
+                    @Override public void onLoadFailed(String message) {
                         view.setVisibility(View.GONE);
                         holderImage.setVisibility(View.VISIBLE);
-                        return false;
                     }
 
-                    @Override public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                    @Override public void onSuccess(Drawable drawable) {
                         view.setVisibility(View.VISIBLE);
                         holderImage.setVisibility(View.GONE);
-                        return false;
                     }
-                }).into(view);
+                });
             }
         } else {
             if (virtualPosition < urls.size()) QsHelper.getInstance().getImageHelper().createRequest(container.getContext()).load(urls.get(virtualPosition)).into(view);
