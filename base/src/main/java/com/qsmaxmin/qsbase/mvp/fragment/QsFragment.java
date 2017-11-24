@@ -1,10 +1,10 @@
 package com.qsmaxmin.qsbase.mvp.fragment;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.view.KeyEvent;
@@ -223,27 +223,39 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
     }
 
     @Override public void intent2Activity(Class clazz) {
-        intent2Activity(clazz, null, 0);
+        intent2Activity(clazz, null, 0, null);
     }
 
     @Override public void intent2Activity(Class clazz, int requestCode) {
-        intent2Activity(clazz, null, requestCode);
+        intent2Activity(clazz, null, requestCode, null);
     }
 
     @Override public void intent2Activity(Class clazz, Bundle bundle) {
-        intent2Activity(clazz, bundle, 0);
+        intent2Activity(clazz, bundle, 0, null);
     }
 
-    @Override public void intent2Activity(Class clazz, Bundle bundle, int requestCode) {
-        Context context = getContext();
-        if (context != null && clazz != null) {
+    @Override public void intent2Activity(Class clazz, Bundle bundle, ActivityOptionsCompat optionsCompat) {
+        intent2Activity(clazz, bundle, 0, optionsCompat);
+    }
+
+    @Override public void intent2Activity(Class clazz, Bundle bundle, int requestCode, ActivityOptionsCompat optionsCompat) {
+        FragmentActivity activity = getActivity();
+        if (clazz != null && activity != null) {
             Intent intent = new Intent();
-            intent.setClass(context, clazz);
+            intent.setClass(activity, clazz);
             if (bundle != null) intent.putExtras(bundle);
-            if (requestCode > 0) {
-                startActivityForResult(intent, requestCode);
+            if (optionsCompat == null) {
+                if (requestCode > 0) {
+                    startActivityForResult(intent, requestCode);
+                } else {
+                    startActivity(intent);
+                }
             } else {
-                startActivity(intent);
+                if (requestCode > 0) {
+                    ActivityCompat.startActivityForResult(activity, intent, requestCode, optionsCompat.toBundle());
+                } else {
+                    ActivityCompat.startActivity(activity, intent, optionsCompat.toBundle());
+                }
             }
         }
     }

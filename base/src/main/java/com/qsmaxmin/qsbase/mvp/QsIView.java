@@ -2,6 +2,7 @@ package com.qsmaxmin.qsbase.mvp;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 
 /**
@@ -62,7 +63,9 @@ public interface QsIView<P> {
 
     void intent2Activity(Class clazz, Bundle bundle);
 
-    void intent2Activity(Class clazz, Bundle bundle, int requestCode);
+    void intent2Activity(Class clazz, Bundle bundle, ActivityOptionsCompat optionsCompat);
+
+    void intent2Activity(Class clazz, Bundle bundle, int requestCode, ActivityOptionsCompat optionsCompat);
 
     void commitFragment(Fragment fragment);
 

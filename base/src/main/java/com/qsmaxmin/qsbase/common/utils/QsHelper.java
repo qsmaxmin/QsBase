@@ -7,6 +7,8 @@ import android.support.annotation.ColorRes;
 import android.support.annotation.DimenRes;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.StringRes;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -87,23 +89,39 @@ public class QsHelper {
     }
 
     public void intent2Activity(Class clazz) {
-        intent2Activity(clazz, null);
+        intent2Activity(clazz, null, 0, null);
     }
 
     public void intent2Activity(Class clazz, Bundle bundle) {
-        intent2Activity(clazz, bundle, -1);
+        intent2Activity(clazz, bundle, 0, null);
     }
 
-    public void intent2Activity(Class clazz, Bundle bundle, int requestCode) {
+    public void intent2Activity(Class clazz, int requestCode) {
+        intent2Activity(clazz, null, requestCode, null);
+    }
+
+    public void intent2Activity(Class clazz, Bundle bundle, ActivityOptionsCompat optionsCompat) {
+        intent2Activity(clazz, bundle, 0, optionsCompat);
+    }
+
+    public void intent2Activity(Class clazz, Bundle bundle, int requestCode, ActivityOptionsCompat optionsCompat) {
         FragmentActivity activity = getScreenHelper().currentActivity();
-        if (activity != null) {
+        if (clazz != null && activity != null) {
             Intent intent = new Intent();
             intent.setClass(activity, clazz);
             if (bundle != null) intent.putExtras(bundle);
-            if (requestCode > 0) {
-                activity.startActivityForResult(intent, requestCode);
+            if (optionsCompat == null) {
+                if (requestCode > 0) {
+                    activity.startActivityForResult(intent, requestCode);
+                } else {
+                    activity.startActivity(intent);
+                }
             } else {
-                activity.startActivity(intent);
+                if (requestCode > 0) {
+                    ActivityCompat.startActivityForResult(activity, intent, requestCode, optionsCompat.toBundle());
+                } else {
+                    ActivityCompat.startActivity(activity, intent, optionsCompat.toBundle());
+                }
             }
         }
     }

@@ -6,6 +6,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -235,26 +236,38 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
     }
 
     @Override public void intent2Activity(Class clazz) {
-        intent2Activity(clazz, null, 0);
+        intent2Activity(clazz, null, 0, null);
     }
 
     @Override public void intent2Activity(Class clazz, int requestCode) {
-        intent2Activity(clazz, null, requestCode);
+        intent2Activity(clazz, null, requestCode, null);
     }
 
     @Override public void intent2Activity(Class clazz, Bundle bundle) {
-        intent2Activity(clazz, bundle, 0);
+        intent2Activity(clazz, bundle, 0, null);
     }
 
-    @Override public void intent2Activity(Class clazz, Bundle bundle, int requestCode) {
+    @Override public void intent2Activity(Class clazz, Bundle bundle, ActivityOptionsCompat optionsCompat) {
+        intent2Activity(clazz, bundle, 0, optionsCompat);
+    }
+
+    @Override public void intent2Activity(Class clazz, Bundle bundle, int requestCode, ActivityOptionsCompat optionsCompat) {
         if (clazz != null) {
             Intent intent = new Intent();
             intent.setClass(this, clazz);
             if (bundle != null) intent.putExtras(bundle);
-            if (requestCode > 0) {
-                startActivityForResult(intent, requestCode);
+            if (optionsCompat == null) {
+                if (requestCode > 0) {
+                    startActivityForResult(intent, requestCode);
+                } else {
+                    startActivity(intent);
+                }
             } else {
-                startActivity(intent);
+                if (requestCode > 0) {
+                    ActivityCompat.startActivityForResult(this, intent, requestCode, optionsCompat.toBundle());
+                } else {
+                    ActivityCompat.startActivity(this, intent, optionsCompat.toBundle());
+                }
             }
         }
     }
