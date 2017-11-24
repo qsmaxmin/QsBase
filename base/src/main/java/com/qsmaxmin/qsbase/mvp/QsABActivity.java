@@ -108,15 +108,14 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
             View.inflate(this, layoutId(), mViewAnimator);
             View.inflate(this, emptyLayoutId(), mViewAnimator);
             View.inflate(this, errorLayoutId(), mViewAnimator);
+            if (isShowBackButtonInDefaultView()) enableBackButtonInDefaultView();
         } else {
             rootView = View.inflate(this, R.layout.qs_activity_ab, null);
-            mToolbar = (Toolbar) rootView.findViewById(R.id.toolbar);//android.R.id.home
+            mToolbar = (Toolbar) rootView.findViewById(R.id.toolbar);
             ViewGroup mainView = (ViewGroup) rootView.findViewById(android.R.id.home);
             View.inflate(this, layoutId(), mainView);
         }
-        if (Build.VERSION.SDK_INT >= 21) {
-            mToolbar.setElevation(0);
-        }
+        if (Build.VERSION.SDK_INT >= 21) mToolbar.setElevation(0);
         if (actionbarLayoutId() > 0) {
             ViewGroup actionbarContainer = (ViewGroup) mToolbar.findViewById(R.id.vg_toolbar);
             View.inflate(getContext(), actionbarLayoutId(), actionbarContainer);
@@ -361,5 +360,35 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
             }
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    private void enableBackButtonInDefaultView() {
+        if (mViewAnimator != null && mViewAnimator.getChildCount() >= 4) {
+            setDefaultViewClickListener(mViewAnimator.getChildAt(0));
+            setDefaultViewClickListener(mViewAnimator.getChildAt(2));
+            setDefaultViewClickListener(mViewAnimator.getChildAt(3));
+        }
+    }
+
+    private void setDefaultViewClickListener(View view) {
+        if (view != null) {
+            View backView = view.findViewById(R.id.qs_back_in_default_view);
+            if (backView != null) backView.setOnClickListener(new View.OnClickListener() {
+                @Override public void onClick(View v) {
+                    onBackPressed();
+                }
+            });
+            View reloadView = view.findViewById(R.id.qs_reload_in_default_view);
+            if (reloadView != null) reloadView.setOnClickListener(new View.OnClickListener() {
+                @Override public void onClick(View v) {
+                    showLoadingView();
+                    initData(getIntent().getExtras());
+                }
+            });
+        }
+    }
+
+    @Override public boolean isShowBackButtonInDefaultView() {
+        return false;
     }
 }

@@ -105,6 +105,7 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
             inflater.inflate(emptyLayoutId(), mViewAnimator);
             inflater.inflate(errorLayoutId(), mViewAnimator);
             if (enableBackgroundColor) contentView.setBackgroundColor(QsHelper.getInstance().getColor(getBackgroundColorId()));
+            if (isShowBackButtonInDefaultView()) enableBackButtonInDefaultView();
         } else {
             view = inflater.inflate(layoutId(), null);
             if (enableBackgroundColor) view.setBackgroundColor(QsHelper.getInstance().getColor(getBackgroundColorId()));
@@ -319,6 +320,32 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         }
     }
 
+    private void enableBackButtonInDefaultView() {
+        if (mViewAnimator != null && mViewAnimator.getChildCount() >= 4) {
+            setDefaultViewClickListener(mViewAnimator.getChildAt(0));
+            setDefaultViewClickListener(mViewAnimator.getChildAt(2));
+            setDefaultViewClickListener(mViewAnimator.getChildAt(3));
+        }
+    }
+
+    private void setDefaultViewClickListener(View view) {
+        if (view != null) {
+            View backView = view.findViewById(R.id.qs_back_in_default_view);
+            if (backView != null) backView.setOnClickListener(new View.OnClickListener() {
+                @Override public void onClick(View v) {
+                    getActivity().onBackPressed();
+                }
+            });
+            View reloadView = view.findViewById(R.id.qs_reload_in_default_view);
+            if (reloadView != null) reloadView.setOnClickListener(new View.OnClickListener() {
+                @Override public void onClick(View v) {
+                    showLoadingView();
+                    initData(getArguments());
+                }
+            });
+        }
+    }
+
     public void enableBackgroundColor() {
         this.enableBackgroundColor = true;
     }
@@ -336,6 +363,10 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
     }
 
     @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
+        return false;
+    }
+
+    @Override public boolean isShowBackButtonInDefaultView() {
         return false;
     }
 }

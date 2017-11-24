@@ -30,6 +30,8 @@ public interface QsIView<P> {
 
     boolean isOpenViewState();
 
+    boolean isShowBackButtonInDefaultView();
+
     void activityFinish();
 
     void activityFinish(boolean finishAfterTransition);
