@@ -195,7 +195,6 @@ public class QsHelper {
         }
     }
 
-
     public ViewBind getViewBindHelper() {
         if (viewBind == null) {
             synchronized (QsHelper.class) {

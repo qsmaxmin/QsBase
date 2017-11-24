@@ -1,6 +1,9 @@
 package com.qsmaxmin.qsbase.common.threadpoll;
 
+import android.os.Looper;
+
 import com.qsmaxmin.qsbase.common.log.L;
+import com.qsmaxmin.qsbase.mvp.model.QsConstants;
 
 /**
  * @CreateBy qsmaxmin
@@ -26,6 +29,22 @@ public class QsThreadPollHelper {
             }
         }
         return instance;
+    }
+
+    public boolean isMainThread() {
+        return Thread.currentThread() == Looper.getMainLooper().getThread();
+    }
+
+    public boolean isWorkThread() {
+        return QsConstants.NAME_WORK_THREAD.equals(Thread.currentThread().getName());
+    }
+
+    public boolean isHttpThread() {
+        return QsConstants.NAME_HTTP_THREAD.equals(Thread.currentThread().getName());
+    }
+
+    public boolean isSingleThread() {
+        return QsConstants.NAME_SINGLE_THREAD.equals(Thread.currentThread().getName());
     }
 
     public MainExecutor getMainThread() {
