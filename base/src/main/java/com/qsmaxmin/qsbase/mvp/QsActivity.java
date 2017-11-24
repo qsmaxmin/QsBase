@@ -100,7 +100,7 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
             View.inflate(this, layoutId(), mViewAnimator);
             View.inflate(this, emptyLayoutId(), mViewAnimator);
             View.inflate(this, errorLayoutId(), mViewAnimator);
-            if (isShowBackButtonInDefaultView()) enableBackButtonInDefaultView();
+            initDefaultView();
         } else {
             rootView = View.inflate(this, layoutId(), null);
         }
@@ -345,7 +345,7 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         return super.onKeyDown(keyCode, event);
     }
 
-    private void enableBackButtonInDefaultView() {
+    private void initDefaultView() {
         if (mViewAnimator != null && mViewAnimator.getChildCount() >= 4) {
             setDefaultViewClickListener(mViewAnimator.getChildAt(0));
             setDefaultViewClickListener(mViewAnimator.getChildAt(2));
@@ -356,11 +356,18 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
     private void setDefaultViewClickListener(View view) {
         if (view != null) {
             View backView = view.findViewById(R.id.qs_back_in_default_view);
-            if (backView != null) backView.setOnClickListener(new View.OnClickListener() {
-                @Override public void onClick(View v) {
-                    onBackPressed();
+            if (backView != null) {
+                if (isShowBackButtonInDefaultView()) {
+                    backView.setVisibility(View.VISIBLE);
+                    backView.setOnClickListener(new View.OnClickListener() {
+                        @Override public void onClick(View v) {
+                            onBackPressed();
+                        }
+                    });
+                } else {
+                    backView.setVisibility(View.GONE);
                 }
-            });
+            }
             View reloadView = view.findViewById(R.id.qs_reload_in_default_view);
             if (reloadView != null) reloadView.setOnClickListener(new View.OnClickListener() {
                 @Override public void onClick(View v) {

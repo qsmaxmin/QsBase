@@ -105,7 +105,7 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
             inflater.inflate(emptyLayoutId(), mViewAnimator);
             inflater.inflate(errorLayoutId(), mViewAnimator);
             if (enableBackgroundColor) contentView.setBackgroundColor(QsHelper.getInstance().getColor(getBackgroundColorId()));
-            if (isShowBackButtonInDefaultView()) enableBackButtonInDefaultView();
+            initDefaultView();
         } else {
             view = inflater.inflate(layoutId(), null);
             if (enableBackgroundColor) view.setBackgroundColor(QsHelper.getInstance().getColor(getBackgroundColorId()));
@@ -320,7 +320,7 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         }
     }
 
-    private void enableBackButtonInDefaultView() {
+    private void initDefaultView() {
         if (mViewAnimator != null && mViewAnimator.getChildCount() >= 4) {
             setDefaultViewClickListener(mViewAnimator.getChildAt(0));
             setDefaultViewClickListener(mViewAnimator.getChildAt(2));
@@ -331,18 +331,27 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
     private void setDefaultViewClickListener(View view) {
         if (view != null) {
             View backView = view.findViewById(R.id.qs_back_in_default_view);
-            if (backView != null) backView.setOnClickListener(new View.OnClickListener() {
-                @Override public void onClick(View v) {
-                    getActivity().onBackPressed();
+            if (backView != null) {
+                if (isShowBackButtonInDefaultView()) {
+                    backView.setVisibility(View.VISIBLE);
+                    backView.setOnClickListener(new View.OnClickListener() {
+                        @Override public void onClick(View v) {
+                            getActivity().onBackPressed();
+                        }
+                    });
+                } else {
+                    backView.setVisibility(View.GONE);
                 }
-            });
+            }
             View reloadView = view.findViewById(R.id.qs_reload_in_default_view);
-            if (reloadView != null) reloadView.setOnClickListener(new View.OnClickListener() {
-                @Override public void onClick(View v) {
-                    showLoadingView();
-                    initData(getArguments());
-                }
-            });
+            if (reloadView != null) {
+                reloadView.setOnClickListener(new View.OnClickListener() {
+                    @Override public void onClick(View v) {
+                        showLoadingView();
+                        initData(getArguments());
+                    }
+                });
+            }
         }
     }
 
