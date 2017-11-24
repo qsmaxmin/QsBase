@@ -3,20 +3,32 @@ package com.qsmaxmin.qsbase.common.utils;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import android.text.format.Formatter;
 import android.view.View;
+import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestBuilder;
 import com.bumptech.glide.RequestManager;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.load.model.GlideUrl;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.bumptech.glide.request.FutureTarget;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.Target;
+import com.qsmaxmin.qsbase.common.log.L;
 
 import java.io.File;
-import java.math.BigDecimal;
+import java.util.concurrent.ExecutionException;
 
 /**
  * @CreateBy qsmaxmin
@@ -91,6 +103,18 @@ public class ImageHelper {
 
     public class Builder {
         private RequestManager manager;
+        private String         mUrl;
+        private Object         mObject;
+        private Drawable       placeholderDrawable;
+        private int            placeholderId;
+        private int            errorId;
+        private Drawable       errorDrawable;
+        private boolean        centerCrop;
+        private boolean        fitCenter;
+        private boolean        centerInside;
+        private int            mCorners;
+        private int            mWidth;
+        private int            mHeight;
 
         Builder(Context context) {
             manager = Glide.with(context);
@@ -120,16 +144,198 @@ public class ImageHelper {
             return manager;
         }
 
-        public RequestBuilder<Drawable> load(String url) {
-            return manager.load(url);
+        public Builder load(String url) {
+            this.mUrl = url;
+            return this;
         }
 
-        public RequestBuilder<Drawable> load(Object object) {
-            return manager.load(object);
+        public Builder load(Object object) {
+            this.mObject = object;
+            return this;
         }
 
-        public RequestBuilder<Drawable> loadIgnoreParamsKey(String url) {
-            return manager.load(new MyGlideUrl(url));
+        public Builder loadIgnoreParamsKey(String url) {
+            this.mObject = new MyGlideUrl(url);
+            return this;
+        }
+
+        public Builder resize(int width, int height) {
+            this.mWidth = width;
+            this.mHeight = height;
+            return this;
+        }
+
+        public Builder placeholder(int resourceId) {
+            this.placeholderId = resourceId;
+            return this;
+        }
+
+        public Builder placeholder(Drawable drawable) {
+            this.placeholderDrawable = drawable;
+            return this;
+        }
+
+        public Builder error(int resourceId) {
+            this.errorId = resourceId;
+            return this;
+        }
+
+        public Builder error(Drawable drawable) {
+            this.errorDrawable = drawable;
+            return this;
+        }
+
+        public Builder centerCrop() {
+            this.centerCrop = true;
+            return this;
+        }
+
+        public Builder fitCenter() {
+            this.fitCenter = true;
+            return this;
+        }
+
+        public Builder centerInside() {
+            this.centerInside = true;
+            return this;
+        }
+
+        public Builder RoundedCorners(int corners) {
+            this.mCorners = corners;
+            return this;
+        }
+
+        public void into(ImageView view) {
+            into(view, null);
+        }
+
+        public void into(ImageView view, final ImageRequestListener listener) {
+            RequestBuilder<Drawable> requestBuilder;
+            if (!TextUtils.isEmpty(mUrl)) {
+                requestBuilder = manager.load(mUrl);
+            } else if (mObject != null) {
+                requestBuilder = manager.load(mObject);
+            } else {
+                L.e("ImageHelper", "url is empty....");
+                return;
+            }
+            setRequestOptionsIfNeed(requestBuilder);
+            if (listener != null) {
+                requestBuilder.listener(new RequestListener<Drawable>() {
+                    @Override public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                        listener.onLoadFailed(e == null ? "" : e.getMessage());
+                        return false;
+                    }
+
+                    @Override public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                        listener.onSuccess(resource);
+                        return false;
+                    }
+                });
+            }
+            requestBuilder.into(view);
+        }
+
+        public Bitmap getBitmap(String url) {
+            return getBitmap(url, Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL);
+        }
+
+        public Drawable getDrawable(String url) {
+            return getDrawable(url, Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL);
+        }
+
+        public File getImageFile(String url) {
+            return getImageFile(url, Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL);
+        }
+
+        public Bitmap getBitmap(String url, int width, int height) {
+            if (TextUtils.isEmpty(url)) return null;
+            RequestBuilder<Bitmap> requestBuilder = manager.asBitmap();
+            setRequestOptionsIfNeed(requestBuilder);
+            FutureTarget<Bitmap> submit = requestBuilder.load(url).submit(width, height);
+            try {
+                return submit.get();
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        public Drawable getDrawable(String url, int width, int height) {
+            if (TextUtils.isEmpty(url)) return null;
+            RequestBuilder<Drawable> requestBuilder = manager.asDrawable();
+            setRequestOptionsIfNeed(requestBuilder);
+            FutureTarget<Drawable> submit = requestBuilder.load(url).submit(width, height);
+            try {
+                return submit.get();
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        public File getImageFile(String url, int width, int height) {
+            if (TextUtils.isEmpty(url)) return null;
+            RequestBuilder<File> requestBuilder = manager.asFile();
+            setRequestOptionsIfNeed(requestBuilder);
+            FutureTarget<File> submit = requestBuilder.load(url).submit(width, height);
+            try {
+                return submit.get();
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        private void setRequestOptionsIfNeed(RequestBuilder requestBuilder) {
+            if (shouldCreateRequestOptions()) {
+                RequestOptions requestOptions = createRequestOptions();
+                requestBuilder.apply(requestOptions);
+            }
+        }
+
+        /**
+         * private Drawable       placeholderDrawable;
+         * private int            placeholderId;
+         * private int            errorId;
+         * private Drawable       errorDrawable;
+         * private boolean        centerCrop;
+         * private boolean        fitCenter;
+         * private boolean        centerInside;
+         * private int            mCorners;
+         * private int            mWidth;
+         * private int            mHeight;
+         */
+        private boolean shouldCreateRequestOptions() {
+            return placeholderId > 0
+                    || placeholderDrawable != null
+                    || errorId > 0
+                    || errorDrawable != null
+                    || centerCrop
+                    || fitCenter
+                    || centerInside
+                    || mCorners > 0
+                    || (mWidth > 0 && mHeight > 0);
+        }
+
+        @NonNull private RequestOptions createRequestOptions() {
+            RequestOptions requestOptions = new RequestOptions();
+            if (placeholderId > 0) {
+                requestOptions.placeholder(placeholderId);
+            } else if (placeholderDrawable != null) {
+                requestOptions.placeholder(placeholderDrawable);
+            }
+            if (errorId > 0) {
+                requestOptions.error(placeholderId);
+            } else if (errorDrawable != null) {
+                requestOptions.error(placeholderId);
+            }
+            if (centerCrop) requestOptions.centerCrop();
+            if (fitCenter) requestOptions.fitCenter();
+            if (centerInside) requestOptions.centerInside();
+            if (mCorners > 0) requestOptions.transform(new RoundedCorners(mCorners));
+            if (mWidth > 0 && mHeight > 0) requestOptions.override(mWidth, mHeight);
+            return requestOptions;
         }
     }
 
@@ -170,32 +376,11 @@ public class ImageHelper {
     }
 
 
-    private static String getFormatSize(double size) {
-        double kiloByte = size / 1024;
-        if (kiloByte < 1) {
-            return size + "Byte";
-        }
+    public interface ImageRequestListener {
 
-        double megaByte = kiloByte / 1024;
-        if (megaByte < 1) {
-            BigDecimal result1 = new BigDecimal(Double.toString(kiloByte));
-            return result1.setScale(2, BigDecimal.ROUND_HALF_UP).toPlainString() + "KB";
-        }
+        void onLoadFailed(String message);
 
-        double gigaByte = megaByte / 1024;
-        if (gigaByte < 1) {
-            BigDecimal result2 = new BigDecimal(Double.toString(megaByte));
-            return result2.setScale(2, BigDecimal.ROUND_HALF_UP).toPlainString() + "MB";
-        }
-
-        double teraBytes = gigaByte / 1024;
-        if (teraBytes < 1) {
-            BigDecimal result3 = new BigDecimal(Double.toString(gigaByte));
-            return result3.setScale(2, BigDecimal.ROUND_HALF_UP).toPlainString() + "GB";
-        }
-        BigDecimal result4 = new BigDecimal(teraBytes);
-
-        return result4.setScale(2, BigDecimal.ROUND_HALF_UP).toPlainString() + "TB";
+        void onSuccess(Drawable drawable);
     }
 
 }
