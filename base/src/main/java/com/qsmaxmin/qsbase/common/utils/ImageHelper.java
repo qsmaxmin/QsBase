@@ -25,6 +25,8 @@ import com.bumptech.glide.request.FutureTarget;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
+import com.qsmaxmin.qsbase.common.aspect.ThreadPoint;
+import com.qsmaxmin.qsbase.common.aspect.ThreadType;
 import com.qsmaxmin.qsbase.common.log.L;
 
 import java.io.File;
@@ -79,7 +81,7 @@ public class ImageHelper {
         return new Builder(view);
     }
 
-    public void clearMemoryCache() {
+    @ThreadPoint(ThreadType.MAIN) public void clearMemoryCache() {
         Glide.get(QsHelper.getInstance().getApplication()).clearMemory();
     }
 

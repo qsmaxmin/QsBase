@@ -103,6 +103,11 @@ public abstract class QsPullRecyclerFragment<P extends QsPresenter, D> extends Q
         super.setData(list);
     }
 
+    @Override @ThreadPoint(ThreadType.MAIN) public void setData(List<D> list, boolean showEmptyView) {
+        mPtrFrameLayout.refreshComplete();
+        super.setData(list, showEmptyView);
+    }
+
     private EndlessRecyclerOnScrollListener mOnScrollListener = new EndlessRecyclerOnScrollListener() {
         @Override public void onLoadNextPage(View view) {
             super.onLoadNextPage(view);

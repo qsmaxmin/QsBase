@@ -106,6 +106,11 @@ public abstract class QsPullListFragment<T extends QsPresenter, D> extends QsLis
         super.setData(list);
     }
 
+    @Override @ThreadPoint(ThreadType.MAIN) public void setData(List<D> list, boolean showEmptyView) {
+        mPtrFrameLayout.refreshComplete();
+        super.setData(list, showEmptyView);
+    }
+
     private void loadingMoreData() {
         if (mLoadingFooter != null) {
             LoadingFooter.State state = mLoadingFooter.getState();
