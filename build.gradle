@@ -4,11 +4,12 @@ buildscript {
     repositories {
         jcenter()
         mavenCentral()
+        maven { url 'https://jitpack.io' }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.3.2'
         /*AspectJ*/
-        classpath 'com.hujiang.aspectjx:gradle-android-plugin-aspectjx:1.0.10'
+        classpath 'com.github.qsmaxmin:gradle_plugin_android_aspectjx:1.1.0'
         classpath 'org.aspectj:aspectjtools:1.8.10'
     }
 }
