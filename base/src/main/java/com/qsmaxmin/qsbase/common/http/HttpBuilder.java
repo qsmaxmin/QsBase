@@ -15,13 +15,18 @@ import okhttp3.Headers;
 
 public class HttpBuilder {
 
-    private final Object requestTag;
-    private       String terminal;
+    private final Object   requestTag;
+    private final String   path;
+    private final Object[] args;
+    private       String   terminal;
 
     private Headers.Builder headerBuilder = new Headers.Builder();
 
-    public HttpBuilder(Object requestType) {
-        this.requestTag = requestType;
+
+    HttpBuilder(Object requestTag, String path, Object[] args) {
+        this.requestTag = requestTag;
+        this.path = path;
+        this.args = args;
     }
 
     public HttpBuilder addHeader(String key, String value) {
@@ -45,6 +50,18 @@ public class HttpBuilder {
             throw new QsException(QsExceptionType.UNEXPECTED, requestTag, "terminal is empty...");
         }
         return this;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public Object getRequestTag() {
+        return requestTag;
+    }
+
+    public Object[] getArgs() {
+        return args;
     }
 
     String getTerminal() {
