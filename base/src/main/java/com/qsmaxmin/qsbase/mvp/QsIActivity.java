@@ -13,4 +13,6 @@ public interface QsIActivity extends QsIView {
     int loadingLayoutId();
 
     int errorLayoutId();
+
+    boolean isTransparentStatusBar();
 }

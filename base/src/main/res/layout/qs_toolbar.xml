@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/toolbar"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/qs_toolbar_height"
+    android:layout_height="wrap_content"
     android:background="@null"
     app:contentInsetEnd="0dp"
     app:contentInsetLeft="0dp"
@@ -16,7 +16,7 @@
     <RelativeLayout
         android:id="@+id/vg_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:background="@null"
         android:gravity="center_vertical"/>
 </android.support.v7.widget.Toolbar>
