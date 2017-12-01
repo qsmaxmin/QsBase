@@ -433,7 +433,7 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
             winParams.flags |= bits;
             window.setAttributes(winParams);
         } else {
-            L.e(initTag(), "当前Android SDK版本太低(" + Build.VERSION.SDK_INT + ")，只有SDK版本大于或等等于KITKAT才支持透明状态栏，推荐在actionbarLayoutId()方法中根据该条件给出不同高度的布局");
+            L.e(initTag(), "当前Android SDK版本太低(" + Build.VERSION.SDK_INT + ")，只有SDK版本 >= KITKAT才支持透明状态栏，推荐在actionbarLayoutId()方法中根据该条件给出不同高度的布局");
         }
     }
 
