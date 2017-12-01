@@ -123,7 +123,7 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
             ViewGroup mainView = (ViewGroup) rootView.findViewById(android.R.id.home);
             View.inflate(this, layoutId(), mainView);
         }
-        if (Build.VERSION.SDK_INT >= 21) mToolbar.setElevation(0);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) mToolbar.setElevation(0);
         if (actionbarLayoutId() > 0) {
             ViewGroup actionbarContainer = (ViewGroup) mToolbar.findViewById(R.id.vg_toolbar);
             View.inflate(getContext(), actionbarLayoutId(), actionbarContainer);
@@ -426,14 +426,12 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
             }
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             window.setStatusBarColor(Color.TRANSPARENT);
-        } else {
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
-                Window window = getWindow();
-                WindowManager.LayoutParams winParams = window.getAttributes();
-                final int bits = WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS;
-                winParams.flags |= bits;
-                window.setAttributes(winParams);
-            }
+        } else if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+            Window window = getWindow();
+            WindowManager.LayoutParams winParams = window.getAttributes();
+            final int bits = WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS;
+            winParams.flags |= bits;
+            window.setAttributes(winParams);
         }
     }
 
