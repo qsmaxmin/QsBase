@@ -15,4 +15,6 @@ public interface QsIActivity extends QsIView {
     int errorLayoutId();
 
     boolean isTransparentStatusBar();
+
+    boolean isBlackIconStatusBar();
 }
