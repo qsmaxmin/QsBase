@@ -26,19 +26,8 @@ public class ThreadAspect {
     private static final String POINTCUT_METHOD_WORK        = "execution(@com.qsmaxmin.qsbase.common.aspect.ThreadPoint(com.qsmaxmin.qsbase.common.aspect.ThreadType.WORK) * *(..))";
     private static final String POINTCUT_METHOD_SINGLE_WORK = "execution(@com.qsmaxmin.qsbase.common.aspect.ThreadPoint(com.qsmaxmin.qsbase.common.aspect.ThreadType.SINGLE_WORK) * *(..))";
 
-    @Pointcut(value = POINTCUT_METHOD_MAIN) public void onMainPoint() {
-    }
 
-    @Pointcut(value = POINTCUT_METHOD_HTTP) public void onHttpPoint() {
-    }
-
-    @Pointcut(value = POINTCUT_METHOD_WORK) public void onWorkPoint() {
-    }
-
-    @Pointcut(value = POINTCUT_METHOD_SINGLE_WORK) public void onSingleWorkPoint() {
-    }
-
-    @Around("onMainPoint()") public Object onMainExecutor(final ProceedingJoinPoint joinPoint) throws Throwable {
+    @Around(POINTCUT_METHOD_MAIN) public Object onMainExecutor(final ProceedingJoinPoint joinPoint) throws Throwable {
         if (Thread.currentThread() == Looper.getMainLooper().getThread()) {
             return joinPoint.proceed();
         } else {
@@ -52,7 +41,7 @@ public class ThreadAspect {
         return null;
     }
 
-    @Around("onHttpPoint()") public Object onHttpExecutor(final ProceedingJoinPoint joinPoint) throws Throwable {
+    @Around(POINTCUT_METHOD_HTTP) public Object onHttpExecutor(final ProceedingJoinPoint joinPoint) throws Throwable {
         QsHelper.getInstance().getThreadHelper().getHttpThreadPoll().execute(new Runnable() {
             @Override public void run() {
                 L.i("ThreadAspect", joinPoint.toShortString() + " in http thread... ");
@@ -62,7 +51,7 @@ public class ThreadAspect {
         return null;
     }
 
-    @Around("onWorkPoint()") public Object onWorkExecutor(final ProceedingJoinPoint joinPoint) throws Throwable {
+    @Around(POINTCUT_METHOD_WORK) public Object onWorkExecutor(final ProceedingJoinPoint joinPoint) throws Throwable {
         QsHelper.getInstance().getThreadHelper().getWorkThreadPoll().execute(new Runnable() {
             @Override public void run() {
                 L.i("ThreadAspect", joinPoint.toShortString() + " in work thread... ");
@@ -72,7 +61,7 @@ public class ThreadAspect {
         return null;
     }
 
-    @Around("onSingleWorkPoint()") public Object onSingleWorkExecutor(final ProceedingJoinPoint joinPoint) throws Throwable {
+    @Around(POINTCUT_METHOD_SINGLE_WORK) public Object onSingleWorkExecutor(final ProceedingJoinPoint joinPoint) throws Throwable {
         QsHelper.getInstance().getThreadHelper().getSingleThreadPoll().execute(new Runnable() {
             @Override public void run() {
                 L.i("ThreadAspect", joinPoint.toShortString() + " in single work thread... ");
