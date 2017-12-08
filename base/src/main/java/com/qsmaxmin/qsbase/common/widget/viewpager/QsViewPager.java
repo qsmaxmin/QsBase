@@ -53,7 +53,7 @@ public class QsViewPager extends ViewPager {
     }
 
     public void setObjectForPosition(Object obj, int position) {
-        objects.put(Integer.valueOf(position), obj);
+        objects.put(position, obj);
     }
 
     public View findViewFromObject(int position) {
