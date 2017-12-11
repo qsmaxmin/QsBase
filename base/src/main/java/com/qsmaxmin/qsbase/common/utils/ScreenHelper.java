@@ -89,4 +89,8 @@ public final class ScreenHelper {
             popActivity(activity);
         }
     }
+
+    public Stack<FragmentActivity> getActivityStack() {
+        return fragmentActivities;
+    }
 }
