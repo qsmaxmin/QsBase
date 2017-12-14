@@ -219,7 +219,7 @@ MVP架构+AOP面向切面编程，摒弃反射、代理等操作，稳定性和�
             @POST("/api/v1/users") ModelUser requestUserData(@Body BaseModelReq req);
         }
 
-        View成和Presenter层通过getView和getPresenter方法相互调用
+        View层和Presenter层通过getView和getPresenter方法相互调用
         QsHelper里封装了很多常用的方法如：
         网络请求：QsHelper.getInstance().getHttpHelper()
         图片加载：QsHelper.getInstance().getImageHelper()
@@ -237,7 +237,6 @@ MVP架构+AOP面向切面编程，摒弃反射、代理等操作，稳定性和�
                 <!--不使用系统的toolbar-->
                 <item name="android:windowActionBar">false</item>
                 <item name="windowNoTitle">true</item>
-                <item name="actionBarSize">50dp</item>
             </style>
 
 
