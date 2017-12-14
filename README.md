@@ -38,13 +38,13 @@ MVP架构+AOP面向切面编程，摒弃反射、代理等操作，稳定性和�
 
 #### step 2：app的build.gradle添加依赖
 
-        apply plugin: 'com.hujiang.android-aspectjx'
+        apply plugin: 'android-aspectjx'
         ...
 
 
         dependencies {
             ...
-            compile 'com.github.qsmaxmin:QsBase:2.1.3'
+            compile 'com.github.qsmaxmin:QsBase:2.1.8'
         }
 
 #### step 3：自定义Application继承QsApplication
@@ -146,15 +146,15 @@ MVP架构+AOP面向切面编程，摒弃反射、代理等操作，稳定性和�
          * V层
          */
         public class MainActivity extends QsViewPagerActivity<MainPresenter> {
+            @Bind(R.id.tv_name)TextView tv_Name;
+
             initData(){
-                ...
                HomePresenter presenter =  getPresenter();
                presenter.requestData();
-               ...
             }
 
-            @@ThreadPoint(ThreadType.MAIN) public void updateUI(ModelUser modelUser) {
-                ...
+            @ThreadPoint(ThreadType.MAIN) public void updateUI(ModelUser modelUser) {
+                tv_Name.setText(modelUser.userName);
             }
         }
 
@@ -165,8 +165,51 @@ MVP架构+AOP面向切面编程，摒弃反射、代理等操作，稳定性和�
              @ThreadPoint(ThreadType.HTTP) public void requestData() {
                 UserHttp userHttp = createHttpRequest(UserHttp.class);
                 ModelUser modelUser = userHttp.requestUserData(new BaseModelReq());
-                getView().updateUI(modelUser);
+                if(isSuccess(modelUser)){
+                    getView().updateUI(modelUser);
+                }
              }
+        }
+
+        /**
+         * M层
+         * 可以定义一个http响应体基类，将公参放到里面，实现未实现的方法
+         * 注：公参由服务端决定，这三个方法必须实现
+         */
+        public class BaseModel extends QsModel{
+            public int     code;
+            public String  msg;
+            public boolean isEnd;
+            /**
+             * http请求是否成功，由子类实现
+             */
+            public boolean isResponseOk() {
+                return code==0;
+            }
+
+            /**
+             * 列表分页是否是最后一页，由子类实现
+             */
+            public boolean isLastPage() {
+                return isEnd;
+            }
+
+            /**
+             * 获取网络请求信息，由子类实现
+             */
+            public String getMessage() {
+                return msg;
+            }
+        }
+
+        /**
+         * M层
+         * 继承自己写的http响应体基类
+         */
+        public class ModelUser extends BaseModel{
+            public String userId;
+            public String userName;
+            ...
         }
 
         /**
