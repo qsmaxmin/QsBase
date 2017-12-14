@@ -3,6 +3,7 @@ package com.qsmaxmin.qsbase.common.utils;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.ColorRes;
 import android.support.annotation.DimenRes;
 import android.support.annotation.DrawableRes;
@@ -240,5 +241,9 @@ public class QsHelper {
 
     public float getDimension(@DimenRes int resId) {
         return getApplication().getResources().getDimension(resId);
+    }
+
+    public boolean isSdCardAvailable() {
+        return Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED);
     }
 }

@@ -2,11 +2,19 @@ package com.qsmaxmin.qsbase.mvp.presenter;
 
 import android.content.Context;
 
+import com.qsmaxmin.qsbase.common.aspect.ThreadPoint;
+import com.qsmaxmin.qsbase.common.aspect.ThreadType;
 import com.qsmaxmin.qsbase.common.exception.QsException;
 import com.qsmaxmin.qsbase.common.exception.QsExceptionType;
 import com.qsmaxmin.qsbase.common.log.L;
+import com.qsmaxmin.qsbase.common.model.QsModel;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
+import com.qsmaxmin.qsbase.common.widget.listview.LoadingFooter;
+import com.qsmaxmin.qsbase.common.widget.toast.QsToast;
 import com.qsmaxmin.qsbase.mvp.QsIView;
+import com.qsmaxmin.qsbase.mvp.fragment.QsIPullHeaderViewPagerFragment;
+import com.qsmaxmin.qsbase.mvp.fragment.QsIPullListFragment;
+import com.qsmaxmin.qsbase.mvp.fragment.QsIPullRecyclerFragment;
 import com.qsmaxmin.qsbase.mvp.model.QsConstants;
 
 /**
@@ -52,7 +60,6 @@ public class QsPresenter<V extends QsIView> {
         cancelHttpRequest();
     }
 
-
     public boolean isViewDetach() {
         return !isAttach || mView == null;
     }
@@ -79,17 +86,91 @@ public class QsPresenter<V extends QsIView> {
         }
     }
 
+    protected String getString(int stringId) {
+        return QsHelper.getInstance().getString(stringId);
+    }
+
+
+    protected boolean isSuccess(QsModel baseModel) {
+        return isSuccess(baseModel, false);
+    }
+
+    /**
+     * 请求网络成功，判断数据的完整性
+     */
+    protected boolean isSuccess(QsModel model, boolean shouldToast) {
+        if (model != null && model.isResponseOk()) {
+            return true;
+        } else if (!isViewDetach()) {
+            resetViewState();
+            if (model != null && shouldToast) QsToast.show(model.getMessage());
+        }
+        return false;
+    }
+
+    /**
+     * 分页
+     *
+     * @param model 分页数据持有
+     */
+    @ThreadPoint(ThreadType.MAIN) public void paging(QsModel model) {
+        if (model != null && !isViewDetach()) {
+            QsIView qsIView = getView();
+            if (qsIView == null) return;
+            if (qsIView instanceof QsIPullListFragment) {
+                if (model.isLastPage()) {
+                    ((QsIPullListFragment) qsIView).setLoadingState(LoadingFooter.State.TheEnd);
+                } else {
+                    ((QsIPullListFragment) qsIView).setLoadingState(LoadingFooter.State.Normal);
+                }
+            } else if (qsIView instanceof QsIPullRecyclerFragment) {
+                if (model.isLastPage()) {
+                    ((QsIPullRecyclerFragment) qsIView).setLoadingState(LoadingFooter.State.TheEnd);
+                } else {
+                    ((QsIPullRecyclerFragment) qsIView).setLoadingState(LoadingFooter.State.Normal);
+                }
+            } else {
+                L.e(initTag(), "not QsPullListFragment or QsPullRecyclerFragment view, so invalid paging(...)");
+            }
+        }
+    }
+
     /**
      * 自定义异常处理
      */
     public void methodError(QsException exception) {
         L.e(initTag(), "methodError... errorType:" + exception.getExceptionType() + " requestTag:" + exception.getRequestTag() + " errorMessage:" + exception.getMessage());
+        switch (exception.getExceptionType()) {
+            case HTTP_ERROR:
+            case NETWORK_ERROR:
+            case UNEXPECTED:
+            case CANCEL:
+                break;
+        }
+        resetViewState();
+    }
+
+    /**
+     * 还原View状态
+     */
+    @ThreadPoint(ThreadType.MAIN) private void resetViewState() {
         if (!isViewDetach()) {
-            if (mView.isOpenViewState()) {
-                mView.showErrorView();
-            } else {
-                mView.loadingClose();
+            QsIView qsIview = getView();
+            if (qsIview instanceof QsIPullListFragment) {
+                QsIPullListFragment view = (QsIPullListFragment) qsIview;
+                view.stopRefreshing();
+                view.setLoadingState(LoadingFooter.State.NetWorkError);
+            } else if (qsIview instanceof QsIPullRecyclerFragment) {
+                QsIPullRecyclerFragment view = (QsIPullRecyclerFragment) qsIview;
+                view.stopRefreshing();
+                view.setLoadingState(LoadingFooter.State.NetWorkError);
+            } else if (qsIview instanceof QsIPullHeaderViewPagerFragment) {
+                ((QsIPullHeaderViewPagerFragment) qsIview).stopRefreshing();
             }
+            if (qsIview.currentViewState() != QsConstants.VIEW_STATE_CONTENT) {
+                qsIview.showErrorView();
+            }
+            qsIview.loadingClose();
         }
     }
 }
