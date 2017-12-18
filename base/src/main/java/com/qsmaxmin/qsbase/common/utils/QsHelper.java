@@ -147,7 +147,7 @@ public class QsHelper {
 
     @ThreadPoint(ThreadType.MAIN) public void commitFragment(FragmentManager fragmentManager, int layoutId, Fragment fragment, String tag) {
         if (fragment != null && !fragment.isAdded() && fragmentManager != null && layoutId > 0) {
-            fragmentManager.beginTransaction().add(layoutId, fragment, tag).setTransition(FragmentTransaction.TRANSIT_NONE).commitAllowingStateLoss();
+            fragmentManager.beginTransaction().replace(layoutId, fragment, tag).setTransition(FragmentTransaction.TRANSIT_NONE).commitAllowingStateLoss();
         }
     }
 
@@ -173,7 +173,7 @@ public class QsHelper {
         if (layoutId > 0 && fragment != null && !fragment.isAdded() && fragmentManager != null) {
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             if (old != null) fragmentTransaction.detach(old);
-            fragmentTransaction.add(layoutId, fragment, tag).setTransition(FragmentTransaction.TRANSIT_NONE).commitAllowingStateLoss();
+            fragmentTransaction.replace(layoutId, fragment, tag).setTransition(FragmentTransaction.TRANSIT_NONE).commitAllowingStateLoss();
         }
     }
 

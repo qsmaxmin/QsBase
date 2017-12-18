@@ -96,7 +96,10 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
 
     @Override protected void onDestroy() {
         super.onDestroy();
-        if (presenter != null) presenter.setDetach();
+        if (presenter != null) {
+            presenter.setDetach();
+            presenter = null;
+        }
         if (isOpenEventBus() && EventBus.getDefault().isRegistered(this)) EventBus.getDefault().unregister(this);
         QsHelper.getInstance().getApplication().onActivityDestroy(this);
         QsHelper.getInstance().getScreenHelper().popActivity(this);
