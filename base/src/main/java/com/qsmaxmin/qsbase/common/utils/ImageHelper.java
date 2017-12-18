@@ -172,17 +172,6 @@ public class ImageHelper {
             return this;
         }
 
-        /**
-         * @deprecated 已过时，用{@link #load(String, boolean)}替代
-         */
-        public Builder loadIgnoreParamsKey(String url) {
-            if (TextUtils.isEmpty(url)) return this;
-            Uri uri = Uri.parse(url);
-            String urlWithoutKey = uri.getScheme() + "://" + uri.getHost() + uri.getPath();
-            this.mObject = new MyGlideUrl(url, urlWithoutKey);
-            return this;
-        }
-
         public Builder resize(int width, int height) {
             this.mWidth = width;
             this.mHeight = height;
