@@ -2,6 +2,7 @@ package com.qsmaxmin.qsbase.mvp.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.ColorRes;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
@@ -39,7 +40,7 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
 
     private   P                presenter;
     private   boolean          hasInitData;
-    private   boolean          enableBackgroundColor;
+    private   int              backgroundColorId;
     protected QsProgressDialog mProgressDialog;
     protected ViewAnimator     mViewAnimator;
 
@@ -107,11 +108,11 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
             View contentView = inflater.inflate(layoutId(), mViewAnimator);
             inflater.inflate(emptyLayoutId(), mViewAnimator);
             inflater.inflate(errorLayoutId(), mViewAnimator);
-            if (enableBackgroundColor) contentView.setBackgroundColor(QsHelper.getInstance().getColor(getBackgroundColorId()));
+            if (getBackgroundColorId() > 0) contentView.setBackgroundColor(QsHelper.getInstance().getColor(getBackgroundColorId()));
             initDefaultView();
         } else {
             view = inflater.inflate(layoutId(), null);
-            if (enableBackgroundColor) view.setBackgroundColor(QsHelper.getInstance().getColor(getBackgroundColorId()));
+            if (getBackgroundColorId() > 0) view.setBackgroundColor(QsHelper.getInstance().getColor(getBackgroundColorId()));
         }
         return view;
     }
@@ -370,12 +371,12 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         }
     }
 
-    public void enableBackgroundColor() {
-        this.enableBackgroundColor = true;
+    public void setBackgroundColor(@ColorRes int colorId) {
+        this.backgroundColorId = colorId;
     }
 
     @Override public int getBackgroundColorId() {
-        return R.color.color_bg;
+        return backgroundColorId;
     }
 
     @Override public boolean onTouch(View v, MotionEvent event) {

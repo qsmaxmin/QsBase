@@ -17,6 +17,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 
 import com.qsmaxmin.qsbase.QsApplication;
+import com.qsmaxmin.qsbase.R;
 import com.qsmaxmin.qsbase.common.aspect.ThreadPoint;
 import com.qsmaxmin.qsbase.common.aspect.ThreadType;
 import com.qsmaxmin.qsbase.common.http.HttpAdapter;
@@ -199,7 +200,7 @@ public class QsHelper {
     @ThreadPoint(ThreadType.MAIN) public void commitBackStackFragment(FragmentManager fragmentManager, int layoutId, Fragment fragment, String tag) {
         if (layoutId > 0 && fragment != null && !fragment.isAdded() && fragmentManager != null) {
             if (fragment instanceof QsFragment) {
-                ((QsFragment) fragment).enableBackgroundColor();
+                ((QsFragment) fragment).setBackgroundColor(R.color.color_bg);
             }
             fragmentManager.beginTransaction().add(layoutId, fragment, tag).addToBackStack(null).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN).commitAllowingStateLoss();
         }
