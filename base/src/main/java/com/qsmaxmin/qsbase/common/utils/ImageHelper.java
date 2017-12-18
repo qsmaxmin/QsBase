@@ -105,7 +105,6 @@ public class ImageHelper {
 
     public class Builder {
         private RequestManager manager;
-        private String         mUrl;
         private Object         mObject;
         private Drawable       placeholderDrawable;
         private int            placeholderId;
@@ -147,7 +146,7 @@ public class ImageHelper {
         }
 
         public Builder load(String url) {
-            this.mUrl = url;
+            this.mObject = url;
             return this;
         }
 
@@ -156,8 +155,31 @@ public class ImageHelper {
             return this;
         }
 
+        public Builder load(String url, boolean ignoreParamsKey) {
+            if (TextUtils.isEmpty(url)) return this;
+            if (ignoreParamsKey) {
+                Uri uri = Uri.parse(url);
+                String urlWithoutKey = uri.getScheme() + "://" + uri.getHost() + uri.getPath();
+                this.mObject = new MyGlideUrl(url, urlWithoutKey);
+            } else {
+                this.mObject = url;
+            }
+            return this;
+        }
+
+        public Builder load(String url, String cacheKey) {
+            this.mObject = new MyGlideUrl(url, cacheKey);
+            return this;
+        }
+
+        /**
+         * @deprecated 已过时，用{@link #load(String, boolean)}替代
+         */
         public Builder loadIgnoreParamsKey(String url) {
-            this.mObject = new MyGlideUrl(url);
+            if (TextUtils.isEmpty(url)) return this;
+            Uri uri = Uri.parse(url);
+            String urlWithoutKey = uri.getScheme() + "://" + uri.getHost() + uri.getPath();
+            this.mObject = new MyGlideUrl(url, urlWithoutKey);
             return this;
         }
 
@@ -213,12 +235,10 @@ public class ImageHelper {
 
         public void into(ImageView view, final ImageRequestListener listener) {
             RequestBuilder<Drawable> requestBuilder;
-            if (!TextUtils.isEmpty(mUrl)) {
-                requestBuilder = manager.load(mUrl);
-            } else if (mObject != null) {
+            if (mObject != null) {
                 requestBuilder = manager.load(mObject);
             } else {
-                L.e("ImageHelper", "url is empty....");
+                L.e("ImageHelper", "method error, load(...) params is empty....");
                 return;
             }
             setRequestOptionsIfNeed(requestBuilder);
@@ -345,18 +365,17 @@ public class ImageHelper {
      * 将图片的url除去param后作为缓存key，避免同一张图片缓存key不一致的问题
      */
     private class MyGlideUrl extends GlideUrl {
-        private String cacheKey;
+        private String mCacheKey;
 
-        MyGlideUrl(String url) {
+        MyGlideUrl(String url, String cacheKey) {
             super(url);
-            if (!TextUtils.isEmpty(url)) {
-                Uri uri = Uri.parse(url);
-                cacheKey = uri.getScheme() + "://" + uri.getHost() + uri.getPath();
+            if (!TextUtils.isEmpty(cacheKey)) {
+                this.mCacheKey = cacheKey;
             }
         }
 
         @Override public String getCacheKey() {
-            return cacheKey;
+            return mCacheKey;
         }
     }
 

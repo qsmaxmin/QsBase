@@ -1,5 +1,5 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.hujiang.android-aspectjx'
+apply plugin: 'android-aspectjx'
 apply plugin: 'maven'
 
 android {
@@ -47,15 +47,17 @@ dependencies {
     compile 'com.android.support:design:25.3.1'
     compile 'com.android.support:recyclerview-v7:25.3.1'
     /*Glide*/
-    compile 'com.github.bumptech.glide:glide:4.0.0-RC0'
+    compile 'com.github.bumptech.glide:glide:4.0.0'
+    compile 'com.github.bumptech.glide:annotations:4.0.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.0.0'
     /*EventBus*/
     compile 'org.greenrobot:eventbus:3.0.0'
     /*AspectJ*/
     compile 'org.aspectj:aspectjrt:1.8.10'
     /*okHttp*/
-    compile 'com.squareup.okhttp3:okhttp:3.4.1'
+    compile 'com.squareup.okhttp3:okhttp:3.9.0'
     /*gson*/
-    compile 'com.google.code.gson:gson:2.8.1'
+    compile 'com.google.code.gson:gson:2.8.2'
 }
 
 uploadArchives {
