@@ -282,3 +282,8 @@ MVP架构+AOP面向切面编程，摒弃反射、代理等操作，稳定性和�
         #model防止混淆
         -keepclassmembers class * extends com.qsmaxmin.qsbase.common.model.QsModel {*;}
         -keepclassmembers class $ extends com.qsmaxmin.qsbase.common.model.QsModel {*;}
+
+        #Glide防止混淆
+        -keep public class extends com.bumptech.glide.module.AppGlideModule
+        -keep public class extends com.bumptech.glide.module.LibraryGlideModule
+        -keep class com.bumptech.glide.GeneratedAppGlideModuleImpl
