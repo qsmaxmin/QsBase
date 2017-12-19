@@ -234,7 +234,14 @@ public class ImageHelper {
             if (listener != null) {
                 requestBuilder.listener(new RequestListener<Drawable>() {
                     @Override public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                        listener.onLoadFailed(e == null ? "" : e.getMessage());
+                        if (e != null) {
+                            listener.onLoadFailed(e.getMessage());
+                            for (Throwable t : e.getRootCauses()) {
+                                L.e("ImageHelper", "Caused by " + t.getMessage());
+                            }
+                        } else {
+                            listener.onLoadFailed("");
+                        }
                         return false;
                     }
 
