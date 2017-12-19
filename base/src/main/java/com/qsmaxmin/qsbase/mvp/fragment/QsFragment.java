@@ -315,7 +315,7 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
     @ThreadPoint(ThreadType.MAIN) private void setViewState(int showState) {
         L.i(initTag(), "setViewState() showState=" + showState);
         if (!isOpenViewState()) {
-            L.i(initTag(), "当前activity没有打开状态模式! isOpenViewState() = false");
+            L.i(initTag(), "当前Fragment没有打开状态模式! isOpenViewState() = false");
             return;
         }
         if (mViewAnimator == null) {
