@@ -1,7 +1,6 @@
 package com.qsmaxmin.qsbase.common.utils.glideWithOkHttp;
 
 import com.bumptech.glide.load.Options;
-import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.load.model.ModelLoader;
 import com.bumptech.glide.load.model.ModelLoaderFactory;
 import com.bumptech.glide.load.model.MultiModelLoaderFactory;
@@ -14,7 +13,7 @@ import okhttp3.OkHttpClient;
 /**
  * A simple model loader for fetching media over http/https using OkHttp.
  */
-public class OkHttpUrlLoader implements ModelLoader<GlideUrl, InputStream> {
+public class OkHttpUrlLoader implements ModelLoader<OkHttpGlideUrl, InputStream> {
 
     private final Call.Factory client;
 
@@ -23,12 +22,12 @@ public class OkHttpUrlLoader implements ModelLoader<GlideUrl, InputStream> {
     }
 
     @Override
-    public boolean handles(GlideUrl url) {
+    public boolean handles(OkHttpGlideUrl url) {
         return true;
     }
 
     @Override
-    public LoadData<InputStream> buildLoadData(GlideUrl model, int width, int height,
+    public LoadData<InputStream> buildLoadData(OkHttpGlideUrl model, int width, int height,
             Options options) {
         return new LoadData<>(model, new OkHttpStreamFetcher(client, model));
     }
@@ -36,7 +35,7 @@ public class OkHttpUrlLoader implements ModelLoader<GlideUrl, InputStream> {
     /**
      * The default factory for {@link OkHttpUrlLoader}s.
      */
-    public static class Factory implements ModelLoaderFactory<GlideUrl, InputStream> {
+    public static class Factory implements ModelLoaderFactory<OkHttpGlideUrl, InputStream> {
         private static volatile Call.Factory internalClient;
         private                 Call.Factory client;
 
@@ -68,7 +67,7 @@ public class OkHttpUrlLoader implements ModelLoader<GlideUrl, InputStream> {
         }
 
         @Override
-        public ModelLoader<GlideUrl, InputStream> build(MultiModelLoaderFactory multiFactory) {
+        public ModelLoader<OkHttpGlideUrl, InputStream> build(MultiModelLoaderFactory multiFactory) {
             return new OkHttpUrlLoader(client);
         }
 

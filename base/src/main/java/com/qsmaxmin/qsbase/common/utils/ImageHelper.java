@@ -20,7 +20,6 @@ import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.GlideException;
-import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.FutureTarget;
 import com.bumptech.glide.request.RequestListener;
@@ -29,6 +28,7 @@ import com.bumptech.glide.request.target.Target;
 import com.qsmaxmin.qsbase.common.aspect.ThreadPoint;
 import com.qsmaxmin.qsbase.common.aspect.ThreadType;
 import com.qsmaxmin.qsbase.common.log.L;
+import com.qsmaxmin.qsbase.common.utils.glideWithOkHttp.OkHttpGlideUrl;
 
 import java.io.File;
 import java.util.concurrent.ExecutionException;
@@ -149,7 +149,7 @@ public class ImageHelper {
         }
 
         public Builder load(String url) {
-            this.mObject = url;
+            this.mObject = new OkHttpGlideUrl(url, url);
             return this;
         }
 
@@ -163,15 +163,15 @@ public class ImageHelper {
             if (ignoreParamsKey) {
                 Uri uri = Uri.parse(url);
                 String urlWithoutKey = uri.getScheme() + "://" + uri.getHost() + uri.getPath();
-                this.mObject = new MyGlideUrl(url, urlWithoutKey);
+                this.mObject = new OkHttpGlideUrl(url, urlWithoutKey);
             } else {
-                this.mObject = url;
+                this.mObject = new OkHttpGlideUrl(url, url);
             }
             return this;
         }
 
         public Builder load(String url, String cacheKey) {
-            this.mObject = new MyGlideUrl(url, cacheKey);
+            this.mObject = new OkHttpGlideUrl(url, cacheKey);
             return this;
         }
 
@@ -371,24 +371,6 @@ public class ImageHelper {
             if (noMemoryCache) requestOptions.skipMemoryCache(true);
             if (diskCacheStrategy != null) requestOptions.diskCacheStrategy(diskCacheStrategy);
             return requestOptions;
-        }
-    }
-
-    /**
-     * 将图片的url除去param后作为缓存key，避免同一张图片缓存key不一致的问题
-     */
-    private class MyGlideUrl extends GlideUrl {
-        private String mCacheKey;
-
-        MyGlideUrl(String url, String cacheKey) {
-            super(url);
-            if (!TextUtils.isEmpty(cacheKey)) {
-                this.mCacheKey = cacheKey;
-            }
-        }
-
-        @Override public String getCacheKey() {
-            return mCacheKey;
         }
     }
 
