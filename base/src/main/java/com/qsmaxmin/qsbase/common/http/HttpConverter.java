@@ -47,7 +47,7 @@ class HttpConverter {
                     result.append(line).append("\n");
                 }
                 String json = result.toString();
-                L.i(TAG, "method:" + methodName + " response ok  Json:" + result.toString());
+                L.i(TAG, "method:" + methodName + "  响应体 Json:" + result.toString());
                 return gson.fromJson(json, type);
             } finally {
                 StreamCloseUtils.close(inputStreamReader, is, bufferedReader);
@@ -56,20 +56,19 @@ class HttpConverter {
         return null;
     }
 
-    RequestBody jsonToBody(String mimeType, Object object, Type type) {
+    RequestBody jsonToBody(String methodName, String mimeType, Object object, Type type) {
         String json = gson.toJson(object, type);
-        L.i(TAG, "请求体:mimeType :" + mimeType + ", json : " + json);
+        L.i(TAG, "methodName:" + methodName + "  请求体 mimeType:" + mimeType + ", Json : " + json);
         return RequestBody.create(MediaType.parse(mimeType), json);
     }
 
-    RequestBody fileToBody(String mimeType, File file) {
-        L.i(TAG, "请求体:mimeType :" + mimeType + ",  file:" + file.getPath());
-
+    RequestBody fileToBody(String methodName, String mimeType, File file) {
+        L.i(TAG, "methodName:" + methodName + "  请求体 mimeType:" + mimeType + ",  file:" + file.getPath());
         return RequestBody.create(MediaType.parse(mimeType), file);
     }
 
-    RequestBody byteToBody(String mimeType, byte[] bytes) {
-        L.i(TAG, "请求体:mimeType :" + mimeType + ",  bytes length:" + bytes.length);
+    RequestBody byteToBody(String methodName, String mimeType, byte[] bytes) {
+        L.i(TAG, "methodName:" + methodName + "  请求体 mimeType:" + mimeType + ",  bytes length:" + bytes.length);
         return RequestBody.create(MediaType.parse(mimeType), bytes);
     }
 }

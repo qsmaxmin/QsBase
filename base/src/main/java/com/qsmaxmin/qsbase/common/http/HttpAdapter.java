@@ -1,5 +1,6 @@
 package com.qsmaxmin.qsbase.common.http;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
@@ -44,7 +45,7 @@ import okhttp3.ResponseBody;
 
 public class HttpAdapter {
     private static final String TAG          = "HttpAdapter";
-    private static final String PATH_REPLACE = "\\{\\w*\\}";
+    private static final String PATH_REPLACE = "\\{\\w*}";
     private final static int    timeOut      = 10;
     private OkHttpClient  client;
     private HttpConverter converter;
@@ -79,7 +80,7 @@ public class HttpAdapter {
     }
 
     private HttpBuilder getHttpBuilder(Object requestTag, String path, Object[] args) {
-        HttpBuilder httpBuilder = new HttpBuilder(requestTag,path,args);
+        HttpBuilder httpBuilder = new HttpBuilder(requestTag, path, args);
         QsHelper.getInstance().getApplication().initHttpAdapter(httpBuilder);
         return httpBuilder;
     }
@@ -228,11 +229,11 @@ public class HttpAdapter {
         if ((!"GET".equals(requestType)) && (!"HEAD".equals(requestType))) {
             if (body != null) {
                 if (body instanceof File) {
-                    requestBody = converter.fileToBody(mimeType, (File) body);
+                    requestBody = converter.fileToBody(method.getName(), mimeType, (File) body);
                 } else if (body instanceof byte[]) {
-                    requestBody = converter.byteToBody(mimeType, (byte[]) body);
+                    requestBody = converter.byteToBody(method.getName(), mimeType, (byte[]) body);
                 } else {
-                    requestBody = converter.jsonToBody(mimeType, body, body.getClass());
+                    requestBody = converter.jsonToBody(method.getName(), mimeType, body, body.getClass());
                 }
             }
         }
@@ -282,7 +283,7 @@ public class HttpAdapter {
         return result;
     }
 
-    @Nullable private StringBuilder getUrl(String terminal, String path, Method method, Object[] args, Object requestTag) {
+    @NonNull private StringBuilder getUrl(String terminal, String path, Method method, Object[] args, Object requestTag) {
         if (TextUtils.isEmpty(terminal)) {
             throw new QsException(QsExceptionType.UNEXPECTED, requestTag, "url terminal error... method:" + method.getName() + "  terminal is null...");
         }
