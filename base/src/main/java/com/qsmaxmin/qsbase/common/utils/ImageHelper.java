@@ -216,7 +216,7 @@ public class ImageHelper {
             return this;
         }
 
-        public Builder RoundedCorners(int corners) {
+        public Builder roundedCorners(int corners) {
             this.mCorners = corners;
             return this;
         }
