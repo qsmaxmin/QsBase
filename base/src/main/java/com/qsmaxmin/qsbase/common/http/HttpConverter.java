@@ -63,12 +63,12 @@ class HttpConverter {
     }
 
     RequestBody fileToBody(String methodName, String mimeType, File file) {
-        L.i(TAG, "methodName:" + methodName + "  请求体 mimeType:" + mimeType + ",  file:" + file.getPath());
+        L.i(TAG, "methodName:" + methodName + "  请求体 mimeType:" + mimeType + ", File:" + file.getPath());
         return RequestBody.create(MediaType.parse(mimeType), file);
     }
 
     RequestBody byteToBody(String methodName, String mimeType, byte[] bytes) {
-        L.i(TAG, "methodName:" + methodName + "  请求体 mimeType:" + mimeType + ",  bytes length:" + bytes.length);
+        L.i(TAG, "methodName:" + methodName + "  请求体 mimeType:" + mimeType + ", bytes length:" + bytes.length);
         return RequestBody.create(MediaType.parse(mimeType), bytes);
     }
 }
