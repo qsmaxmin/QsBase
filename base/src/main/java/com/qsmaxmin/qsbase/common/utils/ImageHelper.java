@@ -18,6 +18,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestBuilder;
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
@@ -104,18 +105,20 @@ public class ImageHelper {
     }
 
     public class Builder {
-        private RequestManager manager;
-        private Object         mObject;
-        private Drawable       placeholderDrawable;
-        private int            placeholderId;
-        private int            errorId;
-        private Drawable       errorDrawable;
-        private boolean        centerCrop;
-        private boolean        fitCenter;
-        private boolean        centerInside;
-        private int            mCorners;
-        private int            mWidth;
-        private int            mHeight;
+        private RequestManager    manager;
+        private Object            mObject;
+        private Drawable          placeholderDrawable;
+        private int               placeholderId;
+        private int               errorId;
+        private Drawable          errorDrawable;
+        private boolean           centerCrop;
+        private boolean           fitCenter;
+        private boolean           centerInside;
+        private int               mCorners;
+        private int               mWidth;
+        private int               mHeight;
+        private boolean           noMemoryCache;
+        private DiskCacheStrategy diskCacheStrategy;
 
         Builder(Context context) {
             manager = Glide.with(context);
@@ -215,6 +218,16 @@ public class ImageHelper {
 
         public Builder RoundedCorners(int corners) {
             this.mCorners = corners;
+            return this;
+        }
+
+        public Builder noMemoryCache() {
+            this.noMemoryCache = true;
+            return this;
+        }
+
+        public Builder noDiskCache() {
+            diskCacheStrategy = DiskCacheStrategy.NONE;
             return this;
         }
 
@@ -333,7 +346,9 @@ public class ImageHelper {
                     || fitCenter
                     || centerInside
                     || mCorners > 0
-                    || (mWidth > 0 && mHeight > 0);
+                    || (mWidth > 0 && mHeight > 0)
+                    || noMemoryCache
+                    || diskCacheStrategy != null;
         }
 
         @NonNull private RequestOptions createRequestOptions() {
@@ -353,6 +368,8 @@ public class ImageHelper {
             if (centerInside) requestOptions.centerInside();
             if (mCorners > 0) requestOptions.transform(new RoundedCorners(mCorners));
             if (mWidth > 0 && mHeight > 0) requestOptions.override(mWidth, mHeight);
+            if (noMemoryCache) requestOptions.skipMemoryCache(true);
+            if (diskCacheStrategy != null) requestOptions.diskCacheStrategy(diskCacheStrategy);
             return requestOptions;
         }
     }
