@@ -55,7 +55,12 @@ public class ImageHelper {
     }
 
     public Builder createRequest() {
-        return new Builder(QsHelper.getInstance().getApplication());
+        FragmentActivity activity = QsHelper.getInstance().getScreenHelper().currentActivity();
+        if (activity != null) {
+            return new Builder(activity);
+        } else {
+            return new Builder(QsHelper.getInstance().getApplication());
+        }
     }
 
     public Builder createRequest(Context context) {
