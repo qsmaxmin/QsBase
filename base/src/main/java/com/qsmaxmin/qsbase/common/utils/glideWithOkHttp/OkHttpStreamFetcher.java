@@ -6,6 +6,7 @@ import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.HttpException;
 import com.bumptech.glide.load.data.DataFetcher;
+import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.util.ContentLengthInputStream;
 import com.bumptech.glide.util.Synthetic;
 
@@ -24,12 +25,12 @@ import okhttp3.ResponseBody;
 public class OkHttpStreamFetcher implements DataFetcher<InputStream> {
     private static final String TAG = "OkHttpFetcher";
     private final    Call.Factory client;
-    private final    OkHttpGlideUrl     url;
+    private final    GlideUrl     url;
     @Synthetic       InputStream  stream;
     @Synthetic       ResponseBody responseBody;
     private volatile Call         call;
 
-    public OkHttpStreamFetcher(Call.Factory client, OkHttpGlideUrl url) {
+    public OkHttpStreamFetcher(Call.Factory client, GlideUrl url) {
         this.client = client;
         this.url = url;
     }

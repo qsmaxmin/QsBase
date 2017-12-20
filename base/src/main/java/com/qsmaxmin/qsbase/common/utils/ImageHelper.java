@@ -20,6 +20,7 @@ import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.FutureTarget;
 import com.bumptech.glide.request.RequestListener;
@@ -28,7 +29,6 @@ import com.bumptech.glide.request.target.Target;
 import com.qsmaxmin.qsbase.common.aspect.ThreadPoint;
 import com.qsmaxmin.qsbase.common.aspect.ThreadType;
 import com.qsmaxmin.qsbase.common.log.L;
-import com.qsmaxmin.qsbase.common.utils.glideWithOkHttp.OkHttpGlideUrl;
 
 import java.io.File;
 import java.util.concurrent.ExecutionException;
@@ -149,7 +149,7 @@ public class ImageHelper {
         }
 
         public Builder load(String url) {
-            this.mObject = new OkHttpGlideUrl(url, url);
+            this.mObject = createGlideUrl(url, url);
             return this;
         }
 
@@ -163,15 +163,15 @@ public class ImageHelper {
             if (ignoreParamsKey) {
                 Uri uri = Uri.parse(url);
                 String urlWithoutKey = uri.getScheme() + "://" + uri.getHost() + uri.getPath();
-                this.mObject = new OkHttpGlideUrl(url, urlWithoutKey);
+                return load(url, urlWithoutKey);
             } else {
-                this.mObject = new OkHttpGlideUrl(url, url);
+                this.mObject = createGlideUrl(url, url);
             }
             return this;
         }
 
         public Builder load(String url, String cacheKey) {
-            this.mObject = new OkHttpGlideUrl(url, cacheKey);
+            this.mObject = createGlideUrl(url, cacheKey);
             return this;
         }
 
@@ -372,6 +372,12 @@ public class ImageHelper {
             if (diskCacheStrategy != null) requestOptions.diskCacheStrategy(diskCacheStrategy);
             return requestOptions;
         }
+
+        private MyGlideUrl createGlideUrl(String url, String cacheKey) {
+            MyGlideUrl myGlideUrl = new MyGlideUrl(url);
+            myGlideUrl.setCacheKey(cacheKey);
+            return myGlideUrl;
+        }
     }
 
     private long getFolderSize(File file) {
@@ -397,6 +403,23 @@ public class ImageHelper {
         void onLoadFailed(String message);
 
         void onSuccess(Drawable drawable);
+    }
+
+    private class MyGlideUrl extends GlideUrl {
+
+        private String mCacheKey;
+
+        MyGlideUrl(String url) {
+            super(url);
+        }
+
+        void setCacheKey(String cacheKey) {
+            this.mCacheKey = cacheKey;
+        }
+
+        @Override public String getCacheKey() {
+            return TextUtils.isEmpty(mCacheKey) ? super.getCacheKey() : mCacheKey;
+        }
     }
 
 }
