@@ -42,8 +42,7 @@ public final class ScreenHelper {
             L.i(TAG, "FragmentActivity堆栈 size = 0");
             return null;
         }
-        FragmentActivity fragmentActivity = fragmentActivities.peek();
-        return fragmentActivity;
+        return fragmentActivities.peek();
     }
 
     /**
