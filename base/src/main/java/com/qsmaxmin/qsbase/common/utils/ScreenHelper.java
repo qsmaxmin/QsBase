@@ -43,7 +43,6 @@ public final class ScreenHelper {
             return null;
         }
         FragmentActivity fragmentActivity = fragmentActivities.peek();
-        L.i(TAG, "获取当前FragmentActivity:" + fragmentActivity.getClass().getSimpleName() + "   栈大小：" + fragmentActivities.size());
         return fragmentActivity;
     }
 
