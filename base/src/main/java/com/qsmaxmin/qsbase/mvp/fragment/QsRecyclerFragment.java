@@ -181,6 +181,15 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
         }
     }
 
+    @Override public void addData(D d) {
+        if (d != null) {
+            synchronized (mList) {
+                mList.add(d);
+                updateAdapter(true);
+            }
+        }
+    }
+
     @Override public void addData(List<D> list) {
         if (list != null && !list.isEmpty()) {
             synchronized (mList) {
@@ -211,11 +220,26 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
         }
     }
 
+    @Override public void delete(D d) {
+        if (d == null) return;
+        synchronized (mList) {
+            mList.remove(d);
+            updateAdapter(true);
+        }
+    }
+
     @Override public void deleteAll() {
         synchronized (mList) {
             mList.clear();
             updateAdapter(true);
         }
+    }
+
+    @Override public D getData(int position) {
+        if (position >= 0 && position < mList.size()) {
+            return mList.get(position);
+        }
+        return null;
     }
 
     @Override public final List<D> getData() {

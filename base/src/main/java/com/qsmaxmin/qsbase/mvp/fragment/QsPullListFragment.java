@@ -101,9 +101,8 @@ public abstract class QsPullListFragment<T extends QsPresenter, D> extends QsLis
         canLoadingMore = false;
     }
 
-    @Override @ThreadPoint(ThreadType.MAIN) public void setData(List<D> list) {
-        mPtrFrameLayout.refreshComplete();
-        super.setData(list);
+    @Override public void setData(List<D> list) {
+        setData(list, true);
     }
 
     @Override @ThreadPoint(ThreadType.MAIN) public void setData(List<D> list, boolean showEmptyView) {
@@ -117,10 +116,10 @@ public abstract class QsPullListFragment<T extends QsPresenter, D> extends QsLis
             if (!canLoadingMore) {
                 return;
             } else if (state == LoadingFooter.State.Loading) {
-                L.i(initTag(), "正在加载中,无需再次加载..........");
+                L.i(initTag(), "Under loading..........");
                 return;
             } else if (state == LoadingFooter.State.TheEnd) {
-                L.i(initTag(), "加载完了,没有更多数据了...........");
+                L.i(initTag(), "no more data...........");
                 return;
             }
             setLoadingState(LoadingFooter.State.Loading);

@@ -17,6 +17,10 @@ import com.qsmaxmin.qsbase.mvp.fragment.QsIViewPagerFragment;
 
 public class QsTabViewPagerAdapter extends QsViewPagerAdapter implements PagerSlidingTabStrip.CustomTabProvider {
 
+    protected String initTag() {
+        return getClass().getSimpleName();
+    }
+
     public QsTabViewPagerAdapter(String tag, FragmentManager fragmentManager, PagerSlidingTabStrip tabs, QsViewPager pager, QsIViewPagerFragment j2WIViewViewpagerFragment) {
         super(tag, fragmentManager, tabs, pager, j2WIViewViewpagerFragment);
     }

@@ -151,6 +151,15 @@ public abstract class QsListFragment<P extends QsPresenter, D> extends QsFragmen
         }
     }
 
+    @Override public void addData(D d) {
+        if (d != null) {
+            synchronized (mList) {
+                mList.add(d);
+                updateAdapter(true);
+            }
+        }
+    }
+
     @Override public void addData(List<D> list) {
         if (list != null && !list.isEmpty()) {
             synchronized (mList) {
@@ -169,6 +178,14 @@ public abstract class QsListFragment<P extends QsPresenter, D> extends QsFragmen
         }
     }
 
+    @Override public void delete(D d) {
+        if (d == null) return;
+        synchronized (mList) {
+            mList.remove(d);
+            updateAdapter(true);
+        }
+    }
+
     @Override public void deleteAll() {
         synchronized (mList) {
             mList.clear();
@@ -180,6 +197,12 @@ public abstract class QsListFragment<P extends QsPresenter, D> extends QsFragmen
         return mList;
     }
 
+    @Override public D getData(int position) {
+        if (position >= 0 && position < mList.size()) {
+            return mList.get(position);
+        }
+        return null;
+    }
 
     @ThreadPoint(ThreadType.MAIN) @Override public void updateAdapter(boolean showEmptyView) {
         if (mListAdapter != null) {

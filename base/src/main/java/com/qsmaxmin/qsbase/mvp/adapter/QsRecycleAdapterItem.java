@@ -27,6 +27,10 @@ public abstract class QsRecycleAdapterItem<T> {
         mViewHolder = new MyViewHolder(mItemView);
     }
 
+    protected String initTag() {
+        return getClass().getSimpleName();
+    }
+
     protected abstract int itemViewLayoutId();
 
     protected abstract void onBindItemData(T datum, int position, int totalCount);

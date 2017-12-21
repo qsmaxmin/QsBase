@@ -45,6 +45,9 @@ public class QsViewPagerAdapter extends PagerAdapter implements OuterPagerAdapte
     protected QsIViewPagerABActivity viewPagerABActivity;
     protected QsIViewPagerActivity   viewPagerActivity;
 
+    protected String initTag() {
+        return getClass().getSimpleName();
+    }
 
     public QsViewPagerAdapter(String tag, FragmentManager fragmentManager, PagerSlidingTabStrip tabs, QsViewPager pager, QsIViewPagerFragment viewPagerFragment) {
         this.tag = tag;

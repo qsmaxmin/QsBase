@@ -9,6 +9,10 @@ import com.qsmaxmin.qsbase.common.utils.QsHelper;
  */
 public abstract class QsListAdapterItem<T> {
 
+    protected String initTag() {
+        return getClass().getSimpleName();
+    }
+
     public abstract int getItemLayout();
 
     public void init(View contentView) {

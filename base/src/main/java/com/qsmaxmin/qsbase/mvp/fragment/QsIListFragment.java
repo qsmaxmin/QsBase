@@ -37,11 +37,17 @@ public interface QsIListFragment<D> extends QsIFragment {
 
     void addData(List<D> list);
 
+    void addData(D d);
+
     void delete(int position);
+
+    void delete(D d);
 
     void deleteAll();
 
     List<D> getData();
+
+    D getData(int position);
 
     void updateAdapter(boolean showEmptyView);
 
