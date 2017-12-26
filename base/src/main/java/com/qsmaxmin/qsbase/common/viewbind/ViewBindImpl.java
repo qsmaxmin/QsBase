@@ -14,10 +14,12 @@ import com.qsmaxmin.qsbase.mvp.QsViewPagerABActivity;
 import com.qsmaxmin.qsbase.mvp.QsViewPagerActivity;
 import com.qsmaxmin.qsbase.mvp.adapter.QsListAdapterItem;
 import com.qsmaxmin.qsbase.mvp.adapter.QsRecycleAdapterItem;
+import com.qsmaxmin.qsbase.mvp.adapter.QsTabViewPagerAdapter;
 import com.qsmaxmin.qsbase.mvp.adapter.QsViewPagerAdapter;
 import com.qsmaxmin.qsbase.mvp.fragment.QsFragment;
 import com.qsmaxmin.qsbase.mvp.fragment.QsHeaderViewpagerFragment;
 import com.qsmaxmin.qsbase.mvp.fragment.QsListFragment;
+import com.qsmaxmin.qsbase.mvp.fragment.QsPullHeaderViewpagerFragment;
 import com.qsmaxmin.qsbase.mvp.fragment.QsPullListFragment;
 import com.qsmaxmin.qsbase.mvp.fragment.QsPullRecyclerFragment;
 import com.qsmaxmin.qsbase.mvp.fragment.QsRecyclerFragment;
@@ -26,11 +28,11 @@ import com.qsmaxmin.qsbase.mvp.fragment.QsViewPagerFragment;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.HashSet;
+import java.util.ArrayList;
 
 public final class ViewBindImpl implements ViewBind {
 
-    private static final HashSet<Class<?>> IGNORED = new HashSet<>();
+    private static final ArrayList<Class<?>> IGNORED = new ArrayList<>();
 
     static {
         IGNORED.add(Object.class);
@@ -52,8 +54,10 @@ public final class ViewBindImpl implements ViewBind {
         IGNORED.add(QsPullRecyclerFragment.class);
         IGNORED.add(QsViewPagerFragment.class);
         IGNORED.add(QsHeaderViewpagerFragment.class);
+        IGNORED.add(QsPullHeaderViewpagerFragment.class);
 
         IGNORED.add(QsViewPagerAdapter.class);
+        IGNORED.add(QsTabViewPagerAdapter.class);
         IGNORED.add(QsListAdapterItem.class);
         IGNORED.add(QsRecycleAdapterItem.class);
     }
