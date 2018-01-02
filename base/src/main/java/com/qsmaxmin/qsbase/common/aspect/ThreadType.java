@@ -1,7 +1,9 @@
 package com.qsmaxmin.qsbase.common.aspect;
 
 /**
- * Created by sky on 15/2/20.线程池类型
+ * @CreateBy qsmaxmin
+ * @Date 2017/6/21 16:10
+ * @Description 线程池类型
  */
 public enum ThreadType {
     SINGLE_WORK,
