@@ -1,11 +1,11 @@
 # QsBase
 ## 基于AOP面向切面编程的Android高效开发框架
 
-这不是一个框架，而是一套完整的Android APP开发生态圈~~
+这不是一个框架，而是一套完整的Android APP开发生态圈~~（低调）
 
-MVP架构+AOP面向切面编程，摒弃反射、代理等操作，稳定性和执行效率远优于一般的框架
+MVP架构+AOP面向切面编程，摒弃反射、代理等操作，稳定性和执行效率高
 
-强大的框架封装思想，能够轻松驾驭任何典型的APP项目开发
+积累很多框架封装思想，能够轻松驾驭任何典型的APP项目开发
 
 ## 如何使用？
 详细使用请参考完整项目[GrapeUniversity](https://github.com/qsmaxmin/GrapeUniversity)
