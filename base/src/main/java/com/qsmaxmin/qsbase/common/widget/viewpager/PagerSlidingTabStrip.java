@@ -143,7 +143,6 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
         tabsContainer = new LinearLayout(context);
         tabsContainer.setOrientation(LinearLayout.HORIZONTAL);
         tabsContainer.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-        tabsContainer.setBackgroundDrawable(getBackground());
         addView(tabsContainer);
 
         DisplayMetrics dm = getResources().getDisplayMetrics();

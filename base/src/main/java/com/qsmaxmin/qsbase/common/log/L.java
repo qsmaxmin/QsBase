@@ -4,7 +4,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 /**
- * Create by sky
+ * Create by qsmaxmin
  */
 public final class L {
 
