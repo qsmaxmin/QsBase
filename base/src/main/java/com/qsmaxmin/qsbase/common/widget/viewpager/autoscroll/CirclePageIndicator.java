@@ -429,7 +429,7 @@ public class CirclePageIndicator extends View implements PageIndicator {
         } else {
             // Calculate the width according the views count
             final int count = ((InfinitePagerAdapter) mViewPager.getAdapter()).getRealCount();
-            result = (int) (getPaddingLeft() + getPaddingRight() + (count * 2 * mRadius) + (count - 1) * mRadius + 1) + (int) selectedWidth;
+            result = (int) (getPaddingLeft() + getPaddingRight() + (count * 2 * mRadius) + (count - 1) * mRadius + +selectedWidth + mRadius * 2 + 1);
             // Respect AT_MOST value if that was what is called for by
             // measureSpec
             if (specMode == MeasureSpec.AT_MOST) {
