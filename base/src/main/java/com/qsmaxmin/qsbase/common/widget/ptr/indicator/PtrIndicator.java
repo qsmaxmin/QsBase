@@ -4,22 +4,22 @@ import android.graphics.PointF;
 
 public class PtrIndicator {
 
-    public final static int    POS_START        = 0;
-    protected           int    mOffsetToRefresh = 0;
-    private             PointF mPtLastMove      = new PointF();
+    public final static int     POS_START                       = 0;
+    protected           int     mOffsetToRefresh                = 0;
+    private             PointF  mPtLastMove                     = new PointF();
+    private             float   mRatioOfHeaderHeightToRefresh   = 1.05f;
+    private             float   mResistance                     = 1.7f;
+    private             boolean mIsUnderTouch                   = false;
+    private             int     mOffsetToKeepHeaderWhileLoading = -1;
+    // record the refresh complete position
+    private             int     mRefreshCompleteY               = 0;
     private float mOffsetX;
     private float mOffsetY;
     private int mCurrentPos = 0;
-    private int mLastPos = 0;
+    private int mLastPos    = 0;
     private int mHeaderHeight;
     private int mPressedPos = 0;
 
-    private float mRatioOfHeaderHeightToRefresh = 1.2f;
-    private float mResistance = 1.7f;
-    private boolean mIsUnderTouch = false;
-    private int mOffsetToKeepHeaderWhileLoading = -1;
-    // record the refresh complete position
-    private int mRefreshCompleteY = 0;
 
     public boolean isUnderTouch() {
         return mIsUnderTouch;
