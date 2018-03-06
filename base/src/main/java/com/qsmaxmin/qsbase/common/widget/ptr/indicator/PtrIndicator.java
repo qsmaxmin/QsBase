@@ -7,7 +7,7 @@ public class PtrIndicator {
     public final static int     POS_START                       = 0;
     protected           int     mOffsetToRefresh                = 0;
     private             PointF  mPtLastMove                     = new PointF();
-    private             float   mRatioOfHeaderHeightToRefresh   = 1.05f;
+    private             float   mRatioOfHeaderHeightToRefresh   = 1.01f;
     private             float   mResistance                     = 1.7f;
     private             boolean mIsUnderTouch                   = false;
     private             int     mOffsetToKeepHeaderWhileLoading = -1;
