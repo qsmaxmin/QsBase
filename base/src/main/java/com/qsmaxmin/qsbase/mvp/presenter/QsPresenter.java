@@ -17,12 +17,15 @@ import com.qsmaxmin.qsbase.mvp.fragment.QsIPullListFragment;
 import com.qsmaxmin.qsbase.mvp.fragment.QsIPullRecyclerFragment;
 import com.qsmaxmin.qsbase.mvp.model.QsConstants;
 
+import java.util.ArrayList;
+
 /**
  * @CreateBy qsmaxmin
  * @Date 2017/6/21 16:27
  * @Description
  */
 public class QsPresenter<V extends QsIView> {
+    private ArrayList<String> tagList = new ArrayList<>();
     private boolean isAttach;
     private V       mView;
 
@@ -58,6 +61,7 @@ public class QsPresenter<V extends QsIView> {
     public void setDetach() {
         isAttach = false;
         cancelHttpRequest();
+        tagList.clear();
     }
 
     public boolean isViewDetach() {
@@ -68,10 +72,15 @@ public class QsPresenter<V extends QsIView> {
      * 发起http请求
      */
     protected <T> T createHttpRequest(Class<T> clazz) {
-        return createHttpRequest(clazz, getClass().getSimpleName());
+        return createHttpRequest(clazz, String.valueOf(System.nanoTime()));
     }
 
     protected <T> T createHttpRequest(Class<T> clazz, String requestTag) {
+        if (!tagList.contains(requestTag)) {
+            tagList.add(requestTag);
+        } else {
+            L.e(initTag(), "createHttpRequest Repeated tag ! tag:" + requestTag);
+        }
         return QsHelper.getInstance().getHttpHelper().create(clazz, requestTag);
     }
 
@@ -80,7 +89,9 @@ public class QsPresenter<V extends QsIView> {
      */
     protected void cancelHttpRequest() {
         try {
-            QsHelper.getInstance().getHttpHelper().cancelRequest(getClass().getSimpleName());
+            for (String tag : tagList) {
+                QsHelper.getInstance().getHttpHelper().cancelRequest(tag);
+            }
         } catch (Exception e) {
             L.e(initTag(), "cancel http request failed :" + e.getMessage());
         }
