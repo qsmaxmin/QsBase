@@ -79,7 +79,7 @@ public class QsPresenter<V extends QsIView> {
         if (!tagList.contains(requestTag)) {
             tagList.add(requestTag);
         } else {
-            L.e(initTag(), "createHttpRequest Repeated tag ! tag:" + requestTag);
+            L.e(initTag(), "createHttpRequest Repeated tag:" + requestTag);
         }
         return QsHelper.getInstance().getHttpHelper().create(clazz, requestTag);
     }
