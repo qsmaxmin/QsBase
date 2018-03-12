@@ -60,8 +60,7 @@ public class QsPresenter<V extends QsIView> {
 
     public void setDetach() {
         isAttach = false;
-        cancelHttpRequest();
-        tagList.clear();
+        cancelAllHttpRequest();
     }
 
     public boolean isViewDetach() {
@@ -87,13 +86,27 @@ public class QsPresenter<V extends QsIView> {
     /**
      * 取消由当前presenter发起的http请求
      */
-    protected void cancelHttpRequest() {
+    protected void cancelAllHttpRequest() {
         try {
             for (String tag : tagList) {
                 QsHelper.getInstance().getHttpHelper().cancelRequest(tag);
             }
+            tagList.clear();
         } catch (Exception e) {
             L.e(initTag(), "cancel http request failed :" + e.getMessage());
+        }
+    }
+
+    protected void cancelHttpRequest(String requestTag) {
+        if (tagList.contains(requestTag)) {
+            tagList.remove(requestTag);
+            try {
+                QsHelper.getInstance().getHttpHelper().cancelRequest(requestTag);
+            } catch (Exception e) {
+                L.e(initTag(), "cancel http request failed :" + e.getMessage());
+            }
+        } else {//当前http请求已经被取消
+            L.i(initTag(), "The current HTTP request has been cancelled! requestTag:" + requestTag);
         }
     }
 

@@ -166,7 +166,7 @@ public class HttpAdapter {
                 for (Call call : queuedCalls) {
                     Request request = call.request();
                     if (requestTag.equals(request.tag())) {
-                        L.e(TAG, "cancel queued request success... requestTag=" + requestTag + "  url=" + request.url());
+                        L.i(TAG, "cancel queued request success... requestTag=" + requestTag + "  url=" + request.url());
                         call.cancel();
                     }
                 }
@@ -175,7 +175,7 @@ public class HttpAdapter {
                 for (Call call : runningCalls) {
                     Request request = call.request();
                     if (requestTag.equals(request.tag())) {
-                        L.e(TAG, "cancel running request ... requestTag=" + requestTag + "  url=" + call.request().url());
+                        L.i(TAG, "cancel running request ... requestTag=" + requestTag + "  url=" + call.request().url());
                         call.cancel();
                     }
                 }
