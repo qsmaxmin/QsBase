@@ -45,7 +45,7 @@ import okhttp3.ResponseBody;
 
 public class HttpAdapter {
     private static final String TAG          = "HttpAdapter";
-    private static final String PATH_REPLACE = "\\{\\w*}";
+    private static final String PATH_REPLACE = "\\{\\w*\\}";
     private final static int    timeOut      = 10;
     private OkHttpClient  client;
     private HttpConverter converter;
