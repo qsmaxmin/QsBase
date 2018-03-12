@@ -204,6 +204,10 @@ public class HttpAdapter {
         HashMap<String, Object> params = null;
         String mimeType = null;
 
+        if (httpBuilder.getUrlParameters() != null && !httpBuilder.getUrlParameters().isEmpty()) {
+            params = new HashMap<>();
+            params.putAll(httpBuilder.getUrlParameters());
+        }
         for (int i = 0; i < annotations.length; i++) {
             Annotation[] annotationArr = annotations[i];
             Annotation annotation = annotationArr[0];
@@ -232,7 +236,7 @@ public class HttpAdapter {
             }
         }
 
-        if (params != null && params.size() > 0) {
+        if (params != null && !params.isEmpty()) {
             int i = 0;
             for (String key : params.keySet()) {
                 Object object = params.get(key);

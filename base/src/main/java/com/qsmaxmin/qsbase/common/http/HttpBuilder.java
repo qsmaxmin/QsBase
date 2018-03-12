@@ -5,6 +5,8 @@ import android.text.TextUtils;
 import com.qsmaxmin.qsbase.common.exception.QsException;
 import com.qsmaxmin.qsbase.common.exception.QsExceptionType;
 
+import java.util.HashMap;
+
 import okhttp3.Headers;
 
 /**
@@ -15,10 +17,11 @@ import okhttp3.Headers;
 
 public class HttpBuilder {
 
-    private final Object   requestTag;
-    private final String   path;
-    private final Object[] args;
-    private       String   terminal;
+    private final Object                  requestTag;
+    private final String                  path;
+    private final Object[]                args;
+    private       String                  terminal;
+    private       HashMap<String, String> urlParameters;
 
     private Headers.Builder headerBuilder = new Headers.Builder();
 
@@ -52,6 +55,26 @@ public class HttpBuilder {
         return this;
     }
 
+    String getTerminal() {
+        return terminal;
+    }
+
+    public HttpBuilder addUrlParameters(String key, String value) {
+        if (!TextUtils.isEmpty(key) && !TextUtils.isEmpty(value)) {
+            if (urlParameters == null) {
+                synchronized (HttpBuilder.class) {
+                    if (urlParameters == null) urlParameters = new HashMap<>();
+                }
+            }
+            urlParameters.put(key, value);
+        }
+        return this;
+    }
+
+    HashMap<String, String> getUrlParameters() {
+        return urlParameters;
+    }
+
     public String getPath() {
         return path;
     }
@@ -64,7 +87,5 @@ public class HttpBuilder {
         return args;
     }
 
-    String getTerminal() {
-        return terminal;
-    }
+
 }
