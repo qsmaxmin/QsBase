@@ -18,7 +18,7 @@ public interface QsIViewPagerFragment extends QsIFragment {
 
     void onPageScrollStateChanged(int state);
 
-    void onPageSelected(View currentTabAt, View oldTabView, int position, int oldPosition);
+    void onPageSelected(View currentTabView, View oldTabView, int position, int oldPosition);
 
     void onPageScrolled(int position, float positionOffset, int positionOffsetPixels);
 
