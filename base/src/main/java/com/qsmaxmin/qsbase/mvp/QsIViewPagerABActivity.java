@@ -18,7 +18,7 @@ public interface QsIViewPagerABActivity extends QsIABActivity {
 
     void onPageScrollStateChanged(int state);
 
-    void onPageSelected(View childAt, View oldView, int position, int oldPosition);
+    void onPageSelected(View currentTabAt, View oldTabView, int position, int oldPosition);
 
     void onPageScrolled(int position, float positionOffset, int positionOffsetPixels);
 
@@ -38,7 +38,7 @@ public interface QsIViewPagerABActivity extends QsIABActivity {
 
     int getTabItemLayout();
 
-    void initTab(View view, QsModelPager modelPager);
+    void initTab(View tabView, QsModelPager modelPager);
 
     Fragment getCurrentFragment();
 }

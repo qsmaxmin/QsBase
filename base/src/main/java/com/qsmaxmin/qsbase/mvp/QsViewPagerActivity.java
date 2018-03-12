@@ -88,7 +88,7 @@ public abstract class QsViewPagerActivity<P extends QsPresenter> extends QsActiv
 
     }
 
-    @Override public void onPageSelected(View childAt, View oldView, int position, int oldPosition) {
+    @Override public void onPageSelected(View currentTabView, View oldTabView, int position, int oldPosition) {
 
     }
 
