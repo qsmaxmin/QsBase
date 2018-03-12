@@ -97,11 +97,11 @@ public abstract class QsViewPagerFragment<P extends QsPresenter> extends QsFragm
 
     }
 
-    @Override public void onPageSelected(View currentTabView, View oldTabView, int position, int oldPosition) {
+    @Override public void onPageSelected(View currentTabItem, View oldTabItem, int position, int oldPosition) {
 
     }
 
-    @Override public void initTab(View view, QsModelPager modelPager) {
+    @Override public void initTab(View tabItem, QsModelPager modelPager) {
 
     }
 
