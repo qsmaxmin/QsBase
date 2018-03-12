@@ -56,6 +56,11 @@ class HttpConverter {
         return null;
     }
 
+    RequestBody stringToBody(String methodName, String mimeType, String body) {
+        L.i(TAG, "methodName:" + methodName + "  请求体 mimeType:" + mimeType + ", String:" + body);
+        return RequestBody.create(MediaType.parse(mimeType), body);
+    }
+    
     RequestBody jsonToBody(String methodName, String mimeType, Object object, Type type) {
         String json = gson.toJson(object, type);
         L.i(TAG, "methodName:" + methodName + "  请求体 mimeType:" + mimeType + ", Json : " + json);

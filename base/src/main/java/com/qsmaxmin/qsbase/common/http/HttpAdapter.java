@@ -226,7 +226,9 @@ public class HttpAdapter {
 
         if ((!"GET".equals(requestType)) && (!"HEAD".equals(requestType))) {
             if (body != null) {
-                if (body instanceof File) {
+                if (body instanceof String) {
+                    requestBody = converter.stringToBody(method.getName(), mimeType, (String) body);
+                } else if (body instanceof File) {
                     requestBody = converter.fileToBody(method.getName(), mimeType, (File) body);
                 } else if (body instanceof byte[]) {
                     requestBody = converter.byteToBody(method.getName(), mimeType, (byte[]) body);
