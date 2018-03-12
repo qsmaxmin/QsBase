@@ -1,7 +1,6 @@
 package com.qsmaxmin.qsbase.common.http;
 
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import com.qsmaxmin.qsbase.common.aspect.Body;
@@ -83,11 +82,6 @@ public class HttpAdapter {
         HttpBuilder httpBuilder = new HttpBuilder(requestTag, path, args);
         QsHelper.getInstance().getApplication().initHttpAdapter(httpBuilder);
         return httpBuilder;
-    }
-
-
-    public <T> T create(Class<T> clazz) {
-        return create(clazz, null);
     }
 
     /**
