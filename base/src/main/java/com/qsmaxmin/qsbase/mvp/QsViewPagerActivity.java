@@ -96,8 +96,6 @@ public abstract class QsViewPagerActivity<P extends QsPresenter> extends QsActiv
 
     }
 
-    @Override public abstract void initTab(View tabItem, QsModelPager modelPager);
-
     @Override public void replaceViewPageItem(QsModelPager... modelPagers) {
         if (adapter != null) {
             adapter.replaceViewPagerDatas(modelPagers);
