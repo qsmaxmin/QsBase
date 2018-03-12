@@ -198,6 +198,6 @@ public abstract class QsViewPagerFragment<P extends QsPresenter> extends QsFragm
     }
 
     protected int getTabsUnderlineColor() {
-        return 0;
+        return Color.TRANSPARENT;
     }
 }
