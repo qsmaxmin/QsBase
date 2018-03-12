@@ -78,8 +78,8 @@ public class HttpAdapter {
         }
     }
 
-    private HttpBuilder getHttpBuilder(Object requestTag, String path, Object[] args) {
-        HttpBuilder httpBuilder = new HttpBuilder(requestTag, path, args);
+    private HttpBuilder getHttpBuilder(Object requestTag, String path, Object[] args, String requestType) {
+        HttpBuilder httpBuilder = new HttpBuilder(requestTag, path, args, requestType);
         QsHelper.getInstance().getApplication().initHttpAdapter(httpBuilder);
         return httpBuilder;
     }
@@ -194,7 +194,7 @@ public class HttpAdapter {
 
         checkParamsAnnotation(annotations, args, method.getName(), requestTag);
 
-        HttpBuilder httpBuilder = getHttpBuilder(requestTag, path, args);
+        HttpBuilder httpBuilder = getHttpBuilder(requestTag, path, args, requestType);
         StringBuilder url = getUrl(TextUtils.isEmpty(terminal) ? httpBuilder.getTerminal() : terminal, path, method, args, requestTag);
 
         if (TextUtils.isEmpty(url)) throw new QsException(QsExceptionType.UNEXPECTED, requestTag, "url error... method:" + method.getName() + "  request url is null...");

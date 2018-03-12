@@ -20,16 +20,18 @@ public class HttpBuilder {
     private final Object                  requestTag;
     private final String                  path;
     private final Object[]                args;
+    private final String                  requestType;
     private       String                  terminal;
     private       HashMap<String, String> urlParameters;
 
     private Headers.Builder headerBuilder = new Headers.Builder();
 
 
-    HttpBuilder(Object requestTag, String path, Object[] args) {
+    HttpBuilder(Object requestTag, String path, Object[] args, String requestType) {
         this.requestTag = requestTag;
         this.path = path;
         this.args = args;
+        this.requestType = requestType;
     }
 
     public HttpBuilder addHeader(String key, String value) {
@@ -87,5 +89,8 @@ public class HttpBuilder {
         return args;
     }
 
+    public String getRequestType() {
+        return requestType;
+    }
 
 }
