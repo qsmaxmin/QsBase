@@ -164,7 +164,7 @@ public abstract class QsViewPagerABActivity<P extends QsPresenter> extends QsABA
     }
 
     protected int getTabsIndicatorColor() {
-        return 0;
+        return Color.TRANSPARENT;
     }
 
     protected int getTabsTitleSize() {
@@ -188,6 +188,6 @@ public abstract class QsViewPagerABActivity<P extends QsPresenter> extends QsABA
     }
 
     protected int getTabsUnderlineColor() {
-        return 0;
+        return Color.TRANSPARENT;
     }
 }

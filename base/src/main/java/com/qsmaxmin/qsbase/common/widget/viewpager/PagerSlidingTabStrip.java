@@ -384,39 +384,37 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 
         final int height = getHeight();
 
-        // draw indicator line
-
-        rectPaint.setColor(indicatorColor);
-
-        // default: line below current tab
-        View currentTab = tabsContainer.getChildAt(currentPosition);
-        float lineLeft = currentTab.getLeft() + rectPaintWidth;
-        float lineRight = tabWidth == 0 ? currentTab.getRight() - rectPaintWidth : tabWidth;
-
-        // if there is an offset, start interpolating left and right coordinates
-        // between current and next tab
-        if (currentPositionOffset > 0f && currentPosition < tabCount - 1) {
-
-            View nextTab = tabsContainer.getChildAt(currentPosition + 1);
-            final float nextTabLeft = nextTab.getLeft() + rectPaintWidth;
-            final float nextTabRight = tabWidth == 0 ? nextTab.getRight() - rectPaintWidth : tabWidth;
-
-            lineLeft = (currentPositionOffset * nextTabLeft + (1f - currentPositionOffset) * lineLeft);
-            lineRight = (currentPositionOffset * nextTabRight + (1f - currentPositionOffset) * lineRight);
-        }
         // draw indicator
-        canvas.drawRect(lineLeft + indicatorMargin, height - indicatorHeight, lineRight - indicatorMargin, height, rectPaint);
+        if (indicatorColor != Color.TRANSPARENT) {
+            rectPaint.setColor(indicatorColor);
+            View currentTab = tabsContainer.getChildAt(currentPosition);
+            float lineLeft = currentTab.getLeft() + rectPaintWidth;
+            float lineRight = tabWidth == 0 ? currentTab.getRight() - rectPaintWidth : tabWidth;
+
+            if (currentPositionOffset > 0f && currentPosition < tabCount - 1) {
+                View nextTab = tabsContainer.getChildAt(currentPosition + 1);
+                final float nextTabLeft = nextTab.getLeft() + rectPaintWidth;
+                final float nextTabRight = tabWidth == 0 ? nextTab.getRight() - rectPaintWidth : tabWidth;
+
+                lineLeft = (currentPositionOffset * nextTabLeft + (1f - currentPositionOffset) * lineLeft);
+                lineRight = (currentPositionOffset * nextTabRight + (1f - currentPositionOffset) * lineRight);
+            }
+            canvas.drawRect(lineLeft + indicatorMargin, height - indicatorHeight, lineRight - indicatorMargin, height, rectPaint);
+        }
 
         // draw underline
-        rectPaint.setColor(underlineColor);
-        canvas.drawRect(0, height - underlineHeight, tabWidth == 0 ? tabsContainer.getWidth() : tabWidth, height, rectPaint);
+        if (underlineColor != Color.TRANSPARENT) {
+            rectPaint.setColor(underlineColor);
+            canvas.drawRect(0, height - underlineHeight, tabWidth == 0 ? tabsContainer.getWidth() : tabWidth, height, rectPaint);
+        }
 
         // draw divider
-
-        dividerPaint.setColor(dividerColor);
-        for (int i = 0; i < tabCount - 1; i++) {
-            View tab = tabsContainer.getChildAt(i);
-            canvas.drawLine(tabWidth == 0 ? tab.getRight() : tabWidth, dividerPadding, tabWidth == 0 ? tab.getRight() : tabWidth, height - dividerPadding, dividerPaint);
+        if (dividerColor != Color.TRANSPARENT) {
+            dividerPaint.setColor(dividerColor);
+            for (int i = 0; i < tabCount - 1; i++) {
+                View tab = tabsContainer.getChildAt(i);
+                canvas.drawLine(tabWidth == 0 ? tab.getRight() : tabWidth, dividerPadding, tabWidth == 0 ? tab.getRight() : tabWidth, height - dividerPadding, dividerPaint);
+            }
         }
     }
 
