@@ -36,7 +36,7 @@ public abstract class QsListFragment<P extends QsPresenter, D> extends QsFragmen
     private   BaseAdapter   mListAdapter;
     private   View          headerView;
     private   View          footerView;
-    protected LoadingFooter mLoadingFooter;
+
 
     @Override public int layoutId() {
         return R.layout.qs_fragment_listview;
@@ -112,11 +112,6 @@ public abstract class QsListFragment<P extends QsPresenter, D> extends QsFragmen
         }
         if (getFooterLayout() != 0) {
             footerView = inflater.inflate(getFooterLayout(), null);
-            if (footerView instanceof LoadingFooter) {
-                mLoadingFooter = (LoadingFooter) footerView;
-            } else {
-                mLoadingFooter = (LoadingFooter) footerView.findViewById(R.id.loading_footer);
-            }
             mListView.addFooterView(footerView);
         }
         mListView.setOnItemClickListener(this);

@@ -26,7 +26,8 @@ import java.util.List;
 
 public abstract class QsPullListFragment<T extends QsPresenter, D> extends QsListFragment<T, D> implements QsIPullListFragment<D> {
 
-    private PtrFrameLayout mPtrFrameLayout;
+    private   PtrFrameLayout mPtrFrameLayout;
+    protected LoadingFooter  mLoadingFooter;
     private boolean canLoadingMore = true;
 
     @Override public int layoutId() {
@@ -41,6 +42,16 @@ public abstract class QsPullListFragment<T extends QsPresenter, D> extends QsLis
         View view = super.initView(inflater);
         initPtrFrameLayout(view);
         return view;
+    }
+
+    @Override protected void initListView(LayoutInflater inflater, View view) {
+        super.initListView(inflater, view);
+        View footerView = getFooterView();
+        if (footerView instanceof LoadingFooter) {
+            mLoadingFooter = (LoadingFooter) footerView;
+        } else if (footerView != null) {
+            mLoadingFooter = (LoadingFooter) footerView.findViewById(R.id.loading_footer);
+        }
     }
 
     private void initPtrFrameLayout(View view) {

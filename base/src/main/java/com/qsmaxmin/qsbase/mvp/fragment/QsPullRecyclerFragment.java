@@ -25,7 +25,8 @@ import java.util.List;
 
 public abstract class QsPullRecyclerFragment<P extends QsPresenter, D> extends QsRecyclerFragment<P, D> implements QsIPullRecyclerFragment<D> {
 
-    private PtrFrameLayout mPtrFrameLayout;
+    private   PtrFrameLayout mPtrFrameLayout;
+    protected LoadingFooter  mLoadingFooter;
     private boolean canLoadingMore = true;
 
     @Override public int getFooterLayout() {
@@ -41,6 +42,16 @@ public abstract class QsPullRecyclerFragment<P extends QsPresenter, D> extends Q
         initPtrFrameLayout(view);
         getRecyclerView().addOnScrollListener(mOnScrollListener);
         return view;
+    }
+
+    @Override protected void initRecycleView(LayoutInflater inflater, View view) {
+        super.initRecycleView(inflater, view);
+        View footerView = getFooterView();
+        if (footerView instanceof LoadingFooter) {
+            mLoadingFooter = (LoadingFooter) footerView;
+        } else if (footerView != null) {
+            mLoadingFooter = (LoadingFooter) footerView.findViewById(R.id.loading_footer);
+        }
     }
 
     private void initPtrFrameLayout(View view) {

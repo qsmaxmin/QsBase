@@ -15,7 +15,6 @@ import com.qsmaxmin.qsbase.common.aspect.ThreadPoint;
 import com.qsmaxmin.qsbase.common.aspect.ThreadType;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
-import com.qsmaxmin.qsbase.common.widget.listview.LoadingFooter;
 import com.qsmaxmin.qsbase.common.widget.recyclerview.HeaderFooterRecyclerView;
 import com.qsmaxmin.qsbase.mvp.adapter.MyRecycleViewHolder;
 import com.qsmaxmin.qsbase.mvp.adapter.QsRecycleAdapterItem;
@@ -40,7 +39,6 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
     private   RecyclerView.Adapter       mRecyclerViewAdapter;
     private   View                       headerView;
     private   View                       footerView;
-    protected LoadingFooter              mLoadingFooter;
     protected StaggeredGridLayoutManager staggeredGridLayoutManager;
 
     @Override public int layoutId() {
@@ -108,22 +106,13 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
         if (mRecyclerView == null) throw new RuntimeException("HeaderFooterRecyclerView is not exit or its id not 'android.R.id.list' in current layout!!");
         if (getHeaderLayout() > 0) {
             headerView = inflater.inflate(getHeaderLayout(), null);
-            if (headerView != null) {
-                mRecyclerView.addHeaderView(headerView);
-                QsHelper.getInstance().getViewBindHelper().bind(this, headerView);
-            }
+            mRecyclerView.addHeaderView(headerView);
+            QsHelper.getInstance().getViewBindHelper().bind(this, headerView);
         }
         if (getFooterLayout() > 0) {
             footerView = inflater.inflate(getFooterLayout(), null);
-            if (footerView != null) {
-                if (footerView instanceof LoadingFooter) {
-                    mLoadingFooter = (LoadingFooter) footerView;
-                } else {
-                    mLoadingFooter = (LoadingFooter) footerView.findViewById(R.id.loading_footer);
-                }
-                mRecyclerView.addFooterView(footerView);
-                QsHelper.getInstance().getViewBindHelper().bind(this, footerView);
-            }
+            mRecyclerView.addFooterView(footerView);
+            QsHelper.getInstance().getViewBindHelper().bind(this, footerView);
         }
 
         mRecyclerViewAdapter = onCreateAdapter();
