@@ -32,8 +32,10 @@ public abstract class QsListFragment<P extends QsPresenter, D> extends QsFragmen
 
     protected final List<D> mList = new ArrayList<>();
 
-    protected ListView      mListView;
-    protected BaseAdapter   mListAdapter;
+    private   ListView      mListView;
+    private   BaseAdapter   mListAdapter;
+    private   View          headerView;
+    private   View          footerView;
     protected LoadingFooter mLoadingFooter;
 
     @Override public int layoutId() {
@@ -105,11 +107,11 @@ public abstract class QsListFragment<P extends QsPresenter, D> extends QsFragmen
         }
         if (mListView == null) throw new RuntimeException("ListView is not exit or its id not 'android.R.id.list' in current layout!!");
         if (getHeaderLayout() != 0) {
-            View headerView = inflater.inflate(getHeaderLayout(), null);
+            headerView = inflater.inflate(getHeaderLayout(), null);
             mListView.addHeaderView(headerView);
         }
         if (getFooterLayout() != 0) {
-            View footerView = inflater.inflate(getFooterLayout(), null);
+            footerView = inflater.inflate(getFooterLayout(), null);
             if (footerView instanceof LoadingFooter) {
                 mLoadingFooter = (LoadingFooter) footerView;
             } else {
@@ -223,6 +225,14 @@ public abstract class QsListFragment<P extends QsPresenter, D> extends QsFragmen
 
     @Override public BaseAdapter getAdapter() {
         return mListAdapter;
+    }
+
+    public View getHeaderView() {
+        return headerView;
+    }
+
+    public View getFooterView() {
+        return footerView;
     }
 
     /**

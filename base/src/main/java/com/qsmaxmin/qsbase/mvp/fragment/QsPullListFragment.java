@@ -138,6 +138,6 @@ public abstract class QsPullListFragment<T extends QsPresenter, D> extends QsLis
      * listView是否滑动到底部
      */
     protected boolean canChildScrollDown() {
-        return ViewCompat.canScrollVertically(mListView, 1);
+        return ViewCompat.canScrollVertically(getListView(), 1);
     }
 }

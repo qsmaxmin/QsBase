@@ -37,7 +37,9 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
     private final       List<D> mList              = new ArrayList<>();
 
     private   HeaderFooterRecyclerView   mRecyclerView;
-    protected RecyclerView.Adapter       mRecyclerViewAdapter;
+    private   RecyclerView.Adapter       mRecyclerViewAdapter;
+    private   View                       headerView;
+    private   View                       footerView;
     protected LoadingFooter              mLoadingFooter;
     protected StaggeredGridLayoutManager staggeredGridLayoutManager;
 
@@ -105,14 +107,14 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
         }
         if (mRecyclerView == null) throw new RuntimeException("HeaderFooterRecyclerView is not exit or its id not 'android.R.id.list' in current layout!!");
         if (getHeaderLayout() > 0) {
-            View headerView = inflater.inflate(getHeaderLayout(), null);
+            headerView = inflater.inflate(getHeaderLayout(), null);
             if (headerView != null) {
                 mRecyclerView.addHeaderView(headerView);
                 QsHelper.getInstance().getViewBindHelper().bind(this, headerView);
             }
         }
         if (getFooterLayout() > 0) {
-            View footerView = inflater.inflate(getFooterLayout(), null);
+            footerView = inflater.inflate(getFooterLayout(), null);
             if (footerView != null) {
                 if (footerView instanceof LoadingFooter) {
                     mLoadingFooter = (LoadingFooter) footerView;
@@ -167,6 +169,14 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
 
     @Override public RecyclerView.Adapter getAdapter() {
         return mRecyclerViewAdapter;
+    }
+
+    public View getHeaderView() {
+        return headerView;
+    }
+
+    public View getFooterView() {
+        return footerView;
     }
 
     @Override public void setData(List<D> list) {
