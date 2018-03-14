@@ -5,6 +5,7 @@ import android.text.TextUtils;
 
 import com.qsmaxmin.qsbase.common.aspect.Body;
 import com.qsmaxmin.qsbase.common.aspect.DELETE;
+import com.qsmaxmin.qsbase.common.aspect.FormBody;
 import com.qsmaxmin.qsbase.common.aspect.GET;
 import com.qsmaxmin.qsbase.common.aspect.HEAD;
 import com.qsmaxmin.qsbase.common.aspect.PATCH;
@@ -201,6 +202,7 @@ public class HttpAdapter {
 
         RequestBody requestBody = null;
         Object body = null;
+        Object formBody = null;
         HashMap<String, Object> params = null;
         String mimeType = null;
 
@@ -221,9 +223,10 @@ public class HttpAdapter {
                 Object arg = args[i];
                 String key = ((Query) annotation).value();
                 params.put(key, arg);
+            } else if (annotation instanceof FormBody) {
+                formBody = args[i];
             }
         }
-
         if ((!"GET".equals(requestType)) && (!"HEAD".equals(requestType))) {
             if (body != null) {
                 if (body instanceof String) {
@@ -235,6 +238,8 @@ public class HttpAdapter {
                 } else {
                     requestBody = converter.jsonToBody(method.getName(), mimeType, body, body.getClass());
                 }
+            } else if (formBody != null) {
+                requestBody = converter.stringToFormBody(method.getName(), formBody);
             }
         }
 

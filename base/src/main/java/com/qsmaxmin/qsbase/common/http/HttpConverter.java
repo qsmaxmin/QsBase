@@ -1,5 +1,7 @@
 package com.qsmaxmin.qsbase.common.http;
 
+import android.text.TextUtils;
+
 import com.google.gson.Gson;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.utils.StreamCloseUtils;
@@ -9,9 +11,12 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.nio.charset.Charset;
+import java.util.Map;
 
+import okhttp3.FormBody;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
@@ -60,7 +65,7 @@ class HttpConverter {
         L.i(TAG, "methodName:" + methodName + "  请求体 mimeType:" + mimeType + ", String:" + body);
         return RequestBody.create(MediaType.parse(mimeType), body);
     }
-    
+
     RequestBody jsonToBody(String methodName, String mimeType, Object object, Type type) {
         String json = gson.toJson(object, type);
         L.i(TAG, "methodName:" + methodName + "  请求体 mimeType:" + mimeType + ", Json : " + json);
@@ -75,5 +80,41 @@ class HttpConverter {
     RequestBody byteToBody(String methodName, String mimeType, byte[] bytes) {
         L.i(TAG, "methodName:" + methodName + "  请求体 mimeType:" + mimeType + ", bytes length:" + bytes.length);
         return RequestBody.create(MediaType.parse(mimeType), bytes);
+    }
+
+    RequestBody stringToFormBody(String methodName, Object formBody) {
+        L.i(TAG, "methodName:" + methodName + "  提交表单:" + formBody.getClass().getSimpleName());
+        FormBody.Builder builder = new FormBody.Builder();
+        if (formBody instanceof Map) {
+            Map dataMap = (Map) formBody;
+            for (Object key : dataMap.keySet()) {
+                Object value = dataMap.get(key);
+                builder.add(String.valueOf(key), String.valueOf(value));
+            }
+        } else if (formBody instanceof String) {
+            String formStr = (String) formBody;
+            String[] paramArr = formStr.split("&");
+            for (String param : paramArr) {
+                if (!TextUtils.isEmpty(param)) {
+                    String[] keyValue = param.split("=");
+                    if (keyValue.length == 2) {
+                        builder.add(keyValue[0], keyValue[1]);
+                    }
+                }
+            }
+        } else {
+            Field[] fieldArr = formBody.getClass().getDeclaredFields();
+            if (fieldArr != null && fieldArr.length > 0) {
+                try {
+                    for (Field field : fieldArr) {
+                        Object value = field.get(formBody);
+                        builder.add(field.getName(), String.valueOf(value));
+                    }
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return builder.build();
     }
 }
