@@ -1,5 +1,6 @@
 package com.qsmaxmin.qsbase.common.http;
 
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
@@ -27,6 +28,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
@@ -245,9 +247,11 @@ public class HttpAdapter {
 
         if (params != null && !params.isEmpty()) {
             int i = 0;
+            Uri uri = Uri.parse(url.toString());
+            Set<String> keySet = uri.getQueryParameterNames();
             for (String key : params.keySet()) {
                 Object object = params.get(key);
-                url.append(i == 0 ? "?" : "&").append(key).append("=").append(object);
+                url.append((i == 0 && keySet.size() > 0) ? "?" : "&").append(key).append("=").append(object);
                 i++;
             }
         }
