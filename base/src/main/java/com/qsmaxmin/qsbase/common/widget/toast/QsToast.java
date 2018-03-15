@@ -2,6 +2,7 @@ package com.qsmaxmin.qsbase.common.widget.toast;
 
 import android.content.Context;
 import android.os.Looper;
+import android.support.annotation.StringRes;
 import android.text.TextUtils;
 import android.widget.Toast;
 
@@ -30,16 +31,23 @@ public class QsToast {
         }
     }
 
+    public static void show(@StringRes int resId) {
+        if (resId != 0) {
+            show(QsHelper.getInstance().getString(resId));
+        }
+    }
+
     /**
      * 弹出提示
      */
     private static void showToast(Context context, String text, int duration) {
         if (mToast == null) {
             mToast = Toast.makeText(context, text, duration);
+            mToast.show();
         } else {
             mToast.setText(text);
             mToast.setDuration(duration);
+            mToast.show();
         }
-        mToast.show();
     }
 }
