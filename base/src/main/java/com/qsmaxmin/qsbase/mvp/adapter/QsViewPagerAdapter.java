@@ -16,7 +16,6 @@ import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.base.OuterPagerAd
 import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.base.OuterScroller;
 import com.qsmaxmin.qsbase.mvp.QsIViewPagerABActivity;
 import com.qsmaxmin.qsbase.mvp.QsIViewPagerActivity;
-import com.qsmaxmin.qsbase.mvp.fragment.QsFragment;
 import com.qsmaxmin.qsbase.mvp.fragment.QsIFragment;
 import com.qsmaxmin.qsbase.mvp.fragment.QsIViewPagerFragment;
 import com.qsmaxmin.qsbase.mvp.model.QsModelPager;
@@ -140,8 +139,10 @@ public class QsViewPagerAdapter extends PagerAdapter implements OuterPagerAdapte
             fragmentManager.executePendingTransactions();
             fragment.setHasOptionsMenu(false);// 设置actionbar不执行
             if (replacePosition != -1) {
-                ((QsIFragment) viewPagerData[replacePosition].fragment).initDataWhenDelay();
-                ((QsIFragment) viewPagerData[replacePosition].fragment).onActionBar();
+                if (viewPagerData[replacePosition].fragment instanceof QsIFragment) {
+                    ((QsIFragment) viewPagerData[replacePosition].fragment).initDataWhenDelay();
+                    ((QsIFragment) viewPagerData[replacePosition].fragment).onActionBar();
+                }
                 viewPagerData[replacePosition].fragment.onResume();
                 replacePosition = -1;
             }
@@ -174,9 +175,11 @@ public class QsViewPagerAdapter extends PagerAdapter implements OuterPagerAdapte
         if (currentPageIndex < viewPagerData.length) viewPagerData[currentPageIndex].fragment.onPause();
 
         if (position < viewPagerData.length && viewPagerData[position].fragment.isAdded()) {
-            ((QsFragment) viewPagerData[position].fragment).initDataWhenDelay(); // 调用延迟加载
-            if (pager.getCurrentItem() == position) {
-                ((QsFragment) viewPagerData[position].fragment).onActionBar();
+            if (viewPagerData[position].fragment instanceof QsIFragment) {
+                ((QsIFragment) viewPagerData[position].fragment).initDataWhenDelay(); // 调用延迟加载
+                if (pager.getCurrentItem() == position) {
+                    ((QsIFragment) viewPagerData[position].fragment).onActionBar();
+                }
             }
             viewPagerData[position].fragment.onResume();
         }
