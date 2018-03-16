@@ -250,7 +250,7 @@ public class HttpAdapter {
             String uriQuery = uri.getQuery();
             for (String key : params.keySet()) {
                 Object object = params.get(key);
-                url.append((i == 0 && !TextUtils.isEmpty(uriQuery)) ? "?" : "&").append(key).append("=").append(object);
+                url.append((i == 0 && TextUtils.isEmpty(uriQuery)) ? "?" : "&").append(key).append("=").append(object);
                 i++;
             }
         }
