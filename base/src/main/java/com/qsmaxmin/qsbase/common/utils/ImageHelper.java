@@ -154,7 +154,7 @@ public class ImageHelper {
         }
 
         public Builder load(String url) {
-            this.mObject = createGlideUrl(url, url);
+            if (!TextUtils.isEmpty(url)) this.mObject = createGlideUrl(url, url);
             return this;
         }
 
@@ -176,7 +176,7 @@ public class ImageHelper {
         }
 
         public Builder load(String url, String cacheKey) {
-            this.mObject = createGlideUrl(url, cacheKey);
+            if (!TextUtils.isEmpty(url)) this.mObject = createGlideUrl(url, cacheKey);
             return this;
         }
 
