@@ -28,7 +28,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
@@ -248,10 +247,10 @@ public class HttpAdapter {
         if (params != null && !params.isEmpty()) {
             int i = 0;
             Uri uri = Uri.parse(url.toString());
-            Set<String> keySet = uri.getQueryParameterNames();
+            String uriQuery = uri.getQuery();
             for (String key : params.keySet()) {
                 Object object = params.get(key);
-                url.append((i == 0 && keySet.size() > 0) ? "?" : "&").append(key).append("=").append(object);
+                url.append((i == 0 && !TextUtils.isEmpty(uriQuery)) ? "?" : "&").append(key).append("=").append(object);
                 i++;
             }
         }
