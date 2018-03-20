@@ -103,7 +103,7 @@ class HttpConverter {
                 }
             }
         } else {
-            Field[] fieldArr = formBody.getClass().getDeclaredFields();
+            Field[] fieldArr = formBody.getClass().getFields();
             if (fieldArr != null && fieldArr.length > 0) {
                 try {
                     for (Field field : fieldArr) {
