@@ -40,7 +40,7 @@ public abstract class QsViewPagerActivity<P extends QsPresenter> extends QsActiv
         pager = (QsViewPager) view.findViewById(R.id.pager);
         tabs = (PagerSlidingTabStrip) view.findViewById(android.R.id.tabs);
         initTabsValue(tabs);
-        initViewPager(getModelPagers(), 3);
+        initViewPager(getModelPagers(), getOffscreenPageLimit());
     }
 
 
@@ -188,5 +188,9 @@ public abstract class QsViewPagerActivity<P extends QsPresenter> extends QsActiv
 
     protected int getTabsUnderlineColor() {
         return Color.TRANSPARENT;
+    }
+
+    protected int getOffscreenPageLimit() {
+        return 3;
     }
 }
