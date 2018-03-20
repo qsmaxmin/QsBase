@@ -88,8 +88,9 @@ class HttpConverter {
         if (formBody instanceof Map) {
             Map dataMap = (Map) formBody;
             for (Object key : dataMap.keySet()) {
-                Object value = dataMap.get(key);
-                builder.add(String.valueOf(key), String.valueOf(value));
+                String keyStr = String.valueOf(key);
+                String valueStr = String.valueOf(dataMap.get(key));
+                if (!TextUtils.isEmpty(keyStr) && !TextUtils.isEmpty(valueStr)) builder.add(keyStr, valueStr);
             }
         } else if (formBody instanceof String) {
             String formStr = (String) formBody;
@@ -97,7 +98,7 @@ class HttpConverter {
             for (String param : paramArr) {
                 if (!TextUtils.isEmpty(param)) {
                     String[] keyValue = param.split("=");
-                    if (keyValue.length == 2) {
+                    if (keyValue.length == 2 && !TextUtils.isEmpty(keyValue[0]) && !TextUtils.isEmpty(keyValue[1])) {
                         builder.add(keyValue[0], keyValue[1]);
                     }
                 }
@@ -108,7 +109,10 @@ class HttpConverter {
                 try {
                     for (Field field : fieldArr) {
                         Object value = field.get(formBody);
-                        builder.add(field.getName(), String.valueOf(value));
+                        String valueStr = String.valueOf(value);
+                        if (!TextUtils.isEmpty(valueStr)) {
+                            builder.add(field.getName(), valueStr);
+                        }
                     }
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
