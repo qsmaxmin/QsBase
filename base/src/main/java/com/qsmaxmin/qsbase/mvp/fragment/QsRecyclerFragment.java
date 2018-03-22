@@ -271,14 +271,14 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
     /**
      * 适配器
      */
-    public class MyRecycleAdapter extends RecyclerView.Adapter {
+    public class MyRecycleAdapter extends RecyclerView.Adapter<MyRecycleViewHolder<D>> {
         private final LayoutInflater mInflater;
 
         MyRecycleAdapter(LayoutInflater inflater) {
             this.mInflater = inflater;
         }
 
-        @Override public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        @Override public MyRecycleViewHolder<D> onCreateViewHolder(ViewGroup parent, int viewType) {
             QsRecycleAdapterItem<D> recycleAdapterItem = getRecycleAdapterItem(mInflater, parent, viewType);
             MyRecycleViewHolder<D> holder = new MyRecycleViewHolder<>(recycleAdapterItem);
 
@@ -295,9 +295,8 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
             return holder;
         }
 
-        @Override public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-            MyRecycleViewHolder<D> myHolder = (MyRecycleViewHolder) holder;
-            myHolder.onBindData(mList.get(position), position, mList.size());
+        @Override public void onBindViewHolder(MyRecycleViewHolder<D> holder, int position) {
+            holder.onBindData(mList.get(position), position, mList.size());
         }
 
         @Override public int getItemViewType(int position) {
