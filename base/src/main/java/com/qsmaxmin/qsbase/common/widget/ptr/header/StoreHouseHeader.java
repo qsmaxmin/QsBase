@@ -9,7 +9,6 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.animation.Transformation;
 
-import com.qsmaxmin.qsbase.R;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrUIHandler;
 import com.qsmaxmin.qsbase.common.widget.ptr.indicator.PtrIndicator;
@@ -49,19 +48,19 @@ public class StoreHouseHeader extends View implements PtrUIHandler {
     public StoreHouseHeader(Context context) {
         super(context);
         initView();
-        initWithString(getResources().getString(R.string.app_name));
+        initWithString("QsBase");
     }
 
     public StoreHouseHeader(Context context, AttributeSet attrs) {
         super(context, attrs);
         initView();
-        initWithString(getResources().getString(R.string.app_name));
+        initWithString("QsBase");
     }
 
     public StoreHouseHeader(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         initView();
-        initWithString(getResources().getString(R.string.app_name));
+        initWithString("QsBase");
     }
 
     private void initView() {
