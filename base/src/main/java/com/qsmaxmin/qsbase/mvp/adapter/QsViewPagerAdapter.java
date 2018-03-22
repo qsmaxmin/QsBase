@@ -89,9 +89,10 @@ public class QsViewPagerAdapter extends PagerAdapter implements OuterPagerAdapte
         replacePosition = pager.getCurrentItem();
         for (QsModelPager modelPager : modelPagers) {
             int position = modelPager.position;
-            container.removeView(viewPagerData[position].fragment.getView());
-            FragmentTransaction fragmentTransaction = this.fragmentManager.beginTransaction();
-            fragmentTransaction.detach(viewPagerData[position].fragment).commitAllowingStateLoss();
+            Fragment oldFragment = viewPagerData[position].fragment;
+            if (oldFragment.getView() != null) container.removeView(oldFragment.getView());
+            FragmentTransaction transaction = this.fragmentManager.beginTransaction();
+            transaction.detach(oldFragment).commitAllowingStateLoss();
             viewPagerData[position] = modelPager;
         }
     }
