@@ -11,6 +11,8 @@ import com.qsmaxmin.qsbase.common.widget.listview.LoadingFooter;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrDefaultHandler;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrHandler;
+import com.qsmaxmin.qsbase.common.widget.ptr.PtrUIHandler;
+import com.qsmaxmin.qsbase.common.widget.ptr.header.StoreHouseHeader;
 import com.qsmaxmin.qsbase.common.widget.recyclerview.EndlessRecyclerOnScrollListener;
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
 
@@ -34,6 +36,10 @@ public abstract class QsPullRecyclerFragment<P extends QsPresenter, D> extends Q
 
     @Override public int layoutId() {
         return (!isOpenViewState() && (getTopLayout() > 0 || getBottomLayout() > 0)) ? R.layout.qs_fragment_pull_recyclerview_with_top_bottom : R.layout.qs_fragment_pull_recyclerview;
+    }
+
+    @Override public PtrUIHandler getPtrUIHandlerView() {
+        return new StoreHouseHeader(getContext());
     }
 
     @Override protected View initView(LayoutInflater inflater) {

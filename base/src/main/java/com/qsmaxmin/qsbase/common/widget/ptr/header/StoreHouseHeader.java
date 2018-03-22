@@ -18,7 +18,7 @@ import java.util.ArrayList;
 
 public class StoreHouseHeader extends View implements PtrUIHandler {
 
-    public ArrayList<StoreHouseBarItem> mItemList = new ArrayList<StoreHouseBarItem>();
+    public ArrayList<StoreHouseBarItem> mItemList = new ArrayList<>();
 
     private int   mLineWidth               = -1;
     private float mScale                   = 1;

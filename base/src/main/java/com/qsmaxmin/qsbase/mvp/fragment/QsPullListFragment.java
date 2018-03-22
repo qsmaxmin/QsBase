@@ -13,6 +13,8 @@ import com.qsmaxmin.qsbase.common.widget.listview.LoadingFooter;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrDefaultHandler;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrHandler;
+import com.qsmaxmin.qsbase.common.widget.ptr.PtrUIHandler;
+import com.qsmaxmin.qsbase.common.widget.ptr.header.StoreHouseHeader;
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
 
 import java.util.List;
@@ -35,6 +37,10 @@ public abstract class QsPullListFragment<T extends QsPresenter, D> extends QsLis
 
     @Override public int getFooterLayout() {
         return R.layout.qs_loading_footer;
+    }
+
+    @Override public PtrUIHandler getPtrUIHandlerView() {
+        return new StoreHouseHeader(getContext());
     }
 
     @Override protected View initView(LayoutInflater inflater) {
