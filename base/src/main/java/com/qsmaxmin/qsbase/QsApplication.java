@@ -2,7 +2,8 @@ package com.qsmaxmin.qsbase;
 
 import android.app.Activity;
 import android.app.Application;
-import android.support.annotation.IdRes;
+import android.support.annotation.DrawableRes;
+import android.support.annotation.LayoutRes;
 
 import com.qsmaxmin.qsbase.common.http.HttpBuilder;
 import com.qsmaxmin.qsbase.common.log.L;
@@ -54,26 +55,22 @@ public abstract class QsApplication extends Application {
         return null;
     }
 
-    public int loadingLayoutId() {
+    public @LayoutRes int loadingLayoutId() {
         return 0;
     }
 
-    public int emptyLayoutId() {
+    public @LayoutRes int emptyLayoutId() {
         return 0;
     }
 
-    public int errorLayoutId() {
+    public @LayoutRes int errorLayoutId() {
         return 0;
     }
 
-    public int listFooterLayoutId() {
-        return R.layout.qs_loading_footer;
+    public @DrawableRes int defaultImageHolder() {
+        return 0;
     }
 
     public void onCommonHttpResponse(Response response) {
-    }
-
-    public @IdRes int defaultImageHolder() {
-        return 0;
     }
 }

@@ -9,7 +9,6 @@ import com.qsmaxmin.qsbase.R;
 import com.qsmaxmin.qsbase.common.aspect.ThreadPoint;
 import com.qsmaxmin.qsbase.common.aspect.ThreadType;
 import com.qsmaxmin.qsbase.common.log.L;
-import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.common.widget.listview.LoadingFooter;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrDefaultHandler;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout;
@@ -35,7 +34,7 @@ public abstract class QsPullListFragment<T extends QsPresenter, D> extends QsLis
     }
 
     @Override public int getFooterLayout() {
-        return QsHelper.getInstance().getApplication().listFooterLayoutId();
+        return R.layout.qs_loading_footer;
     }
 
     @Override protected View initView(LayoutInflater inflater) {
