@@ -9,6 +9,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.animation.Transformation;
 
+import com.qsmaxmin.qsbase.R;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrUIHandler;
 import com.qsmaxmin.qsbase.common.widget.ptr.indicator.PtrIndicator;
@@ -48,16 +49,19 @@ public class StoreHouseHeader extends View implements PtrUIHandler {
     public StoreHouseHeader(Context context) {
         super(context);
         initView();
+        initWithString(getResources().getString(R.string.app_name));
     }
 
     public StoreHouseHeader(Context context, AttributeSet attrs) {
         super(context, attrs);
         initView();
+        initWithString(getResources().getString(R.string.app_name));
     }
 
     public StoreHouseHeader(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         initView();
+        initWithString(getResources().getString(R.string.app_name));
     }
 
     private void initView() {
@@ -130,9 +134,9 @@ public class StoreHouseHeader extends View implements PtrUIHandler {
 
     public void initWithStringArray(int id) {
         String[] points = getResources().getStringArray(id);
-        ArrayList<float[]> pointList = new ArrayList<float[]>();
-        for (int i = 0; i < points.length; i++) {
-            String[] x = points[i].split(",");
+        ArrayList<float[]> pointList = new ArrayList<>();
+        for (String point : points) {
+            String[] x = point.split(",");
             float[] f = new float[4];
             for (int j = 0; j < 4; j++) {
                 f[j] = Float.parseFloat(x[j]);
@@ -280,10 +284,12 @@ public class StoreHouseHeader extends View implements PtrUIHandler {
         private boolean mRunning     = true;
 
         private void start() {
+            int size = mItemList.size();
+            if (size < 1) return;
             mRunning = true;
             mTick = 0;
 
-            mInterval = mLoadingAniDuration / mItemList.size();
+            mInterval = mLoadingAniDuration / size;
             mCountPerSeg = mLoadingAniSegDuration / mInterval;
             mSegCount = mItemList.size() / mCountPerSeg + 1;
             run();
