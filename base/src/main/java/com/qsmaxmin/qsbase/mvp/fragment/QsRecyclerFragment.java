@@ -279,24 +279,25 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
         }
 
         @Override public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            QsRecycleAdapterItem recycleAdapterItem = getRecycleAdapterItem(mInflater, parent, viewType);
-            recycleAdapterItem.getViewHolder().setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            QsRecycleAdapterItem<D> recycleAdapterItem = getRecycleAdapterItem(mInflater, parent, viewType);
+            MyRecycleViewHolder<D> holder = new MyRecycleViewHolder<>(recycleAdapterItem);
+
+            holder.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     QsRecyclerFragment.this.onItemClick(parent, view, position, id);
                 }
             });
-            recycleAdapterItem.getViewHolder().setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            holder.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
                 @Override public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                     return QsRecyclerFragment.this.onItemLongClick(parent, view, position, id);
                 }
             });
-            return recycleAdapterItem.getViewHolder();
+            return holder;
         }
 
         @Override public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-            MyRecycleViewHolder<Object> j2WRecycleViewHolder = (MyRecycleViewHolder) holder;
-            j2WRecycleViewHolder.setPosition(position, getItemCount());
-            j2WRecycleViewHolder.onBindData(mList.get(position), position, mList.size());
+            MyRecycleViewHolder<D> myHolder = (MyRecycleViewHolder) holder;
+            myHolder.onBindData(mList.get(position), position, mList.size());
         }
 
         @Override public int getItemViewType(int position) {

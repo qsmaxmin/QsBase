@@ -1,5 +1,6 @@
 package com.qsmaxmin.qsbase.mvp.adapter;
 
+import android.support.annotation.CallSuper;
 import android.view.View;
 
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
@@ -15,7 +16,7 @@ public abstract class QsListAdapterItem<T> {
 
     public abstract int getItemLayout();
 
-    public void init(View contentView) {
+    @CallSuper public void init(View contentView) {
         QsHelper.getInstance().getViewBindHelper().bind(this, contentView);
     }
 
