@@ -188,6 +188,14 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         loading(message, true);
     }
 
+    @Override public void loading(int resId) {
+        loading(resId, true);
+    }
+
+    @Override public void loading(int resId, boolean cancelAble) {
+        loading(getResources().getString(resId), cancelAble);
+    }
+
     @ThreadPoint(ThreadType.MAIN) @Override public void loading(String message, boolean cancelAble) {
         if (mProgressDialog == null) mProgressDialog = QsHelper.getInstance().getApplication().getCommonProgressDialog();
         if (mProgressDialog != null) {

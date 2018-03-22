@@ -201,6 +201,14 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
         loading(getString(R.string.loading), cancelAble);
     }
 
+    @Override public void loading(int resId) {
+        loading(resId, true);
+    }
+
+    @Override public void loading(int resId, boolean cancelAble) {
+        loading(getResources().getString(resId), cancelAble);
+    }
+
     @Override public void loading(String message) {
         loading(message, true);
     }
