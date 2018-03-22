@@ -2,6 +2,7 @@ package com.qsmaxmin.qsbase;
 
 import android.app.Activity;
 import android.app.Application;
+import android.support.annotation.DrawableRes;
 
 import com.qsmaxmin.qsbase.common.http.HttpBuilder;
 import com.qsmaxmin.qsbase.common.log.L;
@@ -70,5 +71,9 @@ public abstract class QsApplication extends Application {
     }
 
     public void onCommonHttpResponse(Response response) {
+    }
+
+    public @DrawableRes int defaultImageHolder() {
+        return 0;
     }
 }

@@ -110,11 +110,13 @@ public class ImageHelper {
     }
 
     public class Builder {
+        private boolean enableDefaultHolder = true;
         private RequestManager    manager;
         private Object            mObject;
-        private Drawable          placeholderDrawable;
         private int               placeholderId;
         private int               errorId;
+        private int               defaultHolderId;
+        private Drawable          placeholderDrawable;
         private Drawable          errorDrawable;
         private boolean           centerCrop;
         private boolean           fitCenter;
@@ -127,26 +129,32 @@ public class ImageHelper {
 
         Builder(Context context) {
             manager = Glide.with(context);
+            defaultHolderId = QsHelper.getInstance().getApplication().defaultImageHolder();
         }
 
         Builder(Activity context) {
             manager = Glide.with(context);
+            defaultHolderId = QsHelper.getInstance().getApplication().defaultImageHolder();
         }
 
         Builder(Fragment context) {
             manager = Glide.with(context);
+            defaultHolderId = QsHelper.getInstance().getApplication().defaultImageHolder();
         }
 
         Builder(android.support.v4.app.Fragment context) {
             manager = Glide.with(context);
+            defaultHolderId = QsHelper.getInstance().getApplication().defaultImageHolder();
         }
 
         Builder(FragmentActivity context) {
             manager = Glide.with(context);
+            defaultHolderId = QsHelper.getInstance().getApplication().defaultImageHolder();
         }
 
         Builder(View context) {
             manager = Glide.with(context);
+            defaultHolderId = QsHelper.getInstance().getApplication().defaultImageHolder();
         }
 
         public RequestManager getManager() {
@@ -233,6 +241,11 @@ public class ImageHelper {
 
         public Builder noDiskCache() {
             diskCacheStrategy = DiskCacheStrategy.NONE;
+            return this;
+        }
+
+        public Builder enableDefaultHolder(boolean enable) {
+            enableDefaultHolder = enable;
             return this;
         }
 
@@ -344,9 +357,10 @@ public class ImageHelper {
          */
         private boolean shouldCreateRequestOptions() {
             return placeholderId > 0
-                    || placeholderDrawable != null
                     || errorId > 0
+                    || placeholderDrawable != null
                     || errorDrawable != null
+                    || (enableDefaultHolder && defaultHolderId > 0)
                     || centerCrop
                     || fitCenter
                     || centerInside
@@ -362,11 +376,15 @@ public class ImageHelper {
                 requestOptions.placeholder(placeholderId);
             } else if (placeholderDrawable != null) {
                 requestOptions.placeholder(placeholderDrawable);
+            } else if (enableDefaultHolder && defaultHolderId > 0) {
+                requestOptions.placeholder(defaultHolderId);
             }
             if (errorId > 0) {
                 requestOptions.error(placeholderId);
             } else if (errorDrawable != null) {
                 requestOptions.error(placeholderId);
+            } else if (enableDefaultHolder && defaultHolderId > 0) {
+                requestOptions.error(defaultHolderId);
             }
             if (centerCrop) requestOptions.centerCrop();
             if (fitCenter) requestOptions.fitCenter();
