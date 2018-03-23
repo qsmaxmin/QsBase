@@ -17,6 +17,7 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 
 import com.qsmaxmin.qsbase.R;
+import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout;
 import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.base.InnerScroller;
 import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.base.OuterScroller;
@@ -93,6 +94,7 @@ public class InnerListView extends ListView implements InnerScroller, AbsListVie
         ViewParent parent = getParent();
         if (parent instanceof PtrFrameLayout) {
             isInPullLayout = true;
+            L.i(TAG, "parent is PtrFrameLayout......");
         } else {
             mEmptyHeader = new FrameLayout(getContext());
             super.addHeaderView(mEmptyHeader, null, false);
@@ -142,9 +144,11 @@ public class InnerListView extends ListView implements InnerScroller, AbsListVie
         }
         if (mEmptyHeaderHeight.getValue() != mOuterScroller.getHeaderHeight()) {
             if (isInPullLayout) {
+                L.i(TAG, "set PtrFrameLayout top padding:" + mOuterScroller.getHeaderHeight());
                 PtrFrameLayout parentLayout = (PtrFrameLayout) getParent();
                 post(new PaddingRunnable(parentLayout, 0, mOuterScroller.getHeaderHeight(), 0, 0));
             } else if (mEmptyHeader != null) {
+                L.i(TAG, "set listView empty header top padding:" + mOuterScroller.getHeaderHeight());
                 post(new PaddingRunnable(mEmptyHeader, 0, mOuterScroller.getHeaderHeight(), 0, 0));
             } else {
                 return;
