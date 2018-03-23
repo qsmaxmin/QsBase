@@ -16,8 +16,7 @@ public interface InnerScroller {
 
     /**
      * （as its name）
-     *
-     * @param firstVisibleItem {@hide}
+     * @hide
      */
     void recordScrollPosition(int firstVisibleItem);
 
