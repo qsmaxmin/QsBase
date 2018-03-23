@@ -338,6 +338,9 @@ public class HeaderViewPager extends FrameLayout implements OuterScroller {
         return mHeaderHeight;
     }
 
+    @Override public int getTabHeight() {
+        return mTabsViewGroup.getLayoutParams().height;
+    }
 
     /**
      * Call back from pullToRefresh

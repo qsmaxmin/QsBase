@@ -2,7 +2,6 @@ package com.qsmaxmin.qsbase.mvp.fragment;
 
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.annotation.CallSuper;
 import android.support.v4.app.Fragment;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
@@ -10,12 +9,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 
 import com.qsmaxmin.qsbase.R;
-import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.widget.viewpager.PagerSlidingTabStrip;
 import com.qsmaxmin.qsbase.common.widget.viewpager.QsViewPager;
-import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.base.InnerScroller;
-import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.base.InnerScrollerContainer;
-import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.base.OuterScroller;
 import com.qsmaxmin.qsbase.mvp.adapter.QsTabViewPagerAdapter;
 import com.qsmaxmin.qsbase.mvp.adapter.QsViewPagerAdapter;
 import com.qsmaxmin.qsbase.mvp.model.QsModelPager;
@@ -27,7 +22,7 @@ import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
  * @Description
  */
 
-public abstract class QsViewPagerFragment<P extends QsPresenter> extends QsFragment<P> implements QsIViewPagerFragment, InnerScrollerContainer {
+public abstract class QsViewPagerFragment<P extends QsPresenter> extends QsFragment<P> implements QsIViewPagerFragment {
 
     protected QsViewPagerAdapter   adapter;
     protected QsViewPager          pager;
@@ -102,17 +97,7 @@ public abstract class QsViewPagerFragment<P extends QsPresenter> extends QsFragm
 
     }
 
-    @CallSuper @Override public void onPageSelected(View currentTabItem, View oldTabItem, int position, int oldPosition) {
-        if (mOuterScroller != null) {
-            QsModelPager currentModel = getViewPagerAdapter().getData(position);
-            View view = currentModel.fragment.getView();
-            if (view != null) {
-                View list = view.findViewById(android.R.id.list);
-                if (list != null && list instanceof InnerScroller) {
-                    ((InnerScroller) list).register2Outer(mOuterScroller, mIndex);
-                }
-            }
-        }
+    @Override public void onPageSelected(View currentTabItem, View oldTabItem, int position, int oldPosition) {
     }
 
     @Override public void initTab(View tabItem, QsModelPager modelPager) {
@@ -217,16 +202,5 @@ public abstract class QsViewPagerFragment<P extends QsPresenter> extends QsFragm
 
     protected int getOffscreenPageLimit() {
         return 3;
-    }
-
-
-    /*----------------------- 以下是HeaderViewPager支持 ----------------------------*/
-    protected OuterScroller mOuterScroller;
-    protected int           mIndex;
-
-    @Override public void setMyOuterScroller(OuterScroller outerScroller, int myPosition) {
-        mOuterScroller = outerScroller;
-        mIndex = myPosition;
-        L.i(initTag(), "注册调度控件：setMyOuterScroller()   position:" + myPosition);
     }
 }

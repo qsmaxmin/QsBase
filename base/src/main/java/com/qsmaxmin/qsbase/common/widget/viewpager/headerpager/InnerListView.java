@@ -3,6 +3,7 @@ package com.qsmaxmin.qsbase.common.widget.viewpager.headerpager;
 import android.content.Context;
 import android.database.DataSetObserver;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -44,14 +45,15 @@ public class InnerListView extends ListView implements InnerScroller, AbsListVie
     protected              int             mLastHeaderVisibleHeight       = 0;
     private                int             mScrollState                   = SCROLL_STATE_IDLE;
 
-    private LinearLayout                    mHeaderContainerCompat;
-    private InnerScrollListener             mInnerScrollListener;
-    private OnScrollListener                mOnScrollListener;
-    private View                            mReceiveView;
-    private int                             mVisibleHeaderCount;
-    private boolean                         mPreDataSetObserverRegistered;
-    private InflateFirstItemIfNeededAdapter mInnerAdapter;
-    private boolean                         mRendered;
+    private   LinearLayout                    mHeaderContainerCompat;
+    private   InnerScrollListener             mInnerScrollListener;
+    private   OnScrollListener                mOnScrollListener;
+    private   View                            mReceiveView;
+    private   int                             mVisibleHeaderCount;
+    private   boolean                         mPreDataSetObserverRegistered;
+    private   InflateFirstItemIfNeededAdapter mInnerAdapter;
+    private   boolean                         mRendered;
+    protected View                            mEmptyHeader;
 
     public InnerListView(Context context) {
         super(context);
@@ -68,7 +70,6 @@ public class InnerListView extends ListView implements InnerScroller, AbsListVie
         initView();
     }
 
-    protected View mEmptyHeader;
 
     private void initView() {
         initEmptyHeader();
@@ -89,6 +90,7 @@ public class InnerListView extends ListView implements InnerScroller, AbsListVie
 
     private void initEmptyHeader() {
         mEmptyHeader = new FrameLayout(getContext());
+        mEmptyHeader.setBackgroundColor(Color.BLUE);
         super.addHeaderView(mEmptyHeader, null, false);
     }
 
@@ -130,16 +132,11 @@ public class InnerListView extends ListView implements InnerScroller, AbsListVie
     }
 
     @Override public final void adjustEmptyHeaderHeight() {
-        if (mEmptyHeader != null || mOuterScroller == null || mOuterScroller.getHeaderHeight() == 0) {
+        if (mEmptyHeader == null || mOuterScroller == null || mOuterScroller.getHeaderHeight() == 0) {
             return;
         }
         if (mEmptyHeaderHeight.getValue() != mOuterScroller.getHeaderHeight()) {
-            if (mEmptyHeader != null) {
-                L.i(TAG, "set listView empty header top padding:" + mOuterScroller.getHeaderHeight());
-                post(new PaddingRunnable(mEmptyHeader, 0, mOuterScroller.getHeaderHeight(), 0, 0));
-            } else {
-                return;
-            }
+            post(new PaddingRunnable(mEmptyHeader, 0, mOuterScroller.getHeaderHeight(), 0, 0));
             mEmptyHeaderHeight.setValue(mOuterScroller.getHeaderHeight());
             updateEmptyHeaderHeight();
         }

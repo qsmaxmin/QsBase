@@ -13,7 +13,6 @@ import com.qsmaxmin.qsbase.R;
 import com.qsmaxmin.qsbase.common.aspect.ThreadPoint;
 import com.qsmaxmin.qsbase.common.aspect.ThreadType;
 import com.qsmaxmin.qsbase.common.log.L;
-import com.qsmaxmin.qsbase.common.widget.listview.LoadingFooter;
 import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.base.InnerScroller;
 import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.base.InnerScrollerContainer;
 import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.base.OuterScroller;
@@ -32,10 +31,10 @@ public abstract class QsListFragment<P extends QsPresenter, D> extends QsFragmen
 
     protected final List<D> mList = new ArrayList<>();
 
-    private   ListView      mListView;
-    private   BaseAdapter   mListAdapter;
-    private   View          headerView;
-    private   View          footerView;
+    private ListView    mListView;
+    private BaseAdapter mListAdapter;
+    private View        headerView;
+    private View        footerView;
 
 
     @Override public int layoutId() {
@@ -293,15 +292,10 @@ public abstract class QsListFragment<P extends QsPresenter, D> extends QsFragmen
 
     /*----------------------- 以下是HeaderViewPager支持 ----------------------------*/
 
-    protected OuterScroller mOuterScroller;
-    protected int           mIndex;
-
     @Override public void setMyOuterScroller(OuterScroller outerScroller, int myPosition) {
-        mOuterScroller = outerScroller;
-        mIndex = myPosition;
-        if (mListView instanceof InnerScroller) {
+        if (getListView() instanceof InnerScroller) {
             L.i(initTag(), "注册调度控件：setMyOuterScroller()   position:" + myPosition);
-            ((InnerScroller) mListView).register2Outer(mOuterScroller, mIndex);
+            ((InnerScroller) getListView()).register2Outer(outerScroller, myPosition);
         }
     }
 }

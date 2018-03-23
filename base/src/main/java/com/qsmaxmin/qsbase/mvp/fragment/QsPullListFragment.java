@@ -15,7 +15,6 @@ import com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrHandler;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrUIHandler;
 import com.qsmaxmin.qsbase.common.widget.ptr.header.StoreHouseHeader;
-import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.InnerListView;
 import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.base.InnerScroller;
 import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.base.OuterScroller;
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
@@ -163,10 +162,10 @@ public abstract class QsPullListFragment<T extends QsPresenter, D> extends QsLis
     @Override public void setMyOuterScroller(OuterScroller outerScroller, int myPosition) {
         super.setMyOuterScroller(outerScroller, myPosition);
         if (getListView() instanceof InnerScroller) {
-            InnerListView listView = (InnerListView) getListView();
-            int headerHeight = listView.getCustomEmptyViewHeight();
-            L.i(initTag(), "setMyOuterScroller..... header height:" + headerHeight);
-            getPtrFrameLayout().setPadding(0, headerHeight, 0, 0);
+            int headerHeight = outerScroller.getHeaderHeight();
+            int tabHeight = outerScroller.getTabHeight();
+            L.i(initTag(), "The current Fragment is detected in the QsHeaderViewpagerFragment, so the header will be Downward migration... headerHeight:" + headerHeight + "  tabHeight:" + tabHeight);
+            getPtrFrameLayout().setHeaderOffsetY(headerHeight + tabHeight);
         }
     }
 }

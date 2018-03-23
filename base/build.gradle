@@ -66,6 +66,6 @@ uploadArchives {
         repository(url: "file://${deployPath.absolutePath}")
         pom.groupId = "com.qsmaxmin.qsbase"
         pom.artifactId = "base"
-        pom.version = "1.0.0"
+        pom.version = "9.9.9"
     }
 }

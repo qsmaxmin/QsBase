@@ -59,8 +59,8 @@ public class PtrFrameLayout extends ViewGroup {
     // disable when detect moving horizontally
     private boolean mPreventForHorizontal = false;
 
-    private MotionEvent mLastMoveEvent;
-
+    private MotionEvent      mLastMoveEvent;
+    private int              mHeaderOffsetY;
     private PtrUIHandlerHook mRefreshCompleteHook;
 
     private int  mLoadingMinTime   = 500;
@@ -72,6 +72,7 @@ public class PtrFrameLayout extends ViewGroup {
             performRefreshComplete();
         }
     };
+
 
     public PtrFrameLayout(Context context) {
         this(context, null);
@@ -151,7 +152,7 @@ public class PtrFrameLayout extends ViewGroup {
             errorView.setTextColor(0xffff6600);
             errorView.setGravity(Gravity.CENTER);
             errorView.setTextSize(20);
-            errorView.setText("The content view in PtrFrameLayout is empty. Do you forget to specify its id in xml layout file?");
+            errorView.setText(String.valueOf("The content view in PtrFrameLayout is empty. Do you forget to specify its id in xml layout file?"));
             mContent = errorView;
             addView(mContent);
         }
@@ -217,9 +218,9 @@ public class PtrFrameLayout extends ViewGroup {
             MarginLayoutParams lp = (MarginLayoutParams) mHeaderView.getLayoutParams();
             final int left = paddingLeft + lp.leftMargin;
             // enhance readability(header is layout above screen when first init)
-            final int top = -(mHeaderHeight - paddingTop - lp.topMargin - offset);
+            final int top = paddingTop + lp.topMargin + offset - mHeaderHeight + mHeaderOffsetY;
             final int right = left + mHeaderView.getMeasuredWidth();
-            final int bottom = top + mHeaderView.getMeasuredHeight();
+            final int bottom = top + mHeaderView.getMeasuredHeight() + mHeaderOffsetY;
             mHeaderView.layout(left, top, right, bottom);
             if (isDebug()) {
                 PtrCLog.d(LOG_TAG, "onLayout header: %s %s %s %s", left, top, right, bottom);
@@ -239,6 +240,10 @@ public class PtrFrameLayout extends ViewGroup {
             }
             mContent.layout(left, top, right, bottom);
         }
+    }
+
+    public void setHeaderOffsetY(int offsetY) {
+        this.mHeaderOffsetY = offsetY;
     }
 
     @SuppressWarnings({"PointlessBooleanExpression", "ConstantConditions"}) private boolean isDebug() {

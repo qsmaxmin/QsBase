@@ -27,6 +27,8 @@ public interface OuterScroller extends ViewPager.OnPageChangeListener {
      */
     int getHeaderHeight();
 
+    int getTabHeight();
+
     /**
      * Get magic header's visible height.
      */
