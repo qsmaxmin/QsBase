@@ -92,7 +92,7 @@ public class InnerListView extends ListView implements InnerScroller, AbsListVie
 
     private void initEmptyHeader() {
         ViewParent parent = getParent();
-        L.i(TAG, "parent......" + (parent == null ? "null" : parent.getClass().getSimpleName()));
+        L.i(TAG, "parent......" + (parent == null ? ":null" : ":"+parent.getClass().getSimpleName()));
         if (parent instanceof PtrFrameLayout) {
             isInPullLayout = true;
         } else {
