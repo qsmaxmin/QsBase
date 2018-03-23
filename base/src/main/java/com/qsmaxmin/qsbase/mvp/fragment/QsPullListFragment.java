@@ -15,6 +15,9 @@ import com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrHandler;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrUIHandler;
 import com.qsmaxmin.qsbase.common.widget.ptr.header.StoreHouseHeader;
+import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.InnerListView;
+import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.base.InnerScroller;
+import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.base.OuterScroller;
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
 
 import java.util.List;
@@ -155,5 +158,15 @@ public abstract class QsPullListFragment<T extends QsPresenter, D> extends QsLis
      */
     protected boolean canChildScrollDown() {
         return ViewCompat.canScrollVertically(getListView(), 1);
+    }
+
+    @Override public void setMyOuterScroller(OuterScroller outerScroller, int myPosition) {
+        super.setMyOuterScroller(outerScroller, myPosition);
+        if (getListView() instanceof InnerScroller) {
+            InnerListView listView = (InnerListView) getListView();
+            int headerHeight = listView.getCustomEmptyViewHeight();
+            L.i(initTag(), "setMyOuterScroller..... header height:" + headerHeight);
+            getPtrFrameLayout().setPadding(0, headerHeight, 0, 0);
+        }
     }
 }
