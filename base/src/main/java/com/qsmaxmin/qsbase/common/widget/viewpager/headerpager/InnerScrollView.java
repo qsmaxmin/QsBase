@@ -368,46 +368,31 @@ public class InnerScrollView extends ScrollView implements InnerScroller {
     protected int mLastHeaderVisibleHeight = 0;
 
 
-    /**
-     * please use {@link #setContentView(View)} instead
-     */
-    @Deprecated @Override public void addView(View child) {
-        super.addView(child);
+    @Override public void addView(View child) {
+        setContentView(child);
     }
 
-    /**
-     * please use {@link #setContentView(View)} instead
-     */
-    @Deprecated @Override public void addView(View child, int index) {
-        super.addView(child, index);
+    @Override public void addView(View child, int index) {
+        setContentView(child);
     }
 
-    /**
-     * please use {@link #setContentView(View)} instead
-     */
-    @Deprecated @Override public void addView(View child, int index, ViewGroup.LayoutParams params) {
-        super.addView(child, index, params);
+    @Override public void addView(View child, int index, ViewGroup.LayoutParams params) {
+        setContentView(child, (LinearLayout.LayoutParams) params);
     }
 
-    /**
-     * please use {@link #setContentView(View)} instead
-     */
-    @Deprecated @Override public void addView(View child, ViewGroup.LayoutParams params) {
-        super.addView(child, params);
+    @Override public void addView(View child, ViewGroup.LayoutParams params) {
+        setContentView(child, (LinearLayout.LayoutParams) params);
     }
 
-    /**
-     * please use {@link #setContentView(View)} instead
-     */
-    @Deprecated @Override public void addView(View child, int width, int height) {
-        super.addView(child, width, height);
+    @Override public void addView(View child, int width, int height) {
+        setContentView(child, new LinearLayout.LayoutParams(width, height));
     }
 
-    public void setContentView(View contentView) {
+    private void setContentView(View contentView) {
         setContentView(contentView, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
     }
 
-    public void setContentView(View contentView, LinearLayout.LayoutParams layoutParams) {
+    private void setContentView(View contentView, LinearLayout.LayoutParams layoutParams) {
 
         if (contentView == null) {
             clearContent();
