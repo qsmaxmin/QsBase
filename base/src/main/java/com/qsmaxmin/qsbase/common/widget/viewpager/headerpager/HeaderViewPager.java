@@ -64,7 +64,7 @@ public class HeaderViewPager extends FrameLayout implements OuterScroller {
         if (tabsViewGroup instanceof PagerSlidingTabStrip) {
             mPagerSlidingTabStrip = (PagerSlidingTabStrip) tabsViewGroup;
         } else {
-            mPagerSlidingTabStrip = (PagerSlidingTabStrip) tabsViewGroup.findViewById(R.id.tabs);
+            mPagerSlidingTabStrip = (PagerSlidingTabStrip) tabsViewGroup.findViewById(android.R.id.tabs);
         }
     }
 
@@ -194,6 +194,7 @@ public class HeaderViewPager extends FrameLayout implements OuterScroller {
 
     /**
      * Obtain PagerSlidingTabStrip. You may get and customize it.
+     *
      * @return
      */
     public PagerSlidingTabStrip getPagerSlidingTabStrip() {
@@ -365,6 +366,7 @@ public class HeaderViewPager extends FrameLayout implements OuterScroller {
 
     /**
      * AddHeaderView with customized height in Pixel
+     *
      * @param height in Pixel
      */
     public final void addHeaderView(View view, int height) {
