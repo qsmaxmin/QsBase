@@ -194,8 +194,6 @@ public class HeaderViewPager extends FrameLayout implements OuterScroller {
 
     /**
      * Obtain PagerSlidingTabStrip. You may get and customize it.
-     *
-     * @return
      */
     public PagerSlidingTabStrip getPagerSlidingTabStrip() {
         return mPagerSlidingTabStrip;
