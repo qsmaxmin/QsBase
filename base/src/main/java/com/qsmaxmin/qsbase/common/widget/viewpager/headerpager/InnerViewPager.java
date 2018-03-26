@@ -9,6 +9,7 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
+import com.qsmaxmin.qsbase.common.widget.viewpager.QsViewPager;
 import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.base.InnerScroller;
 import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.base.OuterScroller;
 import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.base.SizeSensitiveLinearLayout;
@@ -22,6 +23,7 @@ import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.help.InnerSpecial
 public class InnerViewPager extends ScrollView implements InnerScroller {
 
     public static final String TAG = "InnerViewPager";
+    private QsViewPager qsViewPager;
 
     public InnerViewPager(Context context) {
         super(context);
@@ -40,7 +42,12 @@ public class InnerViewPager extends ScrollView implements InnerScroller {
     }
 
     private void addViewpager() {
+        qsViewPager = new QsViewPager(getContext());
+        setContentView(qsViewPager, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+    }
 
+    public QsViewPager getViewPager() {
+        return qsViewPager;
     }
 
     protected View mEmptyHeader;

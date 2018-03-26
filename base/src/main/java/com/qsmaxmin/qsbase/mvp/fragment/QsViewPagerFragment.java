@@ -33,6 +33,7 @@ public abstract class QsViewPagerFragment<P extends QsPresenter> extends QsFragm
     protected QsViewPagerAdapter   adapter;
     protected QsViewPager          pager;
     protected PagerSlidingTabStrip tabs;
+    private   InnerViewPager       mInnerViewPager;
 
     @Override public int layoutId() {
         return R.layout.qs_fragment_viewpager;
@@ -49,7 +50,13 @@ public abstract class QsViewPagerFragment<P extends QsPresenter> extends QsFragm
     }
 
     protected void initTabAndPager(View view) {
-        pager = (QsViewPager) view.findViewById(R.id.pager);
+        View pagerView = view.findViewById(R.id.pager);
+        if (pagerView instanceof QsViewPager) {
+            pager = (QsViewPager) pagerView;
+        } else if (pagerView instanceof InnerViewPager) {
+            this.mInnerViewPager = (InnerViewPager) pagerView;
+            pager = mInnerViewPager.getViewPager();
+        }
         tabs = (PagerSlidingTabStrip) view.findViewById(android.R.id.tabs);
         initTabsValue(tabs);
         initViewPager(getModelPagers(), getOffscreenPageLimit());
@@ -213,8 +220,7 @@ public abstract class QsViewPagerFragment<P extends QsPresenter> extends QsFragm
 
     /*----------------------- 以下是HeaderViewPager支持 ----------------------------*/
     @Override public void setMyOuterScroller(OuterScroller outerScroller, int myPosition) {
-        QsViewPager viewPager = getViewPager();
-        if (viewPager instanceof InnerViewPager) {
+        if (mInnerViewPager != null) {
             QsModelPager[] allData = getViewPagerAdapter().getAllData();
             if (allData != null) {
                 for (QsModelPager pager : allData) {
