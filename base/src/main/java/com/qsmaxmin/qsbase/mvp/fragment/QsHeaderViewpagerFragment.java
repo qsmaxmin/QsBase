@@ -37,7 +37,7 @@ public abstract class QsHeaderViewpagerFragment<P extends QsPresenter> extends Q
         headerViewPager.setTabsLayout(tabView);
         headerViewPager.initView();
         if (getHeaderLayout() > 0) {
-            headerViewPager.addHeaderView(View.inflate(getContext(), getHeaderLayout(), null));
+            headerViewPager.addPagerHeaderView(View.inflate(getContext(), getHeaderLayout(), null));
         }
         pager = headerViewPager.getViewPager();
         tabs = headerViewPager.getPagerSlidingTabStrip();

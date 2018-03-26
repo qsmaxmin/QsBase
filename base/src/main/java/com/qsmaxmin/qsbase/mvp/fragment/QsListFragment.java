@@ -289,12 +289,10 @@ public abstract class QsListFragment<P extends QsPresenter, D> extends QsFragmen
     }
 
 
-
     /*----------------------- 以下是HeaderViewPager支持 ----------------------------*/
-
     @Override public void setMyOuterScroller(OuterScroller outerScroller, int myPosition) {
         if (getListView() instanceof InnerScroller) {
-            L.i(initTag(), "注册调度控件：setMyOuterScroller()   position:" + myPosition);
+            L.i(initTag(), "注册调度控件：  position:" + myPosition);
             ((InnerScroller) getListView()).register2Outer(outerScroller, myPosition);
         }
     }

@@ -7,10 +7,16 @@ import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ListView;
 
 import com.qsmaxmin.qsbase.R;
+import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.widget.viewpager.PagerSlidingTabStrip;
 import com.qsmaxmin.qsbase.common.widget.viewpager.QsViewPager;
+import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.InnerViewPager;
+import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.base.InnerScroller;
+import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.base.InnerScrollerContainer;
+import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.base.OuterScroller;
 import com.qsmaxmin.qsbase.mvp.adapter.QsTabViewPagerAdapter;
 import com.qsmaxmin.qsbase.mvp.adapter.QsViewPagerAdapter;
 import com.qsmaxmin.qsbase.mvp.model.QsModelPager;
@@ -22,7 +28,7 @@ import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
  * @Description
  */
 
-public abstract class QsViewPagerFragment<P extends QsPresenter> extends QsFragment<P> implements QsIViewPagerFragment {
+public abstract class QsViewPagerFragment<P extends QsPresenter> extends QsFragment<P> implements QsIViewPagerFragment, InnerScrollerContainer {
 
     protected QsViewPagerAdapter   adapter;
     protected QsViewPager          pager;
@@ -202,5 +208,37 @@ public abstract class QsViewPagerFragment<P extends QsPresenter> extends QsFragm
 
     protected int getOffscreenPageLimit() {
         return 3;
+    }
+
+
+    /*----------------------- 以下是HeaderViewPager支持 ----------------------------*/
+    @Override public void setMyOuterScroller(OuterScroller outerScroller, int myPosition) {
+        QsViewPager viewPager = getViewPager();
+        if (viewPager instanceof InnerViewPager) {
+            QsModelPager[] allData = getViewPagerAdapter().getAllData();
+            if (allData != null) {
+                for (QsModelPager pager : allData) {
+                    if (pager.fragment instanceof QsIListFragment) {
+                        ListView listView = ((QsIListFragment) pager.fragment).getListView();
+                        if (listView instanceof InnerScroller) {
+                            L.i(initTag(), "注册调度控件： position:" + myPosition + "  fragment:" + pager.fragment.getClass().getSimpleName());
+                            ((InnerScroller) listView).register2Outer(outerScroller, myPosition);
+                        }
+                    } else if (pager.fragment instanceof QsIFragment) {
+                        View view = pager.fragment.getView();
+                        if (view instanceof InnerScroller) {
+                            L.i(initTag(), "注册调度控件:  position:" + myPosition + "  fragment:" + pager.fragment.getClass().getSimpleName());
+                            ((InnerScroller) view).register2Outer(outerScroller, myPosition);
+                        } else if (view != null) {
+                            View contentView = view.findViewById(R.id.scroll_view_inner);
+                            if (contentView instanceof InnerScroller) {
+                                L.i(initTag(), "注册调度控件:  position:" + myPosition + "  fragment:" + pager.fragment.getClass().getSimpleName());
+                                ((InnerScroller) contentView).register2Outer(outerScroller, myPosition);
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }

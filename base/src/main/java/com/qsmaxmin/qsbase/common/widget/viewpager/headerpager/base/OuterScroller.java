@@ -56,7 +56,7 @@ public interface OuterScroller extends ViewPager.OnPageChangeListener {
     /**
      * Add custom HeaderView
      */
-    void addHeaderView(View view);
+    void addPagerHeaderView(View view);
 
     /**
      * （as its name）

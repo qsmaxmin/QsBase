@@ -350,18 +350,18 @@ public class HeaderViewPager extends FrameLayout implements OuterScroller {
     }
 
     /**
-     * The second implementation of addHeaderView, which need measure whole CustomHeader.
+     * The second implementation of addPagerHeaderView, which need measure whole CustomHeader.
      * Finishing adding all before render, and it will be measured automatically.
      */
-    public void addHeaderView(View view) {
+    public void addPagerHeaderView(View view) {
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        addHeaderView(view, lp);
+        addPagerHeaderView(view, lp);
     }
 
     /**
      * AddHeaderView with customized LayoutParams
      */
-    public final void addHeaderView(View view, LinearLayout.LayoutParams lp) {
+    public final void addPagerHeaderView(View view, LinearLayout.LayoutParams lp) {
         mCustomHeaders.addView(view, lp);
     }
 
@@ -370,12 +370,12 @@ public class HeaderViewPager extends FrameLayout implements OuterScroller {
      *
      * @param height in Pixel
      */
-    public final void addHeaderView(View view, int height) {
+    public final void addPagerHeaderView(View view, int height) {
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, height);
         mCustomHeaders.addView(view, lp);
     }
 
-    public void removeHeaderView(View view) {
+    public void removePagerHeaderView(View view) {
         mCustomHeaders.removeView(view);
     }
 
