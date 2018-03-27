@@ -1,5 +1,6 @@
 package com.qsmaxmin.qsbase.mvp.fragment;
 
+import android.support.v4.view.ViewCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -286,6 +287,20 @@ public abstract class QsListFragment<P extends QsPresenter, D> extends QsFragmen
     }
 
     @Override public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+    }
+
+    /**
+     * listView是否滑动到顶部
+     */
+    @Override public boolean canListScrollDown() {
+        return ViewCompat.canScrollVertically(getListView(), -1);
+    }
+
+    /**
+     * listView是否滑动到底部
+     */
+    @Override public boolean canListScrollUp() {
+        return ViewCompat.canScrollVertically(getListView(), 1);
     }
 
 

@@ -54,4 +54,8 @@ public interface QsIListFragment<D> extends QsIFragment {
     BaseAdapter onCreateAdapter();
 
     BaseAdapter getAdapter();
+
+    boolean canListScrollUp();
+
+    boolean canListScrollDown();
 }

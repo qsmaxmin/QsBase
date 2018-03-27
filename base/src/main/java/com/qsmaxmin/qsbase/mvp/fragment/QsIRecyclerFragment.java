@@ -56,4 +56,8 @@ public interface QsIRecyclerFragment<D> extends QsIFragment {
     RecyclerView.Adapter onCreateAdapter();
 
     RecyclerView.Adapter getAdapter();
+
+    boolean canListScrollUp();
+
+    boolean canListScrollDown();
 }

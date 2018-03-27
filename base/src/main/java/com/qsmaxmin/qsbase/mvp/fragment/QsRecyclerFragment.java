@@ -1,5 +1,6 @@
 package com.qsmaxmin.qsbase.mvp.fragment;
 
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -267,6 +268,19 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
         return false;
     }
 
+    /**
+     * recyclerView是否滑动到顶部
+     */
+    @Override public boolean canListScrollDown() {
+        return ViewCompat.canScrollVertically(getRecyclerView(), -1);
+    }
+
+    /**
+     * recyclerView是否滑动到底部
+     */
+    @Override public boolean canListScrollUp() {
+        return ViewCompat.canScrollVertically(getRecyclerView(), 1);
+    }
 
     /**
      * 适配器

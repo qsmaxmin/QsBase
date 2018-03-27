@@ -147,16 +147,9 @@ public abstract class QsPullListFragment<T extends QsPresenter, D> extends QsLis
 
     @Override public void onScrollStateChanged(AbsListView view, int scrollState) {
         super.onScrollStateChanged(view, scrollState);
-        if (!canChildScrollDown() && scrollState == SCROLL_STATE_IDLE) {
+        if (!canListScrollUp() && scrollState == SCROLL_STATE_IDLE) {
             loadingMoreData();
         }
-    }
-
-    /**
-     * listView是否滑动到底部
-     */
-    protected boolean canChildScrollDown() {
-        return ViewCompat.canScrollVertically(getListView(), 1);
     }
 
     @Override public void setMyOuterScroller(OuterScroller outerScroller, int myPosition) {
