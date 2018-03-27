@@ -379,6 +379,10 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         }
     }
 
+    @Override public void onFragmentSelectedInViewPager(int position) {
+
+    }
+
     public void setBackgroundColor(@ColorRes int colorId) {
         this.backgroundColorId = colorId;
     }

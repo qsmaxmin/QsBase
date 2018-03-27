@@ -2,6 +2,7 @@ package com.qsmaxmin.qsbase.mvp.fragment;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.CallSuper;
 import android.support.v4.app.Fragment;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
@@ -97,7 +98,11 @@ public abstract class QsViewPagerFragment<P extends QsPresenter> extends QsFragm
 
     }
 
-    @Override public void onPageSelected(View currentTabItem, View oldTabItem, int position, int oldPosition) {
+    @CallSuper @Override public void onPageSelected(View currentTabItem, View oldTabItem, int position, int oldPosition) {
+        Fragment fragment = getViewPagerAdapter().getData(position).fragment;
+        if (fragment instanceof QsFragment) {
+            ((QsFragment) fragment).onFragmentSelectedInViewPager(position);
+        }
     }
 
     @Override public void initTab(View tabItem, QsModelPager modelPager) {

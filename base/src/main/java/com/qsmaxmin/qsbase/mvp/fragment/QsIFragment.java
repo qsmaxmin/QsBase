@@ -1,6 +1,5 @@
 package com.qsmaxmin.qsbase.mvp.fragment;
 
-import android.support.annotation.ColorRes;
 import android.view.KeyEvent;
 
 import com.qsmaxmin.qsbase.mvp.QsIView;
@@ -30,4 +29,6 @@ public interface QsIFragment extends QsIView {
     int errorLayoutId();
 
     int getBackgroundColorId();
+
+    void onFragmentSelectedInViewPager(int position);
 }

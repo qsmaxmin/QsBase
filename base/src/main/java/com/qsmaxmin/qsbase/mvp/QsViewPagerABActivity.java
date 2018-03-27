@@ -1,6 +1,7 @@
 package com.qsmaxmin.qsbase.mvp;
 
 import android.graphics.Color;
+import android.support.annotation.CallSuper;
 import android.support.v4.app.Fragment;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
@@ -11,6 +12,7 @@ import com.qsmaxmin.qsbase.common.widget.viewpager.PagerSlidingTabStrip;
 import com.qsmaxmin.qsbase.common.widget.viewpager.QsViewPager;
 import com.qsmaxmin.qsbase.mvp.adapter.QsTabViewPagerAdapter;
 import com.qsmaxmin.qsbase.mvp.adapter.QsViewPagerAdapter;
+import com.qsmaxmin.qsbase.mvp.fragment.QsFragment;
 import com.qsmaxmin.qsbase.mvp.model.QsModelPager;
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
 
@@ -93,8 +95,11 @@ public abstract class QsViewPagerABActivity<P extends QsPresenter> extends QsABA
 
     }
 
-    @Override public void onPageSelected(View currentTabItem, View oldTabItem, int position, int oldPosition) {
-
+    @CallSuper @Override public void onPageSelected(View currentTabItem, View oldTabItem, int position, int oldPosition) {
+        Fragment fragment = getViewPagerAdapter().getData(position).fragment;
+        if (fragment instanceof QsFragment) {
+            ((QsFragment) fragment).onFragmentSelectedInViewPager(position);
+        }
     }
 
     @Override public void replaceViewPageItem(QsModelPager... modelPagers) {
