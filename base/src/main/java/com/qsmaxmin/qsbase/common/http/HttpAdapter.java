@@ -257,6 +257,7 @@ public class HttpAdapter {
         Request.Builder requestBuilder = new Request.Builder();
         requestBuilder.headers(httpBuilder.getHeaderBuilder().build());
         if (requestTag != null) requestBuilder.tag(requestTag);
+        L.i(TAG, "method:" + method.getName() + "  http request url:" + url.toString());
         Request request = requestBuilder.url(url.toString()).method(requestType, requestBody).build();
         try {
             Call call = client.newCall(request);
@@ -327,7 +328,6 @@ public class HttpAdapter {
         }
         StringBuilder url = new StringBuilder(terminal);
         url.append(path);
-        L.i(TAG, "method:" + method.getName() + "  http request url:" + url.toString());
         return url;
     }
 
