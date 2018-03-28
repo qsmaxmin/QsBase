@@ -324,7 +324,7 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         PermissionUtils.getInstance().parsePermissionResultData(requestCode, permissions, grantResults, this);
     }
 
-    @ThreadPoint(ThreadType.MAIN) private void setViewState(int showState) {
+    @ThreadPoint(ThreadType.MAIN) protected void setViewState(int showState) {
         L.i(initTag(), "setViewState() showState=" + showState);
         if (!isOpenViewState()) {
             L.i(initTag(), "当前Activity没有打开状态模式! isOpenViewState() = false");

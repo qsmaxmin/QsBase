@@ -320,7 +320,7 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         QsHelper.getInstance().commitBackStackFragment(getFragmentManager(), layoutId, fragment, tag);
     }
 
-    @ThreadPoint(ThreadType.MAIN) private void setViewState(int showState) {
+    @ThreadPoint(ThreadType.MAIN) protected void setViewState(int showState) {
         L.i(initTag(), "setViewState() showState=" + showState);
         if (!isOpenViewState()) {
             L.i(initTag(), "当前Fragment没有打开状态模式! isOpenViewState() = false");
