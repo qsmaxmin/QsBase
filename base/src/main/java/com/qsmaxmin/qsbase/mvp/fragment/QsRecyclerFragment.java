@@ -249,12 +249,10 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
     @ThreadPoint(ThreadType.MAIN) @Override public void updateAdapter(boolean showEmptyView) {
         if (mRecyclerViewAdapter != null) {
             mRecyclerViewAdapter.notifyDataSetChanged();
-            if (mViewAnimator != null) {
-                if (mList.isEmpty() && showEmptyView) {
-                    showEmptyView();
-                } else {
-                    showContentView();
-                }
+            if (mList.isEmpty() && showEmptyView) {
+                showEmptyView();
+            } else {
+                showContentView();
             }
         }
     }
