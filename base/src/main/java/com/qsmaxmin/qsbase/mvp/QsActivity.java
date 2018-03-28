@@ -338,14 +338,6 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
             return;
         }
         mViewAnimator.setDisplayedChild(showState);
-        if (showState == QsConstants.VIEW_STATE_ERROR) {
-            mViewAnimator.getCurrentView().setOnClickListener(new View.OnClickListener() {
-                @Override public void onClick(View v) {
-                    showLoadingView();
-                    initData(getIntent().getExtras());
-                }
-            });
-        }
     }
 
     @ThreadPoint(ThreadType.MAIN) @Override public void onBackPressed() {

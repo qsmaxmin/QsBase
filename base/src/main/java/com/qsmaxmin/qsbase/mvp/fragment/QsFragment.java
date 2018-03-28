@@ -334,14 +334,6 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
             return;
         }
         mViewAnimator.setDisplayedChild(showState);
-        if (showState == QsConstants.VIEW_STATE_ERROR) {
-            mViewAnimator.getCurrentView().setOnClickListener(new View.OnClickListener() {
-                @Override public void onClick(View v) {
-                    showLoadingView();
-                    initData(getArguments());
-                }
-            });
-        }
     }
 
     private void initDefaultView() {
