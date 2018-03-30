@@ -69,7 +69,7 @@ public class QsHelper {
         return ScreenHelper.getInstance();
     }
 
-    public void eventPost(Object object) {
+    @ThreadPoint(ThreadType.MAIN) public void eventPost(Object object) {
         EventBus.getDefault().post(object);
     }
 
