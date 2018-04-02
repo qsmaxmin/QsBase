@@ -28,7 +28,5 @@ public interface QsIFragment extends QsIView {
 
     int errorLayoutId();
 
-    int getBackgroundColorId();
-
     void onFragmentSelectedInViewPager(int position);
 }
