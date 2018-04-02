@@ -33,6 +33,8 @@ import java.util.Locale;
  */
 public class PagerSlidingTabStrip extends HorizontalScrollView {
 
+    private OnTabItemClickListener mClickListener;
+
     public interface IconTabProvider {
 
         int getPageIconResId(int position);
@@ -226,6 +228,10 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
         this.delegatePageListener = listener;
     }
 
+    public void setOnTabClickListener(OnTabItemClickListener listener) {
+        this.mClickListener = listener;
+    }
+
     public void notifyDataSetChanged() {
 
         tabsContainer.removeAllViews();
@@ -272,7 +278,11 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
         tab.setOnClickListener(new OnClickListener() {
 
             @Override public void onClick(View v) {
-                pager.setCurrentItem(position, isCurrentItemAnimation);
+                if (mClickListener != null) {
+                    mClickListener.onClick(position);
+                } else {
+                    pager.setCurrentItem(position, isCurrentItemAnimation);
+                }
             }
         });
         tabsContainer.addView(tab, position, shouldExpand ? expandedTabLayoutParams : defaultTabLayoutParams);
@@ -678,5 +688,9 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
     @Override protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         invalidate();
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+    }
+
+    public interface OnTabItemClickListener {
+        void onClick(int position);
     }
 }
