@@ -27,6 +27,7 @@ public class InfinitePagerAdapter extends PagerAdapter {
 
     private OnPageClickListener listener;
     private int                 placeholder;
+    private int                 corners;
 
     public void setOnPageClickListener(OnPageClickListener listener) {
         this.listener = listener;
@@ -50,7 +51,6 @@ public class InfinitePagerAdapter extends PagerAdapter {
                 urls.addAll(data);
             }
         }
-
     }
 
     public void setData(List<String> data) {
@@ -66,6 +66,10 @@ public class InfinitePagerAdapter extends PagerAdapter {
         synchronized (urls) {
             urls.clear();
         }
+    }
+
+    public void setRoundedCorners(int corners) {
+        this.corners = corners;
     }
 
     public int getRealCount() {
@@ -111,7 +115,7 @@ public class InfinitePagerAdapter extends PagerAdapter {
         if (placeholder > 0) {
             holderImage.setImageDrawable(container.getContext().getResources().getDrawable(placeholder));
             if (virtualPosition < urls.size()) {
-                QsHelper.getInstance().getImageHelper().createRequest(container.getContext()).load(urls.get(virtualPosition)).into(view, new ImageHelper.ImageRequestListener() {
+                QsHelper.getInstance().getImageHelper().createRequest(container.getContext()).roundedCorners(corners).load(urls.get(virtualPosition)).into(view, new ImageHelper.ImageRequestListener() {
                     @Override public void onLoadFailed(String message) {
                         view.setVisibility(View.GONE);
                         holderImage.setVisibility(View.VISIBLE);
@@ -124,7 +128,7 @@ public class InfinitePagerAdapter extends PagerAdapter {
                 });
             }
         } else {
-            if (virtualPosition < urls.size()) QsHelper.getInstance().getImageHelper().createRequest(container.getContext()).load(urls.get(virtualPosition)).into(view);
+            if (virtualPosition < urls.size()) QsHelper.getInstance().getImageHelper().createRequest(container.getContext()).roundedCorners(corners).load(urls.get(virtualPosition)).into(view);
         }
         if (listener != null) {
             view.setOnClickListener(new View.OnClickListener() {
