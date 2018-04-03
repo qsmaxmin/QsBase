@@ -272,7 +272,7 @@ public class ImageHelper {
                     }
 
                     @Override public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                        listener.onSuccess(resource);
+                        listener.onSuccess(resource, model);
                         return false;
                     }
                 });
@@ -420,10 +420,10 @@ public class ImageHelper {
 
         void onLoadFailed(String message);
 
-        void onSuccess(Drawable drawable);
+        void onSuccess(Drawable drawable, Object model);
     }
 
-    private class MyGlideUrl extends GlideUrl {
+    public class MyGlideUrl extends GlideUrl {
 
         private String mCacheKey;
 

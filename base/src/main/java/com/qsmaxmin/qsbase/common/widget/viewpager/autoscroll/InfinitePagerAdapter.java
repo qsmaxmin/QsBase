@@ -117,7 +117,7 @@ public class InfinitePagerAdapter extends PagerAdapter {
                         holderImage.setVisibility(View.VISIBLE);
                     }
 
-                    @Override public void onSuccess(Drawable drawable) {
+                    @Override public void onSuccess(Drawable drawable, Object model) {
                         view.setVisibility(View.VISIBLE);
                         holderImage.setVisibility(View.GONE);
                     }
