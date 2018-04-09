@@ -17,14 +17,12 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 
 import com.qsmaxmin.qsbase.QsApplication;
-import com.qsmaxmin.qsbase.R;
 import com.qsmaxmin.qsbase.common.aspect.ThreadPoint;
 import com.qsmaxmin.qsbase.common.aspect.ThreadType;
 import com.qsmaxmin.qsbase.common.http.HttpAdapter;
 import com.qsmaxmin.qsbase.common.threadpoll.QsThreadPollHelper;
 import com.qsmaxmin.qsbase.common.viewbind.ViewBind;
 import com.qsmaxmin.qsbase.common.viewbind.ViewBindImpl;
-import com.qsmaxmin.qsbase.mvp.fragment.QsFragment;
 
 import org.greenrobot.eventbus.EventBus;
 
