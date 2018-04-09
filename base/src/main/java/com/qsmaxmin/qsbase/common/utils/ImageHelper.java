@@ -381,14 +381,14 @@ public class ImageHelper {
             } else if (enableDefaultHolder && defaultHolderId > 0) {
                 requestOptions.error(defaultHolderId);
             }
-            if (centerCrop) requestOptions.centerCrop();
-            if (fitCenter) requestOptions.fitCenter();
-            if (centerInside) requestOptions.centerInside();
-            if (mCorners > 0) {
+            if (mCorners > 0) {//圆角默认添加fitCenter属性
                 RoundedCorners corners = new RoundedCorners(mCorners);
                 requestOptions.fitCenter();
                 requestOptions.transform(corners);
             }
+            if (centerCrop) requestOptions.centerCrop();
+            if (fitCenter) requestOptions.fitCenter();
+            if (centerInside) requestOptions.centerInside();
             if (mWidth > 0 && mHeight > 0) requestOptions.override(mWidth, mHeight);
             if (noMemoryCache) requestOptions.skipMemoryCache(true);
             if (diskCacheStrategy != null) requestOptions.diskCacheStrategy(diskCacheStrategy);
