@@ -381,10 +381,25 @@ public class ImageHelper {
             } else if (enableDefaultHolder && defaultHolderId > 0) {
                 requestOptions.error(defaultHolderId);
             }
-            if (mCorners > 0) requestOptions.transform(new RoundBitmapTransform(mCorners));
-            if (centerCrop) requestOptions.centerCrop();
-            if (fitCenter) requestOptions.fitCenter();
-            if (centerInside) requestOptions.centerInside();
+            if (mCorners > 0) {
+                requestOptions.optionalTransform(new RoundBitmapTransform(mCorners));
+                if (centerCrop) {
+                    requestOptions.optionalCenterCrop();
+                } else if (fitCenter) {
+                    requestOptions.optionalFitCenter();
+                } else if (centerInside) {
+                    requestOptions.optionalCenterInside();
+                }
+            } else {
+                if (centerCrop) {
+                    requestOptions.centerCrop();
+                } else if (fitCenter) {
+                    requestOptions.fitCenter();
+                } else if (centerInside) {
+                    requestOptions.centerInside();
+                }
+            }
+
             if (mWidth > 0 && mHeight > 0) requestOptions.override(mWidth, mHeight);
             if (noMemoryCache) requestOptions.skipMemoryCache(true);
             if (diskCacheStrategy != null) requestOptions.diskCacheStrategy(diskCacheStrategy);
