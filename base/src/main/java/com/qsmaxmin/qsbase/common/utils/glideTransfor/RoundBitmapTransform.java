@@ -3,7 +3,9 @@ package com.qsmaxmin.qsbase.common.utils.glideTransfor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapShader;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.PorterDuff;
 import android.graphics.RectF;
 import android.support.annotation.NonNull;
 
@@ -36,13 +38,26 @@ public class RoundBitmapTransform extends BitmapTransformation {
         if (source == null) return null;
         Bitmap result = pool.get(source.getWidth(), source.getHeight(), Bitmap.Config.ARGB_8888);
 
-        Canvas canvas = new Canvas(result);
         Paint paint = new Paint();
-        paint.setShader(new BitmapShader(source, BitmapShader.TileMode.CLAMP, BitmapShader.TileMode.CLAMP));
         paint.setAntiAlias(true);
+        paint.setShader(new BitmapShader(source, BitmapShader.TileMode.CLAMP, BitmapShader.TileMode.CLAMP));
         RectF rectF = new RectF(0f, 0f, source.getWidth(), source.getHeight());
+
+        Canvas canvas = new Canvas(result);
+        canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
         canvas.drawRoundRect(rectF, radius, radius, paint);
+        canvas.setBitmap(null);
         return result;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return (o instanceof RoundBitmapTransform) && ((RoundBitmapTransform) o).radius == radius;
+    }
+
+    @Override
+    public int hashCode() {
+        return CUSTOM_ID.hashCode() + radius;
     }
 
     @Override public void updateDiskCacheKey(MessageDigest messageDigest) {
