@@ -105,33 +105,37 @@ public class InfinitePagerAdapter extends PagerAdapter {
         final int virtualPosition = getVirtualPosition(position);
         L.i("InfinitePagerAdapter", "instantiateItem... position:" + virtualPosition + " totalCount:" + getCount());
         FrameLayout frameLayout = new FrameLayout(container.getContext());
-        final ImageView view = getImageView(container.getContext());
-        final ImageView holderImage = new ImageView(container.getContext());
-        view.setScaleType(ImageView.ScaleType.FIT_XY);
-        holderImage.setScaleType(ImageView.ScaleType.CENTER);
-        view.setId(virtualPosition);
-        frameLayout.addView(holderImage);
-        frameLayout.addView(view);
+        final ImageView contentImage = getImageView(container.getContext());
+        contentImage.setScaleType(ImageView.ScaleType.FIT_XY);
+
         if (placeholder > 0) {
+            final ImageView holderImage = new ImageView(container.getContext());
+            holderImage.setScaleType(ImageView.ScaleType.CENTER);
             holderImage.setImageDrawable(container.getContext().getResources().getDrawable(placeholder));
+            frameLayout.addView(holderImage);
+            frameLayout.addView(contentImage);
+
             if (virtualPosition < urls.size()) {
-                QsHelper.getInstance().getImageHelper().createRequest(container.getContext()).roundedCorners(corners).load(urls.get(virtualPosition)).into(view, new ImageHelper.ImageRequestListener() {
+                QsHelper.getInstance().getImageHelper().createRequest(container.getContext()).roundedCorners(corners).load(urls.get(virtualPosition)).into(contentImage, new ImageHelper.ImageRequestListener() {
                     @Override public void onLoadFailed(String message) {
-                        view.setVisibility(View.GONE);
+                        contentImage.setVisibility(View.GONE);
                         holderImage.setVisibility(View.VISIBLE);
                     }
 
                     @Override public void onSuccess(Drawable drawable, Object model) {
-                        view.setVisibility(View.VISIBLE);
+                        contentImage.setVisibility(View.VISIBLE);
                         holderImage.setVisibility(View.GONE);
                     }
                 });
             }
         } else {
-            if (virtualPosition < urls.size()) QsHelper.getInstance().getImageHelper().createRequest(container.getContext()).roundedCorners(corners).load(urls.get(virtualPosition)).into(view);
+            frameLayout.addView(contentImage);
+            if (virtualPosition < urls.size()) {
+                QsHelper.getInstance().getImageHelper().createRequest(container.getContext()).roundedCorners(corners).load(urls.get(virtualPosition)).into(contentImage);
+            }
         }
         if (listener != null) {
-            view.setOnClickListener(new View.OnClickListener() {
+            contentImage.setOnClickListener(new View.OnClickListener() {
                 @Override public void onClick(View v) {
                     if (listener != null) {
                         listener.onPageClick(virtualPosition);
