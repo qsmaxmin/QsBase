@@ -21,6 +21,7 @@ import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.load.model.GlideUrl;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.FutureTarget;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
@@ -28,7 +29,6 @@ import com.bumptech.glide.request.target.Target;
 import com.qsmaxmin.qsbase.common.aspect.ThreadPoint;
 import com.qsmaxmin.qsbase.common.aspect.ThreadType;
 import com.qsmaxmin.qsbase.common.log.L;
-import com.qsmaxmin.qsbase.common.utils.glideTransfor.RoundBitmapTransform;
 
 import java.io.File;
 import java.util.concurrent.ExecutionException;
@@ -382,7 +382,6 @@ public class ImageHelper {
                 requestOptions.error(defaultHolderId);
             }
             if (mCorners > 0) {
-                requestOptions.optionalTransform(new RoundBitmapTransform(mCorners));
                 if (centerCrop) {
                     requestOptions.optionalCenterCrop();
                 } else if (fitCenter) {
@@ -390,6 +389,7 @@ public class ImageHelper {
                 } else if (centerInside) {
                     requestOptions.optionalCenterInside();
                 }
+                requestOptions.optionalTransform(new RoundedCorners(mCorners));
             } else {
                 if (centerCrop) {
                     requestOptions.centerCrop();
