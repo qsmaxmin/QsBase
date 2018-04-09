@@ -381,10 +381,7 @@ public class ImageHelper {
             } else if (enableDefaultHolder && defaultHolderId > 0) {
                 requestOptions.error(defaultHolderId);
             }
-            if (mCorners > 0) {//圆角默认添加fitCenter属性
-                RoundBitmapTransform corners = new RoundBitmapTransform(mCorners);
-                requestOptions.transform(corners);
-            }
+            if (mCorners > 0) requestOptions.transform(new RoundBitmapTransform(mCorners));
             if (centerCrop) requestOptions.centerCrop();
             if (fitCenter) requestOptions.fitCenter();
             if (centerInside) requestOptions.centerInside();
