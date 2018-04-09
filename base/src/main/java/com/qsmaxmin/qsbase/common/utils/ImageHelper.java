@@ -384,7 +384,11 @@ public class ImageHelper {
             if (centerCrop) requestOptions.centerCrop();
             if (fitCenter) requestOptions.fitCenter();
             if (centerInside) requestOptions.centerInside();
-            if (mCorners > 0) requestOptions.transform(new RoundedCorners(mCorners));
+            if (mCorners > 0) {
+                RoundedCorners corners = new RoundedCorners(mCorners);
+                requestOptions.fitCenter();
+                requestOptions.transform(corners);
+            }
             if (mWidth > 0 && mHeight > 0) requestOptions.override(mWidth, mHeight);
             if (noMemoryCache) requestOptions.skipMemoryCache(true);
             if (diskCacheStrategy != null) requestOptions.diskCacheStrategy(diskCacheStrategy);
