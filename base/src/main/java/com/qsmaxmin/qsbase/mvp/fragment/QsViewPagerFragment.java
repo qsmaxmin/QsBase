@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 
 import com.qsmaxmin.qsbase.R;
+import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.widget.viewpager.PagerSlidingTabStrip;
 import com.qsmaxmin.qsbase.common.widget.viewpager.QsViewPager;
 import com.qsmaxmin.qsbase.mvp.adapter.QsTabViewPagerAdapter;
@@ -110,8 +111,12 @@ public abstract class QsViewPagerFragment<P extends QsPresenter> extends QsFragm
     }
 
     @Override public void replaceViewPageItem(QsModelPager... modelPagers) {
-        adapter.replaceViewPagerDatas(modelPagers);
-        adapter.notifyDataSetChanged();
+        if (adapter != null) {
+            adapter.replaceViewPagerDatas(modelPagers);
+            adapter.notifyDataSetChanged();
+        } else {
+            L.e(initTag(), "adapter is null.... override getModelPagers() return not null or call initViewPager() before !");
+        }
     }
 
     @Override public Fragment getCurrentFragment() {
@@ -119,9 +124,13 @@ public abstract class QsViewPagerFragment<P extends QsPresenter> extends QsFragm
     }
 
     @Override public void setIndex(int index, boolean bool) {
-        int childCount = pager.getAdapter().getCount();
-        if (0 <= index && index < childCount) {
-            pager.setCurrentItem(index, bool);
+        if (adapter != null) {
+            int childCount = adapter.getCount();
+            if (0 <= index && index < childCount) {
+                pager.setCurrentItem(index, bool);
+            }
+        } else {
+            L.e(initTag(), "adapter is null.... override getModelPagers() return not null or call initViewPager() before !");
         }
     }
 
