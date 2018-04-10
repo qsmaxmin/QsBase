@@ -15,13 +15,14 @@ import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.base.OuterScrolle
  * @Description Helper of special views in InnerScroller.
  */
 public class InnerSpecialViewHelper {
-    Context       mContext;
-    OuterScroller mOuterScroller;
-    View          mInnerEmptyView;
+    private Context       mContext;
+    private OuterScroller mOuterScroller;
+    private View          mInnerEmptyView;
 
     private View mCustomEmptyView;
     private int mCustomEmptyViewHeight = ViewGroup.LayoutParams.MATCH_PARENT;
-    private int mCustomEmptyViewHeightOffset;
+    private int     mCustomEmptyViewHeightOffset;
+    private boolean mContentAutoCompletionViewAutomaticMinimumHeight;
 
 
     public InnerSpecialViewHelper(Context context) {
@@ -147,5 +148,13 @@ public class InnerSpecialViewHelper {
 
     public int getContentAutoCompletionViewOffset() {
         return mContentAutoCompletionViewOffset;
+    }
+
+    public void setContentAutoCompletionViewAutomaticMinimumHeight(boolean isAutomaticMinimumHeight) {
+        mContentAutoCompletionViewAutomaticMinimumHeight = isAutomaticMinimumHeight;
+    }
+
+    public boolean isContentAutoCompletionViewAutomaticMinimumHeight() {
+        return mContentAutoCompletionViewAutomaticMinimumHeight;
     }
 }

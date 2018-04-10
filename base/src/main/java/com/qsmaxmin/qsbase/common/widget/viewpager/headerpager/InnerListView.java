@@ -3,7 +3,6 @@ package com.qsmaxmin.qsbase.common.widget.viewpager.headerpager;
 import android.content.Context;
 import android.database.DataSetObserver;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -17,7 +16,6 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 
 import com.qsmaxmin.qsbase.R;
-import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.base.InnerScroller;
 import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.base.OuterScroller;
 import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.help.InnerSpecialViewHelper;
@@ -90,7 +88,6 @@ public class InnerListView extends ListView implements InnerScroller, AbsListVie
 
     private void initEmptyHeader() {
         mEmptyHeader = new FrameLayout(getContext());
-        mEmptyHeader.setBackgroundColor(Color.BLUE);
         super.addHeaderView(mEmptyHeader, null, false);
     }
 
@@ -683,6 +680,10 @@ public class InnerListView extends ListView implements InnerScroller, AbsListVie
         getEmptyViewHelper().setContentAutoCompletionViewOffset(offset);
     }
 
+    public void setContentAutoCompletionViewAutomaticMinimumHeight(boolean isAutomatic) {
+        getEmptyViewHelper().setContentAutoCompletionViewAutomaticMinimumHeight(isAutomatic);
+    }
+
     private View configureAutoEmptyCompletionView(int height) {
         View autoEmptyCompletion = getAutoCompletionViewSafely();
         LayoutParams lp = (LayoutParams) autoEmptyCompletion.getLayoutParams();
@@ -702,6 +703,9 @@ public class InnerListView extends ListView implements InnerScroller, AbsListVie
         List<IntegerVariable> heights = getHeightsSafely();
         int heightSum = getItemHeightSum(position, heights);
         int itemAreaHeight = mOuterScroller.getContentAreaMaxVisibleHeight();
+        if (getEmptyViewHelper().isContentAutoCompletionViewAutomaticMinimumHeight()) {
+            return getEmptyViewHelper().getInnerEmptyViewHeightSafely();
+        }
         return Math.max(0, itemAreaHeight - heightSum - mEmptyViewHelper.getContentAutoCompletionViewOffset());
     }
 
