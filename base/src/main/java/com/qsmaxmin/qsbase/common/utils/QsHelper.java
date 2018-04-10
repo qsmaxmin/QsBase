@@ -44,11 +44,6 @@ public class QsHelper {
     private QsHelper() {
     }
 
-    public static PermissionUtils getPermissionHelper(){
-        PermissionUtils instance = PermissionUtils.getInstance();
-        return PermissionUtils.getInstance();
-    }
-
     public static QsHelper getInstance() {
         return helper;
     }
@@ -63,6 +58,10 @@ public class QsHelper {
 
     public ImageHelper getImageHelper() {
         return ImageHelper.getInstance();
+    }
+
+    public static PermissionUtils getPermissionHelper() {
+        return PermissionUtils.getInstance();
     }
 
     public QsThreadPollHelper getThreadHelper() {
