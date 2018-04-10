@@ -704,7 +704,8 @@ public class InnerListView extends ListView implements InnerScroller, AbsListVie
         int heightSum = getItemHeightSum(position, heights);
         int itemAreaHeight = mOuterScroller.getContentAreaMaxVisibleHeight();
         if (getEmptyViewHelper().isContentAutoCompletionViewAutomaticMinimumHeight()) {
-            return getEmptyViewHelper().getInnerEmptyViewHeightSafely();
+            int emptyViewHeight = getCustomEmptyViewHeight();
+            return Math.min((itemAreaHeight - heightSum), emptyViewHeight);
         }
         return Math.max(0, itemAreaHeight - heightSum - mEmptyViewHelper.getContentAutoCompletionViewOffset());
     }
