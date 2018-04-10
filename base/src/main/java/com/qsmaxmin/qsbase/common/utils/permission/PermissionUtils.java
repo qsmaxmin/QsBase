@@ -36,13 +36,19 @@ public class PermissionUtils {
 
     public static PermissionUtils getInstance() {
         if (util == null) {
-            util = new PermissionUtils();
+            synchronized (PermissionUtils.class) {
+                if (util == null) util = new PermissionUtils();
+            }
         }
         return util;
     }
 
     public PermissionBuilder createBuilder() {
         return new PermissionBuilder();
+    }
+
+    public boolean isPermissionGranted(String permission) {
+        return ContextCompat.checkSelfPermission(QsHelper.getInstance().getApplication(), permission) == PackageManager.PERMISSION_GRANTED;
     }
 
     void startRequestPermission(PermissionBuilder builder) {
@@ -80,7 +86,7 @@ public class PermissionUtils {
     private ArrayList<String> getUnGrantedPermissionArr(List<String> list) {
         ArrayList<String> arrayList = new ArrayList<>();
         for (String permission : list) {
-            if (ContextCompat.checkSelfPermission(QsHelper.getInstance().getApplication(), permission) != PackageManager.PERMISSION_GRANTED) {//用户未授权
+            if (!isPermissionGranted(permission)) {//用户未授权
                 arrayList.add(permission);
             }
         }

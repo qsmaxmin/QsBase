@@ -21,6 +21,7 @@ import com.qsmaxmin.qsbase.common.aspect.ThreadPoint;
 import com.qsmaxmin.qsbase.common.aspect.ThreadType;
 import com.qsmaxmin.qsbase.common.http.HttpAdapter;
 import com.qsmaxmin.qsbase.common.threadpoll.QsThreadPollHelper;
+import com.qsmaxmin.qsbase.common.utils.permission.PermissionUtils;
 import com.qsmaxmin.qsbase.common.viewbind.ViewBind;
 import com.qsmaxmin.qsbase.common.viewbind.ViewBindImpl;
 
@@ -41,6 +42,11 @@ public class QsHelper {
     private volatile static QsApplication mApplication;
 
     private QsHelper() {
+    }
+
+    public static PermissionUtils getPermissionHelper(){
+        PermissionUtils instance = PermissionUtils.getInstance();
+        return PermissionUtils.getInstance();
     }
 
     public static QsHelper getInstance() {
