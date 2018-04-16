@@ -240,13 +240,13 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 
         for (int i = 0; i < tabCount; i++) {
             if (pager.getAdapter() instanceof TitleCountTabProvider) {
-                addTextIconTab(i, pager.getAdapter().getPageTitle(i).toString(), ((TitleCountTabProvider) pager.getAdapter()).getPageCount(i));
+                addTextIconTab(i, String.valueOf(pager.getAdapter().getPageTitle(i)), ((TitleCountTabProvider) pager.getAdapter()).getPageCount(i));
             } else if (pager.getAdapter() instanceof IconTabProvider) {
                 addIconTab(i, ((IconTabProvider) pager.getAdapter()).getPageIconResId(i));
             } else if (pager.getAdapter() instanceof CustomTabProvider) {
                 addCustomTab(i);
             } else {
-                addTextTab(i, pager.getAdapter().getPageTitle(i).toString());
+                addTextTab(i, String.valueOf(pager.getAdapter().getPageTitle(i)));
             }
 
         }
