@@ -11,6 +11,7 @@ import com.qsmaxmin.qsbase.R;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.widget.viewpager.PagerSlidingTabStrip;
 import com.qsmaxmin.qsbase.common.widget.viewpager.QsViewPager;
+import com.qsmaxmin.qsbase.common.widget.viewpager.ViewPagerHelper;
 import com.qsmaxmin.qsbase.mvp.adapter.QsTabViewPagerAdapter;
 import com.qsmaxmin.qsbase.mvp.adapter.QsViewPagerAdapter;
 import com.qsmaxmin.qsbase.mvp.fragment.QsFragment;
@@ -46,24 +47,23 @@ public abstract class QsViewPagerActivity<P extends QsPresenter> extends QsActiv
         initViewPager(getModelPagers(), getOffscreenPageLimit());
     }
 
-
     @Override public void initViewPager(QsModelPager[] modelPagers, int offScreenPageLimit) {
-        if (modelPagers != null) {
-            adapter = createPagerAdapter(pager, tabs);
-            adapter.setModelPagers(modelPagers);
+        if (modelPagers != null && modelPagers.length > 0) {
+            ViewPagerHelper pagerHelper = new ViewPagerHelper(this, pager, tabs, modelPagers);
+            adapter = createPagerAdapter(pagerHelper);
             pager.setAdapter(adapter);
-            final int pageMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4, getResources().getDisplayMetrics());
+            int pageMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4, getResources().getDisplayMetrics());
             pager.setPageMargin(pageMargin);
             pager.setOffscreenPageLimit(offScreenPageLimit);
             if (tabs != null) tabs.setViewPager(pager);
         }
     }
 
-    protected QsViewPagerAdapter createPagerAdapter(QsViewPager pager, PagerSlidingTabStrip tabs) {
+    protected QsViewPagerAdapter createPagerAdapter(ViewPagerHelper pagerHelper) {
         if (getTabItemLayout() > 0) {
-            return new QsTabViewPagerAdapter(initTag(), getSupportFragmentManager(), tabs, pager, this);
+            return new QsTabViewPagerAdapter(getSupportFragmentManager(), pagerHelper);
         } else {
-            return new QsViewPagerAdapter(initTag(), getSupportFragmentManager(), tabs, pager, this);
+            return new QsViewPagerAdapter(getSupportFragmentManager(), pagerHelper);
         }
     }
 

@@ -64,8 +64,6 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 
     private final PageListener pageListener = new PageListener();
 
-    public OnPageChangeListener delegatePageListener;
-
     public LinearLayout tabsContainer;
 
     private ViewPager pager;
@@ -214,16 +212,11 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 
     public void setViewPager(ViewPager pager) {
         this.pager = pager;
-
         if (pager.getAdapter() == null) {
             throw new IllegalStateException("ViewPager does not have adapter instance.");
         }
         pager.addOnPageChangeListener(pageListener);
         notifyDataSetChanged();
-    }
-
-    public void setOnPageChangeListener(OnPageChangeListener listener) {
-        this.delegatePageListener = listener;
     }
 
     public void setOnTabClickListener(OnTabItemClickListener listener) {
@@ -248,7 +241,6 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
             }
 
         }
-
         updateTabStyles();
 
         getViewTreeObserver().addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
@@ -261,9 +253,6 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
                 }
                 currentPosition = pager.getCurrentItem();
                 scrollToChild(currentPosition, 0);
-                if (delegatePageListener != null) {
-                    delegatePageListener.onPageSelected(currentPosition);
-                }
             }
         });
 
@@ -437,32 +426,19 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
         @Override public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
             currentPosition = position;
             currentPositionOffset = positionOffset;
-
             scrollToChild(position, (int) (positionOffset * tabsContainer.getChildAt(position).getWidth()));
-
             invalidate();
-
-            if (delegatePageListener != null) {
-                delegatePageListener.onPageScrolled(position, positionOffset, positionOffsetPixels);
-            }
         }
 
         @Override public void onPageScrollStateChanged(int state) {
             if (state == ViewPager.SCROLL_STATE_IDLE) {
                 scrollToChild(pager.getCurrentItem(), 0);
             }
-
-            if (delegatePageListener != null) {
-                delegatePageListener.onPageScrollStateChanged(state);
-            }
         }
 
         @Override public void onPageSelected(int position) {
             selectedPosition = position;
             updateTabStyles();
-            if (delegatePageListener != null) {
-                delegatePageListener.onPageSelected(position);
-            }
         }
 
     }

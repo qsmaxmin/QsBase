@@ -666,28 +666,6 @@ public class HeaderViewPager extends FrameLayout implements OuterScroller {
         return null;
     }
 
-    public boolean setTabOnPageChangeListener(final ViewPager.OnPageChangeListener onPageChangeListener) {
-        if (mPagerSlidingTabStrip == null || onPageChangeListener == null) {
-            Log.e(TAG, "ERROR: parameter error.");
-            return false;
-        }
-        mPagerSlidingTabStrip.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override public void onPageScrolled(int i, float v, int i1) {
-                onPageChangeListener.onPageScrolled(i, v, i1);
-            }
-
-            @Override public void onPageSelected(int i) {
-                HeaderViewPager.this.onPageSelected(i);
-                onPageChangeListener.onPageSelected(i);
-            }
-
-            @Override public void onPageScrollStateChanged(int i) {
-                onPageChangeListener.onPageScrollStateChanged(i);
-            }
-        });
-        return true;
-    }
-
     /**
      * Synchronize position on innerScroller stop besides touch down. Make full use of performance at leisure time.
      */

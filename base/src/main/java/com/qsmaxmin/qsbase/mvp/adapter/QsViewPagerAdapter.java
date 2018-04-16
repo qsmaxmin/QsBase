@@ -4,20 +4,16 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.qsmaxmin.qsbase.common.log.L;
-import com.qsmaxmin.qsbase.common.widget.viewpager.PagerSlidingTabStrip;
 import com.qsmaxmin.qsbase.common.widget.viewpager.QsViewPager;
+import com.qsmaxmin.qsbase.common.widget.viewpager.ViewPagerHelper;
 import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.base.InnerScrollerContainer;
 import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.base.OuterPagerAdapter;
 import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.base.OuterScroller;
-import com.qsmaxmin.qsbase.mvp.QsIViewPagerABActivity;
-import com.qsmaxmin.qsbase.mvp.QsIViewPagerActivity;
 import com.qsmaxmin.qsbase.mvp.fragment.QsIFragment;
-import com.qsmaxmin.qsbase.mvp.fragment.QsIViewPagerFragment;
 import com.qsmaxmin.qsbase.mvp.model.QsModelPager;
 
 /**
@@ -26,74 +22,55 @@ import com.qsmaxmin.qsbase.mvp.model.QsModelPager;
  * @Description
  */
 
-public class QsViewPagerAdapter extends PagerAdapter implements OuterPagerAdapter, ViewPager.OnPageChangeListener {
-    private static final String TAG              = "QsViewPagerAdapter";
-    private              View   oldView          = null;
-    private              int    oldPosition      = -1;
-    private              int    currentPageIndex = -1;        // 当前page索引（切换之前）
-    private              int    replacePosition  = -1;        // 替换标识
+public class QsViewPagerAdapter extends PagerAdapter implements OuterPagerAdapter {
+    private static final String TAG             = "QsViewPagerAdapter";
+    private              int    replacePosition = -1;        // 替换标识
 
-    private   OuterScroller          mOuterScroller;
-    private   FragmentManager        fragmentManager;
-    protected String                 tag;
-    protected PagerSlidingTabStrip   tabs;
-    private   QsViewPager            pager;
-    private   ViewGroup              container;
-    protected QsModelPager[]         viewPagerData;
-    protected QsIViewPagerFragment   viewPagerFragment;
-    protected QsIViewPagerABActivity viewPagerABActivity;
-    protected QsIViewPagerActivity   viewPagerActivity;
+    private OuterScroller   mOuterScroller;
+    private FragmentManager fragmentManager;
+    private ViewGroup       container;
+    private ViewPagerHelper pagerHelper;
 
     protected String initTag() {
         return getClass().getSimpleName();
     }
 
-    public QsViewPagerAdapter(String tag, FragmentManager fragmentManager, PagerSlidingTabStrip tabs, QsViewPager pager, QsIViewPagerFragment viewPagerFragment) {
-        this.tag = tag;
-        this.viewPagerFragment = viewPagerFragment;
+    public QsViewPagerAdapter(FragmentManager fragmentManager, ViewPagerHelper pagerHelper) {
         this.fragmentManager = fragmentManager;
-        this.tabs = tabs;
-        this.pager = pager;
-        if (this.tabs != null) this.tabs.setOnPageChangeListener(this);
+        this.pagerHelper = pagerHelper;
     }
 
-    public QsViewPagerAdapter(String tag, FragmentManager fragmentManager, PagerSlidingTabStrip tabs, QsViewPager pager, QsIViewPagerABActivity viewPagerABActivity) {
-        this.tag = tag;
-        this.viewPagerABActivity = viewPagerABActivity;
-        this.fragmentManager = fragmentManager;
-        this.tabs = tabs;
-        this.pager = pager;
-        if (this.tabs != null) this.tabs.setOnPageChangeListener(this);
+    public ViewPagerHelper getPagerHelper() {
+        return pagerHelper;
     }
 
-    public QsViewPagerAdapter(String tag, FragmentManager fragmentManager, PagerSlidingTabStrip tabs, QsViewPager pager, QsIViewPagerActivity viewPagerActivity) {
-        this.tag = tag;
-        this.viewPagerActivity = viewPagerActivity;
-        this.fragmentManager = fragmentManager;
-        this.tabs = tabs;
-        this.pager = pager;
-        if (this.tabs != null) this.tabs.setOnPageChangeListener(this);
+    public QsModelPager[] getViewPagerData() {
+        return pagerHelper.getViewPagerData();
+    }
+
+    public QsViewPager getViewPager() {
+        return pagerHelper.getViewPager();
     }
 
     /**
      * 设置数据
      */
     public void setModelPagers(QsModelPager[] data) {
-        this.viewPagerData = data;
+        pagerHelper.setViewPagerData(data);
     }
 
     /**
      * 替换
      */
     public void replaceViewPagerDatas(QsModelPager... modelPagers) {
-        replacePosition = pager.getCurrentItem();
+        replacePosition = getViewPager().getCurrentItem();
         for (QsModelPager modelPager : modelPagers) {
             int position = modelPager.position;
-            Fragment oldFragment = viewPagerData[position].fragment;
+            Fragment oldFragment = getViewPagerData()[position].fragment;
             if (oldFragment.getView() != null) container.removeView(oldFragment.getView());
             FragmentTransaction transaction = this.fragmentManager.beginTransaction();
             transaction.detach(oldFragment).commitAllowingStateLoss();
-            viewPagerData[position] = modelPager;
+            getViewPagerData()[position] = modelPager;
         }
     }
 
@@ -102,24 +79,24 @@ public class QsViewPagerAdapter extends PagerAdapter implements OuterPagerAdapte
     }
 
     public QsModelPager[] getAllData() {
-        return viewPagerData;
+        return getViewPagerData();
     }
 
     public QsModelPager getData(int position) {
-        return viewPagerData[position];
+        return getViewPagerData()[position];
     }
 
     @Override public CharSequence getPageTitle(int position) {
-        return viewPagerData[position].title;
+        return getViewPagerData()[position].title;
     }
 
     @Override public int getCount() {
-        return viewPagerData.length;
+        return getViewPagerData().length;
     }
 
     @Override public void destroyItem(ViewGroup container, int position, Object object) {
         this.container = container;
-        if (position < viewPagerData.length && viewPagerData[position].fragment != null) container.removeView(viewPagerData[position].fragment.getView());
+        if (position < getViewPagerData().length && getViewPagerData()[position].fragment != null) container.removeView(getViewPagerData()[position].fragment.getView());
     }
 
     @Override public boolean isViewFromObject(View view, Object object) {
@@ -131,7 +108,7 @@ public class QsViewPagerAdapter extends PagerAdapter implements OuterPagerAdapte
      */
     @Override public Object instantiateItem(ViewGroup container, int position) {
         this.container = container;
-        Fragment fragment = viewPagerData[position].fragment;
+        Fragment fragment = getViewPagerData()[position].fragment;
         if (!fragment.isAdded()) {
             FragmentTransaction ft = fragmentManager.beginTransaction();
             ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
@@ -140,18 +117,18 @@ public class QsViewPagerAdapter extends PagerAdapter implements OuterPagerAdapte
             fragmentManager.executePendingTransactions();
             fragment.setHasOptionsMenu(false);// 设置actionbar不执行
             if (replacePosition != -1) {
-                if (viewPagerData[replacePosition].fragment instanceof QsIFragment) {
-                    ((QsIFragment) viewPagerData[replacePosition].fragment).initDataWhenDelay();
-                    ((QsIFragment) viewPagerData[replacePosition].fragment).onActionBar();
+                if (getViewPagerData()[replacePosition].fragment instanceof QsIFragment) {
+                    ((QsIFragment) getViewPagerData()[replacePosition].fragment).initDataWhenDelay();
+                    ((QsIFragment) getViewPagerData()[replacePosition].fragment).onActionBar();
                 }
-                viewPagerData[replacePosition].fragment.onResume();
+                getViewPagerData()[replacePosition].fragment.onResume();
                 replacePosition = -1;
             }
         }
         if (fragment.getView() == null) throw new NullPointerException("fragment has not view...");
         if (fragment.getView().getParent() == null) container.addView(fragment.getView());
 
-        pager.setObjectForPosition(fragment.getView(), position);
+        getViewPager().setObjectForPosition(fragment.getView(), position);
 
         if (mOuterScroller != null && fragment instanceof InnerScrollerContainer) {
             L.i(TAG, "activate header viewpager... current fragment is:" + fragment.getClass().getSimpleName());
@@ -160,48 +137,9 @@ public class QsViewPagerAdapter extends PagerAdapter implements OuterPagerAdapte
         return fragment.getView();
     }
 
-    @Override public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-        if (viewPagerFragment != null) viewPagerFragment.onPageScrolled(position, positionOffset, positionOffsetPixels);
-        if (viewPagerABActivity != null) viewPagerABActivity.onPageScrolled(position, positionOffset, positionOffsetPixels);
-        if (viewPagerActivity != null) viewPagerActivity.onPageScrolled(position, positionOffset, positionOffsetPixels);
-    }
-
-    @Override public void onPageSelected(int position) {
-        if (currentPageIndex == -1) {
-            currentPageIndex = position;
-            if (tabs != null) oldView = tabs.tabsContainer.getChildAt(0);
-            oldPosition = position;
-        }
-
-        if (currentPageIndex < viewPagerData.length) viewPagerData[currentPageIndex].fragment.onPause();
-
-        if (position < viewPagerData.length && viewPagerData[position].fragment.isAdded()) {
-            if (viewPagerData[position].fragment instanceof QsIFragment) {
-                ((QsIFragment) viewPagerData[position].fragment).initDataWhenDelay(); // 调用延迟加载
-                if (pager.getCurrentItem() == position) {
-                    ((QsIFragment) viewPagerData[position].fragment).onActionBar();
-                }
-            }
-            viewPagerData[position].fragment.onResume();
-        }
-        currentPageIndex = position;
-        if (viewPagerFragment != null) viewPagerFragment.onPageSelected(tabs == null ? null : tabs.tabsContainer.getChildAt(position), oldView, position, oldPosition);
-        if (viewPagerABActivity != null) viewPagerABActivity.onPageSelected(tabs == null ? null : tabs.tabsContainer.getChildAt(position), oldView, position, oldPosition);
-        if (viewPagerActivity != null) viewPagerActivity.onPageSelected(tabs == null ? null : tabs.tabsContainer.getChildAt(position), oldView, position, oldPosition);
-        if (tabs != null) oldView = tabs.tabsContainer.getChildAt(position);
-        oldPosition = position;
-    }
-
     @Override public void notifyDataSetChanged() {
-        currentPageIndex = -1;
+        pagerHelper.resetPageIndex();
         super.notifyDataSetChanged();
-    }
-
-    @Override public void onPageScrollStateChanged(int state) {
-        if (viewPagerFragment != null) viewPagerFragment.onPageScrollStateChanged(state);
-        if (viewPagerABActivity != null) viewPagerABActivity.onPageScrollStateChanged(state);
-        if (viewPagerActivity != null) viewPagerActivity.onPageScrollStateChanged(state);
-
     }
 
     @Override public void setPageOuterScroller(OuterScroller outerScroller) {

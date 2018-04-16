@@ -4,10 +4,7 @@ import android.support.v4.app.FragmentManager;
 import android.view.View;
 
 import com.qsmaxmin.qsbase.common.widget.viewpager.PagerSlidingTabStrip;
-import com.qsmaxmin.qsbase.common.widget.viewpager.QsViewPager;
-import com.qsmaxmin.qsbase.mvp.QsIViewPagerABActivity;
-import com.qsmaxmin.qsbase.mvp.QsIViewPagerActivity;
-import com.qsmaxmin.qsbase.mvp.fragment.QsIViewPagerFragment;
+import com.qsmaxmin.qsbase.common.widget.viewpager.ViewPagerHelper;
 
 /**
  * @CreateBy qsmaxmin
@@ -21,38 +18,29 @@ public class QsTabViewPagerAdapter extends QsViewPagerAdapter implements PagerSl
         return getClass().getSimpleName();
     }
 
-    public QsTabViewPagerAdapter(String tag, FragmentManager fragmentManager, PagerSlidingTabStrip tabs, QsViewPager pager, QsIViewPagerFragment j2WIViewViewpagerFragment) {
-        super(tag, fragmentManager, tabs, pager, j2WIViewViewpagerFragment);
-    }
-
-    public QsTabViewPagerAdapter(String tag, FragmentManager fragmentManager, PagerSlidingTabStrip tabs, QsViewPager pager, QsIViewPagerABActivity j2WIViewViewpagerABActivity) {
-        super(tag, fragmentManager, tabs, pager, j2WIViewViewpagerABActivity);
-    }
-
-    public QsTabViewPagerAdapter(String tag, FragmentManager fragmentManager, PagerSlidingTabStrip tabs, QsViewPager pager, QsIViewPagerActivity j2WIViewViewpagerActivity) {
-        super(tag, fragmentManager, tabs, pager, j2WIViewViewpagerActivity);
+    public QsTabViewPagerAdapter(FragmentManager fragmentManager, ViewPagerHelper helper) {
+        super(fragmentManager, helper);
     }
 
     @Override public int getCustomTabView() {
-        if (viewPagerABActivity != null) {
-            if (viewPagerABActivity.getTabItemLayout() == 0) throw new IllegalArgumentException("QsTabViewPagerAdapter 必须要有自定义布局！");
-            return viewPagerABActivity.getTabItemLayout();
+        if (getPagerHelper().getViewPagerABActivity() != null) {
+            if (getPagerHelper().getViewPagerABActivity().getTabItemLayout() == 0) throw new IllegalArgumentException("QsTabViewPagerAdapter 必须要有自定义布局！getTabItemLayout return>0");
+            return getPagerHelper().getViewPagerABActivity().getTabItemLayout();
         }
-        if (viewPagerActivity != null) {
-            if (viewPagerActivity.getTabItemLayout() == 0) throw new IllegalArgumentException("QsTabViewPagerAdapter  必须要有自定义布局！");
-            return viewPagerActivity.getTabItemLayout();
-
+        if (getPagerHelper().getViewPagerActivity() != null) {
+            if (getPagerHelper().getViewPagerActivity().getTabItemLayout() == 0) throw new IllegalArgumentException("QsTabViewPagerAdapter  必须要有自定义布局！getTabItemLayout return>0");
+            return getPagerHelper().getViewPagerActivity().getTabItemLayout();
         }
-        if (viewPagerFragment != null) {
-            if (viewPagerFragment.getTabItemLayout() == 0) throw new IllegalArgumentException("QsTabViewPagerAdapter  必须要有自定义布局！");
-            return viewPagerFragment.getTabItemLayout();
+        if (getPagerHelper().getViewPagerFragment() != null) {
+            if (getPagerHelper().getViewPagerFragment().getTabItemLayout() == 0) throw new IllegalArgumentException("QsTabViewPagerAdapter  必须要有自定义布局！getTabItemLayout return>0");
+            return getPagerHelper().getViewPagerFragment().getTabItemLayout();
         }
         return 0;
     }
 
     @Override public void initTabsItem(View view, int position) {
-        if (viewPagerABActivity != null) viewPagerABActivity.initTab(view, viewPagerData[position]);
-        if (viewPagerActivity != null) viewPagerActivity.initTab(view, viewPagerData[position]);
-        if (viewPagerFragment != null) viewPagerFragment.initTab(view, viewPagerData[position]);
+        if (getPagerHelper().getViewPagerABActivity() != null) getPagerHelper().getViewPagerABActivity().initTab(view, getPagerHelper().getViewPagerData()[position]);
+        if (getPagerHelper().getViewPagerActivity() != null) getPagerHelper().getViewPagerActivity().initTab(view, getPagerHelper().getViewPagerData()[position]);
+        if (getPagerHelper().getViewPagerFragment() != null) getPagerHelper().getViewPagerFragment().initTab(view, getPagerHelper().getViewPagerData()[position]);
     }
 }

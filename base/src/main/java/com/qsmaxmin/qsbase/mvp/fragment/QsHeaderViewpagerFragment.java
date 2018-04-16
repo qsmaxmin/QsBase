@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.qsmaxmin.qsbase.R;
+import com.qsmaxmin.qsbase.common.widget.viewpager.ViewPagerHelper;
 import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.HeaderViewPager;
 import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.help.MagicHeaderUtils;
 import com.qsmaxmin.qsbase.mvp.model.QsModelPager;
@@ -54,7 +55,8 @@ public abstract class QsHeaderViewpagerFragment<P extends QsPresenter> extends Q
 
     @Override public void initViewPager(QsModelPager[] modelPagers, int offScreenPageLimit) {
         if (modelPagers != null && modelPagers.length > 0) {
-            adapter = createPagerAdapter(pager, tabs);
+            ViewPagerHelper pagerHelper = new ViewPagerHelper(this, pager, tabs, modelPagers);
+            adapter = createPagerAdapter(pagerHelper);
             adapter.setModelPagers(modelPagers);
             pager.setPageMargin((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4, getResources().getDisplayMetrics()));
             pager.setOffscreenPageLimit(offScreenPageLimit);

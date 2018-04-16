@@ -13,6 +13,7 @@ import com.qsmaxmin.qsbase.R;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.widget.viewpager.PagerSlidingTabStrip;
 import com.qsmaxmin.qsbase.common.widget.viewpager.QsViewPager;
+import com.qsmaxmin.qsbase.common.widget.viewpager.ViewPagerHelper;
 import com.qsmaxmin.qsbase.mvp.adapter.QsTabViewPagerAdapter;
 import com.qsmaxmin.qsbase.mvp.adapter.QsViewPagerAdapter;
 import com.qsmaxmin.qsbase.mvp.model.QsModelPager;
@@ -53,21 +54,21 @@ public abstract class QsViewPagerFragment<P extends QsPresenter> extends QsFragm
 
     @Override public void initViewPager(QsModelPager[] modelPagers, int offScreenPageLimit) {
         if (modelPagers != null && modelPagers.length > 0) {
-            adapter = createPagerAdapter(pager, tabs);
-            adapter.setModelPagers(modelPagers);
+            ViewPagerHelper pagerHelper = new ViewPagerHelper(this, pager, tabs, modelPagers);
+            adapter = createPagerAdapter(pagerHelper);
             pager.setAdapter(adapter);
-            final int pageMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4, getResources().getDisplayMetrics());
+            int pageMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4, getResources().getDisplayMetrics());
             pager.setPageMargin(pageMargin);
             pager.setOffscreenPageLimit(offScreenPageLimit);
             if (tabs != null) tabs.setViewPager(pager);
         }
     }
 
-    protected QsViewPagerAdapter createPagerAdapter(QsViewPager pager, PagerSlidingTabStrip tabs) {
+    protected QsViewPagerAdapter createPagerAdapter(ViewPagerHelper pagerHelper) {
         if (getTabItemLayout() > 0) {
-            return new QsTabViewPagerAdapter(initTag(), getChildFragmentManager(), tabs, pager, this);
+            return new QsTabViewPagerAdapter(getChildFragmentManager(), pagerHelper);
         } else {
-            return new QsViewPagerAdapter(initTag(), getChildFragmentManager(), tabs, pager, this);
+            return new QsViewPagerAdapter(getChildFragmentManager(), pagerHelper);
         }
     }
 
