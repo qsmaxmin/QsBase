@@ -59,7 +59,7 @@ public abstract class QsViewPagerFragment<P extends QsPresenter> extends QsFragm
             final int pageMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4, getResources().getDisplayMetrics());
             pager.setPageMargin(pageMargin);
             pager.setOffscreenPageLimit(offScreenPageLimit);
-            tabs.setViewPager(pager);
+            if (tabs != null) tabs.setViewPager(pager);
         }
     }
 
@@ -72,23 +72,25 @@ public abstract class QsViewPagerFragment<P extends QsPresenter> extends QsFragm
     }
 
     public final void initTabsValue(PagerSlidingTabStrip tab) {
-        DisplayMetrics dm = getResources().getDisplayMetrics();
-        tab.setShouldExpand(getTabsShouldExpand());
-        tab.setDividerColor(getTabsDividerColor());
-        tab.setUnderlineHeight((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, getTabsUnderlineHeight(), dm));
-        tab.setUnderlineColor(getTabsUnderlineColor());
-        tab.setIndicatorHeight((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, getTabsIndicatorSize(), dm));
-        tab.setTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, getTabsTitleSize(), dm));
-        tab.setIndicatorColor(getTabsIndicatorColor());
-        tab.setSelectedTextColor(getTabsSelectedTitleColor());
-        tab.setTextColor(getTabsTitleColor());
-        tab.setTabBackground(getTabsOnClickTitleColor());
-        tab.setBackgroundResource(getTabsBackgroundResource());
-        tab.setTabWidth(getTabWidth());
-        tab.setTabMarginsLeftRight(getTabMargins());
-        tab.setTabPaddingLeftRight(getTabPaddingLeftRight());
-        tab.setIndicatorMargin(getTabsIndicatorMargin());
-        tab.setIsCurrentItemAnimation(getTabsCurrentItemAnimation());
+        if (tab != null) {
+            DisplayMetrics dm = getResources().getDisplayMetrics();
+            tab.setShouldExpand(getTabsShouldExpand());
+            tab.setDividerColor(getTabsDividerColor());
+            tab.setUnderlineHeight((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, getTabsUnderlineHeight(), dm));
+            tab.setUnderlineColor(getTabsUnderlineColor());
+            tab.setIndicatorHeight((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, getTabsIndicatorSize(), dm));
+            tab.setTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, getTabsTitleSize(), dm));
+            tab.setIndicatorColor(getTabsIndicatorColor());
+            tab.setSelectedTextColor(getTabsSelectedTitleColor());
+            tab.setTextColor(getTabsTitleColor());
+            tab.setTabBackground(getTabsOnClickTitleColor());
+            tab.setBackgroundResource(getTabsBackgroundResource());
+            tab.setTabWidth(getTabWidth());
+            tab.setTabMarginsLeftRight(getTabMargins());
+            tab.setTabPaddingLeftRight(getTabPaddingLeftRight());
+            tab.setIndicatorMargin(getTabsIndicatorMargin());
+            tab.setIsCurrentItemAnimation(getTabsCurrentItemAnimation());
+        }
     }
 
     @Override public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {

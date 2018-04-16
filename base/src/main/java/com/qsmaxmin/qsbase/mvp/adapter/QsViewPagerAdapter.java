@@ -54,7 +54,7 @@ public class QsViewPagerAdapter extends PagerAdapter implements OuterPagerAdapte
         this.fragmentManager = fragmentManager;
         this.tabs = tabs;
         this.pager = pager;
-        this.tabs.setOnPageChangeListener(this);
+        if (this.tabs != null) this.tabs.setOnPageChangeListener(this);
     }
 
     public QsViewPagerAdapter(String tag, FragmentManager fragmentManager, PagerSlidingTabStrip tabs, QsViewPager pager, QsIViewPagerABActivity viewPagerABActivity) {
@@ -63,7 +63,7 @@ public class QsViewPagerAdapter extends PagerAdapter implements OuterPagerAdapte
         this.fragmentManager = fragmentManager;
         this.tabs = tabs;
         this.pager = pager;
-        this.tabs.setOnPageChangeListener(this);
+        if (this.tabs != null) this.tabs.setOnPageChangeListener(this);
     }
 
     public QsViewPagerAdapter(String tag, FragmentManager fragmentManager, PagerSlidingTabStrip tabs, QsViewPager pager, QsIViewPagerActivity viewPagerActivity) {
@@ -72,7 +72,7 @@ public class QsViewPagerAdapter extends PagerAdapter implements OuterPagerAdapte
         this.fragmentManager = fragmentManager;
         this.tabs = tabs;
         this.pager = pager;
-        this.tabs.setOnPageChangeListener(this);
+        if (this.tabs != null) this.tabs.setOnPageChangeListener(this);
     }
 
     /**
@@ -134,7 +134,7 @@ public class QsViewPagerAdapter extends PagerAdapter implements OuterPagerAdapte
         Fragment fragment = viewPagerData[position].fragment;
         if (!fragment.isAdded()) {
             FragmentTransaction ft = fragmentManager.beginTransaction();
-            ft.setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out, android.R.animator.fade_in, android.R.animator.fade_out);
+            ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
             ft.add(fragment, fragment.getClass().getSimpleName() + position);
             ft.commitAllowingStateLoss();
             fragmentManager.executePendingTransactions();
@@ -169,7 +169,7 @@ public class QsViewPagerAdapter extends PagerAdapter implements OuterPagerAdapte
     @Override public void onPageSelected(int position) {
         if (currentPageIndex == -1) {
             currentPageIndex = position;
-            oldView = tabs.tabsContainer.getChildAt(0);
+            if (tabs != null) oldView = tabs.tabsContainer.getChildAt(0);
             oldPosition = position;
         }
 
@@ -185,11 +185,10 @@ public class QsViewPagerAdapter extends PagerAdapter implements OuterPagerAdapte
             viewPagerData[position].fragment.onResume();
         }
         currentPageIndex = position;
-        if (viewPagerFragment != null) viewPagerFragment.onPageSelected(tabs.tabsContainer.getChildAt(position), oldView, position, oldPosition);
-        if (viewPagerABActivity != null) viewPagerABActivity.onPageSelected(tabs.tabsContainer.getChildAt(position), oldView, position, oldPosition);
-        if (viewPagerActivity != null) viewPagerActivity.onPageSelected(tabs.tabsContainer.getChildAt(position), oldView, position, oldPosition);
-
-        oldView = tabs.tabsContainer.getChildAt(position);
+        if (viewPagerFragment != null) viewPagerFragment.onPageSelected(tabs == null ? null : tabs.tabsContainer.getChildAt(position), oldView, position, oldPosition);
+        if (viewPagerABActivity != null) viewPagerABActivity.onPageSelected(tabs == null ? null : tabs.tabsContainer.getChildAt(position), oldView, position, oldPosition);
+        if (viewPagerActivity != null) viewPagerActivity.onPageSelected(tabs == null ? null : tabs.tabsContainer.getChildAt(position), oldView, position, oldPosition);
+        if (tabs != null) oldView = tabs.tabsContainer.getChildAt(position);
         oldPosition = position;
     }
 
