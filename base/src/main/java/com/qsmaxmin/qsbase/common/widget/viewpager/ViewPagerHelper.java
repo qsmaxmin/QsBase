@@ -1,9 +1,7 @@
 package com.qsmaxmin.qsbase.common.widget.viewpager;
 
-import android.os.Build;
 import android.support.v4.view.ViewPager;
 import android.view.View;
-import android.view.ViewTreeObserver;
 
 import com.qsmaxmin.qsbase.mvp.QsIViewPagerABActivity;
 import com.qsmaxmin.qsbase.mvp.QsIViewPagerActivity;
@@ -29,23 +27,13 @@ public class ViewPagerHelper {
     private PagerSlidingTabStrip   tabs;
     private QsModelPager[]         viewPagerData;
 
-    public ViewPagerHelper(QsIViewPagerFragment fragment, QsViewPager viewPager, PagerSlidingTabStrip tabs, final QsModelPager[] modelPagers) {
+    public ViewPagerHelper(QsIViewPagerFragment fragment, QsViewPager viewPager, PagerSlidingTabStrip slidingTabStrip, final QsModelPager[] modelPagers) {
         this.viewPagerFragment = fragment;
         this.viewPagerData = modelPagers;
-        this.tabs = tabs;
+        this.tabs = slidingTabStrip;
         this.pager = viewPager;
         final MyPageChangeListener listener = new MyPageChangeListener();
         pager.addOnPageChangeListener(listener);
-        pager.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override public void onGlobalLayout() {
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-                    pager.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-                } else {
-                    pager.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                }
-                listener.onPageSelected(pager.getCurrentItem());
-            }
-        });
     }
 
     public ViewPagerHelper(QsIViewPagerABActivity activity, QsViewPager pager, PagerSlidingTabStrip tabs, QsModelPager[] modelPagers) {
@@ -105,7 +93,6 @@ public class ViewPagerHelper {
             if (currentPageIndex == -1) {
                 currentPageIndex = position;
                 if (tabs != null) oldView = tabs.tabsContainer.getChildAt(0);
-                oldPosition = position;
             }
             if (currentPageIndex < viewPagerData.length) viewPagerData[currentPageIndex].fragment.onPause();
             if (position < viewPagerData.length && viewPagerData[position].fragment.isAdded()) {
