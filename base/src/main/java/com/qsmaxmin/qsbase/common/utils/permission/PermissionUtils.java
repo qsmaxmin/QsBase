@@ -201,6 +201,6 @@ public class PermissionUtils {
                     break;
             }
         }
-        return stringbuilder.append("）").append(QsHelper.getInstance().getApplication().getString(R.string.request_permission_end)).toString();
+        return stringbuilder.append("）").append(QsHelper.getInstance().getString(R.string.request_permission_end)).toString();
     }
 }
