@@ -147,9 +147,9 @@ public class PermissionUtils {
         if (TextUtils.isEmpty(message)) return;
         L.i(TAG, "勾选了不在提醒所以弹出自定义对话框：" + showDialogPermission.toString());
         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(activity);
-        builder.setTitle(QsHelper.getInstance().getApplication().getString(android.R.string.dialog_alert_title))//
+        builder.setTitle(QsHelper.getInstance().getString(android.R.string.dialog_alert_title))//
                 .setMessage(message)//
-                .setPositiveButton(QsHelper.getInstance().getApplication().getString(android.R.string.ok), new DialogInterface.OnClickListener() {//
+                .setPositiveButton(QsHelper.getInstance().getString(android.R.string.ok), new DialogInterface.OnClickListener() {//
                     @Override public void onClick(DialogInterface dialog, int which) {
                         Intent intent = new Intent();
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -158,7 +158,7 @@ public class PermissionUtils {
                         QsHelper.getInstance().getApplication().startActivity(intent);
                         dialog.cancel();
                     }
-                }).setNegativeButton(QsHelper.getInstance().getApplication().getString(android.R.string.cancel), new DialogInterface.OnClickListener() {
+                }).setNegativeButton(QsHelper.getInstance().getString(android.R.string.cancel), new DialogInterface.OnClickListener() {
             @Override public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
             }
