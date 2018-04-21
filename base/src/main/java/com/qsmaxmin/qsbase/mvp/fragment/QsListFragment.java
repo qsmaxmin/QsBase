@@ -140,58 +140,62 @@ public abstract class QsListFragment<P extends QsPresenter, D> extends QsFragmen
         setData(list, true);
     }
 
-    @Override public void setData(List<D> list, boolean showEmptyView) {
+    @ThreadPoint(ThreadType.MAIN) @Override public void setData(List<D> list, boolean showEmptyView) {
         synchronized (mList) {
             mList.clear();
             if (list != null && !list.isEmpty()) mList.addAll(list);
-            updateAdapter(showEmptyView);
         }
+        updateAdapter(showEmptyView);
     }
 
-    @Override public void addData(D d) {
+    @ThreadPoint(ThreadType.MAIN) @Override public void addData(D d) {
         if (d != null) {
             synchronized (mList) {
                 mList.add(d);
-                updateAdapter(true);
             }
+            updateAdapter(true);
         }
     }
 
-    @Override public void addData(List<D> list) {
+    @ThreadPoint(ThreadType.MAIN) @Override public void addData(List<D> list) {
         if (list != null && !list.isEmpty()) {
             synchronized (mList) {
                 mList.addAll(list);
-                updateAdapter(true);
             }
-        }
-    }
-
-    @Override public void delete(int position) {
-        synchronized (mList) {
-            if (position >= 0 && position < mList.size()) {
-                mList.remove(position);
-                updateAdapter(true);
-            }
-        }
-    }
-
-    @Override public void delete(D d) {
-        if (d == null) return;
-        synchronized (mList) {
-            mList.remove(d);
             updateAdapter(true);
         }
     }
 
-    @Override public void deleteAll() {
+    @ThreadPoint(ThreadType.MAIN) @Override public void delete(int position) {
+        if (position >= 0 && position < mList.size()) {
+            synchronized (mList) {
+                mList.remove(position);
+            }
+            updateAdapter(true);
+        }
+    }
+
+    @ThreadPoint(ThreadType.MAIN) @Override public void delete(D d) {
+        if (d == null) return;
+        boolean success;
+        synchronized (mList) {
+            success = mList.remove(d);
+        }
+        if (success) updateAdapter(true);
+    }
+
+    @ThreadPoint(ThreadType.MAIN) @Override public void deleteAll() {
+        if (mList.isEmpty()) return;
         synchronized (mList) {
             mList.clear();
-            updateAdapter(true);
         }
+        updateAdapter(true);
     }
 
     @Override public final List<D> getData() {
-        return mList;
+        ArrayList<D> list = new ArrayList<>();
+        if (!mList.isEmpty()) list.addAll(mList);
+        return list;
     }
 
     @Override public D getData(int position) {
@@ -201,7 +205,7 @@ public abstract class QsListFragment<P extends QsPresenter, D> extends QsFragmen
         return null;
     }
 
-    @ThreadPoint(ThreadType.MAIN) @Override public void updateAdapter(boolean showEmptyView) {
+    @ThreadPoint(ThreadType.MAIN) @Override public void updateAdapter(final boolean showEmptyView) {
         if (mListAdapter != null) {
             mListAdapter.notifyDataSetChanged();
             if (mList.isEmpty() && showEmptyView) {

@@ -118,7 +118,7 @@ public abstract class QsPullRecyclerFragment<P extends QsPresenter, D> extends Q
         setData(list, true);
     }
 
-    @Override @ThreadPoint(ThreadType.MAIN) public void setData(List<D> list, boolean showEmptyView) {
+    @ThreadPoint(ThreadType.MAIN) @Override public void setData(List<D> list, boolean showEmptyView) {
         mPtrFrameLayout.refreshComplete();
         super.setData(list, showEmptyView);
     }

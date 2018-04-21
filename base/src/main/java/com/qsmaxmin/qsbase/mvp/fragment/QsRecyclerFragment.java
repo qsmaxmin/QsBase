@@ -173,77 +173,81 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
         setData(list, true);
     }
 
-    @Override public void setData(List<D> list, boolean showEmptyView) {
+    @ThreadPoint(ThreadType.MAIN) @Override public void setData(List<D> list, boolean showEmptyView) {
         synchronized (mList) {
             mList.clear();
             if (list != null && !list.isEmpty()) mList.addAll(list);
-            updateAdapter(showEmptyView);
         }
+        updateAdapter(showEmptyView);
     }
 
-    @Override public void addData(D d) {
+    @ThreadPoint(ThreadType.MAIN) @Override public void addData(D d) {
         if (d != null) {
             synchronized (mList) {
                 mList.add(d);
-                updateAdapter(true);
             }
+            updateAdapter(true);
         }
     }
 
-    @Override public void addData(List<D> list) {
+    @ThreadPoint(ThreadType.MAIN) @Override public void addData(List<D> list) {
         if (list != null && !list.isEmpty()) {
             synchronized (mList) {
                 mList.addAll(list);
-                updateAdapter(true);
             }
+            updateAdapter(true);
         }
     }
 
-    @Override @ThreadPoint(ThreadType.MAIN) public void addData(List<D> list, int position) {
+    @ThreadPoint(ThreadType.MAIN) @Override public void addData(List<D> list, int position) {
         if (list != null && !list.isEmpty() && position >= 0) {
             synchronized (mList) {
                 position = (position < mList.size()) ? position : mList.size();
                 if (mRecyclerViewAdapter != null) mRecyclerViewAdapter.notifyItemRangeInserted(position, list.size());
                 mList.addAll(position, list);
-                updateAdapter(true);
             }
-        }
-    }
-
-    @Override @ThreadPoint(ThreadType.MAIN) public void delete(int position) {
-        synchronized (mList) {
-            if (position >= 0 && position < mList.size()) {
-                if (mRecyclerViewAdapter != null) mRecyclerViewAdapter.notifyItemRemoved(position);
-                mList.remove(position);
-                updateAdapter(true);
-            }
-        }
-    }
-
-    @Override public void delete(D d) {
-        if (d == null) return;
-        synchronized (mList) {
-            mList.remove(d);
             updateAdapter(true);
         }
     }
 
-    @Override public void deleteAll() {
+    @ThreadPoint(ThreadType.MAIN) @Override public void delete(int position) {
+        if (position >= 0 && position < mList.size()) {
+            if (mRecyclerViewAdapter != null) mRecyclerViewAdapter.notifyItemRemoved(position);
+            synchronized (mList) {
+                mList.remove(position);
+            }
+            updateAdapter(true);
+        }
+    }
+
+    @ThreadPoint(ThreadType.MAIN) @Override public void delete(D d) {
+        if (d == null) return;
+        boolean success;
+        synchronized (mList) {
+            success = mList.remove(d);
+        }
+        if (success) updateAdapter(true);
+    }
+
+    @ThreadPoint(ThreadType.MAIN) @Override public void deleteAll() {
+        if (mList.isEmpty()) return;
         synchronized (mList) {
             mList.clear();
-            updateAdapter(true);
         }
+        updateAdapter(true);
     }
 
-    @Override public D getData(int position) {
+    @Override public final List<D> getData() {
+        ArrayList<D> list = new ArrayList<>();
+        if (!mList.isEmpty()) list.addAll(mList);
+        return list;
+    }
+
+    @ThreadPoint(ThreadType.MAIN) @Override public D getData(int position) {
         if (position >= 0 && position < mList.size()) {
             return mList.get(position);
         }
         return null;
-    }
-
-    @Override public final List<D> getData() {
-        return mList;
     }
 
     @ThreadPoint(ThreadType.MAIN) @Override public void updateAdapter(boolean showEmptyView) {

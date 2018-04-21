@@ -1,6 +1,5 @@
 package com.qsmaxmin.qsbase.mvp.fragment;
 
-import android.support.v4.view.ViewCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AbsListView;
@@ -123,7 +122,7 @@ public abstract class QsPullListFragment<T extends QsPresenter, D> extends QsLis
         setData(list, true);
     }
 
-    @Override @ThreadPoint(ThreadType.MAIN) public void setData(List<D> list, boolean showEmptyView) {
+    @ThreadPoint(ThreadType.MAIN) @Override public void setData(List<D> list, boolean showEmptyView) {
         mPtrFrameLayout.refreshComplete();
         super.setData(list, showEmptyView);
     }
