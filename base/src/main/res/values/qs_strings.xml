@@ -13,4 +13,5 @@
     <string name="request_read_external_storage_permission">读取外部存储</string>
     <string name="request_write_external_storage_permission">写入外部存储</string>
     <string name="request_read_phone_state_permission">读取手机状态</string>
+    <string name="request_other_permission">读取手机状态</string>
 </resources>

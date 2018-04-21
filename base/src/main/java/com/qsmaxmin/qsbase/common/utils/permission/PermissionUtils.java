@@ -173,28 +173,31 @@ public class PermissionUtils {
         for (int i = 0, size = permission.size(); i < size; i++) {
             switch (permission.get(i)) {
                 case Manifest.permission.ACCESS_COARSE_LOCATION:
-                    stringbuilder.append(QsHelper.getInstance().getApplication().getString(R.string.request_location_permission)).append((i == size - 1) ? "" : "，");
+                    stringbuilder.append(QsHelper.getInstance().getString(R.string.request_location_permission)).append((i == size - 1) ? "" : "，");
                     break;
                 case Manifest.permission.READ_EXTERNAL_STORAGE:
-                    stringbuilder.append(QsHelper.getInstance().getApplication().getString(R.string.request_read_external_storage_permission)).append((i == size - 1) ? "" : "，");
+                    stringbuilder.append(QsHelper.getInstance().getString(R.string.request_read_external_storage_permission)).append((i == size - 1) ? "" : "，");
                     break;
                 case Manifest.permission.WRITE_EXTERNAL_STORAGE:
-                    stringbuilder.append(QsHelper.getInstance().getApplication().getString(R.string.request_write_external_storage_permission)).append((i == size - 1) ? "" : "，");
+                    stringbuilder.append(QsHelper.getInstance().getString(R.string.request_write_external_storage_permission)).append((i == size - 1) ? "" : "，");
                     break;
                 case Manifest.permission.READ_CONTACTS:
-                    stringbuilder.append(QsHelper.getInstance().getApplication().getString(R.string.request_constants_permission)).append((i == size - 1) ? "" : "，");
+                    stringbuilder.append(QsHelper.getInstance().getString(R.string.request_constants_permission)).append((i == size - 1) ? "" : "，");
                     break;
                 case Manifest.permission.CALL_PHONE:
-                    stringbuilder.append(QsHelper.getInstance().getApplication().getString(R.string.request_call_permission)).append((i == size - 1) ? "" : "，");
+                    stringbuilder.append(QsHelper.getInstance().getString(R.string.request_call_permission)).append((i == size - 1) ? "" : "，");
                     break;
                 case Manifest.permission.CAMERA:
-                    stringbuilder.append(QsHelper.getInstance().getApplication().getString(R.string.request_camera_permission)).append((i == size - 1) ? "" : "，");
+                    stringbuilder.append(QsHelper.getInstance().getString(R.string.request_camera_permission)).append((i == size - 1) ? "" : "，");
                     break;
                 case Manifest.permission.RECORD_AUDIO:
-                    stringbuilder.append(QsHelper.getInstance().getApplication().getString(R.string.request_record_audio_permission)).append((i == size - 1) ? "" : "，");
+                    stringbuilder.append(QsHelper.getInstance().getString(R.string.request_record_audio_permission)).append((i == size - 1) ? "" : "，");
                     break;
                 case Manifest.permission.READ_PHONE_STATE:
-                    stringbuilder.append(QsHelper.getInstance().getApplication().getString(R.string.request_read_phone_state_permission)).append((i == size - 1) ? "" : "，");
+                    stringbuilder.append(QsHelper.getInstance().getString(R.string.request_read_phone_state_permission)).append((i == size - 1) ? "" : "，");
+                    break;
+                default:
+                    stringbuilder.append(QsHelper.getInstance().getString(R.string.request_other_permission)).append((i == size - 1) ? "" : "，");
                     break;
             }
         }
