@@ -174,38 +174,30 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
     }
 
     @ThreadPoint(ThreadType.MAIN) @Override public void setData(List<D> list, boolean showEmptyView) {
-        synchronized (mList) {
-            mList.clear();
-            if (list != null && !list.isEmpty()) mList.addAll(list);
-        }
+        mList.clear();
+        if (list != null && !list.isEmpty()) mList.addAll(list);
         updateAdapter(showEmptyView);
     }
 
     @ThreadPoint(ThreadType.MAIN) @Override public void addData(D d) {
         if (d != null) {
-            synchronized (mList) {
-                mList.add(d);
-            }
+            mList.add(d);
             updateAdapter(true);
         }
     }
 
     @ThreadPoint(ThreadType.MAIN) @Override public void addData(List<D> list) {
         if (list != null && !list.isEmpty()) {
-            synchronized (mList) {
-                mList.addAll(list);
-            }
+            mList.addAll(list);
             updateAdapter(true);
         }
     }
 
     @ThreadPoint(ThreadType.MAIN) @Override public void addData(List<D> list, int position) {
         if (list != null && !list.isEmpty() && position >= 0) {
-            synchronized (mList) {
-                position = (position < mList.size()) ? position : mList.size();
-                if (mRecyclerViewAdapter != null) mRecyclerViewAdapter.notifyItemRangeInserted(position, list.size());
-                mList.addAll(position, list);
-            }
+            position = (position < mList.size()) ? position : mList.size();
+            if (mRecyclerViewAdapter != null) mRecyclerViewAdapter.notifyItemRangeInserted(position, list.size());
+            mList.addAll(position, list);
             updateAdapter(true);
         }
     }
@@ -213,28 +205,24 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
     @ThreadPoint(ThreadType.MAIN) @Override public void delete(int position) {
         if (position >= 0 && position < mList.size()) {
             if (mRecyclerViewAdapter != null) mRecyclerViewAdapter.notifyItemRemoved(position);
-            synchronized (mList) {
-                mList.remove(position);
-            }
+            mList.remove(position);
             updateAdapter(true);
         }
     }
 
     @ThreadPoint(ThreadType.MAIN) @Override public void delete(D d) {
-        if (d == null) return;
-        boolean success;
-        synchronized (mList) {
+        if (d != null) {
+            boolean success;
             success = mList.remove(d);
+            if (success) updateAdapter(true);
         }
-        if (success) updateAdapter(true);
     }
 
     @ThreadPoint(ThreadType.MAIN) @Override public void deleteAll() {
-        if (mList.isEmpty()) return;
-        synchronized (mList) {
+        if (!mList.isEmpty()) {
             mList.clear();
+            updateAdapter(true);
         }
-        updateAdapter(true);
     }
 
     @Override public final List<D> getData() {
@@ -243,14 +231,17 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
         return list;
     }
 
-    @ThreadPoint(ThreadType.MAIN) @Override public D getData(int position) {
+    @Override public D getData(int position) {
         if (position >= 0 && position < mList.size()) {
             return mList.get(position);
         }
         return null;
     }
 
-    @ThreadPoint(ThreadType.MAIN) @Override public void updateAdapter(boolean showEmptyView) {
+    /**
+     * 该方法必须在主线程中执行
+     */
+    @Override public void updateAdapter(boolean showEmptyView) {
         if (mRecyclerViewAdapter != null) {
             mRecyclerViewAdapter.notifyDataSetChanged();
             if (mList.isEmpty() && showEmptyView) {
