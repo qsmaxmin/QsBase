@@ -800,23 +800,23 @@ public class PtrFrameLayout extends ViewGroup {
         return mPtrIndicator.getOffsetToRefresh();
     }
 
-    @SuppressWarnings({"unused"}) public void setOffsetToRefresh(int offset) {
+    public void setOffsetToRefresh(int offset) {
         mPtrIndicator.setOffsetToRefresh(offset);
     }
 
-    @SuppressWarnings({"unused"}) public float getRatioOfHeaderToHeightRefresh() {
+    public float getRatioOfHeaderToHeightRefresh() {
         return mPtrIndicator.getRatioOfHeaderToHeightRefresh();
     }
 
-    @SuppressWarnings({"unused"}) public int getOffsetToKeepHeaderWhileLoading() {
+    public int getOffsetToKeepHeaderWhileLoading() {
         return mPtrIndicator.getOffsetToKeepHeaderWhileLoading();
     }
 
-    @SuppressWarnings({"unused"}) public void setOffsetToKeepHeaderWhileLoading(int offset) {
+    public void setOffsetToKeepHeaderWhileLoading(int offset) {
         mPtrIndicator.setOffsetToKeepHeaderWhileLoading(offset);
     }
 
-    @SuppressWarnings({"unused"}) public boolean isKeepHeaderWhenRefresh() {
+    public boolean isKeepHeaderWhenRefresh() {
         return mKeepHeaderWhenRefresh;
     }
 
@@ -832,7 +832,7 @@ public class PtrFrameLayout extends ViewGroup {
         mPullToRefresh = pullToRefresh;
     }
 
-    @SuppressWarnings({"unused"}) public View getHeaderView() {
+    public View getHeaderView() {
         return mHeaderView;
     }
 

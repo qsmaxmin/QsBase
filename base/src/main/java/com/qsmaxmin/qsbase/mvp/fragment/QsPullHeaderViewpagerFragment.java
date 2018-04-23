@@ -7,7 +7,7 @@ import com.qsmaxmin.qsbase.R;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrHandler;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrUIHandler;
-import com.qsmaxmin.qsbase.common.widget.ptr.header.StoreHouseHeader;
+import com.qsmaxmin.qsbase.common.widget.ptr.header.BeautyCircleRefreshHeader;
 import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.HeaderViewPager;
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
 
@@ -26,7 +26,7 @@ public abstract class QsPullHeaderViewpagerFragment<P extends QsPresenter> exten
     }
 
     @Override public PtrUIHandler getPtrUIHandlerView() {
-        return new StoreHouseHeader(getContext());
+        return new BeautyCircleRefreshHeader(getContext());
     }
 
     @Override public void startRefreshing() {
