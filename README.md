@@ -132,7 +132,14 @@ MVP架构+AOP面向切面编程，摒弃反射、代理等操作，稳定性和�
 
 #### step 4：继承框架里面的Activity和Fragment
 
-        1，Activity的使用：
+        1，请使用QsTheme：
+            <style name="YourTheme" parent="QsTheme">
+                <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+                <item name="colorPrimary">@color/colorPrimary</item>
+                <item name="colorAccent">@color/colorAccent</item>
+            </style>
+
+        2，Activity的使用：
 
         所有的Activity必须继承框架里的Activity
             为快速开发，框架有多个Activity供开发者继承如：
@@ -241,7 +248,7 @@ MVP架构+AOP面向切面编程，摒弃反射、代理等操作，稳定性和�
 
 
 
-        2，Fragment的使用
+        3，Fragment的使用
         所有的Fragment必须继承框架的Fragment
             为快速开发，框架有多个Fragment供开发者继承如：
             QsFragment: 普通fragment
