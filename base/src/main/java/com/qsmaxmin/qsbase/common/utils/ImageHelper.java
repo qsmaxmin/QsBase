@@ -21,6 +21,7 @@ import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.load.model.GlideUrl;
+import com.bumptech.glide.load.resource.bitmap.BitmapTransformation;
 import com.bumptech.glide.request.FutureTarget;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
@@ -28,7 +29,7 @@ import com.bumptech.glide.request.target.Target;
 import com.qsmaxmin.qsbase.common.aspect.ThreadPoint;
 import com.qsmaxmin.qsbase.common.aspect.ThreadType;
 import com.qsmaxmin.qsbase.common.log.L;
-import com.qsmaxmin.qsbase.common.utils.glideTransfor.RoundBitmapTransform;
+import com.qsmaxmin.qsbase.common.utils.glide.transform.RoundCornerBitmapTransform;
 
 import java.io.File;
 import java.util.concurrent.ExecutionException;
@@ -106,21 +107,23 @@ public class ImageHelper {
 
     public class Builder {
         private boolean enableDefaultHolder = true;
-        private RequestManager    manager;
-        private Object            mObject;
-        private int               placeholderId;
-        private int               errorId;
-        private int               defaultHolderId;
-        private Drawable          placeholderDrawable;
-        private Drawable          errorDrawable;
-        private boolean           centerCrop;
-        private boolean           fitCenter;
-        private boolean           centerInside;
-        private int               mCorners;
-        private int               mWidth;
-        private int               mHeight;
-        private boolean           noMemoryCache;
-        private DiskCacheStrategy diskCacheStrategy;
+        private RequestManager       manager;
+        private Object               mObject;
+        private int                  placeholderId;
+        private int                  errorId;
+        private int                  defaultHolderId;
+        private Drawable             placeholderDrawable;
+        private Drawable             errorDrawable;
+        private boolean              centerCrop;
+        private boolean              fitCenter;
+        private boolean              centerInside;
+        private int                  mCorners;
+        private int                  mWidth;
+        private int                  mHeight;
+        private boolean              noMemoryCache;
+        private DiskCacheStrategy    diskCacheStrategy;
+        private BitmapTransformation mTransformation;
+        private boolean              mIsCircleCrop;
 
         Builder(Context context) {
             manager = Glide.with(context);
@@ -226,6 +229,16 @@ public class ImageHelper {
 
         public Builder roundedCorners(int corners) {
             this.mCorners = corners;
+            return this;
+        }
+
+        public Builder circleCrop() {
+            this.mIsCircleCrop = true;
+            return this;
+        }
+
+        public Builder transform(BitmapTransformation transformation) {
+            this.mTransformation = transformation;
             return this;
         }
 
@@ -362,7 +375,9 @@ public class ImageHelper {
                     || mCorners > 0
                     || (mWidth > 0 && mHeight > 0)
                     || noMemoryCache
-                    || diskCacheStrategy != null;
+                    || diskCacheStrategy != null
+                    || mIsCircleCrop
+                    || mTransformation != null;
         }
 
         @NonNull private RequestOptions createRequestOptions() {
@@ -381,24 +396,16 @@ public class ImageHelper {
             } else if (enableDefaultHolder && defaultHolderId > 0) {
                 requestOptions.error(defaultHolderId);
             }
-            if (mCorners > 0) {
-                if (centerCrop) {
-                    requestOptions.optionalCenterCrop();
-                } else if (fitCenter) {
-                    requestOptions.optionalFitCenter();
-                } else if (centerInside) {
-                    requestOptions.optionalCenterInside();
-                }
-                requestOptions.optionalTransform(new RoundBitmapTransform(mCorners));
-            } else {
-                if (centerCrop) {
-                    requestOptions.centerCrop();
-                } else if (fitCenter) {
-                    requestOptions.fitCenter();
-                } else if (centerInside) {
-                    requestOptions.centerInside();
-                }
+            if (centerCrop) {
+                requestOptions.optionalCenterCrop();
+            } else if (fitCenter) {
+                requestOptions.optionalFitCenter();
+            } else if (centerInside) {
+                requestOptions.optionalCenterInside();
             }
+            if (mIsCircleCrop) requestOptions.optionalCircleCrop();
+            if (mCorners > 0) requestOptions.optionalTransform(new RoundCornerBitmapTransform(mCorners));
+            if (mTransformation != null) requestOptions.optionalTransform(mTransformation);
 
             if (mWidth > 0 && mHeight > 0) requestOptions.override(mWidth, mHeight);
             if (noMemoryCache) requestOptions.skipMemoryCache(true);

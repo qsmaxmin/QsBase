@@ -1,4 +1,4 @@
-package com.qsmaxmin.qsbase.common.utils.glideTransfor;
+package com.qsmaxmin.qsbase.common.utils.glide.transform;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapShader;
@@ -21,12 +21,12 @@ import java.security.MessageDigest;
  * @Description
  */
 
-public class RoundBitmapTransform extends BitmapTransformation {
-    private static final String CUSTOM_ID       = "com.qsmaxmin.qsbase.common.utils.glideTransfor.RoundBitmapTransform";
+public class RoundCornerBitmapTransform extends BitmapTransformation {
+    private static final String CUSTOM_ID       = "com.qsmaxmin.qsbase.common.utils.glide.transformation.RoundBitmapTransform";
     private static final byte[] CUSTOM_ID_BYTES = CUSTOM_ID.getBytes(CHARSET);
     private final int radius;
 
-    public RoundBitmapTransform(int radius) {
+    public RoundCornerBitmapTransform(int radius) {
         this.radius = radius;
     }
 
@@ -52,7 +52,7 @@ public class RoundBitmapTransform extends BitmapTransformation {
 
     @Override
     public boolean equals(Object o) {
-        return (o instanceof RoundBitmapTransform) && ((RoundBitmapTransform) o).radius == radius;
+        return (o instanceof RoundCornerBitmapTransform) && ((RoundCornerBitmapTransform) o).radius == radius;
     }
 
     @Override

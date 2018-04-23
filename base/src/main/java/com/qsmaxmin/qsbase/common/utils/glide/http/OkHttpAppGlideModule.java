@@ -1,4 +1,4 @@
-package com.qsmaxmin.qsbase.common.utils.glideWithOkHttp;
+package com.qsmaxmin.qsbase.common.utils.glide.http;
 
 import android.content.Context;
 

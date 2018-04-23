@@ -1,4 +1,4 @@
-package com.qsmaxmin.qsbase.common.utils.glideWithOkHttp;
+package com.qsmaxmin.qsbase.common.utils.glide.http;
 
 import com.bumptech.glide.load.Options;
 import com.bumptech.glide.load.model.GlideUrl;
