@@ -35,11 +35,11 @@ public class KeyboardHelper {
     /***
      * 延迟300毫秒-显示键盘 说明：延迟会解决 有时弹不出键盘的问题
      */
-    public static void showSoftInputDelay(final Activity acitivity, final EditText et) {
-        if (acitivity == null || et == null) return;
+    public static void showSoftInputDelay(final Activity activity, final EditText et) {
+        if (activity == null || et == null) return;
         et.postDelayed(new Runnable() {
             @Override public void run() {
-                showSoftInput(acitivity, et);
+                showSoftInput(activity, et);
             }
         }, 300);
     }

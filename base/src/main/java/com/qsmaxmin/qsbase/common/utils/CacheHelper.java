@@ -25,11 +25,7 @@ public class CacheHelper {
     }
 
     static CacheHelper getInstance() {
-        if (cacheHelper == null) {
-            synchronized (CacheHelper.class) {
-                if (cacheHelper == null) cacheHelper = new CacheHelper();
-            }
-        }
+        if (cacheHelper == null) cacheHelper = new CacheHelper();
         return cacheHelper;
     }
 

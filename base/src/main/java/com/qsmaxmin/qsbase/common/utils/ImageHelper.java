@@ -47,11 +47,7 @@ public class ImageHelper {
     }
 
     static ImageHelper getInstance() {
-        if (helper == null) {
-            synchronized (ImageHelper.class) {
-                if (helper == null) helper = new ImageHelper();
-            }
-        }
+        if (helper == null) helper = new ImageHelper();
         return helper;
     }
 
