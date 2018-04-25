@@ -287,7 +287,7 @@ public class HttpAdapter {
             response.close();
             throw new QsException(QsExceptionType.HTTP_ERROR, requestTag, "http response error... method:" + method.getName() + "  response body is null!!");
         }
-        Object result = converter.jsonFromBody(body, returnType, method.getName());
+        Object result = converter.jsonFromBody(body, returnType, method.getName(),requestTag);
         response.close();
         return result;
     }
