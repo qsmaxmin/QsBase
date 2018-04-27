@@ -63,6 +63,10 @@ public class HttpAdapter {
         return client;
     }
 
+    public void setHttpClient(OkHttpClient client) {
+        this.client = client;
+    }
+
     /**
      * 获取默认值
      */
@@ -287,7 +291,7 @@ public class HttpAdapter {
             response.close();
             throw new QsException(QsExceptionType.HTTP_ERROR, requestTag, "http response error... method:" + method.getName() + "  response body is null!!");
         }
-        Object result = converter.jsonFromBody(body, returnType, method.getName(),requestTag);
+        Object result = converter.jsonFromBody(body, returnType, method.getName(), requestTag);
         response.close();
         return result;
     }
