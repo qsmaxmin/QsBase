@@ -17,7 +17,7 @@ import com.qsmaxmin.qsbase.mvp.model.QsModelPager;
 
 public class ViewPagerHelper {
     private View oldView          = null;
-    private int  oldPosition      = -1;
+    private int  oldPosition      = 0;
     private int  currentPageIndex = -1;        // 当前page索引（切换之前）
 
     private QsIViewPagerFragment   viewPagerFragment;
