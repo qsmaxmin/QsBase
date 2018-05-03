@@ -228,22 +228,14 @@ public class QsHelper {
         return viewBind;
     }
 
-
     @SuppressLint("MissingPermission") public boolean isNetworkAvailable() {
         ConnectivityManager connect = (ConnectivityManager) getApplication().getSystemService(Context.CONNECTIVITY_SERVICE);
         if (connect == null) {
             return false;
         } else {
-            NetworkInfo[] info = connect.getAllNetworkInfo();
-            if (info != null) {
-                for (NetworkInfo anInfo : info) {
-                    if (anInfo.getState() == NetworkInfo.State.CONNECTED) {
-                        return true;
-                    }
-                }
-            }
+            NetworkInfo activeNetworkInfo = connect.getActiveNetworkInfo();
+            return activeNetworkInfo != null && activeNetworkInfo.isAvailable();
         }
-        return false;
     }
 
     public String getString(@StringRes int resId) {

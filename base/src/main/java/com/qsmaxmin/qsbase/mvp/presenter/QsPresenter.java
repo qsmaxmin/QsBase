@@ -1,6 +1,11 @@
 package com.qsmaxmin.qsbase.mvp.presenter;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.support.annotation.ColorRes;
+import android.support.annotation.DimenRes;
+import android.support.annotation.DrawableRes;
+import android.support.annotation.StringRes;
 
 import com.qsmaxmin.qsbase.common.aspect.ThreadPoint;
 import com.qsmaxmin.qsbase.common.aspect.ThreadType;
@@ -110,19 +115,14 @@ public class QsPresenter<V extends QsIView> {
         }
     }
 
-    protected String getString(int stringId) {
-        return QsHelper.getInstance().getString(stringId);
-    }
-
-
-    protected boolean isSuccess(QsModel baseModel) {
+    public boolean isSuccess(QsModel baseModel) {
         return isSuccess(baseModel, false);
     }
 
     /**
      * 请求网络成功，判断数据的完整性
      */
-    protected boolean isSuccess(QsModel model, boolean shouldToast) {
+    public boolean isSuccess(QsModel model, boolean shouldToast) {
         if (model != null && model.isResponseOk()) {
             return true;
         } else if (!isViewDetach()) {
@@ -196,5 +196,33 @@ public class QsPresenter<V extends QsIView> {
             }
             qsIview.loadingClose();
         }
+    }
+
+    public String getString(int stringId) {
+        return QsHelper.getInstance().getString(stringId);
+    }
+
+    public String getString(@StringRes int resId, Object... formatArgs) {
+        return QsHelper.getInstance().getString(resId, formatArgs);
+    }
+
+    public Drawable getDrawable(@DrawableRes int resId) {
+        return QsHelper.getInstance().getDrawable(resId);
+    }
+
+    public int getColor(@ColorRes int resId) {
+        return QsHelper.getInstance().getColor(resId);
+    }
+
+    public float getDimension(@DimenRes int resId) {
+        return QsHelper.getInstance().getDimension(resId);
+    }
+
+    public boolean isSdCardAvailable() {
+        return QsHelper.getInstance().isSdCardAvailable();
+    }
+
+    public boolean isNetworkAvailable() {
+        return QsHelper.getInstance().isNetworkAvailable();
     }
 }
