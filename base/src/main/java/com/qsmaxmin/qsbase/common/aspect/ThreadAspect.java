@@ -4,6 +4,7 @@ import android.os.Looper;
 
 import com.qsmaxmin.qsbase.R;
 import com.qsmaxmin.qsbase.common.exception.QsException;
+import com.qsmaxmin.qsbase.common.exception.QsExceptionType;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
 
@@ -55,9 +56,10 @@ public class ThreadAspect {
                         if (methodError != null) QsHelper.getInstance().getThreadHelper().getMainThread().execute(new Runnable() {
                             @Override public void run() {
                                 try {
-                                    methodError.invoke(target, QsHelper.getInstance().getString(R.string.network_error));
+                                    QsException qsException = new QsException(QsExceptionType.NETWORK_ERROR, "", QsHelper.getInstance().getString(R.string.network_error));
+                                    methodError.invoke(target, qsException);
                                 } catch (Exception e1) {
-                                    e1.printStackTrace();
+                                    L.e("ThreadAspect", e1.getMessage());
                                 }
                             }
                         });
