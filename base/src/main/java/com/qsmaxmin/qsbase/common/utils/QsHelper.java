@@ -259,6 +259,6 @@ public class QsHelper {
     }
 
     public boolean isSdCardAvailable() {
-        return Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED);
+        return Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState());
     }
 }
