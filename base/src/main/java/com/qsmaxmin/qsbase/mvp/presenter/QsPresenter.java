@@ -198,7 +198,7 @@ public class QsPresenter<V extends QsIView> {
         }
     }
 
-    public String getString(int stringId) {
+    public String getString(@StringRes int stringId) {
         return QsHelper.getInstance().getString(stringId);
     }
 
