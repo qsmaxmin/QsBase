@@ -2,6 +2,7 @@
     <string name="app_name">QsBase</string>
     <string name="loading">加载中…</string>
     <string name="http_error">网络异常</string>
+    <string name="network_error">当前网络不可用，请检查你的网络设置</string>
     <string name="push_loading">上拉加载</string>
 
     <string name="request_permission_end">权限被禁止了，需开启才能执行后续操作!</string>

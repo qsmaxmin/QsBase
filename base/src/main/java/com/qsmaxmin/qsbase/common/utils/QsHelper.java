@@ -1,7 +1,11 @@
 package com.qsmaxmin.qsbase.common.utils;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.ColorRes;
@@ -222,6 +226,24 @@ public class QsHelper {
             }
         }
         return viewBind;
+    }
+
+
+    @SuppressLint("MissingPermission") public boolean isNetworkAvailable() {
+        ConnectivityManager connect = (ConnectivityManager) getApplication().getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connect == null) {
+            return false;
+        } else {
+            NetworkInfo[] info = connect.getAllNetworkInfo();
+            if (info != null) {
+                for (NetworkInfo anInfo : info) {
+                    if (anInfo.getState() == NetworkInfo.State.CONNECTED) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     public String getString(@StringRes int resId) {
