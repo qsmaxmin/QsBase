@@ -66,10 +66,6 @@ public class QsHelper {
         return ImageHelper.getInstance();
     }
 
-    public static PermissionUtils getPermissionHelper() {
-        return PermissionUtils.getInstance();
-    }
-
     public QsThreadPollHelper getThreadHelper() {
         return QsThreadPollHelper.getInstance();
     }
@@ -89,10 +85,6 @@ public class QsHelper {
             }
         }
         return httpAdapter;
-    }
-
-    public void resetHttpAdapter() {
-        httpAdapter = null;
     }
 
     public CacheHelper getCacheHelper() {
@@ -266,5 +258,9 @@ public class QsHelper {
 
     public void closeStream(Closeable... closeables) {
         StreamCloseUtils.close(closeables);
+    }
+
+    public PermissionUtils getPermissionHelper() {
+        return PermissionUtils.getInstance();
     }
 }

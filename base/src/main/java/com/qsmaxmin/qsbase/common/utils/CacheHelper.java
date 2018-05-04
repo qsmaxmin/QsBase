@@ -39,7 +39,7 @@ public class CacheHelper {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            StreamCloseUtils.close(fs);
+            QsHelper.getInstance().closeStream(fs);
         }
     }
 
@@ -57,7 +57,7 @@ public class CacheHelper {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            StreamCloseUtils.close(fileInputStream, inputStreamReader, bufferedReader);
+            QsHelper.getInstance().closeStream(fileInputStream, inputStreamReader, bufferedReader);
         }
         return null;
     }
