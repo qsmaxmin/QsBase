@@ -88,7 +88,7 @@ public class QsHelper {
     }
 
     public CacheHelper getCacheHelper() {
-        return CacheHelper.getInstance();
+        return new CacheHelper();
     }
 
     public void intent2Activity(Class clazz) {

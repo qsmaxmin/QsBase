@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.common.utils.StreamCloseUtils;
+import com.qsmaxmin.qsbase.mvp.model.QsConstants;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -48,7 +49,7 @@ public abstract class QsProperties {
 
     public QsProperties(String propertiesFileName) {
         mPropertiesFileName = propertiesFileName;
-        mPropertyParentFile = new File(QsHelper.getInstance().getApplication().getFilesDir(), "QsBase");
+        mPropertyParentFile = new File(QsHelper.getInstance().getApplication().getFilesDir(), QsConstants.PARENT_FILE_DIR_NAME);
         if (!mPropertyParentFile.exists()) {
             boolean mkdirs = mPropertyParentFile.mkdirs();
             L.i(initTag(), "make dir success:" + mkdirs);
