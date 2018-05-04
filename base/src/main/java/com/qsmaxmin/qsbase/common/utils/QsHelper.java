@@ -31,6 +31,8 @@ import com.qsmaxmin.qsbase.common.viewbind.ViewBindImpl;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.io.Closeable;
+
 /**
  * @CreateBy qsmaxmin
  * @Date 2017/6/20 16:46
@@ -260,5 +262,9 @@ public class QsHelper {
 
     public boolean isSdCardAvailable() {
         return Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState());
+    }
+
+    public void closeStream(Closeable... closeables) {
+        StreamCloseUtils.close(closeables);
     }
 }
