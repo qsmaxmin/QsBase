@@ -1,17 +1,14 @@
 package com.qsmaxmin.qsbase.common.utils;
 
 
+import android.content.Context;
+
 import com.google.gson.Gson;
-import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.model.QsModel;
-import com.qsmaxmin.qsbase.mvp.model.QsConstants;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStreamReader;
 
 
@@ -26,18 +23,11 @@ public class CacheHelper {
     }
 
     public <T extends QsModel> void saveObject2File(T model, String fileName) {
-        File parentDir = new File(QsHelper.getInstance().getApplication().getFilesDir(), QsConstants.PARENT_FILE_DIR_NAME);
-        if (!parentDir.exists()) {
-            boolean mkdirs = parentDir.mkdirs();
-            L.i("CacheHelper", "create parent dir success:" + mkdirs);
-        }
-
         Gson gson = new Gson();
         String json = gson.toJson(model);
         FileOutputStream fos = null;
         try {
-            File targetFile = new File(parentDir, fileName);
-            fos = new FileOutputStream(targetFile);
+            fos = QsHelper.getInstance().getApplication().openFileOutput(fileName, Context.MODE_PRIVATE);
             fos.write(json.getBytes());
         } catch (Exception e) {
             e.printStackTrace();
@@ -47,32 +37,20 @@ public class CacheHelper {
     }
 
     public <T extends QsModel> T getObjectFromFile(String fileName, Class<T> clazz) {
-        File parentDir = new File(QsHelper.getInstance().getApplication().getFilesDir(), QsConstants.PARENT_FILE_DIR_NAME);
-        if (!parentDir.exists()) {
-            L.i("CacheHelper", "parent dir not exists, dir:" + parentDir.getAbsolutePath());
-            return null;
-        }
-        File targetFile = new File(parentDir, fileName);
-        if (!targetFile.exists()) {
-            L.i("CacheHelper", "cache file not exists, file:" + targetFile.getAbsolutePath());
-            return null;
-        }
-        FileInputStream fis = null;
+        FileInputStream fileInputStream = null;
         InputStreamReader inputStreamReader = null;
         BufferedReader bufferedReader = null;
         try {
-            fis = new FileInputStream(targetFile);
-            inputStreamReader = new InputStreamReader(fis);
+            fileInputStream = QsHelper.getInstance().getApplication().openFileInput(fileName);
+            inputStreamReader = new InputStreamReader(fileInputStream);
             bufferedReader = new BufferedReader(inputStreamReader);
             String json = bufferedReader.readLine();
             Gson gson = new Gson();
             return gson.fromJson(json, clazz);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            QsHelper.getInstance().closeStream(fis, inputStreamReader, bufferedReader);
+            QsHelper.getInstance().closeStream(fileInputStream, inputStreamReader, bufferedReader);
         }
         return null;
     }

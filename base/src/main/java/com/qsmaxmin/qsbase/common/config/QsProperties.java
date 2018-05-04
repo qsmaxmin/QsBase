@@ -6,7 +6,6 @@ import android.text.TextUtils;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.common.utils.StreamCloseUtils;
-import com.qsmaxmin.qsbase.mvp.model.QsConstants;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -36,7 +35,7 @@ public abstract class QsProperties {
     public static final  int        OPEN_TYPE_DATA           = 2;
 
     private String           mPropertiesFileName;
-    private File             mPropertyParentFile;
+    private File             propertyFilePath;
     private PropertyCallback propertyCallback;
 
     public QsProperties() {
@@ -49,11 +48,7 @@ public abstract class QsProperties {
 
     public QsProperties(String propertiesFileName) {
         mPropertiesFileName = propertiesFileName;
-        mPropertyParentFile = new File(QsHelper.getInstance().getApplication().getFilesDir(), QsConstants.PARENT_FILE_DIR_NAME);
-        if (!mPropertyParentFile.exists()) {
-            boolean mkdirs = mPropertyParentFile.mkdirs();
-            L.i(initTag(), "make dir success:" + mkdirs);
-        }
+        propertyFilePath = QsHelper.getInstance().getApplication().getFilesDir();
         switch (initType()) {
             case OPEN_TYPE_ASSETS:
                 InputStream inputStream = null;
@@ -72,7 +67,7 @@ public abstract class QsProperties {
                 InputStream in = null;
                 try {
                     String stringBuilder = mPropertiesFileName + EXTENSION;
-                    File file = new File(mPropertyParentFile, stringBuilder);
+                    File file = new File(propertyFilePath, stringBuilder);
                     if (!file.exists()) {
                         boolean success = file.createNewFile();
                         L.i(initTag(), "create properties file " + (success ? "success" : "fail") + " !  file:" + file.getAbsolutePath());
@@ -324,7 +319,7 @@ public abstract class QsProperties {
     public void commit(PropertyCallback callback) {
         OutputStream out = null;
         try {
-            File file = new File(mPropertyParentFile, mPropertiesFileName + EXTENSION);
+            File file = new File(propertyFilePath, mPropertiesFileName + EXTENSION);
             if (!file.exists()) {
                 boolean success = file.createNewFile();
                 L.e(initTag(), "create new file isSuccess:" + success);
@@ -353,7 +348,7 @@ public abstract class QsProperties {
     public void clear() {
         OutputStream out = null;
         try {
-            File file = new File(mPropertyParentFile, mPropertiesFileName + EXTENSION);
+            File file = new File(propertyFilePath, mPropertiesFileName + EXTENSION);
             if (!file.exists()) {
                 return;
             }

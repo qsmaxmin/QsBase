@@ -25,9 +25,4 @@ public class QsConstants {
     public static final String NAME_WORK_THREAD   = "WorkThreadPoll";
     public static final String NAME_SINGLE_THREAD = "SingleThreadPoll";
 
-    /**
-     * {@link com.qsmaxmin.qsbase.common.config.QsProperties}config保存数据到file目录下子文件夹名称
-     * {@link com.qsmaxmin.qsbase.common.utils.CacheHelper}cache保存数据到file目录下子文件夹名称
-     */
-    public static final String PARENT_FILE_DIR_NAME = "QsBase";
 }
