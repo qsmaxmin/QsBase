@@ -1,7 +1,5 @@
 package com.qsmaxmin.qsbase.common.viewbind.annotation;
 
-import android.view.View;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -17,24 +15,8 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface OnClick {
-
     /**
      * 控件的id集合, id小于1时不执行ui事件绑定.
      */
     int[] value();
-
-    /**
-     * 事件的listener, 默认为点击事件.
-     */
-    Class<?> type() default View.OnClickListener.class;
-
-    /**
-     * 事件的setter方法名, 默认为set+type#simpleName.
-     */
-    String setter() default "";
-
-    /**
-     * 如果type的接口类型提供多个方法, 需要使用此参数指定方法名.
-     */
-    String method() default "";
 }
