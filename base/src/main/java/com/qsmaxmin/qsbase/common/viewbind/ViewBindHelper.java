@@ -66,12 +66,15 @@ public final class ViewBindHelper {
         IGNORED.add(QsRecycleAdapterItem.class);
     }
 
-    public void bind(final Object target, View rootView) {
-        if (target == null) return;
-        Class<?> clazz = target.getClass();
-        if (IGNORED.contains(clazz)) return;
-        bind(clazz.getSuperclass(), rootView);
+    public void bind(Object target, View view) {
+        injectObject(target, target.getClass(), view);
+    }
 
+    private void injectObject(final Object target, Class<?> clazz, View rootView) {
+        if (clazz == null || IGNORED.contains(clazz)) {
+            return;
+        }
+        injectObject(target, clazz.getSuperclass(), rootView);
         Field[] fields = clazz.getDeclaredFields();
         if (fields != null && fields.length > 0) {
             for (Field field : fields) {
