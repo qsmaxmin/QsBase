@@ -66,15 +66,15 @@ public final class ViewBindImpl implements ViewBind {
         IGNORED.add(QsRecycleAdapterItem.class);
     }
 
-    @Override public void bind(Object handler, View view) {
-        injectObject(handler, handler.getClass(), new ViewFinder(view));
+    @Override public void bind(Object target, View view) {
+        injectObject(target, target.getClass(), new ViewFinder(view));
     }
 
-    private void injectObject(final Object handler, Class<?> clazz, ViewFinder finder) {
+    private void injectObject(final Object target, Class<?> clazz, ViewFinder finder) {
         if (clazz == null || IGNORED.contains(clazz)) {
             return;
         }
-        injectObject(handler, clazz.getSuperclass(), finder);
+        injectObject(target, clazz.getSuperclass(), finder);
         Field[] fields = clazz.getDeclaredFields();
         if (fields != null && fields.length > 0) {
             for (Field field : fields) {
@@ -93,7 +93,7 @@ public final class ViewBindImpl implements ViewBind {
                         View view = finder.findViewById(bind.value());
                         if (view != null) {
                             field.setAccessible(true);
-                            field.set(handler, view);
+                            field.set(target, view);
                         } else {
                             L.i("ViewBindImpl", "Invalid @Bind for " + clazz.getSimpleName() + "." + field.getName());
                         }
@@ -119,16 +119,16 @@ public final class ViewBindImpl implements ViewBind {
                     if (view != null) {
                         view.setOnClickListener(new View.OnClickListener() {
                             @Override public void onClick(View v) {
-                                if (handler instanceof QsIView) {
-                                    ((QsIView) handler).onViewClick(view);
-                                } else if (handler instanceof QsListAdapterItem) {
-                                    ((QsListAdapterItem) handler).onViewClick(view);
-                                } else if (handler instanceof QsRecycleAdapterItem) {
-                                    ((QsRecycleAdapterItem) handler).onViewClick(view);
-                                } else if (handler instanceof QsDialogFragment) {
-                                    ((QsDialogFragment) handler).onViewClick(view);
+                                if (target instanceof QsIView) {
+                                    ((QsIView) target).onViewClick(view);
+                                } else if (target instanceof QsListAdapterItem) {
+                                    ((QsListAdapterItem) target).onViewClick(view);
+                                } else if (target instanceof QsRecycleAdapterItem) {
+                                    ((QsRecycleAdapterItem) target).onViewClick(view);
+                                } else if (target instanceof QsDialogFragment) {
+                                    ((QsDialogFragment) target).onViewClick(view);
                                 } else {
-                                    L.e("", "Invalid @OnClick target, support only Activity Fragment QsListAdapterItem and QsRecycleAdapterItem, not support:" + handler.getClass().getSimpleName());
+                                    L.e("", "Invalid @OnClick target, support only Activity Fragment QsListAdapterItem and QsRecycleAdapterItem, not support:" + target.getClass().getSimpleName());
                                 }
                             }
                         });
