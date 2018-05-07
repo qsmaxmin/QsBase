@@ -22,8 +22,8 @@ MVP架构+AOP面向切面编程，摒弃反射、代理等操作，稳定性和�
                 }
             dependencies {
                 ...
-                classpath 'org.aspectj:aspectjtools:1.8.10'
-                classpath 'com.github.qsmaxmin:gradle_plugin_android_aspectjx:1.1.1'
+                classpath 'org.aspectj:aspectjtools:1.9.1'
+                classpath 'com.github.qsmaxmin:gradle_plugin_android_aspectjx:2.0.1'
             }
         }
 
