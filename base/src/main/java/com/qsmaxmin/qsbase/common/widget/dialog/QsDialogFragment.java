@@ -10,6 +10,8 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.qsmaxmin.qsbase.common.utils.QsHelper;
+
 /**
  * Created by sky on 15/2/28. dialog 基类
  */
@@ -30,7 +32,9 @@ public abstract class QsDialogFragment extends DialogFragment {
             setAttribute(params);
             window.setAttributes(params);
         }
-        return getDialogView(inflater, container);
+        View dialogView = getDialogView(inflater, container);
+        QsHelper.getInstance().getViewBindHelper().bind(this, dialogView);
+        return dialogView;
     }
 
     protected void setAttribute(WindowManager.LayoutParams params) {
@@ -45,5 +49,8 @@ public abstract class QsDialogFragment extends DialogFragment {
 
     protected String initTag() {
         return getClass().getSimpleName();
+    }
+
+    public void onViewClick(View view) {
     }
 }

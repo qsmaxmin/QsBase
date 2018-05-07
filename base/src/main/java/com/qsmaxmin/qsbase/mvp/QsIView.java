@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.StringRes;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
+import android.view.View;
 
 /**
  * @CreateBy qsmaxmin
@@ -19,6 +20,8 @@ public interface QsIView<P> {
     int layoutId();
 
     void initData(Bundle savedInstanceState);
+
+    void onViewClick(View view);
 
     boolean isDelayData();
 

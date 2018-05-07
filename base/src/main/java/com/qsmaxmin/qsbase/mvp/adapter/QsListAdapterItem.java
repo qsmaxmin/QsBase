@@ -21,4 +21,6 @@ public abstract class QsListAdapterItem<T> {
     }
 
     public abstract void bindData(T t, int position, int count);
+
+    public void onViewClick(View view){}
 }

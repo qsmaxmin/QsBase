@@ -38,4 +38,7 @@ public abstract class QsRecycleAdapterItem<T> {
     View getItemView() {
         return mItemView;
     }
+
+    public void onViewClick(View view) {
+    }
 }

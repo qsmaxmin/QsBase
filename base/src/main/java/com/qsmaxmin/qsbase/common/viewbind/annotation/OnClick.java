@@ -13,9 +13,6 @@ import java.lang.annotation.Target;
  * 1. private 修饰
  * 2. 返回值类型没有要求
  * 3. 参数签名和type的接口要求的参数签名一致.
- * Author: wyouflf
- * Date: 13-9-9
- * Time: 下午12:43
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
@@ -25,11 +22,6 @@ public @interface OnClick {
      * 控件的id集合, id小于1时不执行ui事件绑定.
      */
     int[] value();
-
-    /**
-     * 控件的parent控件的id集合, 组合为(value[i], parentId[i] or 0).
-     */
-    int[] parentId() default 0;
 
     /**
      * 事件的listener, 默认为点击事件.

@@ -136,6 +136,10 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         }
     }
 
+    @Override public void onViewClick(View view) {
+
+    }
+
     @Override public boolean isOpenEventBus() {
         return false;
     }

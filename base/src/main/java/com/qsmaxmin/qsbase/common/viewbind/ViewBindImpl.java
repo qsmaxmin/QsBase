@@ -6,10 +6,13 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
+import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.viewbind.annotation.Bind;
 import com.qsmaxmin.qsbase.common.viewbind.annotation.OnClick;
+import com.qsmaxmin.qsbase.common.widget.dialog.QsDialogFragment;
 import com.qsmaxmin.qsbase.mvp.QsABActivity;
 import com.qsmaxmin.qsbase.mvp.QsActivity;
+import com.qsmaxmin.qsbase.mvp.QsIView;
 import com.qsmaxmin.qsbase.mvp.QsViewPagerABActivity;
 import com.qsmaxmin.qsbase.mvp.QsViewPagerActivity;
 import com.qsmaxmin.qsbase.mvp.adapter.QsListAdapterItem;
@@ -31,7 +34,7 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 
 public final class ViewBindImpl implements ViewBind {
-
+    private static final String              TAG     = "ViewBindImpl";
     private static final ArrayList<Class<?>> IGNORED = new ArrayList<>();
 
     static {
@@ -48,6 +51,7 @@ public final class ViewBindImpl implements ViewBind {
         IGNORED.add(QsViewPagerABActivity.class);
 
         IGNORED.add(QsFragment.class);
+        IGNORED.add(QsDialogFragment.class);
         IGNORED.add(QsListFragment.class);
         IGNORED.add(QsPullListFragment.class);
         IGNORED.add(QsRecyclerFragment.class);
@@ -66,7 +70,7 @@ public final class ViewBindImpl implements ViewBind {
         injectObject(handler, handler.getClass(), new ViewFinder(view));
     }
 
-    private static void injectObject(Object handler, Class<?> clazz, ViewFinder finder) {
+    private void injectObject(final Object handler, Class<?> clazz, ViewFinder finder) {
         if (clazz == null || IGNORED.contains(clazz)) {
             return;
         }
@@ -82,15 +86,16 @@ public final class ViewBindImpl implements ViewBind {
                 /* 不注入数组类型字段 */  fieldType.isArray()) {
                     continue;
                 }
+
                 Bind bind = field.getAnnotation(Bind.class);
                 if (bind != null) {
                     try {
-                        View view = finder.findViewById(bind.value(), bind.parentId());
+                        View view = finder.findViewById(bind.value());
                         if (view != null) {
                             field.setAccessible(true);
                             field.set(handler, view);
                         } else {
-                            throw new RuntimeException("Invalid @Bind for " + clazz.getSimpleName() + "." + field.getName());
+                            L.i("ViewBindImpl", "Invalid @Bind for " + clazz.getSimpleName() + "." + field.getName());
                         }
                     } catch (Throwable ex) {
                         ex.printStackTrace();
@@ -99,30 +104,36 @@ public final class ViewBindImpl implements ViewBind {
             }
         }
 
-        Method[] methods = clazz.getDeclaredMethods();
-        if (methods != null && methods.length > 0) {
-            for (Method method : methods) {
-                if (Modifier.isStatic(method.getModifiers())) {
-                    continue;
-                }
-                OnClick annotation = method.getAnnotation(OnClick.class);
-                if (annotation != null) {
-                    try {
-                        int[] values = annotation.value();
-                        int[] parentIds = annotation.parentId();
-                        int parentIdsLen = parentIds.length;
-                        for (int i = 0; i < values.length; i++) {
-                            int value = values[i];
-                            if (value > 0) {
-                                ViewInfo info = new ViewInfo();
-                                info.value = value;
-                                info.parentId = parentIdsLen > i ? parentIds[i] : 0;
-                                method.setAccessible(true);
-                                EventListenerManager.addEventMethod(finder, info, annotation, handler, method);
+        Method targetMethod = null;
+        try {
+            targetMethod = clazz.getDeclaredMethod("onViewClick", View.class);
+        } catch (NoSuchMethodException e) {
+            L.i(TAG, "never override method:onViewClick(View view)");
+        }
+        if (targetMethod != null) {
+            OnClick annotation = targetMethod.getAnnotation(OnClick.class);
+            if (annotation != null) {
+                int[] values = annotation.value();
+                for (int value : values) {
+                    final View view = finder.findViewById(value);
+                    if (view != null) {
+                        view.setOnClickListener(new View.OnClickListener() {
+                            @Override public void onClick(View v) {
+                                if (handler instanceof QsIView) {
+                                    ((QsIView) handler).onViewClick(view);
+                                } else if (handler instanceof QsListAdapterItem) {
+                                    ((QsListAdapterItem) handler).onViewClick(view);
+                                } else if (handler instanceof QsRecycleAdapterItem) {
+                                    ((QsRecycleAdapterItem) handler).onViewClick(view);
+                                } else if (handler instanceof QsDialogFragment) {
+                                    ((QsDialogFragment) handler).onViewClick(view);
+                                } else {
+                                    L.e("", "Invalid @OnClick target, support only Activity Fragment QsListAdapterItem and QsRecycleAdapterItem, not support:" + handler.getClass().getSimpleName());
+                                }
                             }
-                        }
-                    } catch (Throwable ex) {
-                        ex.printStackTrace();
+                        });
+                    } else {
+                        L.e(TAG, "@OnClick....view is null, id:" + value);
                     }
                 }
             }

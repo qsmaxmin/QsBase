@@ -27,21 +27,6 @@ android {
     }
 }
 
-aspectjx {
-    excludeJarFilter '.jar'
-    excludeJarFilter 'com.android.support'
-    excludeJarFilter 'com.github.bumptech'
-    excludeJarFilter 'org.greenrobot:eventbus'
-    excludeJarFilter 'com.jakewharton:butterknife'
-    excludeJarFilter 'org.aspectj:aspectjrt'
-    excludeJarFilter 'com.squareup.retrofit2'
-    excludeJarFilter 'com.squareup.okhttp3'
-    excludeJarFilter 'com.google.code.gson'
-    excludeJarFilter 'io.reactivex:rxandroid'
-    excludeJarFilter 'org.javassist:javassist'
-}
-
-
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:design:25.3.1'

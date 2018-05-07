@@ -23,8 +23,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Bind {
-
     int value();
-
-    int parentId() default 0;
 }

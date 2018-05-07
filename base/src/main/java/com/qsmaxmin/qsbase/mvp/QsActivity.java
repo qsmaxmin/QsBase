@@ -140,6 +140,10 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         }
     }
 
+    @Override public void onViewClick(View view) {
+
+    }
+
     @Override public Context getContext() {
         return this;
     }

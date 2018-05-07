@@ -156,6 +156,10 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
         }
     }
 
+    @Override public void onViewClick(View view) {
+
+    }
+
     @Override public Context getContext() {
         return this;
     }

@@ -11,7 +11,7 @@ buildscript {
         classpath 'com.android.tools.build:gradle:3.0.1'
         /*AspectJ*/
         classpath 'com.github.qsmaxmin:gradle_plugin_android_aspectjx:2.0.1'
-        classpath 'org.aspectj:aspectjtools:1.8.10'
+        classpath 'org.aspectj:aspectjtools:1.9.1'
     }
 }
 
