@@ -33,8 +33,8 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 
-public final class ViewBindImpl implements ViewBind {
-    private static final String              TAG     = "ViewBindImpl";
+public final class ViewBindHelper {
+    private static final String              TAG     = "ViewBindHelper";
     private static final ArrayList<Class<?>> IGNORED = new ArrayList<>();
 
     static {
@@ -66,15 +66,12 @@ public final class ViewBindImpl implements ViewBind {
         IGNORED.add(QsRecycleAdapterItem.class);
     }
 
-    @Override public void bind(Object target, View view) {
-        injectObject(target, target.getClass(), new ViewFinder(view));
-    }
+    public void bind(final Object target, View rootView) {
+        if (target == null) return;
+        Class<?> clazz = target.getClass();
+        if (IGNORED.contains(clazz)) return;
+        bind(clazz.getSuperclass(), rootView);
 
-    private void injectObject(final Object target, Class<?> clazz, ViewFinder finder) {
-        if (clazz == null || IGNORED.contains(clazz)) {
-            return;
-        }
-        injectObject(target, clazz.getSuperclass(), finder);
         Field[] fields = clazz.getDeclaredFields();
         if (fields != null && fields.length > 0) {
             for (Field field : fields) {
@@ -90,7 +87,7 @@ public final class ViewBindImpl implements ViewBind {
                 Bind bind = field.getAnnotation(Bind.class);
                 if (bind != null) {
                     try {
-                        View view = finder.findViewById(bind.value());
+                        View view = rootView.findViewById(bind.value());
                         if (view != null) {
                             field.setAccessible(true);
                             field.set(target, view);
@@ -115,7 +112,7 @@ public final class ViewBindImpl implements ViewBind {
             if (annotation != null) {
                 int[] values = annotation.value();
                 for (int value : values) {
-                    final View view = finder.findViewById(value);
+                    final View view = rootView.findViewById(value);
                     if (view != null) {
                         view.setOnClickListener(new View.OnClickListener() {
                             @Override public void onClick(View v) {

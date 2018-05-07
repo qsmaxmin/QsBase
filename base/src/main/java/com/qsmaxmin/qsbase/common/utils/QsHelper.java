@@ -26,8 +26,7 @@ import com.qsmaxmin.qsbase.common.aspect.ThreadType;
 import com.qsmaxmin.qsbase.common.http.HttpAdapter;
 import com.qsmaxmin.qsbase.common.threadpoll.QsThreadPollHelper;
 import com.qsmaxmin.qsbase.common.utils.permission.PermissionUtils;
-import com.qsmaxmin.qsbase.common.viewbind.ViewBind;
-import com.qsmaxmin.qsbase.common.viewbind.ViewBindImpl;
+import com.qsmaxmin.qsbase.common.viewbind.ViewBindHelper;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -41,7 +40,6 @@ import java.io.Closeable;
 
 public class QsHelper {
     private HttpAdapter httpAdapter;
-    private ViewBind    viewBind;
 
     private static QsHelper helper = new QsHelper();
 
@@ -213,13 +211,8 @@ public class QsHelper {
         }
     }
 
-    public ViewBind getViewBindHelper() {
-        if (viewBind == null) {
-            synchronized (QsHelper.class) {
-                if (viewBind == null) viewBind = new ViewBindImpl();
-            }
-        }
-        return viewBind;
+    public ViewBindHelper getViewBindHelper() {
+        return new ViewBindHelper();
     }
 
     @SuppressLint("MissingPermission") public boolean isNetworkAvailable() {
