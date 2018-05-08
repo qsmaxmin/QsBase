@@ -44,8 +44,8 @@ public class QsPresenter<V extends QsIView> {
     }
 
     public void initPresenter(V view) {
-        isAttach = true;
         mView = view;
+        isAttach = true;
     }
 
     public V getView() {
@@ -65,6 +65,7 @@ public class QsPresenter<V extends QsIView> {
 
     public void setDetach() {
         isAttach = false;
+        mView = null;
         cancelAllHttpRequest();
     }
 
