@@ -3,6 +3,7 @@ package com.qsmaxmin.qsbase.common.config;
 import android.content.res.Resources;
 import android.text.TextUtils;
 
+import com.google.gson.Gson;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.common.utils.StreamCloseUtils;
@@ -37,6 +38,7 @@ public abstract class QsProperties {
     private String           mPropertiesFileName;
     private File             propertyFilePath;
     private PropertyCallback propertyCallback;
+    private Gson             gson;
 
     public QsProperties() {
         this("config");
@@ -177,6 +179,19 @@ public abstract class QsProperties {
         return result;
     }
 
+    private Object getObject(String key, Class<?> clazz, Object defaultValue) {
+        Object object;
+        try {
+            String property = mProperties.getProperty(key);
+            if (gson == null) gson = new Gson();
+            object = gson.fromJson(property, clazz);
+        } catch (Exception e) {
+            L.e(initTag(), e.getMessage());
+            return null;
+        }
+        return object;
+    }
+
     /**
      * 所有属性写入到properties里
      */
@@ -190,14 +205,28 @@ public abstract class QsProperties {
                 Property annotation = field.getAnnotation(Property.class);
                 if (annotation.value().equals(DEFAULT_ANNOTATION_VALUE)) {
                     try {
-                        mProperties.put(fieldName, field.get(this) == null ? "" : String.valueOf(field.get(this)));
-                    } catch (IllegalAccessException e) {
+                        Object value = field.get(this);
+                        if (isCommonlyType(field.getType())) {
+                            mProperties.put(fieldName, field.get(this) == null ? "" : String.valueOf(value));
+                        } else {
+                            if (gson == null) gson = new Gson();
+                            String jsonStr = gson.toJson(value);
+                            mProperties.put(fieldName, jsonStr);
+                        }
+                    } catch (Exception e) {
                         L.e(initTag(), "Properties写入错误:" + e.toString());
                     }
                 } else {
                     try {
-                        mProperties.put(annotation.value(), field.get(this) == null ? "" : String.valueOf(field.get(this)));
-                    } catch (IllegalAccessException e) {
+                        Object value = field.get(this);
+                        if (isCommonlyType(field.getType())) {
+                            mProperties.put(annotation.value(), field.get(this) == null ? "" : String.valueOf(value));
+                        } else {
+                            if (gson == null) gson = new Gson();
+                            String jsonStr = gson.toJson(value);
+                            mProperties.put(annotation.value(), jsonStr);
+                        }
+                    } catch (Exception e) {
                         L.e(initTag(), "Properties写入错误:" + e.toString());
                     }
                 }
@@ -205,35 +234,18 @@ public abstract class QsProperties {
         }
     }
 
-    /**
-     * 所有属性写入到properties里
-     */
-    private void writeDefaultPropertiesValues() {
-        L.i(initTag(), "writePropertiesValues()-写入所有的值");
-        Class<? extends QsProperties> thisClass = this.getClass();
-        Field[] fields = thisClass.getDeclaredFields();
-        for (Field field : fields) {
-            if (field.isAnnotationPresent(Property.class)) {
-                field.setAccessible(true);
-                String fieldName = field.getName();
-                Property annotation = field.getAnnotation(Property.class);
-                if (annotation.value().equals(DEFAULT_ANNOTATION_VALUE)) {
-                    try {
-                        mProperties.put(fieldName, "");
-                        setFieldDefaultValue(field, fieldName);
-                    } catch (Exception e) {
-                        L.e(initTag(), "Properties写入错误:" + e.toString());
-                    }
-                } else {
-                    try {
-                        mProperties.put(annotation.value(), "");
-                        setFieldDefaultValue(field, annotation.value());
-                    } catch (Exception e) {
-                        L.e(initTag(), "Properties写入错误:" + e.toString());
-                    }
-                }
-            }
-        }
+    private boolean isCommonlyType(Class<?> clazz) {
+        return clazz == String.class
+                || clazz == int.class
+                || clazz == Integer.class
+                || clazz == boolean.class
+                || clazz == Boolean.class
+                || clazz == long.class
+                || clazz == Long.class
+                || clazz == float.class
+                || clazz == Float.class
+                || clazz == double.class
+                || clazz == Double.class;
     }
 
     /**
@@ -281,7 +293,7 @@ public abstract class QsProperties {
         } else if (clazz == long.class || clazz == Long.class) {
             return getLong(key, 0);
         } else {
-            return null;
+            return getObject(key, clazz, null);
         }
     }
 
@@ -361,6 +373,37 @@ public abstract class QsProperties {
             ex.printStackTrace();
         } finally {
             StreamCloseUtils.close(out);
+        }
+    }
+
+    /**
+     * 恢复初始值
+     */
+    private void writeDefaultPropertiesValues() {
+        L.i(initTag(), "writePropertiesValues()-写入所有的值");
+        Class<? extends QsProperties> thisClass = this.getClass();
+        Field[] fields = thisClass.getDeclaredFields();
+        for (Field field : fields) {
+            if (field.isAnnotationPresent(Property.class)) {
+                field.setAccessible(true);
+                String fieldName = field.getName();
+                Property annotation = field.getAnnotation(Property.class);
+                if (annotation.value().equals(DEFAULT_ANNOTATION_VALUE)) {
+                    try {
+                        mProperties.put(fieldName, "");
+                        setFieldDefaultValue(field, fieldName);
+                    } catch (Exception e) {
+                        L.e(initTag(), "Properties写入错误:" + e.toString());
+                    }
+                } else {
+                    try {
+                        mProperties.put(annotation.value(), "");
+                        setFieldDefaultValue(field, annotation.value());
+                    } catch (Exception e) {
+                        L.e(initTag(), "Properties写入错误:" + e.toString());
+                    }
+                }
+            }
         }
     }
 }
