@@ -14,7 +14,7 @@ import com.qsmaxmin.qsbase.common.widget.viewpager.QsViewPager;
 import com.qsmaxmin.qsbase.common.widget.viewpager.ViewPagerHelper;
 import com.qsmaxmin.qsbase.mvp.adapter.QsTabViewPagerAdapter;
 import com.qsmaxmin.qsbase.mvp.adapter.QsViewPagerAdapter;
-import com.qsmaxmin.qsbase.mvp.fragment.QsFragment;
+import com.qsmaxmin.qsbase.mvp.fragment.QsIFragment;
 import com.qsmaxmin.qsbase.mvp.model.QsModelPager;
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
 
@@ -98,9 +98,13 @@ public abstract class QsViewPagerActivity<P extends QsPresenter> extends QsActiv
     }
 
     @CallSuper @Override public void onPageSelected(View currentTabItem, View oldTabItem, int position, int oldPosition) {
-        Fragment fragment = getViewPagerAdapter().getData(position).fragment;
-        if (fragment instanceof QsFragment) {
-            ((QsFragment) fragment).onFragmentSelectedInViewPager(position);
+        QsModelPager[] allData = getViewPagerAdapter().getAllData();
+        if (allData == null || allData.length < 1) return;
+        for (int i = 0; i < allData.length; i++) {
+            QsModelPager qsModelPager = allData[i];
+            if (qsModelPager.fragment instanceof QsIFragment) {
+                ((QsIFragment) qsModelPager.fragment).onFragmentSelectedInViewPager(position == i, position, allData.length);
+            }
         }
     }
 

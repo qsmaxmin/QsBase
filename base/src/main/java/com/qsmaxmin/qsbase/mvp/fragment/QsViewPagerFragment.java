@@ -103,9 +103,13 @@ public abstract class QsViewPagerFragment<P extends QsPresenter> extends QsFragm
     }
 
     @CallSuper @Override public void onPageSelected(View currentTabItem, View oldTabItem, int position, int oldPosition) {
-        Fragment fragment = getViewPagerAdapter().getData(position).fragment;
-        if (fragment instanceof QsFragment) {
-            ((QsFragment) fragment).onFragmentSelectedInViewPager(position);
+        QsModelPager[] allData = getViewPagerAdapter().getAllData();
+        if (allData == null || allData.length < 1) return;
+        for (int i = 0; i < allData.length; i++) {
+            QsModelPager qsModelPager = allData[i];
+            if (qsModelPager.fragment instanceof QsIFragment) {
+                ((QsIFragment) qsModelPager.fragment).onFragmentSelectedInViewPager(position == i, position, allData.length);
+            }
         }
     }
 

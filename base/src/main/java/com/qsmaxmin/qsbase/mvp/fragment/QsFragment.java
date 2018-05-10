@@ -371,8 +371,8 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         }
     }
 
-    @Override public void onFragmentSelectedInViewPager(int position) {
-
+    @Override public void onFragmentSelectedInViewPager(boolean isSelected, int currentPosition, int totalCount) {
+        L.i(initTag(), "onFragmentSelectedInViewPager..... isSelected:" + isSelected + "  currentPosition:" + currentPosition + "  totalCount:" + totalCount);
     }
 
     @Override public boolean onTouch(View v, MotionEvent event) {
