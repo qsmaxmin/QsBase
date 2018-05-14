@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import com.qsmaxmin.qsbase.R;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.utils.ImageHelper;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
@@ -92,13 +93,19 @@ public class InfinitePagerAdapter extends PagerAdapter {
         }
     }
 
-    protected ImageView getImageView(Context context) {
+    protected View getPageView(Context context) {
         ImageView imageView = new ImageView(context);
         FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         imageView.setLayoutParams(layoutParams);
         return imageView;
     }
 
+    protected ImageView getPlaceholderView(Context context) {
+        ImageView imageView = new ImageView(context);
+        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        imageView.setLayoutParams(layoutParams);
+        return imageView;
+    }
 
     @Override public float getPageWidth(int position) {
         return PAGE_WIDTH_SINGLE_ITEM;
@@ -108,41 +115,48 @@ public class InfinitePagerAdapter extends PagerAdapter {
         final int virtualPosition = getVirtualPosition(position);
         L.i("InfinitePagerAdapter", "instantiateItem... position:" + virtualPosition + " totalCount:" + getCount());
         FrameLayout frameLayout = new FrameLayout(container.getContext());
-        final ImageView contentImage = getImageView(container.getContext());
-        contentImage.setScaleType(ImageView.ScaleType.FIT_XY);
+        final View pageView = getPageView(container.getContext());
+        ImageView imageView;
+        if (pageView instanceof ImageView) {
+            imageView = (ImageView) pageView;
+        } else {
+            imageView = (ImageView) pageView.findViewById(R.id.qs_banner_image);
+        }
+        if (imageView == null) throw new IllegalStateException("InfinitePageAdapter getPageView(Context) should return a ImageView or ViewGroup Contains a ID of 'R.id.qs_banner_image' ImageView");
+        imageView.setScaleType(ImageView.ScaleType.FIT_XY);
 
         if (placeholder > 0) {
-            final ImageView holderImage = getImageView(container.getContext());
+            final ImageView holderImage = getPlaceholderView(container.getContext());
             holderImage.setScaleType(ImageView.ScaleType.CENTER);
             holderImage.setImageDrawable(container.getContext().getResources().getDrawable(placeholder));
 
             frameLayout.addView(holderImage);
-            frameLayout.addView(contentImage);
+            frameLayout.addView(pageView);
 
             if (virtualPosition < urls.size()) {
                 QsHelper.getInstance().getImageHelper().createRequest()
                         .roundedCorners(corners)
                         .load(urls.get(virtualPosition))
-                        .into(contentImage, new ImageHelper.ImageRequestListener() {
+                        .into(imageView, new ImageHelper.ImageRequestListener() {
                             @Override public void onLoadFailed(String message) {
-                                contentImage.setVisibility(View.GONE);
+                                pageView.setVisibility(View.GONE);
                                 holderImage.setVisibility(View.VISIBLE);
                             }
 
                             @Override public void onSuccess(Drawable drawable, Object model) {
-                                contentImage.setVisibility(View.VISIBLE);
+                                pageView.setVisibility(View.VISIBLE);
                                 holderImage.setVisibility(View.GONE);
                             }
                         });
             }
         } else {
-            frameLayout.addView(contentImage);
+            frameLayout.addView(pageView);
             if (virtualPosition < urls.size()) {
-                QsHelper.getInstance().getImageHelper().createRequest().roundedCorners(corners).load(urls.get(virtualPosition)).into(contentImage);
+                QsHelper.getInstance().getImageHelper().createRequest().roundedCorners(corners).load(urls.get(virtualPosition)).into(imageView);
             }
         }
         if (listener != null) {
-            contentImage.setOnClickListener(new View.OnClickListener() {
+            pageView.setOnClickListener(new View.OnClickListener() {
                 @Override public void onClick(View v) {
                     if (listener != null) {
                         listener.onPageClick(virtualPosition);
