@@ -99,7 +99,7 @@ public class InfinitePagerAdapter extends PagerAdapter {
         }
     }
 
-    protected View getPageView(Context context, int currentIndex, int totalpage) {
+    protected View getPageView(Context context, int currentIndex, int totalPage) {
         ImageView imageView = new ImageView(context);
         FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         imageView.setLayoutParams(layoutParams);
