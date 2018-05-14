@@ -63,6 +63,12 @@ public class InfinitePagerAdapter extends PagerAdapter {
         }
     }
 
+    public List<String> getData() {
+        ArrayList<String> result = new ArrayList<>();
+        result.addAll(urls);
+        return result;
+    }
+
     public void removeData() {
         synchronized (urls) {
             urls.clear();
@@ -93,7 +99,7 @@ public class InfinitePagerAdapter extends PagerAdapter {
         }
     }
 
-    protected View getPageView(Context context) {
+    protected View getPageView(Context context, int currentIndex, int totalpage) {
         ImageView imageView = new ImageView(context);
         FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         imageView.setLayoutParams(layoutParams);
@@ -113,9 +119,9 @@ public class InfinitePagerAdapter extends PagerAdapter {
 
     @Override public Object instantiateItem(ViewGroup container, final int position) {
         final int virtualPosition = getVirtualPosition(position);
-        L.i("InfinitePagerAdapter", "instantiateItem... position:" + virtualPosition + " totalCount:" + getCount());
+        L.i("InfinitePagerAdapter", "instantiateItem... position:" + virtualPosition + " totalCount:" + urls.size());
         FrameLayout frameLayout = new FrameLayout(container.getContext());
-        final View pageView = getPageView(container.getContext());
+        final View pageView = getPageView(container.getContext(), virtualPosition, urls.size());
         ImageView imageView;
         if (pageView instanceof ImageView) {
             imageView = (ImageView) pageView;
