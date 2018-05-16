@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/swipe_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ScrollView
+        android:id="@+id/swipe_child"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@null"
+        android:overScrollMode="never"
+        android:scrollbars="none"/>
+
+</com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout>
+
