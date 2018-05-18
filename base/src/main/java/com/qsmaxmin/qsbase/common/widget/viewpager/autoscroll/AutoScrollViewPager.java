@@ -285,10 +285,10 @@ public final class AutoScrollViewPager extends ViewPager {
                         viewPager.scroller.setScrollDurationFactor(viewPager.autoScrollFactor);
                         viewPager.scrollOnce();
                         viewPager.scroller.setScrollDurationFactor(viewPager.swipeScrollFactor);
-                        viewPager.sendScrollMessage(viewPager.interval + viewPager.scroller.getDuration());
                     } else {
                         L.i("AutoScrollViewPager", "can not visible, not scroll....");
                     }
+                    viewPager.sendScrollMessage(viewPager.interval + viewPager.scroller.getDuration());
                 default:
                     break;
             }
