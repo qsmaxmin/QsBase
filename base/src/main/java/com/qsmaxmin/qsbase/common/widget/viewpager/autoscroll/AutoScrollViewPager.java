@@ -7,7 +7,10 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
+import android.view.View;
 import android.view.animation.Interpolator;
+
+import com.qsmaxmin.qsbase.common.log.L;
 
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
@@ -93,28 +96,12 @@ public final class AutoScrollViewPager extends ViewPager {
         setViewPagerScroller();
     }
 
+
     /**
      * 执行滚动
      */
     public void startAutoScroll() {
-        startAutoScroll(true);
-    }
-
-    public void startAutoScroll(boolean checkCanScroll) {
-        if (checkCanScroll) {
-            if (getAdapter() == null || getAdapter().getCount() < 1) return;
-        }
-        startAutoScroll((int) (interval + scroller.getDuration() / autoScrollFactor * swipeScrollFactor));
-    }
-
-    /**
-     * 执行滚动
-     *
-     * @param delayTimeInMills 间隔时间
-     */
-    public void startAutoScroll(int delayTimeInMills) {
         isAutoScroll = true;
-        sendScrollMessage(delayTimeInMills);
     }
 
     /**
@@ -122,7 +109,17 @@ public final class AutoScrollViewPager extends ViewPager {
      */
     public void stopAutoScroll() {
         isAutoScroll = false;
-        handler.removeMessages(SCROLL_WHAT);
+    }
+
+    @Override protected void onWindowVisibilityChanged(int visibility) {
+        super.onWindowVisibilityChanged(visibility);
+        if (visibility == View.VISIBLE && isAutoScroll) {
+            L.i("AutoScrollViewPager", "onWindowVisibilityChanged............view visibility start auto scroll !");
+            sendScrollMessage((int) (interval + scroller.getDuration() / autoScrollFactor * swipeScrollFactor));
+        } else {
+            L.i("AutoScrollViewPager", "onWindowVisibilityChanged............stop auto scroll isAutoScroll:" + isAutoScroll + "  view visibility:" + visibility);
+            handler.removeMessages(SCROLL_WHAT);
+        }
     }
 
     /**
@@ -139,9 +136,9 @@ public final class AutoScrollViewPager extends ViewPager {
         autoScrollFactor = scrollFactor;
     }
 
-    private void sendScrollMessage(long delayTimeInMills) {
+    private void sendScrollMessage(long delay) {
         handler.removeMessages(SCROLL_WHAT);
-        handler.sendEmptyMessageDelayed(SCROLL_WHAT, delayTimeInMills);
+        handler.sendEmptyMessageDelayed(SCROLL_WHAT, delay);
     }
 
     private void setViewPagerScroller() {
