@@ -202,7 +202,6 @@ public final class AutoScrollViewPager extends ViewPager {
             }
         }
         if (dispatchTouchEventByScrollMode(ev)) return super.dispatchTouchEvent(ev);
-//        dispatchTouchEventByGestures(ev);
         return super.dispatchTouchEvent(ev);
     }
 
