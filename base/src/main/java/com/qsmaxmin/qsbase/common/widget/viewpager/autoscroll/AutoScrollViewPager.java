@@ -9,6 +9,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.animation.Interpolator;
 
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 
 /**
@@ -88,7 +89,7 @@ public final class AutoScrollViewPager extends ViewPager {
     }
 
     private void init() {
-        handler = new MyHandler();
+        handler = new MyHandler(this);
         setViewPagerScroller();
     }
 
@@ -255,15 +256,22 @@ public final class AutoScrollViewPager extends ViewPager {
         }
     }
 
-    private class MyHandler extends Handler {
+    private static class MyHandler extends Handler {
+        private WeakReference<AutoScrollViewPager> reference;
+
+        MyHandler(AutoScrollViewPager viewPager) {
+            reference = new WeakReference<>(viewPager);
+        }
+
         @Override public void handleMessage(Message msg) {
             super.handleMessage(msg);
             switch (msg.what) {
                 case SCROLL_WHAT:
-                    scroller.setScrollDurationFactor(autoScrollFactor);
-                    scrollOnce();
-                    scroller.setScrollDurationFactor(swipeScrollFactor);
-                    sendScrollMessage(interval + scroller.getDuration());
+                    AutoScrollViewPager viewPager = reference.get();
+                    viewPager.scroller.setScrollDurationFactor(viewPager.autoScrollFactor);
+                    viewPager.scrollOnce();
+                    viewPager.scroller.setScrollDurationFactor(viewPager.swipeScrollFactor);
+                    viewPager.sendScrollMessage(viewPager.interval + viewPager.scroller.getDuration());
                 default:
                     break;
             }
