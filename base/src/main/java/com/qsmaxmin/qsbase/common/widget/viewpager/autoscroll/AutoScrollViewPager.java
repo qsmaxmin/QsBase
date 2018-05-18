@@ -8,7 +8,6 @@ import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
 
 import com.qsmaxmin.qsbase.common.log.L;
@@ -43,7 +42,7 @@ public final class AutoScrollViewPager extends ViewPager {
     public static final int                    SCROLL_WHAT                 = 0;
     private             boolean                infinitePagesEnabled        = true;
 
-    private Handler handler;
+    private MyHandler handler;
 
     @Override public void setAdapter(PagerAdapter adapter) {
         if (!(adapter instanceof InfinitePagerAdapter)) {
@@ -121,6 +120,14 @@ public final class AutoScrollViewPager extends ViewPager {
         } else {
             L.i("AutoScrollViewPager", "onWindowVisibilityChanged............stop auto scroll, isAutoScroll:" + isAutoScroll + "  view visibility:" + visibility);
             handler.removeMessages(SCROLL_WHAT);
+        }
+    }
+
+    @Override protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        stopAutoScroll();
+        if (handler != null) {
+            handler.unload();
         }
     }
 
@@ -284,6 +291,12 @@ public final class AutoScrollViewPager extends ViewPager {
                     }
                 default:
                     break;
+            }
+        }
+
+        private void unload() {
+            if (reference != null) {
+                reference.clear();
             }
         }
     }
