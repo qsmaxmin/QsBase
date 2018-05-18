@@ -94,6 +94,8 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         if (presenter != null) {
             presenter.setDetach();
             presenter = null;
+            mProgressDialog = null;
+            mViewAnimator = null;
         }
         if (isOpenEventBus() && EventBus.getDefault().isRegistered(this)) EventBus.getDefault().unregister(this);
         QsHelper.getInstance().getApplication().onActivityDestroy(this);

@@ -93,6 +93,8 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         if (presenter != null) {
             presenter.setDetach();
             presenter = null;
+            mProgressDialog = null;
+            mViewAnimator = null;
         }
         if (isOpenEventBus() && EventBus.getDefault().isRegistered(this)) EventBus.getDefault().unregister(this);
     }
