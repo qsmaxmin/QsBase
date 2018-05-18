@@ -97,6 +97,13 @@ public final class AutoScrollViewPager extends ViewPager {
      * 执行滚动
      */
     public void startAutoScroll() {
+        startAutoScroll(true);
+    }
+
+    public void startAutoScroll(boolean checkCanScroll) {
+        if (checkCanScroll) {
+            if (getAdapter() == null || getAdapter().getCount() < 1) return;
+        }
         startAutoScroll((int) (interval + scroller.getDuration() / autoScrollFactor * swipeScrollFactor));
     }
 
