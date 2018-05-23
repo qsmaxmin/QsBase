@@ -40,46 +40,8 @@ public final class AutoScrollViewPager extends ViewPager {
     private             float                  downX                       = 0f;
     private             CustomDurationScroller scroller                    = null;
     public static final int                    SCROLL_WHAT                 = 0;
-    private             boolean                infinitePagesEnabled        = true;
 
     private MyHandler handler;
-
-    @Override public void setAdapter(PagerAdapter adapter) {
-        if (!(adapter instanceof InfinitePagerAdapter)) {
-            throw new RuntimeException("setAdapter(..) this adapter must be instance of InfinitePagerAdapter");
-        }
-        InfinitePagerAdapter infinitePagerAdapter = (InfinitePagerAdapter) adapter;
-        infinitePagesEnabled = infinitePagerAdapter.isEnableInfinite();
-        super.setAdapter(adapter);
-    }
-
-
-    /**
-     * 计算位置
-     */
-    @Override public void setCurrentItem(int item) {
-        if (infinitePagesEnabled) {
-            item = getOffsetAmount() + (item % getAdapter().getCount());
-        }
-        super.setCurrentItem(item);
-    }
-
-    public void setEnableInfinite(boolean enable) {
-        infinitePagesEnabled = enable;
-        if (getAdapter() instanceof InfinitePagerAdapter) {
-            InfinitePagerAdapter infAdapter = (InfinitePagerAdapter) getAdapter();
-            infAdapter.enableInfinite(infinitePagesEnabled);
-        }
-    }
-
-    private int getOffsetAmount() {
-        if (getAdapter() instanceof InfinitePagerAdapter) {
-            InfinitePagerAdapter adapter = (InfinitePagerAdapter) getAdapter();
-            return adapter.getRealCount() * 100;
-        } else {
-            return 0;
-        }
-    }
 
     public AutoScrollViewPager(Context paramContext) {
         this(paramContext, null);
@@ -95,6 +57,41 @@ public final class AutoScrollViewPager extends ViewPager {
         setViewPagerScroller();
     }
 
+    @Override public void setAdapter(PagerAdapter adapter) {
+        if (!(adapter instanceof InfinitePagerAdapter)) {
+            throw new RuntimeException("setAdapter(..) this adapter must be instance of InfinitePagerAdapter");
+        }
+        super.setAdapter(adapter);
+    }
+
+    @Override public InfinitePagerAdapter getAdapter() {
+        return (InfinitePagerAdapter) super.getAdapter();
+    }
+
+    /**
+     * 计算位置
+     */
+    @Override public void setCurrentItem(int item) {
+        if (getAdapter().isEnableInfinite()) {
+            item = getOffsetAmount() + (item % getAdapter().getCount());
+        }
+        super.setCurrentItem(item);
+    }
+
+    public void setEnableInfinite(boolean enable) {
+        if (getAdapter() != null) {
+            getAdapter().enableInfinite(enable);
+        }
+    }
+
+    private int getOffsetAmount() {
+        if (getAdapter() != null) {
+            InfinitePagerAdapter adapter = getAdapter();
+            return adapter.getRealCount() * 100;
+        } else {
+            return 0;
+        }
+    }
 
     /**
      * 执行滚动
