@@ -253,9 +253,11 @@ public class HttpAdapter {
             Uri uri = Uri.parse(url.toString());
             String uriQuery = uri.getQuery();
             for (String key : params.keySet()) {
-                Object object = params.get(key);
-                url.append((i == 0 && TextUtils.isEmpty(uriQuery)) ? "?" : "&").append(key).append("=").append(object);
-                i++;
+                String value = String.valueOf(params.get(key));
+                if (!TextUtils.isEmpty(value)) {
+                    url.append((i == 0 && TextUtils.isEmpty(uriQuery)) ? "?" : "&").append(key).append("=").append(value);
+                    i++;
+                }
             }
         }
         Request.Builder requestBuilder = new Request.Builder();
