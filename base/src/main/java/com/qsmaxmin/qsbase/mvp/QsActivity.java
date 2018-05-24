@@ -211,14 +211,16 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         if (mProgressDialog != null) {
             mProgressDialog.setMessage(message);
             mProgressDialog.setCancelable(cancelAble);
-            QsHelper.getInstance().commitDialogFragment(mProgressDialog);
+            if (!mProgressDialog.isAdded()) {
+                QsHelper.getInstance().commitDialogFragment(getSupportFragmentManager(), mProgressDialog);
+            }
         } else {
             L.e(initTag(), "you should override the method 'Application.getCommonProgressDialog' and return a dialog when called the method : loading(...) ");
         }
     }
 
     @ThreadPoint(ThreadType.MAIN) @Override public void loadingClose() {
-        if (mProgressDialog != null) mProgressDialog.dismissAllowingStateLoss();
+        if (mProgressDialog != null && mProgressDialog.isAdded()) mProgressDialog.dismissAllowingStateLoss();
     }
 
     @Override public void showLoadingView() {

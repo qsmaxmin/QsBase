@@ -205,8 +205,11 @@ public class QsHelper {
     public void commitDialogFragment(DialogFragment dialogFragment) {
         FragmentActivity activity = getScreenHelper().currentActivity();
         if (dialogFragment == null || activity == null) return;
-        FragmentManager fragmentManager = activity.getSupportFragmentManager();
-        if (fragmentManager != null) {
+        commitDialogFragment(activity.getSupportFragmentManager(), dialogFragment);
+    }
+
+    public void commitDialogFragment(FragmentManager fragmentManager, DialogFragment dialogFragment) {
+        if (fragmentManager != null && dialogFragment != null) {
             fragmentManager.beginTransaction().add(dialogFragment, dialogFragment.getClass().getSimpleName()).commitAllowingStateLoss();
         }
     }
