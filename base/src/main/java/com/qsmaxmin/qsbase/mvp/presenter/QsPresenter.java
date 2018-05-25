@@ -17,6 +17,7 @@ import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.common.widget.listview.LoadingFooter;
 import com.qsmaxmin.qsbase.common.widget.toast.QsToast;
 import com.qsmaxmin.qsbase.mvp.QsIView;
+import com.qsmaxmin.qsbase.mvp.fragment.QsIPullFragment;
 import com.qsmaxmin.qsbase.mvp.fragment.QsIPullHeaderViewPagerFragment;
 import com.qsmaxmin.qsbase.mvp.fragment.QsIPullListFragment;
 import com.qsmaxmin.qsbase.mvp.fragment.QsIPullRecyclerFragment;
@@ -191,6 +192,8 @@ public class QsPresenter<V extends QsIView> {
                 view.setLoadingState(LoadingFooter.State.NetWorkError);
             } else if (qsIview instanceof QsIPullHeaderViewPagerFragment) {
                 ((QsIPullHeaderViewPagerFragment) qsIview).stopRefreshing();
+            } else if (qsIview instanceof QsIPullFragment) {
+                ((QsIPullFragment) qsIview).stopRefreshing();
             }
             if (qsIview.currentViewState() != QsConstants.VIEW_STATE_CONTENT) {
                 qsIview.showErrorView();
