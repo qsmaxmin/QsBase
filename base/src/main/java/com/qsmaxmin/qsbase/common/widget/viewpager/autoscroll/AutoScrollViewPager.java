@@ -78,12 +78,6 @@ public final class AutoScrollViewPager extends ViewPager {
         super.setCurrentItem(item);
     }
 
-    public void setEnableInfinite(boolean enable) {
-        if (getAdapter() != null) {
-            getAdapter().enableInfinite(enable);
-        }
-    }
-
     private int getOffsetAmount() {
         if (getAdapter() != null) {
             InfinitePagerAdapter adapter = getAdapter();
