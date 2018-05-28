@@ -271,6 +271,7 @@ public final class AutoScrollViewPager extends ViewPager {
             switch (msg.what) {
                 case SCROLL_WHAT:
                     AutoScrollViewPager viewPager = reference.get();
+                    if (viewPager == null) return;
                     boolean shown = viewPager.isShown();
                     if (shown) {
                         viewPager.scroller.setScrollDurationFactor(viewPager.autoScrollFactor);
