@@ -114,14 +114,6 @@ public final class AutoScrollViewPager extends ViewPager {
         }
     }
 
-    @Override protected void onDetachedFromWindow() {
-        super.onDetachedFromWindow();
-        stopAutoScroll();
-        if (handler != null) {
-            handler.unload();
-        }
-    }
-
     /**
      * 设定因子的滑动动画持续时间会改变
      */
