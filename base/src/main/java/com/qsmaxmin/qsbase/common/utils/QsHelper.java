@@ -208,7 +208,7 @@ public class QsHelper {
         commitDialogFragment(activity.getSupportFragmentManager(), dialogFragment);
     }
 
-    public void commitDialogFragment(FragmentManager fragmentManager, DialogFragment dialogFragment) {
+    @ThreadPoint(ThreadType.MAIN) public void commitDialogFragment(FragmentManager fragmentManager, DialogFragment dialogFragment) {
         if (fragmentManager != null && dialogFragment != null) {
             fragmentManager.beginTransaction().add(dialogFragment, dialogFragment.getClass().getSimpleName()).commitAllowingStateLoss();
         }
