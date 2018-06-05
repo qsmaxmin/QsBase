@@ -111,6 +111,7 @@ public class InfinitePagerAdapter extends PagerAdapter {
         ImageView imageView = new ImageView(context);
         FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         imageView.setLayoutParams(layoutParams);
+        imageView.setScaleType(ImageView.ScaleType.CENTER);
         return imageView;
     }
 
@@ -132,9 +133,7 @@ public class InfinitePagerAdapter extends PagerAdapter {
         if (imageView == null) throw new IllegalStateException("InfinitePageAdapter getPageView(Context) should return a ImageView or ViewGroup Contains a ID of 'R.id.qs_banner_image' ImageView");
         if (placeholder > 0) {
             final ImageView holderImage = getPlaceholderView(container.getContext());
-            holderImage.setScaleType(ImageView.ScaleType.CENTER);
             holderImage.setImageDrawable(container.getContext().getResources().getDrawable(placeholder));
-
             frameLayout.addView(holderImage);
             frameLayout.addView(pageView);
 
