@@ -298,3 +298,6 @@ MVP架构+AOP面向切面编程，摒弃反射、代理等操作，稳定性和�
         -keep public class extends com.bumptech.glide.module.AppGlideModule
         -keep public class extends com.bumptech.glide.module.LibraryGlideModule
         -keep class com.bumptech.glide.GeneratedAppGlideModuleImpl
+
+        #Config防止混淆
+        -keepclassmembers class * extends com.qsmaxmin.qsbase.common.config.QsProperties{*;}
