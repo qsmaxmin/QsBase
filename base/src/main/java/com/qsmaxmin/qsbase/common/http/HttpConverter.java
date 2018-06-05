@@ -117,8 +117,8 @@ class HttpConverter {
                 try {
                     for (Field field : fieldArr) {
                         Object value = field.get(formBody);
-                        String valueStr = String.valueOf(value);
-                        if (!TextUtils.isEmpty(valueStr)) {
+                        if (value != null) {
+                            String valueStr = String.valueOf(value);
                             builder.add(field.getName(), valueStr);
                         }
                     }
