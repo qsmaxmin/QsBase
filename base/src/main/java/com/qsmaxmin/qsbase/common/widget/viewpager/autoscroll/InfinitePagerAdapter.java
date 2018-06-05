@@ -103,6 +103,7 @@ public class InfinitePagerAdapter extends PagerAdapter {
         ImageView imageView = new ImageView(context);
         FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         imageView.setLayoutParams(layoutParams);
+        imageView.setScaleType(ImageView.ScaleType.FIT_XY);
         return imageView;
     }
 
@@ -125,7 +126,6 @@ public class InfinitePagerAdapter extends PagerAdapter {
         ImageView imageView;
         if (pageView instanceof ImageView) {
             imageView = (ImageView) pageView;
-            imageView.setScaleType(ImageView.ScaleType.FIT_XY);
         } else {
             imageView = (ImageView) pageView.findViewById(R.id.qs_banner_image);
         }
