@@ -118,8 +118,7 @@ class HttpConverter {
                     for (Field field : fieldArr) {
                         Object value = field.get(formBody);
                         if (value != null) {
-                            String valueStr = String.valueOf(value);
-                            builder.add(field.getName(), valueStr);
+                            builder.add(field.getName(), String.valueOf(value));
                         }
                     }
                 } catch (IllegalAccessException e) {
