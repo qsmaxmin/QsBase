@@ -253,9 +253,9 @@ public class HttpAdapter {
             Uri uri = Uri.parse(url.toString());
             String uriQuery = uri.getQuery();
             for (String key : params.keySet()) {
-                String value = String.valueOf(params.get(key));
-                if (!TextUtils.isEmpty(value)) {
-                    url.append((i == 0 && TextUtils.isEmpty(uriQuery)) ? "?" : "&").append(key).append("=").append(value);
+                Object value = params.get(key);
+                if (value != null) {
+                    url.append((i == 0 && TextUtils.isEmpty(uriQuery) && url.charAt(url.length() - 1) != '?') ? "?" : "&").append(key).append("=").append(String.valueOf(value));
                     i++;
                 }
             }
