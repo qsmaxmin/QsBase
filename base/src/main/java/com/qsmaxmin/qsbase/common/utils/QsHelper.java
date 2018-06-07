@@ -90,22 +90,30 @@ public class QsHelper {
     }
 
     public void intent2Activity(Class clazz) {
-        intent2Activity(clazz, null, 0, null);
+        intent2Activity(clazz, null, 0, null, 0, 0);
     }
 
     public void intent2Activity(Class clazz, Bundle bundle) {
-        intent2Activity(clazz, bundle, 0, null);
+        intent2Activity(clazz, bundle, 0, null, 0, 0);
     }
 
     public void intent2Activity(Class clazz, int requestCode) {
-        intent2Activity(clazz, null, requestCode, null);
+        intent2Activity(clazz, null, requestCode, null, 0, 0);
     }
 
     public void intent2Activity(Class clazz, Bundle bundle, ActivityOptionsCompat optionsCompat) {
-        intent2Activity(clazz, bundle, 0, optionsCompat);
+        intent2Activity(clazz, bundle, 0, optionsCompat, 0, 0);
     }
 
-    public void intent2Activity(Class clazz, Bundle bundle, int requestCode, ActivityOptionsCompat optionsCompat) {
+    public void intent2Activity(Class clazz, int inAnimId, int outAnimId) {
+        intent2Activity(clazz, null, 0, null, inAnimId, outAnimId);
+    }
+
+    public void intent2Activity(Class clazz, Bundle bundle, int inAnimId, int outAnimId) {
+        intent2Activity(clazz, bundle, 0, null, inAnimId, outAnimId);
+    }
+
+    public void intent2Activity(Class clazz, Bundle bundle, int requestCode, ActivityOptionsCompat optionsCompat, int inAnimId, int outAnimId) {
         FragmentActivity activity = getScreenHelper().currentActivity();
         if (clazz != null && activity != null) {
             Intent intent = new Intent();
@@ -114,8 +122,10 @@ public class QsHelper {
             if (optionsCompat == null) {
                 if (requestCode > 0) {
                     activity.startActivityForResult(intent, requestCode);
+                    if (inAnimId > 0 || outAnimId > 0) activity.overridePendingTransition(inAnimId, outAnimId);
                 } else {
                     activity.startActivity(intent);
+                    if (inAnimId > 0 || outAnimId > 0) activity.overridePendingTransition(inAnimId, outAnimId);
                 }
             } else {
                 if (requestCode > 0) {
