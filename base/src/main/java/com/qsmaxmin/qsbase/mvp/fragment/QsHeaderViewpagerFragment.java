@@ -31,7 +31,7 @@ public abstract class QsHeaderViewpagerFragment<P extends QsPresenter> extends Q
         if (view instanceof HeaderViewPager) {
             headerViewPager = (HeaderViewPager) view;
         } else {
-            headerViewPager = (HeaderViewPager) view.findViewById(R.id.pager);
+            headerViewPager = view.findViewById(R.id.pager);
         }
         ViewGroup tabView = createTabView();
         if (tabView == null) throw new RuntimeException("tabView should not be null!!");
