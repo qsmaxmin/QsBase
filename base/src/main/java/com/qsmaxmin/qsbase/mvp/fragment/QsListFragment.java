@@ -1,6 +1,5 @@
 package com.qsmaxmin.qsbase.mvp.fragment;
 
-import android.support.v4.view.ViewCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -103,7 +102,7 @@ public abstract class QsListFragment<P extends QsPresenter, D> extends QsFragmen
         if (view instanceof ListView) {
             mListView = (ListView) view;
         } else {
-            mListView = (ListView) view.findViewById(android.R.id.list);
+            mListView = view.findViewById(android.R.id.list);
         }
         if (mListView == null) throw new RuntimeException("ListView is not exit or its id not 'android.R.id.list' in current layout!!");
         if (getHeaderLayout() != 0) {
@@ -289,14 +288,14 @@ public abstract class QsListFragment<P extends QsPresenter, D> extends QsFragmen
      * listView是否滑动到顶部
      */
     @Override public boolean canListScrollDown() {
-        return ViewCompat.canScrollVertically(getListView(), -1);
+        return getListView().canScrollVertically(-1);
     }
 
     /**
      * listView是否滑动到底部
      */
     @Override public boolean canListScrollUp() {
-        return ViewCompat.canScrollVertically(getListView(), 1);
+        return getListView().canScrollVertically(1);
     }
 
 

@@ -46,8 +46,8 @@ public abstract class QsViewPagerFragment<P extends QsPresenter> extends QsFragm
     }
 
     protected void initTabAndPager(View view) {
-        pager = (QsViewPager) view.findViewById(R.id.pager);
-        tabs = (PagerSlidingTabStrip) view.findViewById(android.R.id.tabs);
+        pager = view.findViewById(R.id.pager);
+        tabs = view.findViewById(android.R.id.tabs);
         initTabsValue(tabs);
         initViewPager(getModelPagers(), getOffscreenPageLimit());
     }

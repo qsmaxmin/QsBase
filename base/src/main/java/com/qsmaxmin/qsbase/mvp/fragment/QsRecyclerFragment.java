@@ -1,6 +1,6 @@
 package com.qsmaxmin.qsbase.mvp.fragment;
 
-import android.support.v4.view.ViewCompat;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -102,7 +102,7 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
         if (view instanceof HeaderFooterRecyclerView) {
             mRecyclerView = (HeaderFooterRecyclerView) view;
         } else {
-            mRecyclerView = (HeaderFooterRecyclerView) view.findViewById(android.R.id.list);
+            mRecyclerView = view.findViewById(android.R.id.list);
         }
         if (mRecyclerView == null) throw new RuntimeException("HeaderFooterRecyclerView is not exit or its id not 'android.R.id.list' in current layout!!");
         if (getHeaderLayout() > 0) {
@@ -265,14 +265,14 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
      * recyclerView是否滑动到顶部
      */
     @Override public boolean canListScrollDown() {
-        return ViewCompat.canScrollVertically(getRecyclerView(), -1);
+        return getRecyclerView().canScrollVertically(-1);
     }
 
     /**
      * recyclerView是否滑动到底部
      */
     @Override public boolean canListScrollUp() {
-        return ViewCompat.canScrollVertically(getRecyclerView(), 1);
+        return getRecyclerView().canScrollVertically(1);
     }
 
     /**
@@ -285,7 +285,7 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
             this.mInflater = inflater;
         }
 
-        @Override public MyRecycleViewHolder<D> onCreateViewHolder(ViewGroup parent, int viewType) {
+        @NonNull @Override public MyRecycleViewHolder<D> onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             QsRecycleAdapterItem<D> recycleAdapterItem = getRecycleAdapterItem(mInflater, parent, viewType);
             MyRecycleViewHolder<D> holder = new MyRecycleViewHolder<>(recycleAdapterItem);
 
@@ -302,7 +302,7 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
             return holder;
         }
 
-        @Override public void onBindViewHolder(MyRecycleViewHolder<D> holder, int position) {
+        @Override public void onBindViewHolder(@NonNull MyRecycleViewHolder<D> holder, int position) {
             holder.onBindData(mList.get(position), position, mList.size());
         }
 

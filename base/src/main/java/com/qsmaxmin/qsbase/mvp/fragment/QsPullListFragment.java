@@ -56,7 +56,7 @@ public abstract class QsPullListFragment<T extends QsPresenter, D> extends QsLis
         if (footerView instanceof LoadingFooter) {
             mLoadingFooter = (LoadingFooter) footerView;
         } else if (footerView != null) {
-            mLoadingFooter = (LoadingFooter) footerView.findViewById(R.id.loading_footer);
+            mLoadingFooter = footerView.findViewById(R.id.loading_footer);
         }
     }
 
@@ -64,7 +64,7 @@ public abstract class QsPullListFragment<T extends QsPresenter, D> extends QsLis
         if (view instanceof PtrFrameLayout) {
             mPtrFrameLayout = (PtrFrameLayout) view;
         } else {
-            mPtrFrameLayout = (PtrFrameLayout) view.findViewById(R.id.swipe_container);
+            mPtrFrameLayout = view.findViewById(R.id.swipe_container);
         }
         if (mPtrFrameLayout == null) throw new RuntimeException("PtrFrameLayout is not exit or its id not 'R.id.swipe_container' in current layout!!");
         mPtrFrameLayout.setHeaderView((View) getPtrUIHandlerView());

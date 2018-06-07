@@ -39,6 +39,8 @@ public interface QsIView<P> {
 
     void activityFinish();
 
+    void activityFinish(int enterAnim, int exitAnim);
+
     void activityFinish(boolean finishAfterTransition);
 
     void loading();

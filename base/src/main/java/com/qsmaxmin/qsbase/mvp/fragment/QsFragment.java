@@ -2,6 +2,7 @@ package com.qsmaxmin.qsbase.mvp.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
@@ -66,7 +67,7 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         setHasOptionsMenu(true);
     }
 
-    @Nullable @Override public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    @Nullable @Override public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         View rootView = initView(inflater);
         QsHelper.getInstance().getViewBindHelper().bind(this, rootView);
@@ -106,7 +107,7 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         View view;
         if (isOpenViewState() && loadingLayoutId() > 0 && emptyLayoutId() > 0 && errorLayoutId() > 0) {
             view = inflater.inflate(rootViewLayoutId(), null);
-            mViewAnimator = (ViewAnimator) view.findViewById(android.R.id.home);
+            mViewAnimator = view.findViewById(android.R.id.home);
             inflater.inflate(loadingLayoutId(), mViewAnimator);
             inflater.inflate(layoutId(), mViewAnimator);
             inflater.inflate(emptyLayoutId(), mViewAnimator);
@@ -161,11 +162,19 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         activityFinish(false);
     }
 
+    @Override public void activityFinish(int enterAnim, int exitAnim) {
+        activityFinish();
+        FragmentActivity activity = getActivity();
+        if (activity != null) activity.overridePendingTransition(enterAnim, exitAnim);
+    }
+
     @Override public void activityFinish(boolean finishAfterTransition) {
+        FragmentActivity activity = getActivity();
+        if (activity == null) return;
         if (finishAfterTransition) {
-            ActivityCompat.finishAfterTransition(getActivity());
+            ActivityCompat.finishAfterTransition(activity);
         } else {
-            getActivity().finish();
+            activity.finish();
         }
     }
 
@@ -359,7 +368,7 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
                     backView.setVisibility(View.VISIBLE);
                     backView.setOnClickListener(new View.OnClickListener() {
                         @Override public void onClick(View v) {
-                            getActivity().onBackPressed();
+                            if (getActivity() != null) getActivity().onBackPressed();
                         }
                     });
                 } else {

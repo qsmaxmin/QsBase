@@ -116,8 +116,8 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
         Toolbar mToolbar;
         if (isOpenViewState() && loadingLayoutId() > 0 && emptyLayoutId() > 0 && errorLayoutId() > 0) {
             rootView = View.inflate(this, rootViewLayoutId(), null);
-            mViewAnimator = (ViewAnimator) rootView.findViewById(android.R.id.home);
-            mToolbar = (Toolbar) rootView.findViewById(R.id.toolbar);
+            mViewAnimator = rootView.findViewById(android.R.id.home);
+            mToolbar = rootView.findViewById(R.id.toolbar);
             View.inflate(this, loadingLayoutId(), mViewAnimator);
             View.inflate(this, layoutId(), mViewAnimator);
             View.inflate(this, emptyLayoutId(), mViewAnimator);
@@ -125,13 +125,13 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
             initDefaultView();
         } else {
             rootView = View.inflate(this, R.layout.qs_activity_ab, null);
-            mToolbar = (Toolbar) rootView.findViewById(R.id.toolbar);
-            ViewGroup mainView = (ViewGroup) rootView.findViewById(android.R.id.home);
+            mToolbar = rootView.findViewById(R.id.toolbar);
+            ViewGroup mainView = rootView.findViewById(android.R.id.home);
             View.inflate(this, layoutId(), mainView);
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) mToolbar.setElevation(0);
         if (actionbarLayoutId() > 0) {
-            ViewGroup actionbarContainer = (ViewGroup) mToolbar.findViewById(R.id.vg_toolbar);
+            ViewGroup actionbarContainer = mToolbar.findViewById(R.id.vg_toolbar);
             View.inflate(getContext(), actionbarLayoutId(), actionbarContainer);
         }
         setSupportActionBar(mToolbar);
@@ -183,6 +183,11 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
 
     @Override public void activityFinish() {
         activityFinish(false);
+    }
+
+    @Override public void activityFinish(int enterAnim, int exitAnim) {
+        activityFinish();
+        overridePendingTransition(enterAnim, exitAnim);
     }
 
     @Override public void activityFinish(boolean finishAfterTransition) {

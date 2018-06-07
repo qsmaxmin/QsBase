@@ -59,7 +59,7 @@ public abstract class QsPullHeaderViewpagerFragment<P extends QsPresenter> exten
         if (view instanceof PtrFrameLayout) {
             mPtrFrameLayout = (PtrFrameLayout) view;
         } else {
-            mPtrFrameLayout = (PtrFrameLayout) view.findViewById(R.id.swipe_container);
+            mPtrFrameLayout = view.findViewById(R.id.swipe_container);
         }
         if (mPtrFrameLayout == null) throw new RuntimeException("PtrFrameLayout is not exit or its id not 'R.id.swipe_container' in current layout!!");
         mPtrFrameLayout.setHeaderView((View) getPtrUIHandlerView());

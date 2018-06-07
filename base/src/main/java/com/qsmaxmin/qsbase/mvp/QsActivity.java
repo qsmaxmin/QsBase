@@ -110,7 +110,7 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         View rootView;
         if (isOpenViewState() && loadingLayoutId() > 0 && emptyLayoutId() > 0 && errorLayoutId() > 0) {
             rootView = View.inflate(this, rootViewLayoutId(), null);
-            mViewAnimator = (ViewAnimator) rootView.findViewById(android.R.id.home);
+            mViewAnimator = rootView.findViewById(android.R.id.home);
             View.inflate(this, loadingLayoutId(), mViewAnimator);
             View.inflate(this, layoutId(), mViewAnimator);
             View.inflate(this, emptyLayoutId(), mViewAnimator);
@@ -167,6 +167,11 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
 
     @Override public void activityFinish() {
         activityFinish(false);
+    }
+
+    @Override public void activityFinish(int enterAnim, int exitAnim) {
+        activityFinish();
+        overridePendingTransition(enterAnim, exitAnim);
     }
 
     @Override public void activityFinish(boolean finishAfterTransition) {
