@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.view.KeyEvent;
@@ -251,22 +252,30 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
     }
 
     @Override public void intent2Activity(Class clazz) {
-        intent2Activity(clazz, null, 0, null);
+        intent2Activity(clazz, null, 0, null, 0, 0);
     }
 
     @Override public void intent2Activity(Class clazz, int requestCode) {
-        intent2Activity(clazz, null, requestCode, null);
+        intent2Activity(clazz, null, requestCode, null, 0, 0);
     }
 
     @Override public void intent2Activity(Class clazz, Bundle bundle) {
-        intent2Activity(clazz, bundle, 0, null);
+        intent2Activity(clazz, bundle, 0, null, 0, 0);
+    }
+
+    @Override public void intent2Activity(Class clazz, Bundle bundle, int inAnimId, int outAnimId) {
+        intent2Activity(clazz, bundle, 0, null, inAnimId, outAnimId);
     }
 
     @Override public void intent2Activity(Class clazz, Bundle bundle, ActivityOptionsCompat optionsCompat) {
-        intent2Activity(clazz, bundle, 0, optionsCompat);
+        intent2Activity(clazz, bundle, 0, optionsCompat, 0, 0);
     }
 
     @Override public void intent2Activity(Class clazz, Bundle bundle, int requestCode, ActivityOptionsCompat optionsCompat) {
+        intent2Activity(clazz, bundle, requestCode, optionsCompat, 0, 0);
+    }
+
+    @Override public void intent2Activity(Class clazz, Bundle bundle, int requestCode, ActivityOptionsCompat optionsCompat, int inAnimId, int outAnimId) {
         FragmentActivity activity = getActivity();
         if (clazz != null && activity != null) {
             Intent intent = new Intent();
@@ -275,8 +284,10 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
             if (optionsCompat == null) {
                 if (requestCode > 0) {
                     startActivityForResult(intent, requestCode);
+                    if (inAnimId > 0 || outAnimId > 0) activity.overridePendingTransition(inAnimId, outAnimId);
                 } else {
                     startActivity(intent);
+                    if (inAnimId > 0 || outAnimId > 0) activity.overridePendingTransition(inAnimId, outAnimId);
                 }
             } else {
                 if (requestCode > 0) {
@@ -334,6 +345,10 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
 
     @ThreadPoint(ThreadType.MAIN) @Override public void commitBackStackFragment(int layoutId, Fragment fragment, String tag) {
         QsHelper.getInstance().commitBackStackFragment(getFragmentManager(), layoutId, fragment, tag);
+    }
+
+    @Override public void commitDialogFragment(DialogFragment fragment) {
+        QsHelper.getInstance().commitDialogFragment(getFragmentManager(), fragment);
     }
 
     @ThreadPoint(ThreadType.MAIN) protected void setViewState(int showState) {

@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -268,22 +269,30 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
     }
 
     @Override public void intent2Activity(Class clazz) {
-        intent2Activity(clazz, null, 0, null);
+        intent2Activity(clazz, null, 0, null, 0, 0);
     }
 
     @Override public void intent2Activity(Class clazz, int requestCode) {
-        intent2Activity(clazz, null, requestCode, null);
+        intent2Activity(clazz, null, requestCode, null, 0, 0);
     }
 
     @Override public void intent2Activity(Class clazz, Bundle bundle) {
-        intent2Activity(clazz, bundle, 0, null);
+        intent2Activity(clazz, bundle, 0, null, 0, 0);
+    }
+
+    @Override public void intent2Activity(Class clazz, Bundle bundle, int inAnimId, int outAnimId) {
+        intent2Activity(clazz, bundle, 0, null, inAnimId, outAnimId);
     }
 
     @Override public void intent2Activity(Class clazz, Bundle bundle, ActivityOptionsCompat optionsCompat) {
-        intent2Activity(clazz, bundle, 0, optionsCompat);
+        intent2Activity(clazz, bundle, 0, optionsCompat, 0, 0);
     }
 
     @Override public void intent2Activity(Class clazz, Bundle bundle, int requestCode, ActivityOptionsCompat optionsCompat) {
+        intent2Activity(clazz, bundle, requestCode, optionsCompat, 0, 0);
+    }
+
+    @Override public void intent2Activity(Class clazz, Bundle bundle, int requestCode, ActivityOptionsCompat optionsCompat, int inAnimId, int outAnimId) {
         if (clazz != null) {
             Intent intent = new Intent();
             intent.setClass(this, clazz);
@@ -291,8 +300,10 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
             if (optionsCompat == null) {
                 if (requestCode > 0) {
                     startActivityForResult(intent, requestCode);
+                    if (inAnimId > 0 || outAnimId > 0) overridePendingTransition(inAnimId, outAnimId);
                 } else {
                     startActivity(intent);
+                    if (inAnimId > 0 || outAnimId > 0) overridePendingTransition(inAnimId, outAnimId);
                 }
             } else {
                 if (requestCode > 0) {
@@ -350,6 +361,10 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
 
     @Override public void commitBackStackFragment(int layoutId, Fragment fragment, String tag) {
         QsHelper.getInstance().commitBackStackFragment(getSupportFragmentManager(), layoutId, fragment, tag);
+    }
+
+    @Override public void commitDialogFragment(DialogFragment fragment) {
+        QsHelper.getInstance().commitDialogFragment(getSupportFragmentManager(), fragment);
     }
 
     @Override public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {

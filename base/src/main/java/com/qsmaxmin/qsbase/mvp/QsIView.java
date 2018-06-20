@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.StringRes;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.view.View;
 
@@ -73,9 +74,13 @@ public interface QsIView<P> {
 
     void intent2Activity(Class clazz, Bundle bundle);
 
+    void intent2Activity(Class clazz, Bundle bundle, int inAnimId, int outAnimId);
+
     void intent2Activity(Class clazz, Bundle bundle, ActivityOptionsCompat optionsCompat);
 
     void intent2Activity(Class clazz, Bundle bundle, int requestCode, ActivityOptionsCompat optionsCompat);
+
+    void intent2Activity(Class clazz, Bundle bundle, int requestCode, ActivityOptionsCompat optionsCompat, int inAnimId, int outAnimId);
 
     void commitFragment(Fragment fragment);
 
@@ -100,4 +105,6 @@ public interface QsIView<P> {
     void commitBackStackFragment(int layoutId, Fragment fragment);
 
     void commitBackStackFragment(int layoutId, Fragment fragment, String tag);
+
+    void commitDialogFragment(DialogFragment fragment);
 }
