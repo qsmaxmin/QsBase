@@ -84,9 +84,8 @@ public class QsPresenter<V extends QsIView> {
     protected <T> T createHttpRequest(Class<T> clazz, String requestTag) {
         if (!tagList.contains(requestTag)) {
             tagList.add(requestTag);
-        } else {
-            L.e(initTag(), "createHttpRequest Repeated tag:" + requestTag);
         }
+        L.i(initTag(), "createHttpRequest Repeated tag:" + requestTag);
         return QsHelper.getInstance().getHttpHelper().create(clazz, requestTag);
     }
 
