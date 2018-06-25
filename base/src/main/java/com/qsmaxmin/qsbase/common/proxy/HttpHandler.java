@@ -11,8 +11,6 @@ import java.lang.reflect.Method;
  * 动态代理 - 网络层
  */
 public class HttpHandler implements InvocationHandler {
-    private static final String TAG = "HttpHandler";
-
     private final HttpAdapter adapter;
     private final Object      tag;
 
@@ -22,7 +20,7 @@ public class HttpHandler implements InvocationHandler {
     }
 
     @Override public Object invoke(Object proxy, Method method, final Object[] args) throws Throwable {
-        L.i(TAG, "网络请求代理方法：" + method.getName() + "  requestTag:" + tag);
+        L.i("HttpHandler", "网络请求代理方法：" + method.getName() + "  requestTag:" + tag);
         return adapter.startRequest(method, args, tag);
     }
 }
