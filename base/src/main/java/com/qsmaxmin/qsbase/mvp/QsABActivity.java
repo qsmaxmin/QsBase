@@ -48,7 +48,7 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
     private   boolean          hasInitData;
 
     @Override public String initTag() {
-        return getClass().getSimpleName();
+        return QsHelper.getInstance().getApplication().isLogOpen() ? getClass().getSimpleName() : "QsABActivity";
     }
 
     @Override public void setActivityTitle(Object value, int code) {

@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.qsmaxmin.qsbase.common.log.L;
+import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.common.widget.viewpager.QsViewPager;
 import com.qsmaxmin.qsbase.common.widget.viewpager.ViewPagerHelper;
 import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.base.InnerScrollerContainer;
@@ -32,7 +33,7 @@ public class QsViewPagerAdapter extends PagerAdapter implements OuterPagerAdapte
     private ViewPagerHelper pagerHelper;
 
     protected String initTag() {
-        return getClass().getSimpleName();
+        return QsHelper.getInstance().getApplication().isLogOpen() ? getClass().getSimpleName() : "QsViewPagerAdapter";
     }
 
     public QsViewPagerAdapter(FragmentManager fragmentManager, ViewPagerHelper pagerHelper) {

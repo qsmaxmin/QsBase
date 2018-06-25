@@ -46,7 +46,7 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
     private   boolean          hasInitData;
 
     @Override public String initTag() {
-        return getClass().getSimpleName();
+        return QsHelper.getInstance().getApplication().isLogOpen() ? getClass().getSimpleName() : "QsActivity";
     }
 
 

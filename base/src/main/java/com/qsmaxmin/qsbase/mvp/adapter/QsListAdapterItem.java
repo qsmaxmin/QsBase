@@ -11,7 +11,7 @@ import com.qsmaxmin.qsbase.common.utils.QsHelper;
 public abstract class QsListAdapterItem<T> {
 
     protected String initTag() {
-        return getClass().getSimpleName();
+        return QsHelper.getInstance().getApplication().isLogOpen() ? getClass().getSimpleName() : "QsListAdapterItem";
     }
 
     public abstract int getItemLayout();

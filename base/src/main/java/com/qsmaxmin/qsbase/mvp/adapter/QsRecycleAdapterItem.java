@@ -24,7 +24,7 @@ public abstract class QsRecycleAdapterItem<T> {
     }
 
     protected String initTag() {
-        return getClass().getSimpleName();
+        return QsHelper.getInstance().getApplication().isLogOpen() ? getClass().getSimpleName() : "QsRecycleAdapterItem";
     }
 
     protected abstract int itemViewLayoutId();

@@ -40,13 +40,17 @@ public abstract class QsProperties {
     private PropertyCallback propertyCallback;
     private Gson             gson;
 
+    public String initTag() {
+        return QsHelper.getInstance().getApplication().isLogOpen() ? getClass().getSimpleName() : "QsProperties";
+    }
+
+    protected int initType() {
+        return OPEN_TYPE_DATA;
+    }
+
     public QsProperties() {
         this("config");
     }
-
-    public abstract String initTag();
-
-    public abstract int initType();
 
     public QsProperties(String propertiesFileName) {
         mPropertiesFileName = propertiesFileName;

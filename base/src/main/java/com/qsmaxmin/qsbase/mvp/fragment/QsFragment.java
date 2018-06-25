@@ -45,7 +45,7 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
     protected ViewAnimator     mViewAnimator;
 
     @Override public String initTag() {
-        return getClass().getSimpleName();
+        return QsHelper.getInstance().getApplication().isLogOpen() ? getClass().getSimpleName() : "QsFragment";
     }
 
     @Override public void setActivityTitle(Object value) {
