@@ -57,7 +57,11 @@ public abstract class QsPullFragment<T extends QsPresenter> extends QsFragment<T
             }
         });
         ViewGroup childView = view.findViewById(R.id.swipe_child);
-        inflater.inflate(viewLayoutId(), childView);
+        if (childView != null) {
+            inflater.inflate(viewLayoutId(), childView);
+        } else {
+            inflater.inflate(viewLayoutId(), mPtrFrameLayout);
+        }
     }
 
     /**
