@@ -4,6 +4,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 
 import com.qsmaxmin.qsbase.R;
+import com.qsmaxmin.qsbase.common.widget.listview.LoadingFooter;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrHandler;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrUIHandler;
@@ -17,7 +18,7 @@ import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
  * @Description
  */
 
-public abstract class QsPullHeaderViewpagerFragment<P extends QsPresenter> extends QsHeaderViewpagerFragment<P> implements QsIPullHeaderViewPagerFragment {
+public abstract class QsPullHeaderViewpagerFragment<P extends QsPresenter> extends QsHeaderViewpagerFragment<P> implements QsIPullToRefresh {
 
     private PtrFrameLayout mPtrFrameLayout;
 
@@ -75,6 +76,21 @@ public abstract class QsPullHeaderViewpagerFragment<P extends QsPresenter> exten
         });
     }
 
+    @Override public final void onLoad() {
+        // do nothing
+    }
+
+    @Override public final void setLoadingState(LoadingFooter.State state) {
+        // do nothing
+    }
+
+    @Override public final void openPullLoading() {
+        // do nothing
+    }
+
+    @Override public final void closePullLoading() {
+        // do nothing
+    }
 
     public boolean canChildScrollUp(HeaderViewPager view) {
         return view != null && view.getCurrentInnerScroller() != null && view.getCurrentInnerScroller().get() != null && view.getCurrentInnerScroller().get().canScrollVertically(-1);

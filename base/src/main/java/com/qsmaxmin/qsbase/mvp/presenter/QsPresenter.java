@@ -17,10 +17,7 @@ import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.common.widget.listview.LoadingFooter;
 import com.qsmaxmin.qsbase.common.widget.toast.QsToast;
 import com.qsmaxmin.qsbase.mvp.QsIView;
-import com.qsmaxmin.qsbase.mvp.fragment.QsIPullFragment;
-import com.qsmaxmin.qsbase.mvp.fragment.QsIPullHeaderViewPagerFragment;
-import com.qsmaxmin.qsbase.mvp.fragment.QsIPullListFragment;
-import com.qsmaxmin.qsbase.mvp.fragment.QsIPullRecyclerFragment;
+import com.qsmaxmin.qsbase.mvp.fragment.QsIPullToRefresh;
 import com.qsmaxmin.qsbase.mvp.model.QsConstants;
 
 import java.util.ArrayList;
@@ -143,19 +140,13 @@ public class QsPresenter<V extends QsIView> {
         if (model != null && !isViewDetach()) {
             QsIView qsIView = getView();
             if (qsIView == null) return;
-            if (qsIView instanceof QsIPullListFragment) {
+            if (qsIView instanceof QsIPullToRefresh) {
                 if (model.isLastPage()) {
-                    ((QsIPullListFragment) qsIView).setLoadingState(LoadingFooter.State.TheEnd);
+                    ((QsIPullToRefresh) qsIView).setLoadingState(LoadingFooter.State.TheEnd);
                 } else {
-                    ((QsIPullListFragment) qsIView).setLoadingState(LoadingFooter.State.Normal);
+                    ((QsIPullToRefresh) qsIView).setLoadingState(LoadingFooter.State.Normal);
                 }
-            } else if (qsIView instanceof QsIPullRecyclerFragment) {
-                if (model.isLastPage()) {
-                    ((QsIPullRecyclerFragment) qsIView).setLoadingState(LoadingFooter.State.TheEnd);
-                } else {
-                    ((QsIPullRecyclerFragment) qsIView).setLoadingState(LoadingFooter.State.Normal);
-                }
-            } else {
+            }else {
                 L.e(initTag(), "not QsPullListFragment or QsPullRecyclerFragment view, so invalid paging(...)");
             }
         }
@@ -182,18 +173,10 @@ public class QsPresenter<V extends QsIView> {
     @ThreadPoint(ThreadType.MAIN) private void resetViewState() {
         if (!isViewDetach()) {
             QsIView qsIview = getView();
-            if (qsIview instanceof QsIPullListFragment) {
-                QsIPullListFragment view = (QsIPullListFragment) qsIview;
+            if (qsIview instanceof QsIPullToRefresh) {
+                QsIPullToRefresh view = (QsIPullToRefresh) qsIview;
                 view.stopRefreshing();
                 view.setLoadingState(LoadingFooter.State.NetWorkError);
-            } else if (qsIview instanceof QsIPullRecyclerFragment) {
-                QsIPullRecyclerFragment view = (QsIPullRecyclerFragment) qsIview;
-                view.stopRefreshing();
-                view.setLoadingState(LoadingFooter.State.NetWorkError);
-            } else if (qsIview instanceof QsIPullHeaderViewPagerFragment) {
-                ((QsIPullHeaderViewPagerFragment) qsIview).stopRefreshing();
-            } else if (qsIview instanceof QsIPullFragment) {
-                ((QsIPullFragment) qsIview).stopRefreshing();
             }
             if (qsIview.currentViewState() != QsConstants.VIEW_STATE_CONTENT) {
                 qsIview.showErrorView();

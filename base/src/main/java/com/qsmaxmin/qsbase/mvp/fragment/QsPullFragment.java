@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import com.qsmaxmin.qsbase.R;
 import com.qsmaxmin.qsbase.common.aspect.ThreadPoint;
 import com.qsmaxmin.qsbase.common.aspect.ThreadType;
+import com.qsmaxmin.qsbase.common.widget.listview.LoadingFooter;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrDefaultHandler;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrHandler;
@@ -85,5 +86,21 @@ public abstract class QsPullFragment<T extends QsPresenter> extends QsFragment<T
 
     @Override @ThreadPoint(ThreadType.MAIN) public void closePullRefreshing() {
         mPtrFrameLayout.setEnabled(false);
+    }
+
+    @Override public final void onLoad() {
+        // do nothing
+    }
+
+    @Override public final void setLoadingState(LoadingFooter.State state) {
+        // do nothing
+    }
+
+    @Override public final void openPullLoading() {
+        // do nothing
+    }
+
+    @Override public final void closePullLoading() {
+        // do nothing
     }
 }

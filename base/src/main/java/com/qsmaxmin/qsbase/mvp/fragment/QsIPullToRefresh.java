@@ -10,7 +10,7 @@ import com.qsmaxmin.qsbase.common.widget.ptr.PtrUIHandler;
  * @Description
  */
 
-public interface QsIPullListFragment<D> extends QsIListFragment<D> {
+public interface QsIPullToRefresh {
 
     PtrUIHandler getPtrUIHandlerView();
 

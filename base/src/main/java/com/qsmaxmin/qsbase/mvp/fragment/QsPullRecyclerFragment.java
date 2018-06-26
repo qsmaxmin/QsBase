@@ -24,7 +24,7 @@ import java.util.List;
  * @Description
  */
 
-public abstract class QsPullRecyclerFragment<P extends QsPresenter, D> extends QsRecyclerFragment<P, D> implements QsIPullRecyclerFragment<D> {
+public abstract class QsPullRecyclerFragment<P extends QsPresenter, D> extends QsRecyclerFragment<P, D> implements QsIPullToRefresh {
 
     private   PtrFrameLayout mPtrFrameLayout;
     protected LoadingFooter  mLoadingFooter;
