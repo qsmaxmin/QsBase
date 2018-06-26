@@ -15,6 +15,8 @@ import java.util.List;
 
 public interface QsIListFragment<D> extends QsIFragment {
 
+    QsListAdapterItem<D> getListAdapterItem(int type);
+
     int getHeaderLayout();
 
     int getFooterLayout();
@@ -28,8 +30,6 @@ public interface QsIListFragment<D> extends QsIFragment {
     int getViewTypeCount();
 
     int getItemViewType(int position);
-
-    QsListAdapterItem<D> getListAdapterItem(int type);
 
     void setData(List<D> list);
 
