@@ -302,9 +302,9 @@ public abstract class QsListFragment<P extends QsPresenter, D> extends QsFragmen
         super.smoothScrollToTop(autoRefresh);
         final int firstVisiblePosition = getListView().getFirstVisiblePosition();
         if (firstVisiblePosition == 0) return;
+        if (firstVisiblePosition > 3) getListView().setSelection(3);
         getListView().post(new Runnable() {
             @Override public void run() {
-                if (firstVisiblePosition > 3) getListView().setSelection(3);
                 getListView().smoothScrollToPositionFromTop(0, 0, 500);
             }
         });

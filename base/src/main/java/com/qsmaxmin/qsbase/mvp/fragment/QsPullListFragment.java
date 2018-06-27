@@ -183,7 +183,7 @@ public abstract class QsPullListFragment<T extends QsPresenter, D> extends QsLis
                 @Override public void run() {
                     startRefreshing();
                 }
-            }, 600);
+            }, 500);
         }
     }
 }
