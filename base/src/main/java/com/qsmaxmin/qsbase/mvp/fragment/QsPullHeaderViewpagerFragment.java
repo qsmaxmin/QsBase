@@ -4,6 +4,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 
 import com.qsmaxmin.qsbase.R;
+import com.qsmaxmin.qsbase.common.aspect.ThreadPoint;
+import com.qsmaxmin.qsbase.common.aspect.ThreadType;
 import com.qsmaxmin.qsbase.common.widget.listview.LoadingFooter;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrHandler;
@@ -30,8 +32,8 @@ public abstract class QsPullHeaderViewpagerFragment<P extends QsPresenter> exten
         return new BeautyCircleRefreshHeader(getContext());
     }
 
-    @Override public void startRefreshing() {
-        mPtrFrameLayout.autoRefresh();
+    @ThreadPoint(ThreadType.MAIN) @Override public void startRefreshing() {
+        if (mPtrFrameLayout != null) mPtrFrameLayout.autoRefresh();
     }
 
     @Override public void stopRefreshing() {
@@ -76,12 +78,24 @@ public abstract class QsPullHeaderViewpagerFragment<P extends QsPresenter> exten
         });
     }
 
+    @Override public boolean canPullRefreshing() {
+        return mPtrFrameLayout.isEnabled();
+    }
+
     @Override public final void onLoad() {
         // do nothing
     }
 
+    @Override public boolean canPullLoading() {
+        return false;
+    }
+
     @Override public final void setLoadingState(LoadingFooter.State state) {
         // do nothing
+    }
+
+    @Override public LoadingFooter.State getLoadingState() {
+        return null;
     }
 
     @Override public final void openPullLoading() {
@@ -93,6 +107,14 @@ public abstract class QsPullHeaderViewpagerFragment<P extends QsPresenter> exten
     }
 
     public boolean canChildScrollUp(HeaderViewPager view) {
-        return view != null && view.getCurrentInnerScroller() != null && view.getCurrentInnerScroller().get() != null && view.getCurrentInnerScroller().get().canScrollVertically(-1);
+        return view != null
+                && view.getCurrentInnerScroller() != null
+                && view.getCurrentInnerScroller().get() != null
+                && view.getCurrentInnerScroller().get().canScrollVertically(-1);
+    }
+
+    @Override public void smoothScrollToTop(boolean autoRefresh) {
+        super.smoothScrollToTop(autoRefresh);
+        if (autoRefresh) startRefreshing();
     }
 }

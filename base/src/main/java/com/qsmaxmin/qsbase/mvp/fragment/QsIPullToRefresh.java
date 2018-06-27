@@ -24,13 +24,19 @@ public interface QsIPullToRefresh {
 
     void setLoadingState(LoadingFooter.State state);
 
+    LoadingFooter.State getLoadingState();
+
     void openPullRefreshing();
 
     void closePullRefreshing();
 
+    boolean canPullRefreshing();
+
     void openPullLoading();
 
     void closePullLoading();
+
+    boolean canPullLoading();
 
     PtrFrameLayout getPtrFrameLayout();
 }

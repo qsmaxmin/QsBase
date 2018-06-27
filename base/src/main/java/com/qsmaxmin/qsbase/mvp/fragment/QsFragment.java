@@ -402,6 +402,10 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         }
     }
 
+    @Override public void smoothScrollToTop(boolean autoRefresh) {
+        // do nothing
+    }
+
     @Override public void onFragmentSelectedInViewPager(boolean isSelected, int currentPosition, int totalCount) {
         L.i(initTag(), "onFragmentSelectedInViewPager..... isSelected:" + isSelected + "  currentPosition:" + currentPosition + "  totalCount:" + totalCount);
     }

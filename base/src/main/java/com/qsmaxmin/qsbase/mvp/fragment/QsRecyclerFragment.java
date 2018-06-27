@@ -275,6 +275,11 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
         return getRecyclerView().canScrollVertically(1);
     }
 
+    @Override public void smoothScrollToTop(boolean autoRefresh) {
+        super.smoothScrollToTop(autoRefresh);
+        getRecyclerView().smoothScrollToPosition(0);
+    }
+
     /**
      * 适配器
      */

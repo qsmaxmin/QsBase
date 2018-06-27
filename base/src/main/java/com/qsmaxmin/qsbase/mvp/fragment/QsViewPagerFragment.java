@@ -224,4 +224,17 @@ public abstract class QsViewPagerFragment<P extends QsPresenter> extends QsFragm
     protected int getOffscreenPageLimit() {
         return 3;
     }
+
+    @Override public void smoothScrollToTop(boolean autoRefresh) {
+        super.smoothScrollToTop(autoRefresh);
+        QsViewPagerAdapter adapter = getViewPagerAdapter();
+        if (adapter == null) return;
+        QsModelPager[] allData = adapter.getAllData();
+        int currentItem = getViewPager().getCurrentItem();
+        if (allData == null || currentItem < 0 || currentItem >= allData.length) return;
+        QsModelPager modelPager = allData[currentItem];
+        if (modelPager != null && modelPager.fragment instanceof QsIFragment) {
+            ((QsIFragment) modelPager.fragment).smoothScrollToTop(autoRefresh);
+        }
+    }
 }

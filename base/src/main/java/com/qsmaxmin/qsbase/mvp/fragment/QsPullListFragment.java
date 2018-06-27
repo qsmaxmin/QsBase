@@ -88,7 +88,7 @@ public abstract class QsPullListFragment<T extends QsPresenter, D> extends QsLis
     }
 
     @Override @ThreadPoint(ThreadType.MAIN) public void startRefreshing() {
-        mPtrFrameLayout.autoRefresh();
+        if (mPtrFrameLayout != null) mPtrFrameLayout.autoRefresh();
     }
 
     @Override @ThreadPoint(ThreadType.MAIN) public void stopRefreshing() {
@@ -97,9 +97,13 @@ public abstract class QsPullListFragment<T extends QsPresenter, D> extends QsLis
 
     @Override @ThreadPoint(ThreadType.MAIN) public void setLoadingState(LoadingFooter.State state) {
         if (mLoadingFooter != null) {
-            L.i(initTag(), "设置刷新尾部状态：" + state);
+            L.i(initTag(), "setLoadingState：" + state);
             mLoadingFooter.setState(state);
         }
+    }
+
+    @Override public LoadingFooter.State getLoadingState() {
+        return mLoadingFooter == null ? null : mLoadingFooter.getState();
     }
 
     @Override @ThreadPoint(ThreadType.MAIN) public void openPullRefreshing() {
@@ -157,8 +161,29 @@ public abstract class QsPullListFragment<T extends QsPresenter, D> extends QsLis
         if (getListView() instanceof InnerScroller) {
             int headerHeight = outerScroller.getHeaderHeight();
             int tabHeight = outerScroller.getTabHeight();
-            L.i(initTag(), "The current Fragment is detected in the QsHeaderViewpagerFragment, so the header will be Downward migration... headerHeight:" + headerHeight + "  tabHeight:" + tabHeight);
+            L.i(initTag(), "The current Fragment is detected in the QsHeaderViewpagerFragment, so the refresh header will be Downward migration... headerHeight:" + headerHeight + "  tabHeight:" + tabHeight);
             getPtrFrameLayout().setHeaderOffsetY(headerHeight + tabHeight);
+        }
+    }
+
+    @Override public boolean canPullLoading() {
+        return canLoadingMore;
+    }
+
+    @Override public boolean canPullRefreshing() {
+        return mPtrFrameLayout.isEnabled();
+    }
+
+    @Override public void smoothScrollToTop(boolean autoRefresh) {
+        super.smoothScrollToTop(autoRefresh);
+        if (autoRefresh) {
+            final int firstVisiblePosition = getListView().getFirstVisiblePosition();
+            if (firstVisiblePosition == 0) return;
+            getListView().postDelayed(new Runnable() {
+                @Override public void run() {
+                    startRefreshing();
+                }
+            }, 600);
         }
     }
 }

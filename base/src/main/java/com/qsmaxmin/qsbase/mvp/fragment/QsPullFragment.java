@@ -3,6 +3,7 @@ package com.qsmaxmin.qsbase.mvp.fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ScrollView;
 
 import com.qsmaxmin.qsbase.R;
 import com.qsmaxmin.qsbase.common.aspect.ThreadPoint;
@@ -24,6 +25,7 @@ import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
 public abstract class QsPullFragment<T extends QsPresenter> extends QsFragment<T> implements QsIPullFragment {
 
     private PtrFrameLayout mPtrFrameLayout;
+    private ViewGroup      childView;
 
     @Override public final int layoutId() {
         return R.layout.qs_fragment_pull_view;
@@ -57,7 +59,7 @@ public abstract class QsPullFragment<T extends QsPresenter> extends QsFragment<T
                 onRefresh();
             }
         });
-        ViewGroup childView = view.findViewById(R.id.swipe_child);
+        childView = view.findViewById(R.id.swipe_child);
         if (childView != null) {
             inflater.inflate(viewLayoutId(), childView);
         } else {
@@ -72,7 +74,7 @@ public abstract class QsPullFragment<T extends QsPresenter> extends QsFragment<T
         return mPtrFrameLayout;
     }
 
-    @Override @ThreadPoint(ThreadType.MAIN) public void startRefreshing() {
+    @ThreadPoint(ThreadType.MAIN) @Override public void startRefreshing() {
         mPtrFrameLayout.autoRefresh();
     }
 
@@ -88,12 +90,24 @@ public abstract class QsPullFragment<T extends QsPresenter> extends QsFragment<T
         mPtrFrameLayout.setEnabled(false);
     }
 
+    @Override public boolean canPullRefreshing() {
+        return mPtrFrameLayout.isEnabled();
+    }
+
     @Override public final void onLoad() {
         // do nothing
     }
 
+    @Override public boolean canPullLoading() {
+        return false;
+    }
+
     @Override public final void setLoadingState(LoadingFooter.State state) {
         // do nothing
+    }
+
+    @Override public LoadingFooter.State getLoadingState() {
+        return null;
     }
 
     @Override public final void openPullLoading() {
@@ -102,5 +116,19 @@ public abstract class QsPullFragment<T extends QsPresenter> extends QsFragment<T
 
     @Override public final void closePullLoading() {
         // do nothing
+    }
+
+    @Override public void smoothScrollToTop(boolean autoRefresh) {
+        super.smoothScrollToTop(autoRefresh);
+        if (childView != null && childView instanceof ScrollView) {
+            ((ScrollView) childView).smoothScrollTo(0, 0);
+            if (autoRefresh) childView.postDelayed(new Runnable() {
+                @Override public void run() {
+                    mPtrFrameLayout.autoRefresh();
+                }
+            }, 500);
+        } else {
+            if (autoRefresh) mPtrFrameLayout.autoRefresh();
+        }
     }
 }

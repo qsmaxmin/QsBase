@@ -20,6 +20,8 @@ public interface QsIFragment extends QsIView {
 
     boolean shouldInterceptTouchEvent();
 
+    void smoothScrollToTop(boolean autoRefresh);
+
     boolean onKeyDown(int keyCode, KeyEvent event);
 
     int emptyLayoutId();

@@ -298,6 +298,22 @@ public abstract class QsListFragment<P extends QsPresenter, D> extends QsFragmen
         return getListView().canScrollVertically(1);
     }
 
+    @Override public void smoothScrollToTop(boolean autoRefresh) {
+        super.smoothScrollToTop(autoRefresh);
+        final int firstVisiblePosition = getListView().getFirstVisiblePosition();
+        if (firstVisiblePosition == 0) return;
+        getListView().post(new Runnable() {
+            @Override public void run() {
+                if (firstVisiblePosition > 3) getListView().setSelection(3);
+                getListView().smoothScrollToPositionFromTop(0, 0, 500);
+            }
+        });
+        getListView().postDelayed(new Runnable() {
+            @Override public void run() {
+                getListView().setSelection(0);
+            }
+        }, 500);
+    }
 
     /*----------------------- 以下是HeaderViewPager支持 ----------------------------*/
     @Override public void setMyOuterScroller(OuterScroller outerScroller, int myPosition) {

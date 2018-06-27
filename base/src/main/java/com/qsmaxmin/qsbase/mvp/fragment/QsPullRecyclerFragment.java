@@ -80,7 +80,7 @@ public abstract class QsPullRecyclerFragment<P extends QsPresenter, D> extends Q
     }
 
     @Override @ThreadPoint(ThreadType.MAIN) public void startRefreshing() {
-        mPtrFrameLayout.autoRefresh();
+        if (mPtrFrameLayout != null) mPtrFrameLayout.autoRefresh();
     }
 
     @Override @ThreadPoint(ThreadType.MAIN) public void stopRefreshing() {
@@ -89,9 +89,13 @@ public abstract class QsPullRecyclerFragment<P extends QsPresenter, D> extends Q
 
     @Override @ThreadPoint(ThreadType.MAIN) public void setLoadingState(LoadingFooter.State state) {
         if (mLoadingFooter != null) {
-            L.i(initTag(), "设置刷新尾部状态：" + state);
+            L.i(initTag(), "setLoadingState：" + state);
             mLoadingFooter.setState(state);
         }
+    }
+
+    @Override public LoadingFooter.State getLoadingState() {
+        return mLoadingFooter == null ? null : mLoadingFooter.getState();
     }
 
     @Override @ThreadPoint(ThreadType.MAIN) public void openPullRefreshing() {
@@ -146,5 +150,22 @@ public abstract class QsPullRecyclerFragment<P extends QsPresenter, D> extends Q
             setLoadingState(LoadingFooter.State.Loading);
             onLoad();
         }
+    }
+
+    @Override public boolean canPullLoading() {
+        return canLoadingMore;
+    }
+
+    @Override public boolean canPullRefreshing() {
+        return mPtrFrameLayout.isEnabled();
+    }
+
+    @Override public void smoothScrollToTop(boolean autoRefresh) {
+        super.smoothScrollToTop(autoRefresh);
+        if (autoRefresh) getRecyclerView().postDelayed(new Runnable() {
+            @Override public void run() {
+                startRefreshing();
+            }
+        }, 500);
     }
 }
