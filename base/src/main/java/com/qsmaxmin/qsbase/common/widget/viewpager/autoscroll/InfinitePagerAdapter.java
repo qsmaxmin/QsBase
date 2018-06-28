@@ -2,6 +2,7 @@ package com.qsmaxmin.qsbase.common.widget.viewpager.autoscroll;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
 import android.text.TextUtils;
 import android.view.View;
@@ -180,6 +181,10 @@ public class InfinitePagerAdapter extends PagerAdapter {
 
     @Override public boolean isViewFromObject(View view, Object object) {
         return view == object;
+    }
+
+    @Override public int getItemPosition(@NonNull Object object) {
+        return POSITION_NONE;
     }
 
     int getVirtualPosition(int position) {
