@@ -1,5 +1,4 @@
 apply plugin: 'com.android.library'
-apply plugin: 'android-aspectjx'
 apply plugin: 'maven'
 
 android {
@@ -38,7 +37,7 @@ dependencies {
     /*EventBus*/
     compile 'org.greenrobot:eventbus:3.0.0'
     /*AspectJ*/
-    compile 'org.aspectj:aspectjrt:1.8.10'
+    compile 'org.aspectj:aspectjrt:1.9.1'
     /*okHttp*/
     compile 'com.squareup.okhttp3:okhttp:3.10.0'
     /*gson*/
