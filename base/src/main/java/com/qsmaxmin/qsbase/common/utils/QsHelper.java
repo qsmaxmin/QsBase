@@ -27,6 +27,7 @@ import com.qsmaxmin.qsbase.common.http.HttpAdapter;
 import com.qsmaxmin.qsbase.common.threadpoll.QsThreadPollHelper;
 import com.qsmaxmin.qsbase.common.utils.permission.PermissionUtils;
 import com.qsmaxmin.qsbase.common.viewbind.ViewBindHelper;
+import com.qsmaxmin.qsbase.common.widget.dialog.QsProgressDialog;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -220,7 +221,18 @@ public class QsHelper {
 
     @ThreadPoint(ThreadType.MAIN) public void commitDialogFragment(FragmentManager fragmentManager, DialogFragment dialogFragment) {
         if (fragmentManager != null && dialogFragment != null) {
+            if (dialogFragment instanceof QsProgressDialog) {
+                QsProgressDialog dialog = (QsProgressDialog) dialogFragment;
+                if (dialog.isAdded() || dialog.isShowing()) {
+                    return;
+                }
+            } else if (dialogFragment.isAdded()) {
+                return;
+            }
             fragmentManager.beginTransaction().add(dialogFragment, dialogFragment.getClass().getSimpleName()).commitAllowingStateLoss();
+            if (dialogFragment instanceof QsProgressDialog) {
+                ((QsProgressDialog) dialogFragment).setIsShowing(true);
+            }
         }
     }
 

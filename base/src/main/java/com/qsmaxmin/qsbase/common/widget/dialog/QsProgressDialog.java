@@ -12,6 +12,7 @@ import android.view.WindowManager;
 public abstract class QsProgressDialog extends QsDialogFragment {
 
     private CharSequence mMessage;
+    private boolean      isShow;
 
     @Override protected void setAttribute(WindowManager.LayoutParams params) {
         params.gravity = Gravity.CENTER;
@@ -25,5 +26,18 @@ public abstract class QsProgressDialog extends QsDialogFragment {
 
     public CharSequence getMessage() {
         return mMessage;
+    }
+
+    public boolean isShowing() {
+        return isShow;
+    }
+
+    public void setIsShowing(boolean show) {
+        this.isShow = show;
+    }
+
+    @Override public void dismissAllowingStateLoss() {
+        super.dismissAllowingStateLoss();
+        setIsShowing(false);
     }
 }
