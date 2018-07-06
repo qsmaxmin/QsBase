@@ -36,8 +36,8 @@ public abstract class QsProgressDialog extends QsDialogFragment {
         this.isShow = show;
     }
 
-    @Override public void dismissAllowingStateLoss() {
-        super.dismissAllowingStateLoss();
+    @Override public void onDetach() {
+        super.onDetach();
         setIsShowing(false);
     }
 }

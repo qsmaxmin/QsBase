@@ -49,7 +49,7 @@ uploadArchives {
         def deployPath = file(getProperty('aar.deployPath'))
         repository(url: "file://${deployPath.absolutePath}")
         pom.groupId = "com.qsmaxmin.qsbase"
-        pom.artifactId = "base"
+        pom.artifactId = "QsBase"
         pom.version = "9.9.9"
     }
 }
