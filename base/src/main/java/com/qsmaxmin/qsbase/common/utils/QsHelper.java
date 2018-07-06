@@ -229,10 +229,10 @@ public class QsHelper {
             } else if (dialogFragment.isAdded()) {
                 return;
             }
-            fragmentManager.beginTransaction().add(dialogFragment, dialogFragment.getClass().getSimpleName()).commitAllowingStateLoss();
             if (dialogFragment instanceof QsProgressDialog) {
                 ((QsProgressDialog) dialogFragment).setIsShowing(true);
             }
+            fragmentManager.beginTransaction().add(dialogFragment, dialogFragment.getClass().getSimpleName()).commitAllowingStateLoss();
         }
     }
 
