@@ -226,11 +226,9 @@ public class QsHelper {
                 if (dialog.isAdded() || dialog.isShowing()) {
                     return;
                 }
+                ((QsProgressDialog) dialogFragment).setIsShowing(true);
             } else if (dialogFragment.isAdded()) {
                 return;
-            }
-            if (dialogFragment instanceof QsProgressDialog) {
-                ((QsProgressDialog) dialogFragment).setIsShowing(true);
             }
             fragmentManager.beginTransaction().add(dialogFragment, dialogFragment.getClass().getSimpleName()).commitAllowingStateLoss();
         }
