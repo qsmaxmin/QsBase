@@ -27,6 +27,7 @@ import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.view.View;
@@ -179,11 +180,15 @@ public class CirclePageIndicator extends View implements PageIndicator {
         if (mViewPager == null) {
             return;
         }
-        final int count = ((InfinitePagerAdapter) mViewPager.getAdapter()).getRealCount();
-        if (count == 0) {
-            return;
+        PagerAdapter adapter = mViewPager.getAdapter();
+        if (adapter == null) return;
+        final int count;
+        if (adapter instanceof InfinitePagerAdapter) {
+            count = ((InfinitePagerAdapter) adapter).getRealCount();
+        } else {
+            count = adapter.getCount();
         }
-
+        if (count == 0) return;
         if (mCurrentPage >= count) {
             setCurrentItem(count - 1);
             return;
@@ -385,7 +390,13 @@ public class CirclePageIndicator extends View implements PageIndicator {
     }
 
     @Override public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-        mCurrentPage = ((InfinitePagerAdapter) mViewPager.getAdapter()).getVirtualPosition(position);
+        PagerAdapter adapter = mViewPager.getAdapter();
+        if (adapter == null) return;
+        if (adapter instanceof InfinitePagerAdapter) {
+            mCurrentPage = ((InfinitePagerAdapter) adapter).getVirtualPosition(position);
+        } else {
+            mCurrentPage = mViewPager.getCurrentItem();
+        }
         mPageOffset = positionOffset;
         invalidate();
         if (mListener != null) mListener.onPageScrolled(position, positionOffset, positionOffsetPixels);
@@ -393,7 +404,12 @@ public class CirclePageIndicator extends View implements PageIndicator {
 
     @Override public void onPageSelected(int position) {
         if (transformMode == 1 || mScrollState == ViewPager.SCROLL_STATE_IDLE) {
-            mCurrentPage = ((InfinitePagerAdapter) mViewPager.getAdapter()).getVirtualPosition(position);
+            PagerAdapter adapter = mViewPager.getAdapter();
+            if (adapter instanceof InfinitePagerAdapter) {
+                mCurrentPage = ((InfinitePagerAdapter) adapter).getVirtualPosition(position);
+            } else {
+                mCurrentPage = mViewPager.getCurrentItem();
+            }
             mSnapPage = mCurrentPage;
             invalidate();
         }
@@ -419,7 +435,7 @@ public class CirclePageIndicator extends View implements PageIndicator {
      * @return The width of the view, honoring constraints from measureSpec
      */
     private int measureLong(int measureSpec) {
-        int result;
+        int result = 0;
         int specMode = MeasureSpec.getMode(measureSpec);
         int specSize = MeasureSpec.getSize(measureSpec);
 
@@ -428,7 +444,14 @@ public class CirclePageIndicator extends View implements PageIndicator {
             result = specSize;
         } else {
             // Calculate the width according the views count
-            final int count = ((InfinitePagerAdapter) mViewPager.getAdapter()).getRealCount();
+            PagerAdapter adapter = mViewPager.getAdapter();
+            if (adapter == null) return result;
+            final int count;
+            if (adapter instanceof InfinitePagerAdapter) {
+                count = ((InfinitePagerAdapter) adapter).getRealCount();
+            } else {
+                count = adapter.getCount();
+            }
             result = (int) (getPaddingLeft() + getPaddingRight() + (count * 2 * mRadius) + (count - 1) * mRadius + +selectedWidth + mRadius * 2 + 1);
             // Respect AT_MOST value if that was what is called for by
             // measureSpec
