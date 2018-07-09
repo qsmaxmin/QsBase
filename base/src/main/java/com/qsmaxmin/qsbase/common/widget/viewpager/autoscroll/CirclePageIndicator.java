@@ -232,7 +232,7 @@ public class CirclePageIndicator extends View implements PageIndicator {
         private float leftX;
         private float rightX;
 
-        public Indicator(int index) {
+        Indicator(int index) {
             this.index = index;
         }
 
@@ -380,8 +380,10 @@ public class CirclePageIndicator extends View implements PageIndicator {
     }
 
     @Override public void notifyDataSetChanged() {
-        mViewPager.getAdapter().notifyDataSetChanged();
-        invalidate();
+        if (mViewPager.getAdapter() != null) {
+            mViewPager.getAdapter().notifyDataSetChanged();
+            invalidate();
+        }
     }
 
     @Override public void onPageScrollStateChanged(int state) {
