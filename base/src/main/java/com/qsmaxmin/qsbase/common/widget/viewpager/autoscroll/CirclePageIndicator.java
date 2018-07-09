@@ -397,7 +397,7 @@ public class CirclePageIndicator extends View implements PageIndicator {
         if (adapter instanceof InfinitePagerAdapter) {
             mCurrentPage = ((InfinitePagerAdapter) adapter).getVirtualPosition(position);
         } else {
-            mCurrentPage = mViewPager.getCurrentItem();
+            mCurrentPage = position;
         }
         mPageOffset = positionOffset;
         invalidate();
@@ -410,7 +410,7 @@ public class CirclePageIndicator extends View implements PageIndicator {
             if (adapter instanceof InfinitePagerAdapter) {
                 mCurrentPage = ((InfinitePagerAdapter) adapter).getVirtualPosition(position);
             } else {
-                mCurrentPage = mViewPager.getCurrentItem();
+                mCurrentPage = position;
             }
             mSnapPage = mCurrentPage;
             invalidate();
