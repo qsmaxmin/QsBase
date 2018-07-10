@@ -1,7 +1,9 @@
 package com.qsmaxmin.qsbase;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.Application;
+import android.content.Context;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.LayoutRes;
 
@@ -72,5 +74,29 @@ public abstract class QsApplication extends Application {
     }
 
     public void onCommonHttpResponse(Response response) {
+    }
+
+    /**
+     * 获取当前进程名
+     */
+    public String getCurrentProcessName() {
+        int pid = android.os.Process.myPid();
+        String processName = "";
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        if (manager == null) return processName;
+        for (ActivityManager.RunningAppProcessInfo process : manager.getRunningAppProcesses()) {
+            if (process.pid == pid) {
+                processName = process.processName;
+            }
+        }
+        return processName;
+    }
+
+    public boolean isMainProcess() {
+        return getPackageName().equals(getCurrentProcessName());
+    }
+
+    public boolean isCurrentProcess(String processName) {
+        return getCurrentProcessName().equals(processName);
     }
 }
