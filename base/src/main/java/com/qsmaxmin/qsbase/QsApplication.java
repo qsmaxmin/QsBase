@@ -87,6 +87,7 @@ public abstract class QsApplication extends Application {
         for (ActivityManager.RunningAppProcessInfo process : manager.getRunningAppProcesses()) {
             if (process.pid == pid) {
                 processName = process.processName;
+                break;
             }
         }
         return processName;
