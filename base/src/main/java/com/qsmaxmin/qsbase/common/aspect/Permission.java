@@ -16,4 +16,6 @@ public @interface Permission {
     String[] value() default {};
 
     boolean forceGoOn() default false;
+
+    boolean showCustomDialog() default true;
 }

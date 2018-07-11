@@ -45,7 +45,7 @@ public class PermissionAspect {
                 builder.addWantPermission(permissionStr);
             }
             builder.setActivity(activity)//
-                    .setShowCustomDialog(true)//
+                    .setShowCustomDialog(permission.showCustomDialog())//
                     .setListener(new PermissionCallbackListener() {
                         @Override public void onPermissionCallback(int requestCode, boolean isGrantedAll) {
                             if (permission.forceGoOn() || isGrantedAll) {
@@ -54,8 +54,8 @@ public class PermissionAspect {
                                 } catch (Throwable throwable) {
                                     throwable.printStackTrace();
                                 }
-                            }else{
-                                L.e("PermissionAspect","current permission is not allow, you can set @Permission(forceGoOn = true), it will run the method whether permission is granted!!");
+                            } else {
+                                L.e("PermissionAspect", "current permission is not allow, you can set @Permission(forceGoOn = true), it will run the method whether permission is granted!!");
                             }
                         }
                     });
