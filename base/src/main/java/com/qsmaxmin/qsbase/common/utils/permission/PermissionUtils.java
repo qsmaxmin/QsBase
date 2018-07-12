@@ -47,8 +47,13 @@ public class PermissionUtils {
         return new PermissionBuilder();
     }
 
-    public boolean isPermissionGranted(String permission) {
-        return ContextCompat.checkSelfPermission(QsHelper.getInstance().getApplication(), permission) == PackageManager.PERMISSION_GRANTED;
+
+    public boolean isPermissionGranted(String... permissionArr) {
+        if (permissionArr == null) return true;
+        for (String permission : permissionArr) {
+            if (!(ContextCompat.checkSelfPermission(QsHelper.getInstance().getApplication(), permission) == PackageManager.PERMISSION_GRANTED)) return false;
+        }
+        return true;
     }
 
     void startRequestPermission(PermissionBuilder builder) {
