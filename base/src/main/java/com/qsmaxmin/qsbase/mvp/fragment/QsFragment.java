@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ViewAnimator;
 
+import com.qsmaxmin.qsbase.QsApplication;
 import com.qsmaxmin.qsbase.R;
 import com.qsmaxmin.qsbase.common.aspect.ThreadPoint;
 import com.qsmaxmin.qsbase.common.aspect.ThreadType;
@@ -102,6 +103,14 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         }
         mViewAnimator = null;
         if (isOpenEventBus() && EventBus.getDefault().isRegistered(this)) EventBus.getDefault().unregister(this);
+    }
+
+    @Override public void onDestroy() {
+        super.onDestroy();
+        QsApplication application = QsHelper.getInstance().getApplication();
+        if (application != null && application.isMemoryWatcherOpen()) {
+            application.getRefWatcher().watch(this, initTag());
+        }
     }
 
     protected View initView(LayoutInflater inflater) {
