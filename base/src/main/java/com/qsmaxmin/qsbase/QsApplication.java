@@ -31,6 +31,7 @@ public abstract class QsApplication extends Application {
         QsHelper.getInstance().init(this);
         if (isMemoryWatcherOpen() && !LeakCanary.isInAnalyzerProcess(this)) {
             refWatcher = LeakCanary.install(this);
+            L.i("Application", "memory watcher is open, so call LeakCanary.install....");
         }
     }
 
