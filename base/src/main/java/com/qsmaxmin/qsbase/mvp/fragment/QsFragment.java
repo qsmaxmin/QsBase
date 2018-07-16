@@ -29,6 +29,7 @@ import com.qsmaxmin.qsbase.common.widget.dialog.QsProgressDialog;
 import com.qsmaxmin.qsbase.mvp.QsIABActivity;
 import com.qsmaxmin.qsbase.mvp.model.QsConstants;
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
+import com.squareup.leakcanary.RefWatcher;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -109,7 +110,8 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         super.onDestroy();
         QsApplication application = QsHelper.getInstance().getApplication();
         if (application != null && application.isMemoryWatcherOpen()) {
-            application.getRefWatcher().watch(this, initTag());
+            RefWatcher refWatcher = application.getRefWatcher();
+            if (refWatcher != null) refWatcher.watch(this, initTag());
         }
     }
 
