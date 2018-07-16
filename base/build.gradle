@@ -43,8 +43,7 @@ dependencies {
     /*gson*/
     compile 'com.google.code.gson:gson:2.8.2'
     /*内存监测工具*/
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.5.4'
-    releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
+    compile 'com.squareup.leakcanary:leakcanary-android:1.5.4'
 }
 
 uploadArchives {
