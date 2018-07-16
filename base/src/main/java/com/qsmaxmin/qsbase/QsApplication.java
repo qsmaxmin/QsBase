@@ -27,12 +27,14 @@ public abstract class QsApplication extends Application {
 
     @Override public void onCreate() {
         super.onCreate();
-        if (isLogOpen()) L.init(true);
-        QsHelper.getInstance().init(this);
-        if (isMemoryWatcherOpen() && !LeakCanary.isInAnalyzerProcess(this)) {
+        if (LeakCanary.isInAnalyzerProcess(this)) return;
+        if (isMemoryWatcherOpen()) {
             refWatcher = LeakCanary.install(this);
             L.i("Application", "memory watcher is open, so call LeakCanary.install....");
         }
+        if (isLogOpen()) L.init(true);
+        QsHelper.getInstance().init(this);
+
     }
 
     public abstract boolean isLogOpen();
