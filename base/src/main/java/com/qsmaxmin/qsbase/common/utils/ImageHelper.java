@@ -259,12 +259,7 @@ public class ImageHelper {
 
         public void into(ImageView view, final ImageRequestListener listener) {
             RequestBuilder<Drawable> requestBuilder;
-            if (mObject != null) {
-                requestBuilder = manager.load(mObject);
-            } else {
-                L.e("ImageHelper", "method error, load(...) params is empty....");
-                return;
-            }
+            requestBuilder = manager.load(mObject);
             setRequestOptionsIfNeed(requestBuilder);
             if (listener != null) {
                 requestBuilder.listener(new RequestListener<Drawable>() {
