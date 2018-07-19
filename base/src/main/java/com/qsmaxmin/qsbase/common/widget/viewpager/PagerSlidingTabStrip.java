@@ -34,6 +34,7 @@ import java.util.Locale;
 public class PagerSlidingTabStrip extends HorizontalScrollView {
 
     private OnTabItemClickListener mClickListener;
+    private OnTabItemClickListener mLongClickListener;
 
     public interface IconTabProvider {
 
@@ -227,6 +228,10 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
         this.mClickListener = listener;
     }
 
+    public void setOnTabLongClickListener(OnTabItemClickListener listener) {
+        this.mLongClickListener = listener;
+    }
+
     public void notifyDataSetChanged() {
 
         tabsContainer.removeAllViews();
@@ -276,6 +281,15 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
                 }
             }
         });
+
+        if (mLongClickListener != null) {
+            tab.setOnLongClickListener(new OnLongClickListener() {
+                @Override public boolean onLongClick(View v) {
+                    mLongClickListener.onClick(position);
+                    return true;
+                }
+            });
+        }
         tabsContainer.addView(tab, position, shouldExpand ? expandedTabLayoutParams : defaultTabLayoutParams);
     }
 
