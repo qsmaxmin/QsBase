@@ -268,8 +268,10 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
     }
 
     private void addCustomTab(final int position) {
-        View tab = LayoutInflater.from(getContext()).inflate(((CustomTabProvider) pager.getAdapter()).getCustomTabView(), null);
-        ((CustomTabProvider) pager.getAdapter()).initTabsItem(tab, position);
+        CustomTabProvider adapter = (CustomTabProvider) pager.getAdapter();
+        if (adapter == null) return;
+        View tab = LayoutInflater.from(getContext()).inflate(adapter.getCustomTabView(), null);
+        adapter.initTabsItem(tab, position);
         tab.setFocusable(true);
         tab.setOnClickListener(new OnClickListener() {
 
@@ -282,14 +284,15 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
             }
         });
 
-        if (mLongClickListener != null) {
-            tab.setOnLongClickListener(new OnLongClickListener() {
-                @Override public boolean onLongClick(View v) {
+        tab.setOnLongClickListener(new OnLongClickListener() {
+            @Override public boolean onLongClick(View v) {
+                if (mLongClickListener != null) {
                     mLongClickListener.onClick(position);
                     return true;
                 }
-            });
-        }
+                return false;
+            }
+        });
         tabsContainer.addView(tab, position, shouldExpand ? expandedTabLayoutParams : defaultTabLayoutParams);
     }
 
