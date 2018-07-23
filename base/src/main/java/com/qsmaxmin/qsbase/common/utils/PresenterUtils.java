@@ -36,7 +36,7 @@ public final class PresenterUtils {
             }
         } else {
             String viewName = QsHelper.getInstance().getApplication().isLogOpen() ? iView.getClass().getSimpleName() : "QsIView";
-            L.e("PresenterUtils", viewName + "类未添加@Presenter注解，创建Presenter将使用泛型第一个参数");
+            L.e("PresenterUtils", viewName + "未添加@Presenter注解，创建Presenter将使用泛型第一个参数");
         }
 
         Type genericSuperclass = viewClass.getGenericSuperclass();
