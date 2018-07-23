@@ -1,7 +1,9 @@
 package com.qsmaxmin.qsbase.common.utils;
 
 
+import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.mvp.QsIView;
+import com.qsmaxmin.qsbase.mvp.presenter.Presenter;
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
 
 import java.lang.reflect.ParameterizedType;
@@ -19,6 +21,24 @@ public final class PresenterUtils {
     public static <P extends QsPresenter, V extends QsIView> P createPresenter(V iView) {
         Class<? extends QsIView> viewClass = iView.getClass();
         P presenterImpl;
+
+        Presenter presenterAnn = viewClass.getAnnotation(Presenter.class);
+        if (presenterAnn != null) {
+            Class presenterClass = presenterAnn.value();
+            try {
+                presenterImpl = (P) presenterClass.newInstance();
+                presenterImpl.initPresenter(iView);
+                return presenterImpl;
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        } else {
+            String viewName = QsHelper.getInstance().getApplication().isLogOpen() ? iView.getClass().getSimpleName() : "QsIView";
+            L.e("PresenterUtils", viewName + "类未添加@Presenter注解，创建Presenter将使用泛型第一个参数");
+        }
+
         Type genericSuperclass = viewClass.getGenericSuperclass();
         if (genericSuperclass instanceof ParameterizedType) {
             Type[] typeArguments = ((ParameterizedType) genericSuperclass).getActualTypeArguments();
@@ -29,9 +49,9 @@ public final class PresenterUtils {
                     presenterImpl.initPresenter(iView);
                     return presenterImpl;
                 } catch (InstantiationException e) {
-                    throw new IllegalArgumentException(String.valueOf(viewClass) + "，实例化异常！");
+                    e.printStackTrace();
                 } catch (IllegalAccessException e) {
-                    throw new IllegalArgumentException(String.valueOf(viewClass) + "，访问权限异常！");
+                    e.printStackTrace();
                 }
             }
         }
