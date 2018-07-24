@@ -258,6 +258,7 @@ public abstract class QsListFragment<P extends QsPresenter, D> extends QsFragmen
          * getView
          **/
         @Override public View getView(int position, View convertView, ViewGroup parent) {
+            onAdapterGetView(position, getCount());
             QsListAdapterItem item = null;
             if (convertView == null) {
                 int count = getViewTypeCount();
@@ -313,6 +314,10 @@ public abstract class QsListFragment<P extends QsPresenter, D> extends QsFragmen
                 getListView().setSelection(0);
             }
         }, 500);
+    }
+
+    @Override public void onAdapterGetView(int position, int totalCount) {
+        //for custom logic
     }
 
     /*----------------------- 以下是HeaderViewPager支持 ----------------------------*/

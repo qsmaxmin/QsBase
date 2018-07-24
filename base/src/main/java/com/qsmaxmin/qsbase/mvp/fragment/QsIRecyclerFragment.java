@@ -60,4 +60,6 @@ public interface QsIRecyclerFragment<D> extends QsIFragment {
     boolean canListScrollUp();
 
     boolean canListScrollDown();
+
+    void onAdapterGetView(int position, int totalCount);
 }

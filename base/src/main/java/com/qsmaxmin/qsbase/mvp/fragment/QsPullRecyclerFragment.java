@@ -25,10 +25,12 @@ import java.util.List;
  */
 
 public abstract class QsPullRecyclerFragment<P extends QsPresenter, D> extends QsRecyclerFragment<P, D> implements QsIPullToRefresh {
-
+    public static final int     LOAD_WHEN_SCROLL_TO_BOTTOM = 0;
+    public static final int     LOAD_WHEN_SECOND_TO_LAST   = 1;
+    private             boolean canLoadingMore             = true;
     private   PtrFrameLayout mPtrFrameLayout;
     protected LoadingFooter  mLoadingFooter;
-    private boolean canLoadingMore = true;
+
 
     @Override public int getFooterLayout() {
         return R.layout.qs_loading_footer;
@@ -131,9 +133,18 @@ public abstract class QsPullRecyclerFragment<P extends QsPresenter, D> extends Q
     private EndlessRecyclerOnScrollListener mOnScrollListener = new EndlessRecyclerOnScrollListener() {
         @Override public void onLoadNextPage(View view) {
             super.onLoadNextPage(view);
-            loadingMoreData();
+            if (onLoadTriggerCondition() == LOAD_WHEN_SCROLL_TO_BOTTOM) {
+                loadingMoreData();
+            }
         }
     };
+
+    @Override public void onAdapterGetView(int position, int totalCount) {
+        super.onAdapterGetView(position, totalCount);
+        if (onLoadTriggerCondition() == LOAD_WHEN_SECOND_TO_LAST && position == totalCount - 2) {
+            loadingMoreData();
+        }
+    }
 
     private void loadingMoreData() {
         if (mLoadingFooter != null) {
@@ -167,5 +178,9 @@ public abstract class QsPullRecyclerFragment<P extends QsPresenter, D> extends Q
                 startRefreshing();
             }
         }, 500);
+    }
+
+    protected int onLoadTriggerCondition() {
+        return LOAD_WHEN_SCROLL_TO_BOTTOM;
     }
 }

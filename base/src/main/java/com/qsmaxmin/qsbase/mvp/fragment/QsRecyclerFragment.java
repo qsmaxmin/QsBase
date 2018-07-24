@@ -308,6 +308,7 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
         }
 
         @Override public void onBindViewHolder(@NonNull MyRecycleViewHolder<D> holder, int position) {
+            onAdapterGetView(position, getItemCount());
             holder.onBindData(mList.get(position), position, mList.size());
         }
 
@@ -330,5 +331,9 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
 
     @Override public int getItemViewType(int position) {
         return 0;
+    }
+
+    @Override public void onAdapterGetView(int position, int totalCount) {
+        //for custom logic
     }
 }
