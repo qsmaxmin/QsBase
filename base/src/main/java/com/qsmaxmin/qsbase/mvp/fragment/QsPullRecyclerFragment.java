@@ -141,7 +141,7 @@ public abstract class QsPullRecyclerFragment<P extends QsPresenter, D> extends Q
 
     @Override public void onAdapterGetView(int position, int totalCount) {
         super.onAdapterGetView(position, totalCount);
-        if (onLoadTriggerCondition() == LOAD_WHEN_SECOND_TO_LAST && position == totalCount - 2) {
+        if (onLoadTriggerCondition() == LOAD_WHEN_SECOND_TO_LAST && (position == totalCount - 2 || totalCount <= 1)) {
             loadingMoreData();
         }
     }
