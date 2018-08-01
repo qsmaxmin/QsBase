@@ -104,6 +104,8 @@ public interface QsIView<P> {
 
     void commitBackStackFragment(int layoutId, Fragment fragment);
 
+    void commitBackStackFragment(Fragment fragment, int enterAnim, int exitAnim);
+
     void commitBackStackFragment(int layoutId, Fragment fragment, String tag);
 
     void commitDialogFragment(DialogFragment fragment);

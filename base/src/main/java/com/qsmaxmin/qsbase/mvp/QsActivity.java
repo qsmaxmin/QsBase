@@ -343,6 +343,10 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         commitBackStackFragment(layoutId, fragment, fragment.getClass().getSimpleName());
     }
 
+    @Override public void commitBackStackFragment(Fragment fragment, int enterAnim, int exitAnim) {
+        QsHelper.getInstance().commitBackStackFragment(fragment, enterAnim, exitAnim);
+    }
+
     @Override public void commitBackStackFragment(int layoutId, Fragment fragment, String tag) {
         QsHelper.getInstance().commitBackStackFragment(getSupportFragmentManager(), layoutId, fragment, tag);
     }

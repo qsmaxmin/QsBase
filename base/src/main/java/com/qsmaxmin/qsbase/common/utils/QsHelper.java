@@ -200,16 +200,27 @@ public class QsHelper {
         commitBackStackFragment(layoutId, fragment, fragment.getClass().getSimpleName());
     }
 
+    public void commitBackStackFragment(Fragment fragment, int enterAnim, int exitAnim) {
+        FragmentActivity activity = getScreenHelper().currentActivity();
+        if (activity == null) return;
+        commitBackStackFragment(activity.getSupportFragmentManager(), android.R.id.custom, fragment, fragment.getClass().getSimpleName(), enterAnim, exitAnim);
+    }
+
     public void commitBackStackFragment(int layoutId, Fragment fragment, String tag) {
         FragmentActivity activity = getScreenHelper().currentActivity();
         if (activity == null) return;
-        FragmentManager fragmentManager = activity.getSupportFragmentManager();
-        commitBackStackFragment(fragmentManager, layoutId, fragment, tag);
+        commitBackStackFragment(activity.getSupportFragmentManager(), layoutId, fragment, tag);
     }
 
-    @ThreadPoint(ThreadType.MAIN) public void commitBackStackFragment(FragmentManager fragmentManager, int layoutId, Fragment fragment, String tag) {
+    public void commitBackStackFragment(FragmentManager fragmentManager, int layoutId, Fragment fragment, String tag) {
+        commitBackStackFragment(fragmentManager, layoutId, fragment, tag, 0, 0);
+    }
+
+    @ThreadPoint(ThreadType.MAIN) public void commitBackStackFragment(FragmentManager fragmentManager, int layoutId, Fragment fragment, String tag, int enterAnim, int exitAnim) {
         if (layoutId > 0 && fragment != null && !fragment.isAdded() && fragmentManager != null) {
-            fragmentManager.beginTransaction().add(layoutId, fragment, tag).addToBackStack(null).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN).commitAllowingStateLoss();
+            FragmentTransaction transaction = fragmentManager.beginTransaction();
+            if (enterAnim > 0 || exitAnim > 0) transaction.setCustomAnimations(enterAnim, exitAnim, enterAnim, exitAnim);
+            transaction.add(layoutId, fragment, tag).addToBackStack(null).setTransition(FragmentTransaction.TRANSIT_NONE).commitAllowingStateLoss();
         }
     }
 

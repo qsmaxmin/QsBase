@@ -354,7 +354,11 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         commitBackStackFragment(layoutId, fragment, fragment.getClass().getSimpleName());
     }
 
-    @ThreadPoint(ThreadType.MAIN) @Override public void commitBackStackFragment(int layoutId, Fragment fragment, String tag) {
+    @Override public void commitBackStackFragment(Fragment fragment, int enterAnim, int exitAnim) {
+        QsHelper.getInstance().commitBackStackFragment(fragment, enterAnim, exitAnim);
+    }
+
+    @Override public void commitBackStackFragment(int layoutId, Fragment fragment, String tag) {
         QsHelper.getInstance().commitBackStackFragment(getFragmentManager(), layoutId, fragment, tag);
     }
 
