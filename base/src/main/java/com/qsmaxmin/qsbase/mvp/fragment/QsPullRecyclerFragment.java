@@ -4,8 +4,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 
 import com.qsmaxmin.qsbase.R;
-import com.qsmaxmin.qsbase.common.aspect.ThreadPoint;
-import com.qsmaxmin.qsbase.common.aspect.ThreadType;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.widget.listview.LoadingFooter;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrDefaultHandler;
@@ -81,31 +79,50 @@ public abstract class QsPullRecyclerFragment<P extends QsPresenter, D> extends Q
         });
     }
 
-    @Override @ThreadPoint(ThreadType.MAIN) public void startRefreshing() {
-        if (mPtrFrameLayout != null) mPtrFrameLayout.autoRefresh();
+    @Override public void startRefreshing() {
+        if (mPtrFrameLayout != null) mPtrFrameLayout.post(new Runnable() {
+            @Override public void run() {
+                mPtrFrameLayout.autoRefresh();
+            }
+        });
     }
 
-    @Override @ThreadPoint(ThreadType.MAIN) public void stopRefreshing() {
-        mPtrFrameLayout.refreshComplete();
+    @Override public void stopRefreshing() {
+        if (mPtrFrameLayout != null) mPtrFrameLayout.post(new Runnable() {
+            @Override public void run() {
+                mPtrFrameLayout.refreshComplete();
+            }
+        });
     }
 
-    @Override @ThreadPoint(ThreadType.MAIN) public void setLoadingState(LoadingFooter.State state) {
-        if (mLoadingFooter != null) {
-            L.i(initTag(), "setLoadingState：" + state);
-            mLoadingFooter.setState(state);
-        }
+    @Override public void setLoadingState(final LoadingFooter.State state) {
+        L.i(initTag(), "setLoadingState：" + state);
+        if (mLoadingFooter != null) mLoadingFooter.post(new Runnable() {
+            @Override public void run() {
+                mLoadingFooter.setState(state);
+            }
+        });
     }
 
     @Override public LoadingFooter.State getLoadingState() {
         return mLoadingFooter == null ? null : mLoadingFooter.getState();
     }
 
-    @Override @ThreadPoint(ThreadType.MAIN) public void openPullRefreshing() {
+    @Override public void openPullRefreshing() {
         mPtrFrameLayout.setEnabled(true);
+        if (mPtrFrameLayout != null) mPtrFrameLayout.post(new Runnable() {
+            @Override public void run() {
+                mPtrFrameLayout.setEnabled(true);
+            }
+        });
     }
 
-    @Override @ThreadPoint(ThreadType.MAIN) public void closePullRefreshing() {
-        mPtrFrameLayout.setEnabled(false);
+    @Override public void closePullRefreshing() {
+        if (mPtrFrameLayout != null) mPtrFrameLayout.post(new Runnable() {
+            @Override public void run() {
+                mPtrFrameLayout.setEnabled(false);
+            }
+        });
     }
 
     @Override public void openPullLoading() {
@@ -120,13 +137,21 @@ public abstract class QsPullRecyclerFragment<P extends QsPresenter, D> extends Q
         return mPtrFrameLayout;
     }
 
-    @ThreadPoint(ThreadType.MAIN) @Override public void setData(List<D> list) {
-        mPtrFrameLayout.refreshComplete();
+    @Override public void setData(List<D> list) {
+        if (mPtrFrameLayout != null) mPtrFrameLayout.post(new Runnable() {
+            @Override public void run() {
+                mPtrFrameLayout.refreshComplete();
+            }
+        });
         super.setData(list);
     }
 
-    @ThreadPoint(ThreadType.MAIN) @Override public void setData(List<D> list, boolean showEmptyView) {
-        mPtrFrameLayout.refreshComplete();
+    @Override public void setData(List<D> list, boolean showEmptyView) {
+        if (mPtrFrameLayout != null) mPtrFrameLayout.post(new Runnable() {
+            @Override public void run() {
+                mPtrFrameLayout.refreshComplete();
+            }
+        });
         super.setData(list, showEmptyView);
     }
 
