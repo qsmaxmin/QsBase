@@ -153,7 +153,7 @@ public abstract class QsPullListFragment<T extends QsPresenter, D> extends QsLis
 
     @Override public void onAdapterGetView(int position, int totalCount) {
         super.onAdapterGetView(position, totalCount);
-        if (onLoadTriggerCondition() == LOAD_WHEN_SECOND_TO_LAST && (position == totalCount - 2 || totalCount <= 1)) {
+        if (onLoadTriggerCondition() == LOAD_WHEN_SECOND_TO_LAST && (position == totalCount - 2 || totalCount == 1)) {
             L.i(initTag(), "onAdapterGetView...... position:" + position + "  totalCount:" + totalCount + ", so loadingMoreData()");
             loadingMoreData();
         }
