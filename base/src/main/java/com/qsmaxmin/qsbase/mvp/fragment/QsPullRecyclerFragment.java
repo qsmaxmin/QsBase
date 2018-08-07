@@ -4,6 +4,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 
 import com.qsmaxmin.qsbase.R;
+import com.qsmaxmin.qsbase.common.aspect.ThreadPoint;
+import com.qsmaxmin.qsbase.common.aspect.ThreadType;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.widget.listview.LoadingFooter;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrDefaultHandler;
@@ -95,13 +97,9 @@ public abstract class QsPullRecyclerFragment<P extends QsPresenter, D> extends Q
         });
     }
 
-    @Override public void setLoadingState(final LoadingFooter.State state) {
+    @ThreadPoint(ThreadType.MAIN) @Override public void setLoadingState(final LoadingFooter.State state) {
         L.i(initTag(), "setLoadingState：" + state);
-        if (mLoadingFooter != null) mLoadingFooter.post(new Runnable() {
-            @Override public void run() {
-                mLoadingFooter.setState(state);
-            }
-        });
+        if (mLoadingFooter != null) mLoadingFooter.setState(state);
     }
 
     @Override public LoadingFooter.State getLoadingState() {
