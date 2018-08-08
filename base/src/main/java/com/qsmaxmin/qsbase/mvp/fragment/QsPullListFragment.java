@@ -27,8 +27,8 @@ import java.util.List;
  */
 
 public abstract class QsPullListFragment<T extends QsPresenter, D> extends QsListFragment<T, D> implements QsIPullToRefresh {
-    public static final int     LOAD_WHEN_SCROLL_TO_BOTTOM = 0;
-    public static final int     LOAD_WHEN_SECOND_TO_LAST   = 1;
+    public static final byte    LOAD_WHEN_SCROLL_TO_BOTTOM = 0;
+    public static final byte    LOAD_WHEN_SECOND_TO_LAST   = 1;
     private             boolean canLoadingMore             = true;
     private   PtrFrameLayout mPtrFrameLayout;
     protected LoadingFooter  mLoadingFooter;

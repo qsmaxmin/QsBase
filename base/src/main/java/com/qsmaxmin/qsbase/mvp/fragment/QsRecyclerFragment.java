@@ -31,9 +31,9 @@ import java.util.List;
  */
 public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFragment<P> implements QsIRecyclerFragment<D>, AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
 
-    public static final int     TYPE_LIST          = 1 << 2;
-    public static final int     TYPE_GRID          = 2 << 2;
-    public static final int     TYPE_STAGGEREDGRID = 3 << 2;
+    public static final byte    TYPE_LIST          = 1 << 2;
+    public static final byte    TYPE_GRID          = 2 << 2;
+    public static final byte    TYPE_STAGGEREDGRID = 3 << 2;
     private final       List<D> mList              = new ArrayList<>();
 
     private   HeaderFooterRecyclerView   mRecyclerView;
