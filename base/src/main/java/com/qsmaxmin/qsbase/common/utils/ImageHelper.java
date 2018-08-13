@@ -285,7 +285,7 @@ public class ImageHelper {
             if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
                 requestBuilder.into(view);
             } else {
-                QsHelper.getInstance().getThreadHelper().getHttpThreadPoll().execute(new Runnable() {
+                QsHelper.getInstance().getThreadHelper().getMainThread().execute(new Runnable() {
                     @Override public void run() {
                         requestBuilder.into(view);
                     }
