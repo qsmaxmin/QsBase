@@ -6,6 +6,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
@@ -257,8 +258,8 @@ public class ImageHelper {
             into(view, null);
         }
 
-        public void into(ImageView view, final ImageRequestListener listener) {
-            RequestBuilder<Drawable> requestBuilder;
+        public void into(final ImageView view, final ImageRequestListener listener) {
+            final RequestBuilder<Drawable> requestBuilder;
             requestBuilder = manager.load(mObject);
             setRequestOptionsIfNeed(requestBuilder);
             if (listener != null) {
@@ -281,7 +282,15 @@ public class ImageHelper {
                     }
                 });
             }
-            requestBuilder.into(view);
+            if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
+                requestBuilder.into(view);
+            } else {
+                QsHelper.getInstance().getThreadHelper().getHttpThreadPoll().execute(new Runnable() {
+                    @Override public void run() {
+                        requestBuilder.into(view);
+                    }
+                });
+            }
         }
 
         public Bitmap getBitmap(String url) {
