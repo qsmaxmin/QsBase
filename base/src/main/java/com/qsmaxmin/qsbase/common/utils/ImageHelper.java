@@ -293,49 +293,69 @@ public class ImageHelper {
             }
         }
 
+
         public Bitmap getBitmap(String url) {
             return getBitmap(url, Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL);
+        }
+
+        public Bitmap getBitmap(Object object) {
+            return getBitmap(object, Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL);
+        }
+
+        public Bitmap getBitmap(String url, int width, int height) {
+            if (TextUtils.isEmpty(url)) return null;
+            return getBitmap(new MyGlideUrl(url), width, height);
+        }
+
+        public Bitmap getBitmap(Object object, int width, int height) {
+            if (object == null) return null;
+            RequestBuilder<Bitmap> requestBuilder = manager.asBitmap();
+            setRequestOptionsIfNeed(requestBuilder);
+            FutureTarget<Bitmap> submit = requestBuilder.load(object).submit(width, height);
+            try {
+                return submit.get();
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+            return null;
         }
 
         public Drawable getDrawable(String url) {
             return getDrawable(url, Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL);
         }
 
-        public File getImageFile(String url) {
-            return getImageFile(url, Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL);
-        }
-
-        public Bitmap getBitmap(String url, int width, int height) {
-            if (TextUtils.isEmpty(url)) return null;
-            RequestBuilder<Bitmap> requestBuilder = manager.asBitmap();
-            setRequestOptionsIfNeed(requestBuilder);
-            FutureTarget<Bitmap> submit = requestBuilder.load(url).submit(width, height);
-            try {
-                return submit.get();
-            } catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
-            }
-            return null;
+        public Drawable getDrawable(Object object) {
+            return getDrawable(object, Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL);
         }
 
         public Drawable getDrawable(String url, int width, int height) {
             if (TextUtils.isEmpty(url)) return null;
+            return getDrawable(new MyGlideUrl(url), width, height);
+        }
+
+        public Drawable getDrawable(Object object, int width, int height) {
+            if (object == null) return null;
             RequestBuilder<Drawable> requestBuilder = manager.asDrawable();
             setRequestOptionsIfNeed(requestBuilder);
-            FutureTarget<Drawable> submit = requestBuilder.load(url).submit(width, height);
+            FutureTarget<Drawable> submit = requestBuilder.load(object).submit(width, height);
             try {
                 return submit.get();
             } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();
             }
             return null;
+        }
+
+
+        public File getImageFile(String url) {
+            return getImageFile(url, Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL);
         }
 
         public File getImageFile(String url, int width, int height) {
             if (TextUtils.isEmpty(url)) return null;
             RequestBuilder<File> requestBuilder = manager.asFile();
             setRequestOptionsIfNeed(requestBuilder);
-            FutureTarget<File> submit = requestBuilder.load(url).submit(width, height);
+            FutureTarget<File> submit = requestBuilder.load(new MyGlideUrl(url)).submit(width, height);
             try {
                 return submit.get();
             } catch (InterruptedException | ExecutionException e) {
