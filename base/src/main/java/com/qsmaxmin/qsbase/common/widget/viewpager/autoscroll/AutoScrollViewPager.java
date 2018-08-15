@@ -72,7 +72,7 @@ public final class AutoScrollViewPager extends ViewPager {
      * 计算位置
      */
     @Override public void setCurrentItem(int item) {
-        if (getAdapter().isEnableInfinite()) {
+        if (getAdapter() != null && getAdapter().isEnableInfinite()) {
             item = getOffsetAmount() + (item % getAdapter().getCount());
         }
         super.setCurrentItem(item);
@@ -135,12 +135,12 @@ public final class AutoScrollViewPager extends ViewPager {
 
     private void setViewPagerScroller() {
         try {
-            Field scrollerField = ViewPager.class.getDeclaredField("mScroller");
-            scrollerField.setAccessible(true);
             Field interpolatorField = ViewPager.class.getDeclaredField("sInterpolator");
             interpolatorField.setAccessible(true);
-            interpolatorField.get(null);
             scroller = new CustomDurationScroller(getContext(), (Interpolator) interpolatorField.get(null));
+
+            Field scrollerField = ViewPager.class.getDeclaredField("mScroller");
+            scrollerField.setAccessible(true);
             scrollerField.set(this, scroller);
         } catch (Exception e) {
             e.printStackTrace();
