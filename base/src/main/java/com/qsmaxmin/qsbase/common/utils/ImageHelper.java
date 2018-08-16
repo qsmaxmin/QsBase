@@ -259,11 +259,9 @@ public class ImageHelper {
         }
 
         public void into(final ImageView view, final ImageRequestListener listener) {
-            final RequestBuilder<Drawable> requestBuilder;
-            requestBuilder = manager.load(mObject);
-            setRequestOptionsIfNeed(requestBuilder);
+            final RequestBuilder<Drawable> requestBuilder = setRequestOptionsIfNeed(manager.load(mObject));
             if (listener != null) {
-                requestBuilder.listener(new RequestListener<Drawable>() {
+                RequestBuilder<Drawable> builder = requestBuilder.listener(new RequestListener<Drawable>() {
                     @Override public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
                         if (e != null) {
                             listener.onLoadFailed(e.getMessage());
@@ -309,8 +307,7 @@ public class ImageHelper {
 
         public Bitmap getBitmap(Object object, int width, int height) {
             if (object == null) return null;
-            RequestBuilder<Bitmap> requestBuilder = manager.asBitmap();
-            setRequestOptionsIfNeed(requestBuilder);
+            RequestBuilder<Bitmap> requestBuilder = setRequestOptionsIfNeed(manager.asBitmap());
             FutureTarget<Bitmap> submit = requestBuilder.load(object).submit(width, height);
             try {
                 return submit.get();
@@ -335,8 +332,7 @@ public class ImageHelper {
 
         public Drawable getDrawable(Object object, int width, int height) {
             if (object == null) return null;
-            RequestBuilder<Drawable> requestBuilder = manager.asDrawable();
-            setRequestOptionsIfNeed(requestBuilder);
+            RequestBuilder<Drawable> requestBuilder = setRequestOptionsIfNeed(manager.asDrawable());
             FutureTarget<Drawable> submit = requestBuilder.load(object).submit(width, height);
             try {
                 return submit.get();
@@ -353,8 +349,7 @@ public class ImageHelper {
 
         public File getImageFile(String url, int width, int height) {
             if (TextUtils.isEmpty(url)) return null;
-            RequestBuilder<File> requestBuilder = manager.asFile();
-            setRequestOptionsIfNeed(requestBuilder);
+            RequestBuilder<File> requestBuilder = setRequestOptionsIfNeed(manager.asFile());
             FutureTarget<File> submit = requestBuilder.load(new MyGlideUrl(url)).submit(width, height);
             try {
                 return submit.get();
@@ -364,11 +359,12 @@ public class ImageHelper {
             return null;
         }
 
-        private void setRequestOptionsIfNeed(RequestBuilder requestBuilder) {
+        private <T> RequestBuilder<T> setRequestOptionsIfNeed(RequestBuilder<T> requestBuilder) {
             if (shouldCreateRequestOptions()) {
                 RequestOptions requestOptions = createRequestOptions();
-                requestBuilder.apply(requestOptions);
+                return requestBuilder.apply(requestOptions);
             }
+            return requestBuilder;
         }
 
         /**
@@ -403,33 +399,45 @@ public class ImageHelper {
         @NonNull private RequestOptions createRequestOptions() {
             RequestOptions requestOptions = new RequestOptions();
             if (placeholderId > 0) {
-                requestOptions.placeholder(placeholderId);
+                requestOptions = requestOptions.placeholder(placeholderId);
             } else if (placeholderDrawable != null) {
-                requestOptions.placeholder(placeholderDrawable);
+                requestOptions = requestOptions.placeholder(placeholderDrawable);
             } else if (enableDefaultHolder && defaultHolderId > 0) {
-                requestOptions.placeholder(defaultHolderId);
+                requestOptions = requestOptions.placeholder(defaultHolderId);
             }
             if (errorId > 0) {
-                requestOptions.error(placeholderId);
+                requestOptions = requestOptions.error(placeholderId);
             } else if (errorDrawable != null) {
-                requestOptions.error(placeholderId);
+                requestOptions = requestOptions.error(placeholderId);
             } else if (enableDefaultHolder && defaultHolderId > 0) {
-                requestOptions.error(defaultHolderId);
+                requestOptions = requestOptions.error(defaultHolderId);
             }
             if (centerCrop) {
-                requestOptions.optionalCenterCrop();
+                requestOptions = requestOptions.optionalCenterCrop();
             } else if (fitCenter) {
-                requestOptions.optionalFitCenter();
+                requestOptions = requestOptions.optionalFitCenter();
             } else if (centerInside) {
-                requestOptions.optionalCenterInside();
+                requestOptions = requestOptions.optionalCenterInside();
             }
-            if (mIsCircleCrop) requestOptions.optionalCircleCrop();
-            if (mCorners > 0) requestOptions.optionalTransform(new RoundCornerBitmapTransform(mCorners));
-            if (mTransformation != null) requestOptions.optionalTransform(mTransformation);
+            if (mIsCircleCrop) {
+                requestOptions = requestOptions.optionalCircleCrop();
+            }
+            if (mCorners > 0) {
+                requestOptions = requestOptions.optionalTransform(new RoundCornerBitmapTransform(mCorners));
+            }
+            if (mTransformation != null) {
+                requestOptions = requestOptions.optionalTransform(mTransformation);
+            }
 
-            if (mWidth > 0 && mHeight > 0) requestOptions.override(mWidth, mHeight);
-            if (noMemoryCache) requestOptions.skipMemoryCache(true);
-            if (diskCacheStrategy != null) requestOptions.diskCacheStrategy(diskCacheStrategy);
+            if (mWidth > 0 && mHeight > 0) {
+                requestOptions = requestOptions.override(mWidth, mHeight);
+            }
+            if (noMemoryCache) {
+                requestOptions = requestOptions.skipMemoryCache(true);
+            }
+            if (diskCacheStrategy != null) {
+                requestOptions = requestOptions.diskCacheStrategy(diskCacheStrategy);
+            }
             return requestOptions;
         }
 
