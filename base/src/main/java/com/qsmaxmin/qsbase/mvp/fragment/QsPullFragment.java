@@ -27,7 +27,7 @@ public abstract class QsPullFragment<T extends QsPresenter> extends QsFragment<T
     private PtrFrameLayout mPtrFrameLayout;
     private ViewGroup      childView;
 
-    @Override public final int layoutId() {
+    @Override public int layoutId() {
         return R.layout.qs_fragment_pull_view;
     }
 
@@ -60,10 +60,12 @@ public abstract class QsPullFragment<T extends QsPresenter> extends QsFragment<T
             }
         });
         childView = view.findViewById(R.id.swipe_child);
-        if (childView != null) {
-            inflater.inflate(viewLayoutId(), childView);
-        } else {
-            inflater.inflate(viewLayoutId(), mPtrFrameLayout);
+        if (viewLayoutId() > 0) {
+            if (childView != null) {
+                inflater.inflate(viewLayoutId(), childView);
+            } else {
+                inflater.inflate(viewLayoutId(), mPtrFrameLayout);
+            }
         }
     }
 
