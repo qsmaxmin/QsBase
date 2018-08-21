@@ -1,5 +1,7 @@
 package com.qsmaxmin.qsbase.common.utils.glide.http;
 
+import android.support.annotation.NonNull;
+
 import com.bumptech.glide.load.Options;
 import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.load.model.ModelLoader;
@@ -23,13 +25,12 @@ public class OkHttpUrlLoader implements ModelLoader<GlideUrl, InputStream> {
     }
 
     @Override
-    public boolean handles(GlideUrl url) {
+    public boolean handles(@NonNull GlideUrl url) {
         return true;
     }
 
     @Override
-    public LoadData<InputStream> buildLoadData(GlideUrl model, int width, int height,
-            Options options) {
+    public LoadData<InputStream> buildLoadData(@NonNull GlideUrl model, int width, int height, @NonNull Options options) {
         return new LoadData<>(model, new OkHttpStreamFetcher(client, model));
     }
 
@@ -67,8 +68,8 @@ public class OkHttpUrlLoader implements ModelLoader<GlideUrl, InputStream> {
             this.client = client;
         }
 
-        @Override
-        public ModelLoader<GlideUrl, InputStream> build(MultiModelLoaderFactory multiFactory) {
+        @NonNull @Override
+        public ModelLoader<GlideUrl, InputStream> build(@NonNull MultiModelLoaderFactory multiFactory) {
             return new OkHttpUrlLoader(client);
         }
 
