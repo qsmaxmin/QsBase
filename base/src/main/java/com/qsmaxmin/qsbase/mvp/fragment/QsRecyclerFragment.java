@@ -276,7 +276,6 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
     }
 
     @Override public void smoothScrollToTop(boolean autoRefresh) {
-        super.smoothScrollToTop(autoRefresh);
         getRecyclerView().smoothScrollToPosition(0);
     }
 

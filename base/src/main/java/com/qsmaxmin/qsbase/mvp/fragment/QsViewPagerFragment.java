@@ -226,7 +226,6 @@ public abstract class QsViewPagerFragment<P extends QsPresenter> extends QsFragm
     }
 
     @Override public void smoothScrollToTop(boolean autoRefresh) {
-        super.smoothScrollToTop(autoRefresh);
         QsViewPagerAdapter adapter = getViewPagerAdapter();
         if (adapter == null) return;
         QsModelPager[] allData = adapter.getAllData();
