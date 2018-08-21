@@ -421,12 +421,12 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
     @Override public void smoothScrollToTop(boolean autoRefresh) {
         View view = getView();
         if (view == null) return;
-        ScrollView scrollView = tryGetTargetView(ScrollView.class, view);
+        ScrollView scrollView = (ScrollView) tryGetTargetView(ScrollView.class, view);
         if (scrollView != null) {
             int scaleDuration = (int) scrollView.getScaleY() / 2;
             scrollView.smoothScrollTo(0, 0);
             if (autoRefresh) {
-                final PtrFrameLayout frameLayout = tryGetTargetView(PtrFrameLayout.class, view);
+                final PtrFrameLayout frameLayout = (PtrFrameLayout) tryGetTargetView(PtrFrameLayout.class, view);
                 if (frameLayout != null) {
                     scrollView.postDelayed(new Runnable() {
                         @Override public void run() {
@@ -438,21 +438,21 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         }
     }
 
-    private <TA> TA tryGetTargetView(Class<TA> clazz, View view) {
-        TA ta = null;
-        if (view.getClass() == clazz) {
-            ta = (TA) view;
+    private View tryGetTargetView(Class clazz, View parentView) {
+        View targetView = null;
+        if (parentView.getClass() == clazz) {
+            targetView = parentView;
         } else {
-            if (view instanceof ViewGroup) {
-                int childCount = ((ViewGroup) view).getChildCount();
+            if (parentView instanceof ViewGroup) {
+                int childCount = ((ViewGroup) parentView).getChildCount();
                 for (int i = 0; i < childCount; i++) {
-                    View childAt = ((ViewGroup) view).getChildAt(i);
-                    ta = tryGetTargetView(clazz, childAt);
-                    if (ta != null) break;
+                    View childAt = ((ViewGroup) parentView).getChildAt(i);
+                    targetView = tryGetTargetView(clazz, childAt);
+                    if (targetView != null) break;
                 }
             }
         }
-        return ta;
+        return targetView;
     }
 
     @Override public void onFragmentSelectedInViewPager(boolean isSelected, int currentPosition, int totalCount) {
