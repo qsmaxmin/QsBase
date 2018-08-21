@@ -1,6 +1,7 @@
 package com.qsmaxmin.qsbase.common.utils.glide.http;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.GlideBuilder;
@@ -23,7 +24,7 @@ public class OkHttpAppGlideModule extends AppGlideModule {
         super.applyOptions(context, builder);
     }
 
-    @Override public void registerComponents(Context context, Glide glide, Registry registry) {
+    @Override public void registerComponents(@NonNull Context context, @NonNull Glide glide, @NonNull Registry registry) {
         super.registerComponents(context, glide, registry);
         registry.replace(GlideUrl.class, InputStream.class, new OkHttpUrlLoader.Factory());
     }
