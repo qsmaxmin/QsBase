@@ -1,14 +1,12 @@
 package com.qsmaxmin.qsbase.common.model;
 
-import java.io.Serializable;
-
 /**
  * @CreateBy qsmaxmin
  * @Date 2017/6/29 14:44
  * @Description 网络请求基类
  */
 
-public class QsModel implements Serializable {
+public class QsModel {
     public QsModel() {
     }
 
