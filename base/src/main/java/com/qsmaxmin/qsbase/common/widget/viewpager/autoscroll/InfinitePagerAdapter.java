@@ -75,15 +75,15 @@ public class InfinitePagerAdapter extends PagerAdapter {
         }
     }
 
-    public List<Bitmap> getBitmpaData() {
-        ArrayList<Bitmap> result = new ArrayList<>();
-        result.addAll(bitmapList);
-        return result;
-    }
-
     public List<String> getData() {
         ArrayList<String> result = new ArrayList<>();
         result.addAll(urls);
+        return result;
+    }
+
+    public List<Bitmap> getBitmpaData() {
+        ArrayList<Bitmap> result = new ArrayList<>();
+        result.addAll(bitmapList);
         return result;
     }
 
@@ -91,9 +91,6 @@ public class InfinitePagerAdapter extends PagerAdapter {
         synchronized (urls) {
             urls.clear();
         }
-    }
-
-    public void removeBitmapData() {
         synchronized (bitmapList) {
             bitmapList.clear();
         }
