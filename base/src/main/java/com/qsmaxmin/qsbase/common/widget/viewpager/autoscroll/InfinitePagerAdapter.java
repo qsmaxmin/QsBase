@@ -20,7 +20,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * create by skyJC
+ * @CreateBy qsmaxmin
+ * @Date 2017-7-6 12:37:16
+ * @Description 自动轮播适配器
  */
 public class InfinitePagerAdapter extends PagerAdapter {
 
@@ -48,7 +50,7 @@ public class InfinitePagerAdapter extends PagerAdapter {
         }
     }
 
-    public void addData(List<String> data) {
+    public void addData(List data) {
         synchronized (urls) {
             if (data != null && !data.isEmpty()) {
                 urls.addAll(data);
@@ -56,7 +58,7 @@ public class InfinitePagerAdapter extends PagerAdapter {
         }
     }
 
-    public void setData(List<String> data) {
+    public void setData(List data) {
         synchronized (urls) {
             urls.clear();
             if (data != null && !data.isEmpty()) {
@@ -113,7 +115,7 @@ public class InfinitePagerAdapter extends PagerAdapter {
         ImageView imageView = new ImageView(context);
         FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         imageView.setLayoutParams(layoutParams);
-        imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        imageView.setScaleType(ImageView.ScaleType.CENTER);
         return imageView;
     }
 
@@ -123,9 +125,7 @@ public class InfinitePagerAdapter extends PagerAdapter {
 
     @NonNull @Override public Object instantiateItem(@NonNull ViewGroup container, final int position) {
         final int virtualPosition = getVirtualPosition(position);
-        L.i("InfinitePagerAdapter", "instantiateItem... position:" + virtualPosition + " totalCount:" + urls.size());
         FrameLayout frameLayout = new FrameLayout(container.getContext());
-        if (virtualPosition < urls.size()) return frameLayout;
         final View pageView = getPageView(container.getContext(), virtualPosition, urls.size());
         ImageView imageView;
         if (pageView instanceof ImageView) {
@@ -139,48 +139,63 @@ public class InfinitePagerAdapter extends PagerAdapter {
             holderImage.setImageDrawable(container.getContext().getResources().getDrawable(placeholder));
             frameLayout.addView(holderImage);
             frameLayout.addView(pageView);
-            Object object = urls.get(virtualPosition);
+            if (virtualPosition < urls.size()) {
+                Object object = urls.get(virtualPosition);
+                if (object instanceof String) {
+                    L.i("InfinitePagerAdapter", "instantiateItem... type:String(holder), position:" + virtualPosition + ", totalCount:" + urls.size());
+                    QsHelper.getInstance().getImageHelper().createRequest()
+                            .roundedCorners(corners)
+                            .load(urls.get(virtualPosition))
+                            .into(imageView, new ImageHelper.ImageRequestListener() {
+                                @Override public void onLoadFailed(String message) {
+                                    pageView.setVisibility(View.GONE);
+                                    holderImage.setVisibility(View.VISIBLE);
+                                }
 
-            ImageHelper.ImageRequestListener listener = new ImageHelper.ImageRequestListener() {
-                @Override public void onLoadFailed(String message) {
-                    pageView.setVisibility(View.GONE);
-                    holderImage.setVisibility(View.VISIBLE);
-                }
-
-                @Override public void onSuccess(Drawable drawable, Object model) {
+                                @Override public void onSuccess(Drawable drawable, Object model) {
+                                    pageView.setVisibility(View.VISIBLE);
+                                    holderImage.setVisibility(View.GONE);
+                                }
+                            });
+                } else if (object instanceof Bitmap) {
+                    L.i("InfinitePagerAdapter", "instantiateItem... type:Bitmap(holder), position:" + virtualPosition + ", totalCount:" + urls.size());
                     pageView.setVisibility(View.VISIBLE);
                     holderImage.setVisibility(View.GONE);
+                    imageView.setImageBitmap((Bitmap) object);
+                } else {
+                    L.i("InfinitePagerAdapter", "instantiateItem... type:Object(holder), position:" + virtualPosition + ", totalCount:" + urls.size());
+                    QsHelper.getInstance().getImageHelper().createRequest()
+                            .roundedCorners(corners)
+                            .load(object)
+                            .into(imageView, new ImageHelper.ImageRequestListener() {
+                                @Override public void onLoadFailed(String message) {
+                                    pageView.setVisibility(View.GONE);
+                                    holderImage.setVisibility(View.VISIBLE);
+                                }
+
+                                @Override public void onSuccess(Drawable drawable, Object model) {
+                                    pageView.setVisibility(View.VISIBLE);
+                                    holderImage.setVisibility(View.GONE);
+                                }
+                            });
                 }
-            };
-
-            if (object instanceof String) {
-                QsHelper.getInstance().getImageHelper().createRequest()
-                        .roundedCorners(corners)
-                        .load((String) object)
-                        .into(imageView, listener);
-            } else if (object instanceof Bitmap) {
-                imageView.setImageBitmap((Bitmap) object);
-                pageView.setVisibility(View.VISIBLE);
-                holderImage.setVisibility(View.GONE);
-            } else {
-                QsHelper.getInstance().getImageHelper().createRequest()
-                        .roundedCorners(corners)
-                        .load(object)
-                        .into(imageView, listener);
             }
-
         } else {
             frameLayout.addView(pageView);
-            Object object = urls.get(virtualPosition);
-            if (object instanceof String) {
-                QsHelper.getInstance().getImageHelper().createRequest().roundedCorners(corners).load((String) object).into(imageView);
-            } else if (object instanceof Bitmap) {
-                imageView.setImageBitmap((Bitmap) object);
-            } else {
-                QsHelper.getInstance().getImageHelper().createRequest().roundedCorners(corners).load(object).into(imageView);
+            if (virtualPosition < urls.size()) {
+                Object object = urls.get(virtualPosition);
+                if (object instanceof String) {
+                    L.i("InfinitePagerAdapter", "instantiateItem... type:String(no holder), position:" + virtualPosition + ", totalCount:" + urls.size());
+                    QsHelper.getInstance().getImageHelper().createRequest().roundedCorners(corners).load((String) object).into(imageView);
+                } else if (object instanceof Bitmap) {
+                    L.i("InfinitePagerAdapter", "instantiateItem... type:Bitmap(no holder), position:" + virtualPosition + ", totalCount:" + urls.size());
+                    imageView.setImageBitmap((Bitmap) object);
+                } else {
+                    L.i("InfinitePagerAdapter", "instantiateItem... type:Object(no holder), position:" + virtualPosition + ", totalCount:" + urls.size());
+                    QsHelper.getInstance().getImageHelper().createRequest().roundedCorners(corners).load(urls.get(virtualPosition)).into(imageView);
+                }
             }
         }
-
         if (listener != null) {
             pageView.setOnClickListener(new View.OnClickListener() {
                 @Override public void onClick(View v) {
@@ -194,13 +209,13 @@ public class InfinitePagerAdapter extends PagerAdapter {
         return frameLayout;
     }
 
-    @Override public void destroyItem(ViewGroup container, int position, Object object) {
+    @Override public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
         int virtualPosition = getVirtualPosition(position);
-        L.i("destroyItem", "" + virtualPosition + ":" + position);
+        L.i("destroyItem", virtualPosition + ":" + position);
         container.removeView((View) object);
     }
 
-    @Override public boolean isViewFromObject(View view, Object object) {
+    @Override public boolean isViewFromObject(@NonNull View view, @NonNull Object object) {
         return view == object;
     }
 
