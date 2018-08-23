@@ -64,22 +64,17 @@ public class CacheHelper {
     public <T extends QsModel> T getObjectFromFile(String key, Class<T> clazz) {
         FileInputStream fileInputStream = null;
         InputStreamReader inputStreamReader = null;
-        BufferedReader bufferedReader = null;
         try {
             fileInputStream = QsHelper.getInstance().getApplication().openFileInput(key);
             inputStreamReader = new InputStreamReader(fileInputStream);
-            bufferedReader = new BufferedReader(inputStreamReader);
-            String json = bufferedReader.readLine();
             Gson gson = new Gson();
-            return gson.fromJson(json, clazz);
+            return gson.fromJson(inputStreamReader, clazz);
         } catch (FileNotFoundException e) {
             L.e("CacheHelper", "getObjectFromFile not exit... key:" + key);
-        } catch (IOException e) {
-            e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            QsHelper.getInstance().closeStream(fileInputStream, inputStreamReader, bufferedReader);
+            QsHelper.getInstance().closeStream(fileInputStream, inputStreamReader);
         }
         return null;
     }
