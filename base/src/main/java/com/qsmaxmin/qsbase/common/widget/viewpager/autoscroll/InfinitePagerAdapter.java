@@ -24,8 +24,7 @@ import java.util.List;
  */
 public class InfinitePagerAdapter extends PagerAdapter {
 
-    private final        List<String> urls                   = new ArrayList<>();
-    private final        List<Bitmap> bitmapList             = new ArrayList<>();
+    private final        List<Object> urls                   = new ArrayList<>();
     private static final float        PAGE_WIDTH_SINGLE_ITEM = 1.0f;
     private              boolean      infinitePagesEnabled   = true;
 
@@ -66,33 +65,15 @@ public class InfinitePagerAdapter extends PagerAdapter {
         }
     }
 
-    public void setBitmpaData(List<Bitmap> data) {
-        synchronized (urls) {
-            bitmapList.clear();
-            if (data != null && !data.isEmpty()) {
-                bitmapList.addAll(data);
-            }
-        }
-    }
-
-    public List<String> getData() {
-        ArrayList<String> result = new ArrayList<>();
+    public List<Object> getData() {
+        ArrayList<Object> result = new ArrayList<>();
         result.addAll(urls);
-        return result;
-    }
-
-    public List<Bitmap> getBitmpaData() {
-        ArrayList<Bitmap> result = new ArrayList<>();
-        result.addAll(bitmapList);
         return result;
     }
 
     public void removeData() {
         synchronized (urls) {
             urls.clear();
-        }
-        synchronized (bitmapList) {
-            bitmapList.clear();
         }
     }
 
@@ -144,6 +125,7 @@ public class InfinitePagerAdapter extends PagerAdapter {
         final int virtualPosition = getVirtualPosition(position);
         L.i("InfinitePagerAdapter", "instantiateItem... position:" + virtualPosition + " totalCount:" + urls.size());
         FrameLayout frameLayout = new FrameLayout(container.getContext());
+        if (virtualPosition < urls.size()) return frameLayout;
         final View pageView = getPageView(container.getContext(), virtualPosition, urls.size());
         ImageView imageView;
         if (pageView instanceof ImageView) {
@@ -157,43 +139,45 @@ public class InfinitePagerAdapter extends PagerAdapter {
             holderImage.setImageDrawable(container.getContext().getResources().getDrawable(placeholder));
             frameLayout.addView(holderImage);
             frameLayout.addView(pageView);
-            if (!urls.isEmpty()) {
-                if (virtualPosition < urls.size()) {
-                    QsHelper.getInstance().getImageHelper().createRequest()
-                            .roundedCorners(corners)
-                            .load(urls.get(virtualPosition))
-                            .into(imageView, new ImageHelper.ImageRequestListener() {
-                                @Override public void onLoadFailed(String message) {
-                                    pageView.setVisibility(View.GONE);
-                                    holderImage.setVisibility(View.VISIBLE);
-                                }
+            Object object = urls.get(virtualPosition);
 
-                                @Override public void onSuccess(Drawable drawable, Object model) {
-                                    pageView.setVisibility(View.VISIBLE);
-                                    holderImage.setVisibility(View.GONE);
-                                }
-                            });
+            ImageHelper.ImageRequestListener listener = new ImageHelper.ImageRequestListener() {
+                @Override public void onLoadFailed(String message) {
+                    pageView.setVisibility(View.GONE);
+                    holderImage.setVisibility(View.VISIBLE);
                 }
-            } else if (!bitmapList.isEmpty()) {
-                if (virtualPosition < bitmapList.size()) {
-                    Bitmap bitmap = bitmapList.get(virtualPosition);
-                    imageView.setImageBitmap(bitmap);
+
+                @Override public void onSuccess(Drawable drawable, Object model) {
                     pageView.setVisibility(View.VISIBLE);
                     holderImage.setVisibility(View.GONE);
                 }
+            };
+
+            if (object instanceof String) {
+                QsHelper.getInstance().getImageHelper().createRequest()
+                        .roundedCorners(corners)
+                        .load((String) object)
+                        .into(imageView, listener);
+            } else if (object instanceof Bitmap) {
+                imageView.setImageBitmap((Bitmap) object);
+                pageView.setVisibility(View.VISIBLE);
+                holderImage.setVisibility(View.GONE);
+            } else {
+                QsHelper.getInstance().getImageHelper().createRequest()
+                        .roundedCorners(corners)
+                        .load(object)
+                        .into(imageView, listener);
             }
+
         } else {
             frameLayout.addView(pageView);
-            if (!urls.isEmpty()) {
-                if (virtualPosition < urls.size()) {
-                    QsHelper.getInstance().getImageHelper().createRequest().roundedCorners(corners).load(urls.get(virtualPosition)).into(imageView);
-                }
-            } else if (!bitmapList.isEmpty()) {
-                if (virtualPosition < bitmapList.size()) {
-                    Bitmap bitmap = bitmapList.get(virtualPosition);
-                    imageView.setImageBitmap(bitmap);
-                    pageView.setVisibility(View.VISIBLE);
-                }
+            Object object = urls.get(virtualPosition);
+            if (object instanceof String) {
+                QsHelper.getInstance().getImageHelper().createRequest().roundedCorners(corners).load((String) object).into(imageView);
+            } else if (object instanceof Bitmap) {
+                imageView.setImageBitmap((Bitmap) object);
+            } else {
+                QsHelper.getInstance().getImageHelper().createRequest().roundedCorners(corners).load(object).into(imageView);
             }
         }
 
