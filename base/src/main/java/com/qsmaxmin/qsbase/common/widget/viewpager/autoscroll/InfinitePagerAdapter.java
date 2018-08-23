@@ -1,6 +1,7 @@
 package com.qsmaxmin.qsbase.common.widget.viewpager.autoscroll;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
@@ -24,6 +25,7 @@ import java.util.List;
 public class InfinitePagerAdapter extends PagerAdapter {
 
     private final        List<String> urls                   = new ArrayList<>();
+    private final        List<Bitmap> bitmapList             = new ArrayList<>();
     private static final float        PAGE_WIDTH_SINGLE_ITEM = 1.0f;
     private              boolean      infinitePagesEnabled   = true;
 
@@ -64,6 +66,21 @@ public class InfinitePagerAdapter extends PagerAdapter {
         }
     }
 
+    public void setBitmpaData(List<Bitmap> data) {
+        synchronized (urls) {
+            bitmapList.clear();
+            if (data != null && !data.isEmpty()) {
+                bitmapList.addAll(data);
+            }
+        }
+    }
+
+    public List<Bitmap> getBitmpaData() {
+        ArrayList<Bitmap> result = new ArrayList<>();
+        result.addAll(bitmapList);
+        return result;
+    }
+
     public List<String> getData() {
         ArrayList<String> result = new ArrayList<>();
         result.addAll(urls);
@@ -73,6 +90,12 @@ public class InfinitePagerAdapter extends PagerAdapter {
     public void removeData() {
         synchronized (urls) {
             urls.clear();
+        }
+    }
+
+    public void removeBitmapData() {
+        synchronized (bitmapList) {
+            bitmapList.clear();
         }
     }
 
@@ -112,7 +135,7 @@ public class InfinitePagerAdapter extends PagerAdapter {
         ImageView imageView = new ImageView(context);
         FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         imageView.setLayoutParams(layoutParams);
-        imageView.setScaleType(ImageView.ScaleType.CENTER);
+        imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
         return imageView;
     }
 
@@ -120,7 +143,7 @@ public class InfinitePagerAdapter extends PagerAdapter {
         return PAGE_WIDTH_SINGLE_ITEM;
     }
 
-    @Override public Object instantiateItem(ViewGroup container, final int position) {
+    @NonNull @Override public Object instantiateItem(@NonNull ViewGroup container, final int position) {
         final int virtualPosition = getVirtualPosition(position);
         L.i("InfinitePagerAdapter", "instantiateItem... position:" + virtualPosition + " totalCount:" + urls.size());
         FrameLayout frameLayout = new FrameLayout(container.getContext());
@@ -129,7 +152,7 @@ public class InfinitePagerAdapter extends PagerAdapter {
         if (pageView instanceof ImageView) {
             imageView = (ImageView) pageView;
         } else {
-            imageView = (ImageView) pageView.findViewById(R.id.qs_banner_image);
+            imageView = pageView.findViewById(R.id.qs_banner_image);
         }
         if (imageView == null) throw new IllegalStateException("InfinitePageAdapter getPageView(Context) should return a ImageView or ViewGroup Contains a ID of 'R.id.qs_banner_image' ImageView");
         if (placeholder > 0) {
@@ -137,29 +160,46 @@ public class InfinitePagerAdapter extends PagerAdapter {
             holderImage.setImageDrawable(container.getContext().getResources().getDrawable(placeholder));
             frameLayout.addView(holderImage);
             frameLayout.addView(pageView);
+            if (!urls.isEmpty()) {
+                if (virtualPosition < urls.size()) {
+                    QsHelper.getInstance().getImageHelper().createRequest()
+                            .roundedCorners(corners)
+                            .load(urls.get(virtualPosition))
+                            .into(imageView, new ImageHelper.ImageRequestListener() {
+                                @Override public void onLoadFailed(String message) {
+                                    pageView.setVisibility(View.GONE);
+                                    holderImage.setVisibility(View.VISIBLE);
+                                }
 
-            if (virtualPosition < urls.size()) {
-                QsHelper.getInstance().getImageHelper().createRequest()
-                        .roundedCorners(corners)
-                        .load(urls.get(virtualPosition))
-                        .into(imageView, new ImageHelper.ImageRequestListener() {
-                            @Override public void onLoadFailed(String message) {
-                                pageView.setVisibility(View.GONE);
-                                holderImage.setVisibility(View.VISIBLE);
-                            }
-
-                            @Override public void onSuccess(Drawable drawable, Object model) {
-                                pageView.setVisibility(View.VISIBLE);
-                                holderImage.setVisibility(View.GONE);
-                            }
-                        });
+                                @Override public void onSuccess(Drawable drawable, Object model) {
+                                    pageView.setVisibility(View.VISIBLE);
+                                    holderImage.setVisibility(View.GONE);
+                                }
+                            });
+                }
+            } else if (!bitmapList.isEmpty()) {
+                if (virtualPosition < bitmapList.size()) {
+                    Bitmap bitmap = bitmapList.get(virtualPosition);
+                    imageView.setImageBitmap(bitmap);
+                    pageView.setVisibility(View.VISIBLE);
+                    holderImage.setVisibility(View.GONE);
+                }
             }
         } else {
             frameLayout.addView(pageView);
-            if (virtualPosition < urls.size()) {
-                QsHelper.getInstance().getImageHelper().createRequest().roundedCorners(corners).load(urls.get(virtualPosition)).into(imageView);
+            if (!urls.isEmpty()) {
+                if (virtualPosition < urls.size()) {
+                    QsHelper.getInstance().getImageHelper().createRequest().roundedCorners(corners).load(urls.get(virtualPosition)).into(imageView);
+                }
+            } else if (!bitmapList.isEmpty()) {
+                if (virtualPosition < bitmapList.size()) {
+                    Bitmap bitmap = bitmapList.get(virtualPosition);
+                    imageView.setImageBitmap(bitmap);
+                    pageView.setVisibility(View.VISIBLE);
+                }
             }
         }
+
         if (listener != null) {
             pageView.setOnClickListener(new View.OnClickListener() {
                 @Override public void onClick(View v) {
