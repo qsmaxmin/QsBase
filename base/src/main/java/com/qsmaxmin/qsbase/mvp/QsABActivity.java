@@ -51,7 +51,7 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
         return QsHelper.getInstance().getApplication().isLogOpen() ? getClass().getSimpleName() : "QsABActivity";
     }
 
-    @Override @ThreadPoint(ThreadType.MAIN) public void setActivityTitle(Object value, int code) {
+    @Override public void setActivityTitle(Object value, int code) {
 
     }
 
