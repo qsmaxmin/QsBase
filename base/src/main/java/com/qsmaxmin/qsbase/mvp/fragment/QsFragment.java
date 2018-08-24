@@ -56,11 +56,11 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         setActivityTitle(value, -1);
     }
 
-    @Override public void setActivityTitle(Object value, int code) {
+    @Override @ThreadPoint(ThreadType.MAIN) public void setActivityTitle(Object value, int code) {
         FragmentActivity activity = getActivity();
         if (activity instanceof QsIABActivity) {
+            L.i(initTag(), "setActivityTitle(" + String.valueOf(value) + ", " + code + ")");
             ((QsIABActivity) activity).setActivityTitle(value, code);
-            L.i(initTag(), "setActivityTitle()  title=" + String.valueOf(value) + "  code=" + code);
         }
     }
 
