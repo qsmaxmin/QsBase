@@ -202,7 +202,7 @@ public abstract class QsListFragment<P extends QsPresenter, D> extends QsFragmen
             mListAdapter.notifyDataSetChanged();
             if (mList.isEmpty() && showEmptyView) {
                 showEmptyView();
-            } else {
+            } else if (showContentViewWhenDataLoadingComplete()) {
                 showContentView();
             }
         }
@@ -290,6 +290,10 @@ public abstract class QsListFragment<P extends QsPresenter, D> extends QsFragmen
      */
     @Override public boolean canListScrollDown() {
         return getListView().canScrollVertically(-1);
+    }
+
+    @Override public boolean showContentViewWhenDataLoadingComplete() {
+        return true;
     }
 
     /**

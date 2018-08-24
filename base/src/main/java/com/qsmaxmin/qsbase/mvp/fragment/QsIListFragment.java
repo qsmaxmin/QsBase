@@ -59,5 +59,7 @@ public interface QsIListFragment<D> extends QsIFragment {
 
     boolean canListScrollDown();
 
+    boolean showContentViewWhenDataLoadingComplete();
+
     void onAdapterGetView(int position, int totalCount);
 }

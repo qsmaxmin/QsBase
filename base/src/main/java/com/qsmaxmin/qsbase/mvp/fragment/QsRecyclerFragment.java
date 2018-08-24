@@ -246,7 +246,7 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
             mRecyclerViewAdapter.notifyDataSetChanged();
             if (mList.isEmpty() && showEmptyView) {
                 showEmptyView();
-            } else {
+            } else if (showContentViewWhenDataLoadingComplete()) {
                 showContentView();
             }
         }
@@ -266,6 +266,10 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
      */
     @Override public boolean canListScrollDown() {
         return getRecyclerView().canScrollVertically(-1);
+    }
+
+    @Override public boolean showContentViewWhenDataLoadingComplete() {
+        return true;
     }
 
     /**
