@@ -33,6 +33,7 @@ public class CacheHelper {
         try {
             fos = QsHelper.getInstance().getApplication().openFileOutput(key, Context.MODE_PRIVATE);
             fos.write(json.getBytes());
+            fos.flush();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -54,6 +55,7 @@ public class CacheHelper {
         try {
             fos = new FileOutputStream(cacheFile);
             fos.write(json.getBytes());
+            fos.flush();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
