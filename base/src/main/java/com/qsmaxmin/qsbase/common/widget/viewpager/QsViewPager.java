@@ -47,7 +47,8 @@ public class QsViewPager extends ViewPager {
     public boolean parseTouchEvent(MotionEvent ev) {
         switch (ev.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                distanceX = distanceY = 0f;
+                distanceX = 0f;
+                distanceY = 0f;
                 lastX = ev.getX();
                 lastY = ev.getY();
                 break;
@@ -58,11 +59,21 @@ public class QsViewPager extends ViewPager {
                 distanceY += Math.abs(curY - lastY);
                 lastX = curX;
                 lastY = curY;
-                L.i(initTag(), "parseTouchEvent.........distanceX:" + distanceX + "  distanceY:" + distanceY + ", so" + (distanceX > distanceY ? "" : " not") + " intercept touch event");
                 if (distanceX > distanceY) {
+                    L.i(initTag(), "parseTouchEvent.........distanceX:" + distanceX + "  distanceY:" + distanceY + ", so intercept touch event");
                     getParent().requestDisallowInterceptTouchEvent(true);
                     return true;
+                } else {
+                    L.i(initTag(), "parseTouchEvent.........distanceX:" + distanceX + "  distanceY:" + distanceY + ", so not intercept touch event");
+                    return false;
                 }
+            case MotionEvent.ACTION_CANCEL:
+            case MotionEvent.ACTION_UP:
+                distanceX = 0f;
+                distanceY = 0f;
+                lastX = 0;
+                lastY = 0;
+                break;
         }
         return super.onInterceptTouchEvent(ev);
     }
