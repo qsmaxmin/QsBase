@@ -22,11 +22,6 @@ public class QsViewPager extends ViewPager {
 
     public QsViewPager(Context context, AttributeSet attrs) {
         super(context, attrs);
-
-    }
-
-    @Override public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-        super.onPageScrolled(position, positionOffset, positionOffsetPixels);
     }
 
     @Override public boolean onTouchEvent(MotionEvent arg0) {

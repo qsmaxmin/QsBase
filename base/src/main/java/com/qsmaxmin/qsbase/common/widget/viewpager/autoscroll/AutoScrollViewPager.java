@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.animation.Interpolator;
 
 import com.qsmaxmin.qsbase.common.log.L;
+import com.qsmaxmin.qsbase.common.widget.viewpager.QsViewPager;
 
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
@@ -20,7 +21,7 @@ import java.lang.reflect.Field;
  * @Date 2017-7-6 12:37:16
  * @Description 自动轮播，支持无限轮播
  */
-public final class AutoScrollViewPager extends ViewPager {
+public final class AutoScrollViewPager extends QsViewPager {
 
     public static final int                    DEFAULT_INTERVAL            = 3000;
     public static final int                    LEFT                        = 0;
