@@ -129,8 +129,6 @@ public class QsViewPagerAdapter extends PagerAdapter implements OuterPagerAdapte
         if (fragment.getView() == null) throw new NullPointerException("fragment has not view...");
         if (fragment.getView().getParent() == null) container.addView(fragment.getView());
 
-        getViewPager().setObjectForPosition(fragment.getView(), position);
-
         if (mOuterScroller != null && fragment instanceof InnerScrollerContainer) {
             L.i(TAG, "activate header viewpager... current fragment is:" + fragment.getClass().getSimpleName());
             ((InnerScrollerContainer) fragment).setMyOuterScroller(mOuterScroller, position);
