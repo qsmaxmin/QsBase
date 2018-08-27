@@ -6,6 +6,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 
 import com.qsmaxmin.qsbase.common.log.L;
+import com.qsmaxmin.qsbase.common.utils.QsHelper;
 
 /**
  * @CreateBy QS
@@ -57,12 +58,16 @@ public class QsViewPager extends ViewPager {
                 distanceY += Math.abs(curY - lastY);
                 lastX = curX;
                 lastY = curY;
-                L.i("QsViewPager", "parseTouchEvent.........distanceX:" + distanceX + "  distanceY:" + distanceY + ", so " + (distanceX > distanceY ? "" : "not") + " intercept touch event");
+                L.i(initTag(), "parseTouchEvent.........distanceX:" + distanceX + "  distanceY:" + distanceY + ", so " + (distanceX > distanceY ? "" : "not") + " intercept touch event");
                 if (distanceX > distanceY) {
                     getParent().requestDisallowInterceptTouchEvent(true);
                     return true;
                 }
         }
         return super.onInterceptTouchEvent(ev);
+    }
+
+    protected String initTag() {
+        return QsHelper.getInstance().getApplication().isLogOpen() ? getClass().getSimpleName() : "QsViewPager";
     }
 }

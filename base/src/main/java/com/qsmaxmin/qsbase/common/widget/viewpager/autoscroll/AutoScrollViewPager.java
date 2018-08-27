@@ -22,7 +22,6 @@ import java.lang.reflect.Field;
  * @Description 自动轮播，支持无限轮播
  */
 public final class AutoScrollViewPager extends QsViewPager {
-
     public static final int                    DEFAULT_INTERVAL            = 3000;
     public static final int                    LEFT                        = 0;
     public static final int                    RIGHT                       = 1;
@@ -107,10 +106,10 @@ public final class AutoScrollViewPager extends QsViewPager {
     @Override protected void onWindowVisibilityChanged(int visibility) {
         super.onWindowVisibilityChanged(visibility);
         if (visibility == View.VISIBLE && isAutoScroll) {
-            L.i("AutoScrollViewPager", "onWindowVisibilityChanged............view VISIBLE, start auto scroll !");
+            L.i(initTag(), "onWindowVisibilityChanged............view VISIBLE, start auto scroll !");
             sendScrollMessage((int) (interval + scroller.getDuration() / autoScrollFactor * swipeScrollFactor));
         } else {
-            L.i("AutoScrollViewPager", "onWindowVisibilityChanged............stop auto scroll, isAutoScroll:" + isAutoScroll + "  view visibility:" + visibility);
+            L.i(initTag(), "onWindowVisibilityChanged............stop auto scroll, isAutoScroll:" + isAutoScroll + "  view visibility:" + visibility);
             handler.removeMessages(SCROLL_WHAT);
         }
     }
