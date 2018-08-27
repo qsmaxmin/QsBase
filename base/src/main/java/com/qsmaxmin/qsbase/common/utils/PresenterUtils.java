@@ -61,7 +61,7 @@ public final class PresenterUtils {
         }
 
         String viewName = QsHelper.getInstance().getApplication().isLogOpen() ? iView.getClass().getSimpleName() : "QsIView";
-        L.e("PresenterUtils", viewName + "未添加@Presenter注解，将使用默认的QsPresenter");
+        L.e("PresenterUtils", viewName + "未添加泛型Presenter类，将使用默认的QsPresenter");
         presenterImpl = (P) new QsPresenter<>();
         presenterImpl.initPresenter(iView);
         return presenterImpl;
