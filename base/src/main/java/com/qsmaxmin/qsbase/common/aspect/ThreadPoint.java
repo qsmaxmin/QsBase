@@ -10,8 +10,10 @@ import java.lang.annotation.Target;
  * @Date 2017/6/20 16:40
  * @Description 线程切换必备
  */
-@Retention(RetentionPolicy.CLASS)
+@Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface ThreadPoint {
     ThreadType value();
+
+    boolean checkNetwork() default true;
 }

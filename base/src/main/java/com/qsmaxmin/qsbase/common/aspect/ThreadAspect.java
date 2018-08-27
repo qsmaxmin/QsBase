@@ -23,7 +23,7 @@ import java.lang.reflect.Method;
 public class ThreadAspect {
 
     private static final String POINTCUT_METHOD_MAIN        = "execution(@com.qsmaxmin.qsbase.common.aspect.ThreadPoint(com.qsmaxmin.qsbase.common.aspect.ThreadType.MAIN) * *(..))";
-    private static final String POINTCUT_METHOD_HTTP        = "execution(@com.qsmaxmin.qsbase.common.aspect.ThreadPoint(com.qsmaxmin.qsbase.common.aspect.ThreadType.HTTP) * *(..))";
+    private static final String POINTCUT_METHOD_HTTP        = "execution(@com.qsmaxmin.qsbase.common.aspect.ThreadPoint(com.qsmaxmin.qsbase.common.aspect.ThreadType.HTTP) * *(..)) && @annotation(point)";
     private static final String POINTCUT_METHOD_WORK        = "execution(@com.qsmaxmin.qsbase.common.aspect.ThreadPoint(com.qsmaxmin.qsbase.common.aspect.ThreadType.WORK) * *(..))";
     private static final String POINTCUT_METHOD_SINGLE_WORK = "execution(@com.qsmaxmin.qsbase.common.aspect.ThreadPoint(com.qsmaxmin.qsbase.common.aspect.ThreadType.SINGLE_WORK) * *(..))";
 
@@ -42,32 +42,37 @@ public class ThreadAspect {
         return null;
     }
 
-    @Around(POINTCUT_METHOD_HTTP) public Object onHttpExecutor(final ProceedingJoinPoint joinPoint) throws Throwable {
+    @Around(POINTCUT_METHOD_HTTP) public Object onHttpExecutor(final ProceedingJoinPoint joinPoint, final ThreadPoint point) throws Throwable {
         QsHelper.getInstance().getThreadHelper().getHttpThreadPoll().execute(new Runnable() {
             @Override public void run() {
                 L.i("ThreadAspect", joinPoint.toShortString() + " in http thread... ");
-                boolean networkAvailable = QsHelper.getInstance().isNetworkAvailable();
-                if (networkAvailable) {
-                    startOriginalMethod(joinPoint);
-                } else {
-                    try {
-                        final Object target = joinPoint.getTarget();
-                        final Method methodError = target.getClass().getMethod("methodError", QsException.class);
-                        if (methodError != null) QsHelper.getInstance().getThreadHelper().getMainThread().execute(new Runnable() {
-                            @Override public void run() {
-                                try {
-                                    QsException qsException = new QsException(QsExceptionType.NETWORK_ERROR, "", QsHelper.getInstance().getString(R.string.network_error));
-                                    methodError.invoke(target, qsException);
-                                } catch (Exception e1) {
-                                    L.e("ThreadAspect", e1.getMessage());
+                boolean checkNetwork = point.checkNetwork();
+                if (checkNetwork) {
+                    boolean networkAvailable = QsHelper.getInstance().isNetworkAvailable();
+                    L.i("ThreadAspect", joinPoint.toShortString() + " check network available:" + networkAvailable);
+                    if (networkAvailable) {
+                        startOriginalMethod(joinPoint);
+                    } else {
+                        try {
+                            final Object target = joinPoint.getTarget();
+                            final Method methodError = target.getClass().getMethod("methodError", QsException.class);
+                            if (methodError != null) QsHelper.getInstance().getThreadHelper().getMainThread().execute(new Runnable() {
+                                @Override public void run() {
+                                    try {
+                                        QsException qsException = new QsException(QsExceptionType.NETWORK_ERROR, "", QsHelper.getInstance().getString(R.string.network_error));
+                                        methodError.invoke(target, qsException);
+                                    } catch (Exception e1) {
+                                        L.e("ThreadAspect", e1.getMessage());
+                                    }
                                 }
-                            }
-                        });
-                    } catch (NoSuchMethodException e2) {
-                        e2.printStackTrace();
+                            });
+                        } catch (NoSuchMethodException e2) {
+                            e2.printStackTrace();
+                        }
                     }
+                } else {
+                    startOriginalMethod(joinPoint);
                 }
-
             }
         });
         return null;
