@@ -21,7 +21,7 @@ import android.graphics.Bitmap;
 public class FastBlurUtils {
 
     public static Bitmap blur(Bitmap srcBitmap, int radius) {
-        return blur(srcBitmap, radius, 0.5f, false);
+        return blur(srcBitmap, radius, .5f, false);
     }
 
     public static Bitmap blur(Bitmap srcBitmap, int radius, float scale) {
