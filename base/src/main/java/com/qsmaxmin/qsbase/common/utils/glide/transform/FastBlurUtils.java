@@ -20,18 +20,29 @@ import android.graphics.Bitmap;
 
 public class FastBlurUtils {
 
-    public static Bitmap blur(Bitmap sentBitmap, int radius, boolean canReuseInBitmap) {
+    public static Bitmap blur(Bitmap srcBitmap, int radius) {
+        return blur(srcBitmap, radius, 0.5f, false);
+    }
+
+    public static Bitmap blur(Bitmap srcBitmap, int radius, float scale) {
+        return blur(srcBitmap, radius, scale, false);
+    }
+
+    public static Bitmap blur(Bitmap srcBitmap, int radius, boolean reuseBitmap) {
+        return blur(srcBitmap, radius, .5f, reuseBitmap);
+    }
+
+    public static Bitmap blur(Bitmap srcBitmap, int radius, float scale, boolean reuseBitmap) {
+        if (radius <= 1) return srcBitmap;
+        if (scale <= 0 || scale > 1) scale = 1f;
         Bitmap bitmap;
-        if (canReuseInBitmap) {
-            bitmap = sentBitmap;
+        if (reuseBitmap) {
+            bitmap = srcBitmap;
         } else {
-            bitmap = sentBitmap.copy(sentBitmap.getConfig(), true);
+            int width = Math.round(srcBitmap.getWidth() * scale);
+            int height = Math.round(srcBitmap.getHeight() * scale);
+            bitmap = Bitmap.createScaledBitmap(srcBitmap, width, height, false);
         }
-
-        if (radius < 1) {
-            return (null);
-        }
-
         int w = bitmap.getWidth();
         int h = bitmap.getHeight();
 
