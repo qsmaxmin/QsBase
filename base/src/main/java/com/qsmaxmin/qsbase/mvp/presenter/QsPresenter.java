@@ -55,7 +55,7 @@ public class QsPresenter<V extends QsIView> {
                 case QsConstants.NAME_SINGLE_THREAD:
                     throw new QsException(QsExceptionType.CANCEL, null, "current thread:" + threadName + " execute " + initTag() + ".getView() return null, maybe view is destroy...");
                 default:
-                    throw new QsException(QsExceptionType.UNEXPECTED, null, "请不要在非@ThreadPoint注解的线程或其他回调里执行getView()方法，若必须调动请先确定isViewDetach()返回值为false再调用getView方法");
+                    throw new QsException(QsExceptionType.UNEXPECTED, null, "请不要在非@ThreadPoint注解的线程或其他回调里直接执行getView()方法，必须先确定isViewDetach()返回值为false再调用getView方法");
             }
         }
         return mView;
