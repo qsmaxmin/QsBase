@@ -64,7 +64,7 @@ public class QsViewPager extends ViewPager {
                 distanceY += Math.abs(curY - lastY);
                 lastX = curX;
                 lastY = curY;
-                if (distanceX > distanceY * mFactor) {
+                if (distanceX * mFactor > distanceY) {
                     if (getParent() != null) getParent().requestDisallowInterceptTouchEvent(true);
                     setBeingDragged();
                     L.i(initTag(), "parseInterceptTouchEvent.........setBeingDragged");
