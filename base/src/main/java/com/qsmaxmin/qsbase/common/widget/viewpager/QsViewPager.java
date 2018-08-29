@@ -92,9 +92,9 @@ public class QsViewPager extends ViewPager {
         try {
             if (mIsBeingDraggedField == null) {
                 mIsBeingDraggedField = ViewPager.class.getDeclaredField("mIsBeingDragged");
-                mIsBeingDraggedField.setAccessible(true);
+                if (mIsBeingDraggedField != null) mIsBeingDraggedField.setAccessible(true);
             }
-            mIsBeingDraggedField.set(this, true);
+            if (mIsBeingDraggedField != null) mIsBeingDraggedField.set(this, true);
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
