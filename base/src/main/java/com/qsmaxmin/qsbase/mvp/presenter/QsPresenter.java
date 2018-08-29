@@ -5,6 +5,7 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.ColorRes;
 import android.support.annotation.DimenRes;
 import android.support.annotation.DrawableRes;
+import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 
 import com.qsmaxmin.qsbase.common.aspect.ThreadPoint;
@@ -46,16 +47,16 @@ public class QsPresenter<V extends QsIView> {
         isAttach = true;
     }
 
-    public V getView() {
+    @Nullable public V getView() {
         if (isViewDetach()) {
             String threadName = Thread.currentThread().getName();
             switch (threadName) {
                 case QsConstants.NAME_HTTP_THREAD:
                 case QsConstants.NAME_WORK_THREAD:
                 case QsConstants.NAME_SINGLE_THREAD:
-                    throw new QsException(QsExceptionType.CANCEL, null, "current thread:" + threadName + " execute " + getClass().getSimpleName() + ".getView() return null, maybe view" + (mView == null ? "" : "(" + mView.getClass().getSimpleName() + ")") + "is destroy...");
+                    throw new QsException(QsExceptionType.CANCEL, null, "current thread:" + threadName + " execute " + initTag() + ".getView() return null, maybe view is destroy...");
                 default:
-                    throw new QsException(QsExceptionType.CANCEL, null, "当前线程:" + threadName + "执行" + getClass().getSimpleName() + ".getView()方法返回null, 因为View层" + (mView == null ? "" : "(" + mView.getClass().getSimpleName() + ")") + "销毁了，为了规避这种风险，请不要在Presenter里面通过非@ThreadPoint注解的方式创建线程并在该线程中调用getView()方法...");
+                    L.i(initTag(), "getView() return null, maybe view is destroy...");
             }
         }
         return mView;
@@ -146,7 +147,7 @@ public class QsPresenter<V extends QsIView> {
                 } else {
                     ((QsIPullToRefresh) qsIView).setLoadingState(LoadingFooter.State.Normal);
                 }
-            }else {
+            } else {
                 L.e(initTag(), "not QsPullListFragment or QsPullRecyclerFragment view, so invalid paging(...)");
             }
         }
