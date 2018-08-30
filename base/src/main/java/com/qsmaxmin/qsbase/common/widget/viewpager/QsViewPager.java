@@ -99,7 +99,7 @@ public class QsViewPager extends ViewPager {
 
                 setScrollStateMethod = ViewPager.class.getDeclaredMethod("setScrollState", int.class);
                 if (setScrollStateMethod != null) setScrollStateMethod.setAccessible(true);
-                L.i(initTag(), "setBeingDragged.... use time:" + ((System.nanoTime() - start) / 1000000) + "ms");
+                L.i(initTag(), "setBeingDragged based on reflex to get field and method.... use time:" + ((System.nanoTime() - start) / 1000000) + "ms");
             }
             if (mIsBeingDraggedField != null) mIsBeingDraggedField.set(this, true);
             if (setScrollStateMethod != null) setScrollStateMethod.invoke(this, SCROLL_STATE_DRAGGING);
