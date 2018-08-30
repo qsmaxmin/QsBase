@@ -92,16 +92,16 @@ public class QsViewPager extends ViewPager {
      */
     private void setBeingDragged() {
         try {
-            if (mIsBeingDraggedField == null) {
+            if (mIsBeingDraggedField == null || setScrollStateMethod == null) {
+                long start = System.nanoTime();
                 mIsBeingDraggedField = ViewPager.class.getDeclaredField("mIsBeingDragged");
                 if (mIsBeingDraggedField != null) mIsBeingDraggedField.setAccessible(true);
-            }
-            if (mIsBeingDraggedField != null) mIsBeingDraggedField.set(this, true);
 
-            if (setScrollStateMethod == null) {
                 setScrollStateMethod = ViewPager.class.getDeclaredMethod("setScrollState", int.class);
                 if (setScrollStateMethod != null) setScrollStateMethod.setAccessible(true);
+                L.i(initTag(), "setBeingDragged.... use time:" + ((System.nanoTime() - start) / 1000000) + "ms");
             }
+            if (mIsBeingDraggedField != null) mIsBeingDraggedField.set(this, true);
             if (setScrollStateMethod != null) setScrollStateMethod.invoke(this, SCROLL_STATE_DRAGGING);
 
         } catch (NoSuchFieldException e) {
