@@ -9,6 +9,7 @@ import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 /**
  * @CreateBy QS
@@ -18,11 +19,12 @@ import java.lang.reflect.Field;
 public class QsViewPager extends ViewPager {
     private boolean canScroll = true;
     private float   mFactor   = 1.0f;
-    private Field mIsBeingDraggedField;
-    private float distanceX;
-    private float distanceY;
-    private float lastX;
-    private float lastY;
+    private Field  mIsBeingDraggedField;
+    private Method setScrollStateMethod;
+    private float  distanceX;
+    private float  distanceY;
+    private float  lastX;
+    private float  lastY;
 
 
     public QsViewPager(Context context) {
@@ -95,6 +97,13 @@ public class QsViewPager extends ViewPager {
                 if (mIsBeingDraggedField != null) mIsBeingDraggedField.setAccessible(true);
             }
             if (mIsBeingDraggedField != null) mIsBeingDraggedField.set(this, true);
+
+            if (setScrollStateMethod == null) {
+                setScrollStateMethod = ViewPager.class.getDeclaredMethod("setScrollState", int.class);
+                if (setScrollStateMethod != null) setScrollStateMethod.setAccessible(true);
+            }
+            if (setScrollStateMethod != null) setScrollStateMethod.invoke(this, SCROLL_STATE_DRAGGING);
+
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
