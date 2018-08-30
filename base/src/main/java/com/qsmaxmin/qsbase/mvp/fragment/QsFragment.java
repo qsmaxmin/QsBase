@@ -19,7 +19,6 @@ import android.view.ViewGroup;
 import android.widget.ScrollView;
 import android.widget.ViewAnimator;
 
-import com.qsmaxmin.qsbase.QsApplication;
 import com.qsmaxmin.qsbase.R;
 import com.qsmaxmin.qsbase.common.aspect.ThreadPoint;
 import com.qsmaxmin.qsbase.common.aspect.ThreadType;
@@ -31,7 +30,6 @@ import com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout;
 import com.qsmaxmin.qsbase.mvp.QsIABActivity;
 import com.qsmaxmin.qsbase.mvp.model.QsConstants;
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
-import com.squareup.leakcanary.RefWatcher;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -105,15 +103,6 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         }
         mViewAnimator = null;
         if (isOpenEventBus() && EventBus.getDefault().isRegistered(this)) EventBus.getDefault().unregister(this);
-    }
-
-    @Override public void onDestroy() {
-        super.onDestroy();
-        QsApplication application = QsHelper.getInstance().getApplication();
-        if (application != null && application.isMemoryWatcherOpen()) {
-            RefWatcher refWatcher = application.getRefWatcher();
-            if (refWatcher != null) refWatcher.watch(this, initTag());
-        }
     }
 
     protected View initView(LayoutInflater inflater) {

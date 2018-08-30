@@ -11,8 +11,6 @@ import com.qsmaxmin.qsbase.common.http.HttpBuilder;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.common.widget.dialog.QsProgressDialog;
-import com.squareup.leakcanary.LeakCanary;
-import com.squareup.leakcanary.RefWatcher;
 
 import okhttp3.Response;
 
@@ -23,18 +21,11 @@ import okhttp3.Response;
  */
 
 public abstract class QsApplication extends Application {
-    private RefWatcher refWatcher;
 
     @Override public void onCreate() {
         super.onCreate();
-        if (LeakCanary.isInAnalyzerProcess(this)) return;
-        if (isMemoryWatcherOpen()) {
-            refWatcher = LeakCanary.install(this);
-            L.i("Application", "memory watcher is open, so call LeakCanary.install....");
-        }
         if (isLogOpen()) L.init(true);
         QsHelper.getInstance().init(this);
-
     }
 
     public abstract boolean isLogOpen();
@@ -108,13 +99,5 @@ public abstract class QsApplication extends Application {
 
     public boolean isCurrentProcess(String processName) {
         return getCurrentProcessName().equals(processName);
-    }
-
-    public boolean isMemoryWatcherOpen() {
-        return false;
-    }
-
-    public RefWatcher getRefWatcher() {
-        return refWatcher;
     }
 }
