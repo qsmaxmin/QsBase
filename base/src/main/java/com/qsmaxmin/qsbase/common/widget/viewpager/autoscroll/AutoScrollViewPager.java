@@ -15,6 +15,7 @@ import com.qsmaxmin.qsbase.common.widget.viewpager.QsViewPager;
 
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 /**
  * @CreateBy qsmaxmin
@@ -40,8 +41,14 @@ public final class AutoScrollViewPager extends QsViewPager {
     private             float                  downX                       = 0f;
     private             CustomDurationScroller scroller                    = null;
     public static final int                    SCROLL_WHAT                 = 0;
-
+    private             float                  mFactor                     = 1.0f;
     private MyHandler handler;
+    private Field     mIsBeingDraggedField;
+    private Method    setScrollStateMethod;
+    private float     distanceX;
+    private float     distanceY;
+    private float     lastX;
+    private float     lastY;
 
     public AutoScrollViewPager(Context paramContext) {
         this(paramContext, null);
@@ -87,22 +94,6 @@ public final class AutoScrollViewPager extends QsViewPager {
         }
     }
 
-    /**
-     * 执行滚动
-     */
-    public void startAutoScroll() {
-        isAutoScroll = true;
-        sendScrollMessage((int) (interval + scroller.getDuration() / autoScrollFactor * swipeScrollFactor));
-    }
-
-    /**
-     * 停止滚动
-     */
-    public void stopAutoScroll() {
-        isAutoScroll = false;
-        handler.removeMessages(SCROLL_WHAT);
-    }
-
     @Override protected void onWindowVisibilityChanged(int visibility) {
         super.onWindowVisibilityChanged(visibility);
         if (visibility == View.VISIBLE && isAutoScroll) {
@@ -112,20 +103,6 @@ public final class AutoScrollViewPager extends QsViewPager {
             L.i(initTag(), "onWindowVisibilityChanged............stop auto scroll, isAutoScroll:" + isAutoScroll + "  view visibility:" + visibility);
             handler.removeMessages(SCROLL_WHAT);
         }
-    }
-
-    /**
-     * 设定因子的滑动动画持续时间会改变
-     */
-    public void setSwipeScrollDurationFactor(double scrollFactor) {
-        swipeScrollFactor = scrollFactor;
-    }
-
-    /**
-     * 设定因子的滑动动画持续时间会改变 在自动滚动
-     */
-    public void setAutoScrollDurationFactor(double scrollFactor) {
-        autoScrollFactor = scrollFactor;
     }
 
     private void sendScrollMessage(long delay) {
@@ -147,17 +124,7 @@ public final class AutoScrollViewPager extends QsViewPager {
         }
     }
 
-    public void setScrollerInterpolator(Interpolator interpolator) {
-        try {
-            Field mInterpolator = scroller.getClass().getSuperclass().getDeclaredField("mInterpolator");
-            mInterpolator.setAccessible(true);
-            mInterpolator.set(scroller, interpolator);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void scrollOnce() {
+    private void scrollOnce() {
         PagerAdapter adapter = getAdapter();
         int currentItem = getCurrentItem();
         int totalCount;
@@ -221,33 +188,64 @@ public final class AutoScrollViewPager extends QsViewPager {
         return false;
     }
 
-    private float   lastMoveX;
-    private float   lastMoveY;
-    private boolean isSetTouchGesture;
+    @Override public boolean onInterceptTouchEvent(MotionEvent arg0) {
+        return isCanScroll() && parseInterceptTouchEvent(arg0);
+    }
 
-    private void dispatchTouchEventByGestures(MotionEvent ev) {
-        float newTouchX = ev.getX();
-        float newTouchY = ev.getY();
-        if (lastMoveY > 0 || lastMoveX > 0) {
-            if (Math.abs(newTouchY - lastMoveY) >= Math.abs(newTouchX - lastMoveX) * 1.7) {
-                if (!isSetTouchGesture) {
-                    isSetTouchGesture = true;
-                    getParent().requestDisallowInterceptTouchEvent(false);
+    private boolean parseInterceptTouchEvent(MotionEvent ev) {
+        switch (ev.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                distanceX = 0f;
+                distanceY = 0f;
+                lastX = ev.getX();
+                lastY = ev.getY();
+                break;
+            case MotionEvent.ACTION_MOVE:
+                final float curX = ev.getX();
+                final float curY = ev.getY();
+                distanceX += Math.abs(curX - lastX);
+                distanceY += Math.abs(curY - lastY);
+                lastX = curX;
+                lastY = curY;
+                if (distanceX * mFactor > distanceY) {
+                    if (getParent() != null) getParent().requestDisallowInterceptTouchEvent(true);
+                    setBeingDragged();
+                    L.i(initTag(), "parseInterceptTouchEvent.........setBeingDragged");
                 }
-            } else {
-                if (!isSetTouchGesture) {
-                    isSetTouchGesture = true;
-                    getParent().requestDisallowInterceptTouchEvent(true);
-                }
-            }
-        } else {
-            lastMoveY = newTouchY;
-            lastMoveX = newTouchX;
+                break;
+            case MotionEvent.ACTION_CANCEL:
+            case MotionEvent.ACTION_UP:
+                distanceX = 0f;
+                distanceY = 0f;
+                lastX = 0f;
+                lastY = 0f;
+                break;
         }
-        if (ev.getAction() == MotionEvent.ACTION_UP || ev.getAction() == MotionEvent.ACTION_CANCEL) {
-            lastMoveX = 0;
-            lastMoveY = 0;
-            isSetTouchGesture = false;
+        return super.onInterceptTouchEvent(ev);
+    }
+
+    /**
+     * 反射使view处于被drag状态
+     */
+    private void setBeingDragged() {
+        try {
+            if (mIsBeingDraggedField == null || setScrollStateMethod == null) {
+                mIsBeingDraggedField = ViewPager.class.getDeclaredField("mIsBeingDragged");
+                if (mIsBeingDraggedField != null) mIsBeingDraggedField.setAccessible(true);
+
+                setScrollStateMethod = ViewPager.class.getDeclaredMethod("setScrollState", int.class);
+                if (setScrollStateMethod != null) setScrollStateMethod.setAccessible(true);
+                L.i(initTag(), "setBeingDragged based on reflex to get field and method......");
+            }
+            if (mIsBeingDraggedField != null) mIsBeingDraggedField.set(this, true);
+            if (setScrollStateMethod != null) setScrollStateMethod.invoke(this, SCROLL_STATE_DRAGGING);
+
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -277,38 +275,19 @@ public final class AutoScrollViewPager extends QsViewPager {
                     break;
             }
         }
-
-        private void unload() {
-            if (reference != null) {
-                reference.clear();
-            }
-        }
     }
 
-    /**
-     * 间隔时间
-     *
-     * @return the interval
-     */
     public long getInterval() {
         return interval;
     }
 
     /**
      * set auto scroll time in milliseconds, default is
-     * {@link #DEFAULT_INTERVAL}
-     *
-     * @param interval the interval to set
      */
     public void setInterval(long interval) {
         this.interval = interval;
     }
 
-    /**
-     * get auto scroll direction
-     *
-     * @return {@link #LEFT} or {@link #RIGHT}, default is {@link #RIGHT}
-     */
     public int getDirection() {
         return (direction == LEFT) ? LEFT : RIGHT;
     }
@@ -380,5 +359,49 @@ public final class AutoScrollViewPager extends QsViewPager {
      */
     public void setSlideBorderMode(int slideBorderMode) {
         this.slideBorderMode = slideBorderMode;
+    }
+
+    public void setScrollerInterpolator(Interpolator interpolator) {
+        try {
+            Field mInterpolator = scroller.getClass().getSuperclass().getDeclaredField("mInterpolator");
+            mInterpolator.setAccessible(true);
+            mInterpolator.set(scroller, interpolator);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 设定因子的滑动动画持续时间会改变
+     */
+    public void setSwipeScrollDurationFactor(double scrollFactor) {
+        swipeScrollFactor = scrollFactor;
+    }
+
+    /**
+     * 设定因子的滑动动画持续时间会改变 在自动滚动
+     */
+    public void setAutoScrollDurationFactor(double scrollFactor) {
+        autoScrollFactor = scrollFactor;
+    }
+
+    /**
+     * 执行滚动
+     */
+    public void startAutoScroll() {
+        isAutoScroll = true;
+        sendScrollMessage((int) (interval + scroller.getDuration() / autoScrollFactor * swipeScrollFactor));
+    }
+
+    /**
+     * 停止滚动
+     */
+    public void stopAutoScroll() {
+        isAutoScroll = false;
+        handler.removeMessages(SCROLL_WHAT);
+    }
+
+    public void setTouchDirectionFactor(float factor) {
+        this.mFactor = factor;
     }
 }
