@@ -5,8 +5,6 @@ import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
-import com.qsmaxmin.qsbase.common.utils.QsHelper;
-
 /**
  * @CreateBy QS
  * @Date 16/11/20  下午7:21
@@ -37,6 +35,6 @@ public class QsViewPager extends ViewPager {
     }
 
     protected String initTag() {
-        return QsHelper.getInstance().getApplication().isLogOpen() ? getClass().getSimpleName() : "QsViewPager";
+        return getClass().getSimpleName();
     }
 }
