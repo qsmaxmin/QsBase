@@ -17,4 +17,6 @@ public interface QsIActivity extends QsIView {
     boolean isTransparentStatusBar();
 
     boolean isBlackIconStatusBar();
+
+    boolean isTransparentNavigationBar();
 }
