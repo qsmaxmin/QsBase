@@ -411,18 +411,20 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         View view = getView();
         if (view == null) return;
         ScrollView scrollView = (ScrollView) tryGetTargetView(ScrollView.class, view);
+        int scrollDuration = 0;
         if (scrollView != null) {
-            int scaleDuration = (int) scrollView.getScaleY() / 2;
+            scrollDuration = scrollView.getScrollY() / 2;
             scrollView.smoothScrollTo(0, 0);
-            if (autoRefresh) {
-                final PtrFrameLayout frameLayout = (PtrFrameLayout) tryGetTargetView(PtrFrameLayout.class, view);
-                if (frameLayout != null) {
-                    scrollView.postDelayed(new Runnable() {
-                        @Override public void run() {
-                            frameLayout.autoRefresh();
-                        }
-                    }, (scaleDuration > 600 ? 600 : scaleDuration));
-                }
+        }
+
+        if (autoRefresh) {
+            final PtrFrameLayout frameLayout = (PtrFrameLayout) tryGetTargetView(PtrFrameLayout.class, view);
+            if (frameLayout != null) {
+                view.postDelayed(new Runnable() {
+                    @Override public void run() {
+                        frameLayout.autoRefresh();
+                    }
+                }, (scrollDuration > 600 ? 600 : (scrollDuration < 0 ? 0 : scrollDuration)));
             }
         }
     }
