@@ -315,7 +315,7 @@ public abstract class QsListFragment<P extends QsPresenter, D> extends QsFragmen
             @Override public void run() {
                 getListView().setSelection(0);
             }
-        }, 500);
+        }, 600);
     }
 
     @Override public void onAdapterGetView(int position, int totalCount) {

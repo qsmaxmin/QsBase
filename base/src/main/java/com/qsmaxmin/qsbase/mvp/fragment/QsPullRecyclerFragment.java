@@ -196,11 +196,7 @@ public abstract class QsPullRecyclerFragment<P extends QsPresenter, D> extends Q
 
     @Override public void smoothScrollToTop(boolean autoRefresh) {
         super.smoothScrollToTop(autoRefresh);
-        if (autoRefresh) getRecyclerView().postDelayed(new Runnable() {
-            @Override public void run() {
-                startRefreshing();
-            }
-        }, 500);
+        if (autoRefresh) startRefreshing();
     }
 
     protected int onLoadTriggerCondition() {

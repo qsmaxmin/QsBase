@@ -209,18 +209,7 @@ public abstract class QsPullListFragment<T extends QsPresenter, D> extends QsLis
 
     @Override public void smoothScrollToTop(boolean autoRefresh) {
         super.smoothScrollToTop(autoRefresh);
-        if (autoRefresh) {
-            final int firstVisiblePosition = getListView().getFirstVisiblePosition();
-            if (firstVisiblePosition == 0) {
-                startRefreshing();
-            } else {
-                getListView().postDelayed(new Runnable() {
-                    @Override public void run() {
-                        startRefreshing();
-                    }
-                }, 500);
-            }
-        }
+        if (autoRefresh) startRefreshing();
     }
 
     protected int onLoadTriggerCondition() {

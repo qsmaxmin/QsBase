@@ -123,13 +123,12 @@ public abstract class QsPullFragment<T extends QsPresenter> extends QsFragment<T
     @Override public void smoothScrollToTop(boolean autoRefresh) {
         if (childView != null && childView instanceof ScrollView) {
             ScrollView scrollView = (ScrollView) this.childView;
-            int scrollDuration = scrollView.getScrollY() / 2;
             scrollView.smoothScrollTo(0, 0);
-            if (autoRefresh) scrollView.postDelayed(new Runnable() {
+            if (autoRefresh) scrollView.post(new Runnable() {
                 @Override public void run() {
-                    mPtrFrameLayout.autoRefresh();
+                    startRefreshing();
                 }
-            }, (scrollDuration > 300 ? 300 : (scrollDuration < 0 ? 0 : scrollDuration)));
+            });
         } else {
             super.smoothScrollToTop(autoRefresh);
         }
