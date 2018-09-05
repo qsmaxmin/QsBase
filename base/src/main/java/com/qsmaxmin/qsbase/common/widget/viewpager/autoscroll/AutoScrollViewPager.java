@@ -79,19 +79,19 @@ public final class AutoScrollViewPager extends QsViewPager {
      * 计算位置
      */
     @Override public void setCurrentItem(int item) {
-        if (getAdapter() != null && getAdapter().isEnableInfinite()) {
-            item = getOffsetAmount() + (item % getAdapter().getCount());
+        if (getAdapter() == null) return;
+        if (item < 0) item = 0;
+        int realCount = getAdapter().getRealCount();
+        if (getAdapter().isEnableInfinite()) {
+            int halfCount = getAdapter().getCount() / 2;
+            super.setCurrentItem(halfCount - halfCount % realCount + item);
+        } else {
+            super.setCurrentItem(item >= realCount ? realCount - 1 : realCount);
         }
-        super.setCurrentItem(item);
     }
 
-    private int getOffsetAmount() {
-        if (getAdapter() != null) {
-            InfinitePagerAdapter adapter = getAdapter();
-            return adapter.getRealCount() * 100;
-        } else {
-            return 0;
-        }
+    @Override public void setCurrentItem(int item, boolean smoothScroll) {
+        super.setCurrentItem(item, smoothScroll);
     }
 
     @Override protected void onWindowVisibilityChanged(int visibility) {
@@ -126,19 +126,18 @@ public final class AutoScrollViewPager extends QsViewPager {
 
     private void scrollOnce() {
         PagerAdapter adapter = getAdapter();
+        if (adapter == null) return;
         int currentItem = getCurrentItem();
-        int totalCount;
-        if (adapter == null || (totalCount = adapter.getCount()) <= 1) {
-            return;
-        }
+        int totalCount = adapter.getCount();
+        if (totalCount <= 1) return;
         int nextItem = (direction == LEFT) ? --currentItem : ++currentItem;
         if (nextItem < 0) {
             if (isCycle) {
-                setCurrentItem(totalCount - 1, true);
+                setCurrentItem(totalCount - 1, false);
             }
         } else if (nextItem == totalCount) {
             if (isCycle) {
-                setCurrentItem(0, true);
+                setCurrentItem(0, false);
             }
         } else {
             setCurrentItem(nextItem, true);
