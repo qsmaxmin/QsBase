@@ -1,6 +1,7 @@
 package com.qsmaxmin.qsbase.common.widget.dialog;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.view.Gravity;
@@ -11,6 +12,7 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
+import com.qsmaxmin.qsbase.common.viewbind.ViewBindHelper;
 
 /**
  * Created by sky on 15/2/28. dialog 基类
@@ -22,7 +24,9 @@ public abstract class QsDialogFragment extends DialogFragment {
         setStyle(DialogFragment.STYLE_NO_TITLE, getDialogTheme());
     }
 
-    @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    @Override public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        ViewBindHelper bindHelper = new ViewBindHelper(this);
+        bindHelper.bindBundle(getArguments());
         getDialog().setCanceledOnTouchOutside(true);
         final Window window = getDialog().getWindow();
         if (window != null) {
@@ -33,7 +37,8 @@ public abstract class QsDialogFragment extends DialogFragment {
             window.setAttributes(params);
         }
         View dialogView = getDialogView(inflater, container);
-        QsHelper.getInstance().getViewBindHelper().bind(this, dialogView);
+        bindHelper.bindView(dialogView);
+        bindHelper.release();
         return dialogView;
     }
 

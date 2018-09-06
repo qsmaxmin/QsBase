@@ -25,6 +25,7 @@ import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.utils.PresenterUtils;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.common.utils.permission.PermissionUtils;
+import com.qsmaxmin.qsbase.common.viewbind.ViewBindHelper;
 import com.qsmaxmin.qsbase.common.widget.dialog.QsProgressDialog;
 import com.qsmaxmin.qsbase.mvp.fragment.QsIFragment;
 import com.qsmaxmin.qsbase.mvp.model.QsConstants;
@@ -59,10 +60,13 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         super.onCreate(savedInstanceState);
         QsHelper.getInstance().getScreenHelper().pushActivity(this);
         QsHelper.getInstance().getApplication().onActivityCreate(this);
+        ViewBindHelper bindHelper = new ViewBindHelper(this);
+        bindHelper.bindBundle(getIntent().getExtras());
         initStatusBar();
         View view = initView();
         setContentView(view);
-        QsHelper.getInstance().getViewBindHelper().bind(this, view);
+        bindHelper.bindView(view);
+        bindHelper.release();
         if (isOpenEventBus() && !EventBus.getDefault().isRegistered(this)) EventBus.getDefault().register(this);
         if (!isDelayData()) {
             hasInitData = true;

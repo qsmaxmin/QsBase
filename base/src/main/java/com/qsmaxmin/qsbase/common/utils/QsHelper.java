@@ -26,7 +26,6 @@ import com.qsmaxmin.qsbase.common.aspect.ThreadType;
 import com.qsmaxmin.qsbase.common.http.HttpAdapter;
 import com.qsmaxmin.qsbase.common.threadpoll.QsThreadPollHelper;
 import com.qsmaxmin.qsbase.common.utils.permission.PermissionUtils;
-import com.qsmaxmin.qsbase.common.viewbind.ViewBindHelper;
 import com.qsmaxmin.qsbase.common.widget.dialog.QsProgressDialog;
 
 import org.greenrobot.eventbus.EventBus;
@@ -40,11 +39,10 @@ import java.io.Closeable;
  */
 
 public class QsHelper {
-    private HttpAdapter httpAdapter;
-
     private static QsHelper helper = new QsHelper();
 
-    private volatile static QsApplication mApplication;
+    private QsApplication mApplication;
+    private HttpAdapter   httpAdapter;
 
     private QsHelper() {
     }
@@ -243,10 +241,6 @@ public class QsHelper {
             }
             fragmentManager.beginTransaction().add(dialogFragment, dialogFragment.getClass().getSimpleName()).commitAllowingStateLoss();
         }
-    }
-
-    public ViewBindHelper getViewBindHelper() {
-        return new ViewBindHelper();
     }
 
     @SuppressLint("MissingPermission") public boolean isNetworkAvailable() {

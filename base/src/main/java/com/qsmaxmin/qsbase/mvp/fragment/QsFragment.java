@@ -25,6 +25,7 @@ import com.qsmaxmin.qsbase.common.aspect.ThreadType;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.utils.PresenterUtils;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
+import com.qsmaxmin.qsbase.common.viewbind.ViewBindHelper;
 import com.qsmaxmin.qsbase.common.widget.dialog.QsProgressDialog;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout;
 import com.qsmaxmin.qsbase.mvp.QsIABActivity;
@@ -71,8 +72,11 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
     }
 
     @Nullable @Override public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        ViewBindHelper bindHelper = new ViewBindHelper(this);
+        bindHelper.bindBundle(getArguments());
         View rootView = initView(inflater);
-        QsHelper.getInstance().getViewBindHelper().bind(this, rootView);
+        bindHelper.bindView(rootView);
+        bindHelper.release();
         rootView.setOnTouchListener(this);
         if (isOpenEventBus() && !EventBus.getDefault().isRegistered(this)) EventBus.getDefault().register(this);
         return rootView;

@@ -15,7 +15,7 @@ import com.qsmaxmin.qsbase.R;
 import com.qsmaxmin.qsbase.common.aspect.ThreadPoint;
 import com.qsmaxmin.qsbase.common.aspect.ThreadType;
 import com.qsmaxmin.qsbase.common.log.L;
-import com.qsmaxmin.qsbase.common.utils.QsHelper;
+import com.qsmaxmin.qsbase.common.viewbind.ViewBindHelper;
 import com.qsmaxmin.qsbase.common.widget.recyclerview.HeaderFooterRecyclerView;
 import com.qsmaxmin.qsbase.mvp.adapter.MyRecycleViewHolder;
 import com.qsmaxmin.qsbase.mvp.adapter.QsRecycleAdapterItem;
@@ -105,16 +105,20 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
             mRecyclerView = view.findViewById(android.R.id.list);
         }
         if (mRecyclerView == null) throw new RuntimeException("HeaderFooterRecyclerView is not exit or its id not 'android.R.id.list' in current layout!!");
+        ViewBindHelper bindHelper = null;
         if (getHeaderLayout() > 0) {
             headerView = inflater.inflate(getHeaderLayout(), null);
             mRecyclerView.addHeaderView(headerView);
-            QsHelper.getInstance().getViewBindHelper().bind(this, headerView);
+            bindHelper = new ViewBindHelper(this);
+            bindHelper.bindView(headerView);
         }
         if (getFooterLayout() > 0) {
             footerView = inflater.inflate(getFooterLayout(), null);
             mRecyclerView.addFooterView(footerView);
-            QsHelper.getInstance().getViewBindHelper().bind(this, footerView);
+            if (bindHelper == null) bindHelper = new ViewBindHelper(this);
+            bindHelper.bindView(footerView);
         }
+        if (bindHelper != null) bindHelper.release();
 
         mRecyclerViewAdapter = onCreateAdapter();
         if (mRecyclerViewAdapter == null) {

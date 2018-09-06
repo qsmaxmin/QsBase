@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
+import com.qsmaxmin.qsbase.common.viewbind.ViewBindHelper;
 
 
 /**
@@ -19,7 +20,9 @@ public abstract class QsRecycleAdapterItem<T> {
 
     public QsRecycleAdapterItem(LayoutInflater inflater, ViewGroup parent) {
         mItemView = inflater.inflate(itemViewLayoutId(), parent, false);
-        QsHelper.getInstance().getViewBindHelper().bind(this, mItemView);
+        ViewBindHelper bindHelper = new ViewBindHelper(this);
+        bindHelper.bindView(mItemView);
+        bindHelper.release();
         mParentContext = parent.getContext();
     }
 

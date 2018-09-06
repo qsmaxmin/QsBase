@@ -4,6 +4,7 @@ import android.support.annotation.CallSuper;
 import android.view.View;
 
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
+import com.qsmaxmin.qsbase.common.viewbind.ViewBindHelper;
 
 /**
  * Created by sky on 15/2/6. 适配器
@@ -17,7 +18,9 @@ public abstract class QsListAdapterItem<T> {
     public abstract int getItemLayout();
 
     @CallSuper public void init(View contentView) {
-        QsHelper.getInstance().getViewBindHelper().bind(this, contentView);
+        ViewBindHelper bindHelper = new ViewBindHelper(this);
+        bindHelper.bindView(contentView);
+        bindHelper.release();
     }
 
     public abstract void bindData(T t, int position, int count);
