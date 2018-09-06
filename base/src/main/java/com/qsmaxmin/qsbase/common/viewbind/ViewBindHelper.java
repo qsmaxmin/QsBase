@@ -85,7 +85,7 @@ public final class ViewBindHelper {
         try {
             targetMethod = target.getClass().getDeclaredMethod("onViewClick", View.class);
         } catch (NoSuchMethodException e) {
-            L.e(getTag(), "never override method:onViewClick(View view)");
+            L.i(getTag(), "never override method:onViewClick(View view)");
         }
         if (targetMethod == null) return;
         OnClick annotation = targetMethod.getAnnotation(OnClick.class);
