@@ -8,6 +8,7 @@ package com.qsmaxmin.qsbase.common.aspect;
 public enum ThreadType {
     SINGLE_WORK,
     HTTP,
+    HTTP_NO_CHECK_NETWORK,
     MAIN,
     WORK
 }
