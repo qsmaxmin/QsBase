@@ -1,6 +1,15 @@
 package com.qsmaxmin.qsbase.common.utils.glide.transform;
 
 import android.graphics.Bitmap;
+import android.os.Build;
+import android.renderscript.Allocation;
+import android.renderscript.Element;
+import android.renderscript.RenderScript;
+import android.renderscript.ScriptIntrinsicBlur;
+import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
+
+import com.qsmaxmin.qsbase.common.utils.QsHelper;
 
 /**
  * Copyright (C) 2018 Wasabeef
@@ -20,19 +29,20 @@ import android.graphics.Bitmap;
 
 public class FastBlurUtils {
 
-    public static Bitmap blur(Bitmap srcBitmap, int radius) {
+    @NonNull public static Bitmap blur(Bitmap srcBitmap, int radius) {
         return blur(srcBitmap, radius, .5f, false);
     }
 
-    public static Bitmap blur(Bitmap srcBitmap, int radius, float scale) {
+    @NonNull public static Bitmap blur(Bitmap srcBitmap, int radius, float scale) {
         return blur(srcBitmap, radius, scale, false);
     }
 
-    public static Bitmap blur(Bitmap srcBitmap, int radius, boolean reuseBitmap) {
+    @NonNull public static Bitmap blur(Bitmap srcBitmap, int radius, boolean reuseBitmap) {
         return blur(srcBitmap, radius, .5f, reuseBitmap);
     }
 
-    public static Bitmap blur(Bitmap srcBitmap, int radius, float scale, boolean reuseBitmap) {
+
+    @NonNull public static Bitmap blur(Bitmap srcBitmap, int radius, float scale, boolean reuseBitmap) {
         if (radius <= 1) return srcBitmap;
         if (scale <= 0 || scale > 1) scale = 1f;
         Bitmap bitmap;
@@ -43,6 +53,30 @@ public class FastBlurUtils {
             int height = Math.round(srcBitmap.getHeight() * scale);
             bitmap = Bitmap.createScaledBitmap(srcBitmap, width, height, false);
         }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            return blurHeightVersion(bitmap, radius);
+        }
+        return blurLowVersion(bitmap, radius);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
+    @NonNull private static Bitmap blurHeightVersion(Bitmap bitmap, int radius) {
+        RenderScript renderScript = RenderScript.create(QsHelper.getInstance().getApplication());
+
+        final Allocation input = Allocation.createFromBitmap(renderScript, bitmap);
+        final Allocation output = Allocation.createTyped(renderScript, input.getType());
+
+        ScriptIntrinsicBlur scriptIntrinsicBlur = ScriptIntrinsicBlur.create(renderScript, Element.U8_4(renderScript));
+        scriptIntrinsicBlur.setInput(input);
+        scriptIntrinsicBlur.setRadius(radius);
+        scriptIntrinsicBlur.forEach(output);
+
+        output.copyTo(bitmap);
+        renderScript.destroy();
+        return bitmap;
+    }
+
+    @NonNull private static Bitmap blurLowVersion(Bitmap bitmap, int radius) {
         int w = bitmap.getWidth();
         int h = bitmap.getHeight();
 
@@ -232,6 +266,6 @@ public class FastBlurUtils {
             }
         }
         bitmap.setPixels(pix, 0, w, 0, 0, w, h);
-        return (bitmap);
+        return bitmap;
     }
 }
