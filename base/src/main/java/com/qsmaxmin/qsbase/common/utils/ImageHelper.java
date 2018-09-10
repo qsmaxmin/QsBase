@@ -259,9 +259,9 @@ public class ImageHelper {
         }
 
         public void into(final ImageView view, final ImageRequestListener listener) {
-            final RequestBuilder<Drawable> requestBuilder = setRequestOptionsIfNeed(manager.load(mObject));
+            RequestBuilder<Drawable> requestBuilder = setRequestOptionsIfNeed(manager.load(mObject));
             if (listener != null) {
-                RequestBuilder<Drawable> builder = requestBuilder.listener(new RequestListener<Drawable>() {
+                requestBuilder = requestBuilder.listener(new RequestListener<Drawable>() {
                     @Override public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
                         if (e != null) {
                             listener.onLoadFailed(e.getMessage());
@@ -283,9 +283,10 @@ public class ImageHelper {
             if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
                 requestBuilder.into(view);
             } else {
+                final RequestBuilder<Drawable> finalRequestBuilder = requestBuilder;
                 QsHelper.getInstance().getThreadHelper().getMainThread().execute(new Runnable() {
                     @Override public void run() {
-                        requestBuilder.into(view);
+                        finalRequestBuilder.into(view);
                     }
                 });
             }
