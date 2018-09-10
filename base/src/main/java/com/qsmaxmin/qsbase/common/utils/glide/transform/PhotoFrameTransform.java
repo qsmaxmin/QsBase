@@ -1,9 +1,9 @@
 package com.qsmaxmin.qsbase.common.utils.glide.transform;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 
@@ -35,10 +35,10 @@ public class PhotoFrameTransform extends BitmapTransformation {
     }
 
     @Override protected Bitmap transform(@NonNull BitmapPool pool, @NonNull Bitmap toTransform, int outWidth, int outHeight) {
-        return addLabel(pool, toTransform);
+        return createBitmapWithFrame(pool, toTransform);
     }
 
-    private Bitmap addLabel(BitmapPool pool, Bitmap source) {
+    private Bitmap createBitmapWithFrame(BitmapPool pool, Bitmap source) {
         if (source == null) return null;
         Bitmap result = pool.get(source.getWidth(), source.getHeight(), Bitmap.Config.ARGB_8888);
 
@@ -46,35 +46,25 @@ public class PhotoFrameTransform extends BitmapTransformation {
         Canvas canvas = new Canvas(result);
         canvas.drawBitmap(source, 0, 0, paint);
 
-        Bitmap scaledBitmap = getFrameBitmap(result.getWidth(), result.getHeight());
-        if (scaledBitmap != null) canvas.drawBitmap(scaledBitmap, 0, 0, paint);
+        drawFrame(canvas, result.getWidth(), result.getHeight());
         return result;
     }
 
-    private Bitmap getFrameBitmap(int width, int height) {
+    private void drawFrame(Canvas canvas, int width, int height) {
         if (sourceId > 0) {
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inJustDecodeBounds = true;
-            BitmapFactory.decodeResource(QsHelper.getInstance().getApplication().getResources(), sourceId, options);
-            int halfWidth = options.outWidth / 2;
-            int halfHeight = options.outHeight / 2;
-            int scaleRatio = 1;
-            while (halfWidth > width && halfHeight > height) {
-                scaleRatio *= 2;
-                halfWidth /= 2;
-                halfHeight /= 2;
+            Drawable drawable = QsHelper.getInstance().getDrawable(sourceId);
+            if (drawable != null) {
+                drawable.setBounds(0, 0, width, height);
+                drawable.draw(canvas);
             }
-            options.inJustDecodeBounds = false;
-            options.inSampleSize = scaleRatio;
-            Bitmap frameBitmap = BitmapFactory.decodeResource(QsHelper.getInstance().getApplication().getResources(), sourceId, options);
-            return Bitmap.createScaledBitmap(frameBitmap, width, height, false);
         } else if (mBitmap != null) {
             if (mBitmap.getWidth() != width || mBitmap.getHeight() != height) {
-                return Bitmap.createScaledBitmap(mBitmap, width, height, false);
+                Bitmap scaledBitmap = Bitmap.createScaledBitmap(mBitmap, width, height, false);
+                canvas.drawBitmap(scaledBitmap, 0, 0, null);
+            } else {
+                canvas.drawBitmap(mBitmap, 0, 0, null);
             }
-            return mBitmap;
         }
-        return null;
     }
 
     @Override
