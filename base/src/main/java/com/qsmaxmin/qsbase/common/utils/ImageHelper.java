@@ -7,7 +7,6 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Looper;
-import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
@@ -237,8 +236,10 @@ public class ImageHelper {
             return this;
         }
 
-        public Builder addFrame(@DrawableRes int frameId) {
-            this.mTransformation = new PhotoFrameTransform(frameId);
+        public Builder addFrame(int frameId) {
+            if (frameId > 0) {
+                this.mTransformation = new PhotoFrameTransform(frameId);
+            }
             return this;
         }
 
