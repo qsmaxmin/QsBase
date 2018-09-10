@@ -243,6 +243,13 @@ public class ImageHelper {
             return this;
         }
 
+        public Builder addFrame(Bitmap frameBitmap) {
+            if (frameBitmap != null) {
+                this.mTransformation = new PhotoFrameTransform(frameBitmap);
+            }
+            return this;
+        }
+
         public Builder transform(BitmapTransformation transformation) {
             this.mTransformation = transformation;
             return this;

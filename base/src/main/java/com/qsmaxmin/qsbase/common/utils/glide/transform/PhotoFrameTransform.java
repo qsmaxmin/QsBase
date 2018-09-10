@@ -23,10 +23,15 @@ import java.security.MessageDigest;
 public class PhotoFrameTransform extends BitmapTransformation {
     private static final String CUSTOM_ID       = "com.qsmaxmin.qsbase.common.utils.glide.transformation.PhotoFrameTransform";
     private static final byte[] CUSTOM_ID_BYTES = CUSTOM_ID.getBytes(CHARSET);
-    private final int sourceId;
+    private int    sourceId;
+    private Bitmap mBitmap;
 
     public PhotoFrameTransform(@DrawableRes int sourceId) {
         this.sourceId = sourceId;
+    }
+
+    public PhotoFrameTransform(@NonNull Bitmap frameBitmap) {
+        this.mBitmap = frameBitmap;
     }
 
     @Override protected Bitmap transform(@NonNull BitmapPool pool, @NonNull Bitmap toTransform, int outWidth, int outHeight) {
@@ -41,23 +46,35 @@ public class PhotoFrameTransform extends BitmapTransformation {
         Canvas canvas = new Canvas(result);
         canvas.drawBitmap(source, 0, 0, paint);
 
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        BitmapFactory.decodeResource(QsHelper.getInstance().getApplication().getResources(), sourceId, options);
-        int halfWidth = options.outWidth / 2;
-        int halfHeight = options.outHeight / 2;
-        int scaleRatio = 1;
-        while (halfWidth > result.getWidth() && halfHeight > result.getHeight()) {
-            scaleRatio *= 2;
-            halfWidth /= 2;
-            halfHeight /= 2;
-        }
-        options.inJustDecodeBounds = false;
-        options.inSampleSize = scaleRatio;
-        Bitmap frameBitmap = BitmapFactory.decodeResource(QsHelper.getInstance().getApplication().getResources(), sourceId, options);
-        Bitmap scaledBitmap = Bitmap.createScaledBitmap(frameBitmap, result.getWidth(), result.getHeight(), false);
-        canvas.drawBitmap(scaledBitmap, 0, 0, paint);
+        Bitmap scaledBitmap = getFrameBitmap(result.getWidth(), result.getHeight());
+        if (scaledBitmap != null) canvas.drawBitmap(scaledBitmap, 0, 0, paint);
         return result;
+    }
+
+    private Bitmap getFrameBitmap(int width, int height) {
+        if (sourceId > 0) {
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeResource(QsHelper.getInstance().getApplication().getResources(), sourceId, options);
+            int halfWidth = options.outWidth / 2;
+            int halfHeight = options.outHeight / 2;
+            int scaleRatio = 1;
+            while (halfWidth > width && halfHeight > height) {
+                scaleRatio *= 2;
+                halfWidth /= 2;
+                halfHeight /= 2;
+            }
+            options.inJustDecodeBounds = false;
+            options.inSampleSize = scaleRatio;
+            Bitmap frameBitmap = BitmapFactory.decodeResource(QsHelper.getInstance().getApplication().getResources(), sourceId, options);
+            return Bitmap.createScaledBitmap(frameBitmap, width, height, false);
+        } else if (mBitmap != null) {
+            if (mBitmap.getWidth() != width || mBitmap.getHeight() != height) {
+                return Bitmap.createScaledBitmap(mBitmap, width, height, false);
+            }
+            return mBitmap;
+        }
+        return null;
     }
 
     @Override
