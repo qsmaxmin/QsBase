@@ -1,7 +1,6 @@
 package com.qsmaxmin.qsbase.common.widget.ptr.header;
 
 import android.content.Context;
-import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
@@ -105,7 +104,7 @@ public class BeautyCircleRefreshHeader extends RelativeLayout implements PtrUIHa
         if (checkCanAnimation()) {
             circleLogoDrawable.setPercent(percent);
             circleLogoDrawable.setIsReachCriticalPoint(percent == ptrIndicator.getRatioOfHeaderToHeightRefresh());
-            ViewCompat.setTranslationY(ivRefresh, (1f - percent) * headerHeight / 2);
+            ivRefresh.setTranslationY((1f - percent) * headerHeight / 2);
         }
     }
 
