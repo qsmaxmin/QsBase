@@ -10,13 +10,11 @@ public interface PtrUIHandler {
 
     /**
      * When the content view has reached top and refresh has been completed, view will be reset.
-     * @param frame
      */
     void onUIReset(PtrFrameLayout frame);
 
     /**
      * prepare for loading
-     * @param frame
      */
     void onUIRefreshPrepare(PtrFrameLayout frame);
 
@@ -30,5 +28,8 @@ public interface PtrUIHandler {
      */
     void onUIRefreshComplete(PtrFrameLayout frame);
 
+    /**
+     * @param status {@link PtrFrameLayout#PTR_STATUS_INIT}等
+     */
     void onUIPositionChange(PtrFrameLayout frame, boolean isUnderTouch, byte status, PtrIndicator ptrIndicator);
 }
