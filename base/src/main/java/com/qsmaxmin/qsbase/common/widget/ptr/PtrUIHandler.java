@@ -4,7 +4,7 @@ package com.qsmaxmin.qsbase.common.widget.ptr;
 import com.qsmaxmin.qsbase.common.widget.ptr.indicator.PtrIndicator;
 
 /**
- *
+ * PtrFrameLayout交互监听
  */
 public interface PtrUIHandler {
 
