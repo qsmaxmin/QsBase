@@ -168,8 +168,7 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
             }
             case TYPE_STAGGEREDGRID: {
                 StaggeredGridLayoutManager manager = new StaggeredGridLayoutManager(getSpanCount(), StaggeredGridLayoutManager.VERTICAL);
-                /*顶部不留白*/
-                manager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS);
+                manager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_NONE);
                 mRecyclerView.setLayoutManager(manager);
                 break;
             }
