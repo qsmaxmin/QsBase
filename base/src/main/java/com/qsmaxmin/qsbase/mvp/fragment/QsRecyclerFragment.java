@@ -348,8 +348,11 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
             int[] spanArr = new int[getSpanCount()];
             StaggeredGridLayoutManager layoutManager = (StaggeredGridLayoutManager) getRecyclerView().getLayoutManager();
             layoutManager.findFirstCompletelyVisibleItemPositions(spanArr);
-            if ((spanArr[0] == 1 || spanArr[1] == 1)) {
-                layoutManager.invalidateSpanAssignments();
+            for (int index : spanArr) {
+                if (index == 1) {
+                    getAdapter().notifyDataSetChanged();
+                    break;
+                }
             }
         }
     }
