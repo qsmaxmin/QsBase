@@ -390,7 +390,7 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
     @IntDef({TYPE_GRID, TYPE_LIST, TYPE_STAGGEREDGRID})
     @Retention(RetentionPolicy.CLASS)
     @Target(ElementType.METHOD)
-    public @interface LayoutManagerType {
+    private @interface LayoutManagerType {
 
     }
 }
