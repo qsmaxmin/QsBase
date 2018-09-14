@@ -64,4 +64,8 @@ public interface QsIRecyclerFragment<D> extends QsIFragment {
     boolean showContentViewWhenDataLoadingComplete();
 
     void onAdapterGetView(int position, int totalCount);
+
+    void onScrollStateChanged(RecyclerView recyclerView, int newState);
+
+    void onScrolled(RecyclerView recyclerView, int dx, int dy);
 }
