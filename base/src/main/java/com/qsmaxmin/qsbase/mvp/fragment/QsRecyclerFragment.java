@@ -363,7 +363,7 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
         return 2;
     }
 
-    protected @RecycleType int getRecyclerViewType() {
+    @LayoutManagerType protected int getRecyclerViewType() {
         return TYPE_LIST;
     }
 
@@ -390,7 +390,7 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
     @IntDef({TYPE_GRID, TYPE_LIST, TYPE_STAGGEREDGRID})
     @Retention(RetentionPolicy.CLASS)
     @Target(ElementType.METHOD)
-    private @interface RecycleType {
+    public @interface LayoutManagerType {
 
     }
 }
