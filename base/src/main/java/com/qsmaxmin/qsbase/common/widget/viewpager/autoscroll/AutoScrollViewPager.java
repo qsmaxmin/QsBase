@@ -96,6 +96,7 @@ public final class AutoScrollViewPager extends QsViewPager {
 
     @Override protected void onWindowVisibilityChanged(int visibility) {
         super.onWindowVisibilityChanged(visibility);
+        if (getAdapter() == null) return;
         if (visibility == View.VISIBLE && isAutoScroll) {
             L.i(initTag(), "onWindowVisibilityChanged............view VISIBLE, start auto scroll !");
             sendScrollMessage((int) (interval + scroller.getDuration() / autoScrollFactor * swipeScrollFactor));
