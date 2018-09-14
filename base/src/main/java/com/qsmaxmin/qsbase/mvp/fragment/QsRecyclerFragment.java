@@ -1,5 +1,6 @@
 package com.qsmaxmin.qsbase.mvp.fragment;
 
+import android.graphics.Rect;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -120,6 +121,7 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
         }
         if (bindHelper != null) bindHelper.release();
 
+        mRecyclerView.addItemDecoration(new CustomItemDecoration());
         mRecyclerViewAdapter = onCreateAdapter();
         if (mRecyclerViewAdapter == null) {
             mRecyclerViewAdapter = new MyRecycleAdapter(inflater);
@@ -342,5 +344,17 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
 
     @Override public void onAdapterGetView(int position, int totalCount) {
         //for custom logic
+    }
+
+    private class CustomItemDecoration extends RecyclerView.ItemDecoration {
+        @Override
+        public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+            super.getItemOffsets(outRect, view, parent, state);
+            setItemOffset(outRect, view, parent, state);
+        }
+    }
+
+    protected void setItemOffset(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+
     }
 }
