@@ -1,6 +1,7 @@
 package com.qsmaxmin.qsbase.mvp.fragment;
 
 import android.graphics.Rect;
+import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -22,6 +23,10 @@ import com.qsmaxmin.qsbase.mvp.adapter.MyRecycleViewHolder;
 import com.qsmaxmin.qsbase.mvp.adapter.QsRecycleAdapterItem;
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -334,7 +339,7 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
         return 2;
     }
 
-    protected int getRecyclerViewType() {
+    protected @RecycleType int getRecyclerViewType() {
         return TYPE_LIST;
     }
 
@@ -355,6 +360,13 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
     }
 
     protected void setItemOffset(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+
+    }
+
+    @IntDef({TYPE_GRID, TYPE_LIST, TYPE_STAGGEREDGRID})
+    @Retention(RetentionPolicy.CLASS)
+    @Target(ElementType.METHOD)
+    private @interface RecycleType {
 
     }
 }
