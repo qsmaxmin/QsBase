@@ -367,32 +367,11 @@ public class InnerScrollView extends ScrollView implements InnerScroller {
 
     protected int mLastHeaderVisibleHeight = 0;
 
-
-    @Override public void addView(View child) {
-        setContentView(child);
+    public void addContentView(View contentView) {
+        addContentView(contentView, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
     }
 
-    @Override public void addView(View child, int index) {
-        setContentView(child);
-    }
-
-    @Override public void addView(View child, int index, ViewGroup.LayoutParams params) {
-        setContentView(child, (LinearLayout.LayoutParams) params);
-    }
-
-    @Override public void addView(View child, ViewGroup.LayoutParams params) {
-        setContentView(child, (LinearLayout.LayoutParams) params);
-    }
-
-    @Override public void addView(View child, int width, int height) {
-        setContentView(child, new LinearLayout.LayoutParams(width, height));
-    }
-
-    private void setContentView(View contentView) {
-        setContentView(contentView, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-    }
-
-    private void setContentView(View contentView, LinearLayout.LayoutParams layoutParams) {
+    public void addContentView(View contentView, LinearLayout.LayoutParams layoutParams) {
 
         if (contentView == null) {
             clearContent();
@@ -411,7 +390,6 @@ public class InnerScrollView extends ScrollView implements InnerScroller {
             mTheOnlyChild.removeView(getInnerEmptyView());
             setInnerEmptyView(null);
         }
-
         mTheOnlyChild.addView(mContentView, getContentInsertIndex(), layoutParams);
     }
 
@@ -441,7 +419,6 @@ public class InnerScrollView extends ScrollView implements InnerScroller {
         mTheOnlyChild = new SizeSensitiveLinearLayout(getContext());
         mTheOnlyChild.setOrientation(LinearLayout.VERTICAL);
         mTheOnlyChild.setOnSizeChangedListener(new SizeSensitiveLinearLayout.SizeChangedListener() {
-
             @Override public void onSizeChanged(int w, int h, int oldw, int oldh) {
                 onContentSizeChanged();
             }
@@ -451,9 +428,7 @@ public class InnerScrollView extends ScrollView implements InnerScroller {
 
     private void onContentSizeChanged() {
         updateScrollRange();
-
         updateViewState();
-
         if (!mHasAdjustedFirstScrollPosition) {
             postDelayed(new Runnable() {
                 @Override public void run() {
