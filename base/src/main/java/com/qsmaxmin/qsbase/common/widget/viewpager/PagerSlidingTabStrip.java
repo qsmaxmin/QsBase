@@ -126,13 +126,12 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 
         // get system attrs (android:textSize and android:textColor)
 
-        TypedArray a = context.obtainStyledAttributes(attrs, ATTRS);
-        tabTextSize = a.getDimensionPixelSize(0, tabTextSize);
-        tabTextColor = a.getColor(1, tabTextColor);
-        a.recycle();
-
         // get custom attrs
-        a = context.obtainStyledAttributes(attrs, R.styleable.PagerSlidingTabStrip);
+        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.PagerSlidingTabStrip);
+
+        tabTextSize = a.getDimensionPixelSize(R.styleable.PagerSlidingTabStrip_psts_TextSize, tabTextSize);
+        tabTextColor = a.getColor(R.styleable.PagerSlidingTabStrip_psts_UnSelectedTextColor, tabTextColor);
+        selectedTabTextColor = a.getColor(R.styleable.PagerSlidingTabStrip_psts_SelectedTextColor, getResources().getColor(R.color.colorAccent));
 
         indicatorColor = a.getColor(R.styleable.PagerSlidingTabStrip_psts_IndicatorColor, indicatorColor);
         indicatorWidth = a.getDimensionPixelSize(R.styleable.PagerSlidingTabStrip_psts_IndicatorWidth, 0);
@@ -148,7 +147,7 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
         shouldExpand = a.getBoolean(R.styleable.PagerSlidingTabStrip_psts_ShouldExpand, shouldExpand);
         scrollOffset = a.getDimensionPixelSize(R.styleable.PagerSlidingTabStrip_psts_ScrollOffset, scrollOffset);
         textAllCaps = a.getBoolean(R.styleable.PagerSlidingTabStrip_psts_TextAllCaps, textAllCaps);
-        selectedTabTextColor = a.getColor(R.styleable.PagerSlidingTabStrip_psts_SelectedTextColor, Color.parseColor("#51A3FF"));
+
         a.recycle();
 
         rectPaint = new Paint();
@@ -465,12 +464,12 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
         invalidate();
     }
 
-    private void setIndicatorWidth(int indicatorWidth) {
+    public void setIndicatorWidth(int indicatorWidth) {
         this.indicatorWidth = indicatorWidth;
         invalidate();
     }
 
-    private int getIndicatorWidth() {
+    public int getIndicatorWidth() {
         return indicatorWidth;
     }
 

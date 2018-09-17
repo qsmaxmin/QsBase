@@ -74,7 +74,9 @@ public abstract class QsViewPagerActivity<P extends QsPresenter> extends QsActiv
             tab.setDividerColor(getTabsDividerColor());
             tab.setUnderlineHeight((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, getTabsUnderlineHeight(), dm));
             tab.setUnderlineColor(getTabsUnderlineColor());
-            tab.setIndicatorHeight((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, getTabsIndicatorSize(), dm));
+            tab.setIndicatorHeight((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, getTabsIndicatorHeight(), dm));
+            tab.setIndicatorWidth((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, getTabsIndicatorWidth(), dm));
+            tab.setIndicatorCorner((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, getTabsIndicatorCorner(), dm));
             tab.setTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, getTabsTitleSize(), dm));
             tab.setIndicatorColor(getTabsIndicatorColor());
             tab.setSelectedTextColor(getTabsSelectedTitleColor());
@@ -188,8 +190,16 @@ public abstract class QsViewPagerActivity<P extends QsPresenter> extends QsActiv
         return 12;
     }
 
-    protected float getTabsIndicatorSize() {
+    protected float getTabsIndicatorHeight() {
         return 2;
+    }
+
+    protected float getTabsIndicatorWidth() {
+        return 0;
+    }
+
+    protected float getTabsIndicatorCorner() {
+        return 1;
     }
 
     protected float getTabsUnderlineHeight() {

@@ -3,6 +3,7 @@
 
     <!-- viewpager -->
     <declare-styleable name="PagerSlidingTabStrip">
+        <attr name="psts_TextSize" format="dimension"/>
         <attr name="psts_IndicatorColor" format="color"/>
         <attr name="psts_IndicatorWidth" format="dimension"/>
         <attr name="psts_IndicatorHeight" format="dimension"/>
@@ -10,6 +11,7 @@
         <attr name="psts_UnderlineColor" format="color"/>
         <attr name="psts_DividerColor" format="color"/>
         <attr name="psts_SelectedTextColor" format="color"/>
+        <attr name="psts_UnSelectedTextColor" format="color"/>
         <attr name="psts_UnderlineHeight" format="dimension"/>
         <attr name="psts_DividerPadding" format="dimension"/>
         <attr name="psts_TabPaddingLeftRight" format="dimension"/>
