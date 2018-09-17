@@ -26,7 +26,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.qsmaxmin.qsbase.R;
-import com.qsmaxmin.qsbase.common.log.L;
 
 import java.util.Locale;
 
@@ -491,6 +490,15 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 
     public int getIndicatorHeight() {
         return indicatorHeight;
+    }
+
+    public void setIndicatorCorner(int indicatorCorner) {
+        this.indicatorCorner = indicatorCorner;
+        invalidate();
+    }
+
+    public int getIndicatorCorner() {
+        return indicatorCorner;
     }
 
     public void setUnderlineColor(int underlineColor) {
