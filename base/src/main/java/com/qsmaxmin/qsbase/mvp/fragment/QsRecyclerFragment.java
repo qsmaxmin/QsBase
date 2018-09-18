@@ -349,7 +349,7 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
             StaggeredGridLayoutManager layoutManager = (StaggeredGridLayoutManager) getRecyclerView().getLayoutManager();
             layoutManager.findFirstCompletelyVisibleItemPositions(spanArr);
             for (int index : spanArr) {
-                if (index == 1) {
+                if (index == 1 || index == 0) {
                     getAdapter().notifyDataSetChanged();
                     break;
                 }
