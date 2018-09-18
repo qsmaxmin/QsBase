@@ -41,8 +41,8 @@ public abstract class QsViewPagerActivity<P extends QsPresenter> extends QsActiv
     }
 
     private void initTabAndPager(View view) {
-        pager = (QsViewPager) view.findViewById(R.id.pager);
-        tabs = (PagerSlidingTabStrip) view.findViewById(android.R.id.tabs);
+        pager = view.findViewById(R.id.pager);
+        tabs = view.findViewById(android.R.id.tabs);
         initTabsValue(tabs);
         initViewPager(getModelPagers(), getOffscreenPageLimit());
     }
@@ -74,8 +74,8 @@ public abstract class QsViewPagerActivity<P extends QsPresenter> extends QsActiv
             tab.setDividerColor(getTabsDividerColor());
             tab.setUnderlineHeight((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, getTabsUnderlineHeight(), dm));
             tab.setUnderlineColor(getTabsUnderlineColor());
-            tab.setIndicatorHeight((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, getTabsIndicatorHeight(), dm));
-            tab.setIndicatorWidth((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, getTabsIndicatorWidth(), dm));
+            if (getTabsIndicatorHeight() > 0) tab.setIndicatorHeight((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, getTabsIndicatorHeight(), dm));
+            if (getTabsIndicatorWidth() > 0) tab.setIndicatorWidth((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, getTabsIndicatorWidth(), dm));
             tab.setIndicatorCorner((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, getTabsIndicatorCorner(), dm));
             tab.setTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, getTabsTitleSize(), dm));
             tab.setIndicatorColor(getTabsIndicatorColor());

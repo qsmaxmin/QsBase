@@ -460,13 +460,17 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
     }
 
     public void setIndicatorColor(int indicatorColor) {
-        this.indicatorColor = indicatorColor;
-        invalidate();
+        if (this.indicatorColor != indicatorColor) {
+            this.indicatorColor = indicatorColor;
+            invalidate();
+        }
     }
 
     public void setIndicatorWidth(int indicatorWidth) {
-        this.indicatorWidth = indicatorWidth;
-        invalidate();
+        if (this.indicatorWidth != indicatorWidth) {
+            this.indicatorWidth = indicatorWidth;
+            invalidate();
+        }
     }
 
     public int getIndicatorWidth() {
@@ -474,8 +478,10 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
     }
 
     public void setIndicatorColorResource(int resId) {
-        this.indicatorColor = getResources().getColor(resId);
-        invalidate();
+        if (this.indicatorColor != getResources().getColor(resId)) {
+            this.indicatorColor = getResources().getColor(resId);
+            invalidate();
+        }
     }
 
     public int getIndicatorColor() {
@@ -483,8 +489,10 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
     }
 
     public void setIndicatorHeight(int indicatorLineHeightPx) {
-        this.indicatorHeight = indicatorLineHeightPx;
-        invalidate();
+        if (this.indicatorHeight != indicatorLineHeightPx) {
+            this.indicatorHeight = indicatorLineHeightPx;
+            invalidate();
+        }
     }
 
     public int getIndicatorHeight() {
@@ -492,8 +500,10 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
     }
 
     public void setIndicatorCorner(int indicatorCorner) {
-        this.indicatorCorner = indicatorCorner;
-        invalidate();
+        if (this.indicatorCorner != indicatorCorner) {
+            this.indicatorCorner = indicatorCorner;
+            invalidate();
+        }
     }
 
     public int getIndicatorCorner() {
@@ -501,8 +511,10 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
     }
 
     public void setUnderlineColor(int underlineColor) {
-        this.underlineColor = underlineColor;
-        invalidate();
+        if (this.underlineColor != underlineColor) {
+            this.underlineColor = underlineColor;
+            invalidate();
+        }
     }
 
     public void setUnderlineColorResource(int resId) {
@@ -515,13 +527,17 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
     }
 
     public void setDividerColor(int dividerColor) {
-        this.dividerColor = dividerColor;
-        invalidate();
+        if (this.dividerColor != dividerColor) {
+            this.dividerColor = dividerColor;
+            invalidate();
+        }
     }
 
     public void setDividerColorResource(int resId) {
-        this.dividerColor = getResources().getColor(resId);
-        invalidate();
+        if (this.dividerColor != getResources().getColor(resId)) {
+            this.dividerColor = getResources().getColor(resId);
+            invalidate();
+        }
     }
 
     public int getDividerColor() {
@@ -529,8 +545,10 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
     }
 
     public void setUnderlineHeight(int underlineHeightPx) {
-        this.underlineHeight = underlineHeightPx;
-        invalidate();
+        if (this.underlineHeight != underlineHeightPx) {
+            this.underlineHeight = underlineHeightPx;
+            invalidate();
+        }
     }
 
     public int getUnderlineHeight() {
@@ -538,8 +556,10 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
     }
 
     public void setDividerPadding(int dividerPaddingPx) {
-        this.dividerPadding = dividerPaddingPx;
-        invalidate();
+        if (this.dividerPadding != dividerPaddingPx) {
+            this.dividerPadding = dividerPaddingPx;
+            invalidate();
+        }
     }
 
     public int getDividerPadding() {
@@ -547,8 +567,10 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
     }
 
     public void setScrollOffset(int scrollOffsetPx) {
-        this.scrollOffset = scrollOffsetPx;
-        invalidate();
+        if (this.scrollOffset != scrollOffsetPx) {
+            this.scrollOffset = scrollOffsetPx;
+            invalidate();
+        }
     }
 
     public int getScrollOffset() {
