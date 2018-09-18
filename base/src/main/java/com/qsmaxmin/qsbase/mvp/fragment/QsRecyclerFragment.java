@@ -128,6 +128,18 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
         mRecyclerView.addItemDecoration(new CustomItemDecoration());
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                //防止滚动列表时item位置互换及滑动到顶部时对齐顶部
+                if (newState == RecyclerView.SCROLL_STATE_IDLE && getRecyclerViewType() == TYPE_STAGGEREDGRID && getSpanCount() > 1) {
+                    int[] spanArr = new int[getSpanCount()];
+                    StaggeredGridLayoutManager layoutManager = (StaggeredGridLayoutManager) getRecyclerView().getLayoutManager();
+                    layoutManager.findFirstCompletelyVisibleItemPositions(spanArr);
+                    for (int index : spanArr) {
+                        if (index == 1 || index == 0) {
+                            getAdapter().notifyDataSetChanged();
+                            break;
+                        }
+                    }
+                }
                 QsRecyclerFragment.this.onScrollStateChanged(recyclerView, newState);
             }
 
@@ -344,17 +356,7 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
     }
 
     @Override public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-        if (newState == RecyclerView.SCROLL_STATE_IDLE && getRecyclerViewType() == TYPE_STAGGEREDGRID && getSpanCount() > 1) {
-            int[] spanArr = new int[getSpanCount()];
-            StaggeredGridLayoutManager layoutManager = (StaggeredGridLayoutManager) getRecyclerView().getLayoutManager();
-            layoutManager.findFirstCompletelyVisibleItemPositions(spanArr);
-            for (int index : spanArr) {
-                if (index == 1 || index == 0) {
-                    getAdapter().notifyDataSetChanged();
-                    break;
-                }
-            }
-        }
+        //for custom logic
     }
 
     @Override public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
