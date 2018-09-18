@@ -49,14 +49,14 @@ public class RoundCornersTransformation extends BitmapTransformation {
 
         Path path = new Path();
         float[] radiusArray = new float[8];
-        radiusArray[0] = mCorners[0] / 2f;
-        radiusArray[1] = mCorners[0] / 2f;
-        radiusArray[2] = mCorners[1] / 2f;
-        radiusArray[3] = mCorners[1] / 2f;
-        radiusArray[4] = mCorners[2] / 2f;
-        radiusArray[5] = mCorners[2] / 2f;
-        radiusArray[6] = mCorners[3] / 2f;
-        radiusArray[7] = mCorners[3] / 2f;
+        radiusArray[0] = mCorners[0];
+        radiusArray[1] = mCorners[0];
+        radiusArray[2] = mCorners[1];
+        radiusArray[3] = mCorners[1];
+        radiusArray[4] = mCorners[2];
+        radiusArray[5] = mCorners[2];
+        radiusArray[6] = mCorners[3];
+        radiusArray[7] = mCorners[3];
         path.addRoundRect(rectf, radiusArray, Path.Direction.CW);
         canvas.drawPath(path, paint);
 
