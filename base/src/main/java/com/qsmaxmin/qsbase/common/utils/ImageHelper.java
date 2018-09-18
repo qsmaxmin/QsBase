@@ -33,6 +33,7 @@ import com.qsmaxmin.qsbase.common.aspect.ThreadPoint;
 import com.qsmaxmin.qsbase.common.aspect.ThreadType;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.utils.glide.transform.PhotoFrameTransform;
+import com.qsmaxmin.qsbase.common.utils.glide.transform.RoundCornersTransformation;
 
 import java.io.File;
 import java.util.concurrent.ExecutionException;
@@ -116,7 +117,7 @@ public class ImageHelper {
         private boolean              centerCrop;
         private boolean              fitCenter;
         private boolean              centerInside;
-        private int                  mCorners;
+        private int[]                mCorners;
         private int                  mWidth;
         private int                  mHeight;
         private boolean              noMemoryCache;
@@ -226,7 +227,7 @@ public class ImageHelper {
             return this;
         }
 
-        public Builder roundedCorners(int corners) {
+        public Builder roundedCorners(int... corners) {
             this.mCorners = corners;
             return this;
         }
@@ -405,7 +406,7 @@ public class ImageHelper {
                     || centerCrop
                     || fitCenter
                     || centerInside
-                    || mCorners > 0
+                    || mCorners != null
                     || (mWidth > 0 && mHeight > 0)
                     || noMemoryCache
                     || diskCacheStrategy != null
@@ -439,15 +440,23 @@ public class ImageHelper {
             if (mTransformation != null) {
                 if (mIsCircleCrop) {
                     requestOptions = requestOptions.transforms(new CircleCrop(), mTransformation);
-                } else if (mCorners > 0) {
-                    requestOptions = requestOptions.transforms(new RoundedCorners(mCorners), mTransformation);
+                } else if (mCorners != null) {
+                    if (mCorners.length == 1) {
+                        requestOptions = requestOptions.transforms(new RoundedCorners(mCorners[0]), mTransformation);
+                    } else {
+                        requestOptions = requestOptions.transforms(new RoundCornersTransformation(mCorners), mTransformation);
+                    }
                 } else {
                     requestOptions = requestOptions.optionalTransform(mTransformation);
                 }
             } else if (mIsCircleCrop) {
                 requestOptions = requestOptions.optionalCircleCrop();
-            } else if (mCorners > 0) {
-                requestOptions = requestOptions.optionalTransform(new RoundedCorners(mCorners));
+            } else if (mCorners != null) {
+                if (mCorners.length == 1) {
+                    requestOptions = requestOptions.optionalTransform(new RoundedCorners(mCorners[0]));
+                } else {
+                    requestOptions = requestOptions.optionalTransform(new RoundCornersTransformation(mCorners));
+                }
             }
             if (mWidth > 0 && mHeight > 0) {
                 requestOptions = requestOptions.override(mWidth, mHeight);
