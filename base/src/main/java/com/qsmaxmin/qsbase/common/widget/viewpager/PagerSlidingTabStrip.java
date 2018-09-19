@@ -68,7 +68,7 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
     private       int          underlineColor         = 0x1A000000;
     private       int          dividerColor           = 0x1A000000;
     private       boolean      shouldExpand           = false;
-    private       boolean      textAllCaps            = true;
+    private       boolean      textAllCaps            = false;
     private       int          scrollOffset           = 52;
     private       int          underlineHeight        = 2;
     private       int          dividerPadding         = 12;
@@ -317,27 +317,16 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
     private void updateTabStyles() {
 
         for (int i = 0; i < tabCount; i++) {
-
             View v = tabsContainer.getChildAt(i);
-
             v.setBackgroundResource(tabBackgroundResId);
 
             if (v instanceof TextView) {
-
                 TextView tab = (TextView) v;
                 tab.setTextSize(TypedValue.COMPLEX_UNIT_PX, tabTextSize);
                 tab.setTypeface(tabTypeface, tabTypefaceStyle);
                 tab.setTextColor(tabTextColor);
-
-                // setAllCaps() is only available from API 14, so the upper case
-                // is made manually if we are on a
-                // pre-ICS-build
                 if (textAllCaps) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-                        tab.setAllCaps(true);
-                    } else {
-                        tab.setText(tab.getText().toString().toUpperCase(locale));
-                    }
+                    tab.setAllCaps(true);
                 }
                 if (i == selectedPosition) {
                     tab.setTextColor(selectedTabTextColor);
