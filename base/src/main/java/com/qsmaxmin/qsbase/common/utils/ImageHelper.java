@@ -441,7 +441,7 @@ public class ImageHelper {
                 if (mIsCircleCrop) {
                     requestOptions = requestOptions.transforms(new CircleCrop(), mTransformation);
                 } else if (mCorners != null) {
-                    if (mCorners.length == 1) {
+                    if (mCorners.length == 1 && mCorners[0] > 0) {
                         requestOptions = requestOptions.transforms(new RoundedCorners(mCorners[0]), mTransformation);
                     } else {
                         requestOptions = requestOptions.transforms(new RoundCornersTransformation(mCorners), mTransformation);
@@ -452,7 +452,7 @@ public class ImageHelper {
             } else if (mIsCircleCrop) {
                 requestOptions = requestOptions.optionalCircleCrop();
             } else if (mCorners != null) {
-                if (mCorners.length == 1) {
+                if (mCorners.length == 1 && mCorners[0] > 0) {
                     requestOptions = requestOptions.optionalTransform(new RoundedCorners(mCorners[0]));
                 } else {
                     requestOptions = requestOptions.optionalTransform(new RoundCornersTransformation(mCorners));
