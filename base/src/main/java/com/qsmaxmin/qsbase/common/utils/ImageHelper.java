@@ -125,6 +125,10 @@ public class ImageHelper {
         private BitmapTransformation mTransformation;
         private boolean              mIsCircleCrop;
 
+        public Object getLoadObject() {
+            return mObject;
+        }
+
         Builder(Context context) {
             manager = Glide.with(context);
             defaultHolderId = QsHelper.getInstance().getApplication().defaultImageHolder();
@@ -276,6 +280,7 @@ public class ImageHelper {
         }
 
         public void into(final ImageView view, final ImageRequestListener listener) {
+            onLoadImageBefore(this);
             RequestBuilder<Drawable> requestBuilder = setRequestOptionsIfNeed(manager.load(mObject));
             if (listener != null) {
                 requestBuilder = requestBuilder.listener(new RequestListener<Drawable>() {
@@ -325,6 +330,7 @@ public class ImageHelper {
 
         public Bitmap getBitmap(Object object, int width, int height) {
             if (object == null) return null;
+            onLoadImageBefore(this);
             RequestBuilder<Bitmap> requestBuilder = setRequestOptionsIfNeed(manager.asBitmap());
             FutureTarget<Bitmap> submit = requestBuilder.load(object).submit(width, height);
             try {
@@ -350,6 +356,7 @@ public class ImageHelper {
 
         public Drawable getDrawable(Object object, int width, int height) {
             if (object == null) return null;
+            onLoadImageBefore(this);
             RequestBuilder<Drawable> requestBuilder = setRequestOptionsIfNeed(manager.asDrawable());
             FutureTarget<Drawable> submit = requestBuilder.load(object).submit(width, height);
             try {
@@ -367,6 +374,7 @@ public class ImageHelper {
 
         public File getImageFile(String url, int width, int height) {
             if (TextUtils.isEmpty(url)) return null;
+            onLoadImageBefore(this);
             RequestBuilder<File> requestBuilder = setRequestOptionsIfNeed(manager.asFile());
             FutureTarget<File> submit = requestBuilder.load(new MyGlideUrl(url)).submit(width, height);
             try {
@@ -475,6 +483,10 @@ public class ImageHelper {
             myGlideUrl.setCacheKey(cacheKey);
             return myGlideUrl;
         }
+    }
+
+    private void onLoadImageBefore(Builder builder) {
+        QsHelper.getInstance().getApplication().onCommonLoadImage(builder);
     }
 
     private long getFolderSize(File file) {

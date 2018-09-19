@@ -9,6 +9,7 @@ import android.support.annotation.LayoutRes;
 
 import com.qsmaxmin.qsbase.common.http.HttpBuilder;
 import com.qsmaxmin.qsbase.common.log.L;
+import com.qsmaxmin.qsbase.common.utils.ImageHelper;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.common.widget.dialog.QsProgressDialog;
 
@@ -99,5 +100,8 @@ public abstract class QsApplication extends Application {
 
     public boolean isCurrentProcess(String processName) {
         return getCurrentProcessName().equals(processName);
+    }
+
+    public void onCommonLoadImage(ImageHelper.Builder builder) {
     }
 }
