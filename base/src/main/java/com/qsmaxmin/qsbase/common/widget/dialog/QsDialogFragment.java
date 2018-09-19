@@ -42,6 +42,11 @@ public abstract class QsDialogFragment extends DialogFragment {
         return dialogView;
     }
 
+    @Override public void onStart() {
+        super.onStart();
+        initData();
+    }
+
     protected void setAttribute(WindowManager.LayoutParams params) {
         params.gravity = Gravity.BOTTOM;
         params.width = WindowManager.LayoutParams.MATCH_PARENT;
@@ -57,5 +62,13 @@ public abstract class QsDialogFragment extends DialogFragment {
     }
 
     public void onViewClick(View view) {
+    }
+
+    protected void initData() {
+
+    }
+
+    public void show() {
+        QsHelper.getInstance().commitDialogFragment(getFragmentManager(), this);
     }
 }
