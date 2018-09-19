@@ -325,7 +325,7 @@ public class ImageHelper {
 
         public Bitmap getBitmap(String url, int width, int height) {
             if (TextUtils.isEmpty(url)) return null;
-            return getBitmap(new MyGlideUrl(url), width, height);
+            return getBitmap(new QsGlideUrl(url), width, height);
         }
 
         public Bitmap getBitmap(Object object, int width, int height) {
@@ -351,7 +351,7 @@ public class ImageHelper {
 
         public Drawable getDrawable(String url, int width, int height) {
             if (TextUtils.isEmpty(url)) return null;
-            return getDrawable(new MyGlideUrl(url), width, height);
+            return getDrawable(new QsGlideUrl(url), width, height);
         }
 
         public Drawable getDrawable(Object object, int width, int height) {
@@ -376,7 +376,7 @@ public class ImageHelper {
             if (TextUtils.isEmpty(url)) return null;
             onLoadImageBefore(this);
             RequestBuilder<File> requestBuilder = setRequestOptionsIfNeed(manager.asFile());
-            FutureTarget<File> submit = requestBuilder.load(new MyGlideUrl(url)).submit(width, height);
+            FutureTarget<File> submit = requestBuilder.load(new QsGlideUrl(url)).submit(width, height);
             try {
                 return submit.get();
             } catch (InterruptedException | ExecutionException e) {
@@ -478,10 +478,10 @@ public class ImageHelper {
             return requestOptions;
         }
 
-        private MyGlideUrl createGlideUrl(String url, String cacheKey) {
-            MyGlideUrl myGlideUrl = new MyGlideUrl(url);
-            myGlideUrl.setCacheKey(cacheKey);
-            return myGlideUrl;
+        private QsGlideUrl createGlideUrl(String url, String cacheKey) {
+            QsGlideUrl qsGlideUrl = new QsGlideUrl(url);
+            qsGlideUrl.setCacheKey(cacheKey);
+            return qsGlideUrl;
         }
     }
 
@@ -514,16 +514,21 @@ public class ImageHelper {
         void onSuccess(Drawable drawable, Object model);
     }
 
-    public class MyGlideUrl extends GlideUrl {
+    public class QsGlideUrl extends GlideUrl {
+        private final String mUrl;
+        private       String mCacheKey;
 
-        private String mCacheKey;
-
-        MyGlideUrl(String url) {
+        QsGlideUrl(String url) {
             super(url);
+            this.mUrl = url;
         }
 
         void setCacheKey(String cacheKey) {
             this.mCacheKey = cacheKey;
+        }
+
+        public String getUrl() {
+            return mUrl;
         }
 
         @Override public String getCacheKey() {
