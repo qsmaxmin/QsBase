@@ -196,6 +196,11 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         return QsHelper.getInstance().getApplication().errorLayoutId();
     }
 
+    @Override public void onBackPressed() {
+        FragmentActivity activity = getActivity();
+        if (activity != null) activity.onBackPressed();
+    }
+
     @Override public void loading() {
         loading(true);
     }
