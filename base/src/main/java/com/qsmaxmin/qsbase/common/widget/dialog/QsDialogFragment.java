@@ -69,6 +69,6 @@ public abstract class QsDialogFragment extends DialogFragment {
     }
 
     public void show() {
-        QsHelper.getInstance().commitDialogFragment(getFragmentManager(), this);
+        QsHelper.getInstance().commitDialogFragment(this);
     }
 }
