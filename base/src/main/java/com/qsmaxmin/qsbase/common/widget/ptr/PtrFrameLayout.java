@@ -8,6 +8,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
+import android.view.animation.Interpolator;
 import android.widget.Scroller;
 import android.widget.TextView;
 
@@ -772,21 +773,17 @@ public class PtrFrameLayout extends ViewGroup {
 
     /**
      * The duration to return back to the refresh position
-     *
-     * @param duration
      */
     public void setDurationToClose(int duration) {
         mDurationToClose = duration;
     }
 
-    @SuppressWarnings({"unused"}) public long getDurationToCloseHeader() {
+    public long getDurationToCloseHeader() {
         return mDurationToCloseHeader;
     }
 
     /**
      * The duration to close time
-     *
-     * @param duration
      */
     public void setDurationToCloseHeader(int duration) {
         mDurationToCloseHeader = duration;
@@ -852,6 +849,10 @@ public class PtrFrameLayout extends ViewGroup {
         }
     }
 
+    public void setInterpolator(Interpolator interpolator) {
+        if (mScrollChecker != null) mScrollChecker.setInterpolator(interpolator);
+    }
+
     @Override protected boolean checkLayoutParams(ViewGroup.LayoutParams p) {
         return p != null && p instanceof LayoutParams;
     }
@@ -911,15 +912,18 @@ public class PtrFrameLayout extends ViewGroup {
     }
 
     class ScrollChecker implements Runnable {
-
         private int      mLastFlingY;
         private Scroller mScroller;
         private boolean mIsRunning = false;
         private int mStart;
         private int mTo;
 
-        public ScrollChecker() {
+        ScrollChecker() {
             mScroller = new Scroller(getContext());
+        }
+
+        void setInterpolator(Interpolator interpolator) {
+            mScroller = new Scroller(getContext(), interpolator);
         }
 
         public void run() {
@@ -961,7 +965,7 @@ public class PtrFrameLayout extends ViewGroup {
             }
         }
 
-        public void abortIfWorking() {
+        void abortIfWorking() {
             if (mIsRunning) {
                 if (!mScroller.isFinished()) {
                     mScroller.forceFinished(true);
@@ -971,7 +975,7 @@ public class PtrFrameLayout extends ViewGroup {
             }
         }
 
-        public void tryToScrollTo(int to, int duration) {
+        void tryToScrollTo(int to, int duration) {
             if (mPtrIndicator.isAlreadyHere(to)) {
                 return;
             }
