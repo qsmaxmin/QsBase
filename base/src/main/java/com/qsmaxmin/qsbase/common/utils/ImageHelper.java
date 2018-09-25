@@ -106,12 +106,11 @@ public class ImageHelper {
     }
 
     public class Builder {
-        private boolean enableDefaultHolder = true;
+        private boolean enableHolder = true;
         private RequestManager       manager;
         private Object               mObject;
         private int                  placeholderId;
         private int                  errorId;
-        private int                  defaultHolderId;
         private Drawable             placeholderDrawable;
         private Drawable             errorDrawable;
         private boolean              centerCrop;
@@ -131,32 +130,26 @@ public class ImageHelper {
 
         Builder(Context context) {
             manager = Glide.with(context);
-            defaultHolderId = QsHelper.getInstance().getApplication().defaultImageHolder();
         }
 
         Builder(Activity context) {
             manager = Glide.with(context);
-            defaultHolderId = QsHelper.getInstance().getApplication().defaultImageHolder();
         }
 
         Builder(Fragment context) {
             manager = Glide.with(context);
-            defaultHolderId = QsHelper.getInstance().getApplication().defaultImageHolder();
         }
 
         Builder(android.support.v4.app.Fragment context) {
             manager = Glide.with(context);
-            defaultHolderId = QsHelper.getInstance().getApplication().defaultImageHolder();
         }
 
         Builder(FragmentActivity context) {
             manager = Glide.with(context);
-            defaultHolderId = QsHelper.getInstance().getApplication().defaultImageHolder();
         }
 
         Builder(View context) {
             manager = Glide.with(context);
-            defaultHolderId = QsHelper.getInstance().getApplication().defaultImageHolder();
         }
 
         public RequestManager getManager() {
@@ -270,8 +263,8 @@ public class ImageHelper {
             return this;
         }
 
-        public Builder enableDefaultHolder(boolean enable) {
-            enableDefaultHolder = enable;
+        public Builder enableHolder(boolean enable) {
+            enableHolder = enable;
             return this;
         }
 
@@ -410,7 +403,6 @@ public class ImageHelper {
                     || errorId > 0
                     || placeholderDrawable != null
                     || errorDrawable != null
-                    || (enableDefaultHolder && defaultHolderId > 0)
                     || centerCrop
                     || fitCenter
                     || centerInside
@@ -424,20 +416,19 @@ public class ImageHelper {
 
         @NonNull private RequestOptions createRequestOptions() {
             RequestOptions requestOptions = new RequestOptions();
-            if (placeholderId > 0) {
-                requestOptions = requestOptions.placeholder(placeholderId);
-            } else if (placeholderDrawable != null) {
-                requestOptions = requestOptions.placeholder(placeholderDrawable);
-            } else if (enableDefaultHolder && defaultHolderId > 0) {
-                requestOptions = requestOptions.placeholder(defaultHolderId);
+            if (enableHolder) {
+                if (placeholderId > 0) {
+                    requestOptions = requestOptions.placeholder(placeholderId);
+                } else if (placeholderDrawable != null) {
+                    requestOptions = requestOptions.placeholder(placeholderDrawable);
+                }
+                if (errorId > 0) {
+                    requestOptions = requestOptions.error(placeholderId);
+                } else if (errorDrawable != null) {
+                    requestOptions = requestOptions.error(placeholderId);
+                }
             }
-            if (errorId > 0) {
-                requestOptions = requestOptions.error(placeholderId);
-            } else if (errorDrawable != null) {
-                requestOptions = requestOptions.error(placeholderId);
-            } else if (enableDefaultHolder && defaultHolderId > 0) {
-                requestOptions = requestOptions.error(defaultHolderId);
-            }
+
             if (centerCrop) {
                 requestOptions = requestOptions.optionalCenterCrop();
             } else if (fitCenter) {
