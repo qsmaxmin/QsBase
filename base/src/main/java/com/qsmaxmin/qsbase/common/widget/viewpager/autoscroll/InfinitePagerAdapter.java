@@ -145,7 +145,7 @@ public class InfinitePagerAdapter extends PagerAdapter {
                     L.i("InfinitePagerAdapter", "instantiateItem... type:String(holder), position:" + virtualPosition + ", totalCount:" + urls.size());
                     QsHelper.getInstance().getImageHelper().createRequest()
                             .roundedCorners(corners)
-                            .load(urls.get(virtualPosition))
+                            .load(object)
                             .into(imageView, new ImageHelper.ImageRequestListener() {
                                 @Override public void onLoadFailed(String message) {
                                     pageView.setVisibility(View.GONE);
