@@ -266,9 +266,13 @@ public class HttpAdapter {
         L.i(TAG, "method:" + method.getName() + "  http request url:" + url.toString());
         Request request = requestBuilder.url(url.toString()).method(requestType, requestBody).build();
         try {
-            Call call = client.newCall(request);
-            Response response = call.execute();
-            return createResult(method, response, requestTag);
+            if (QsHelper.getInstance().isNetworkAvailable()) {
+                Call call = client.newCall(request);
+                Response response = call.execute();
+                return createResult(method, response, requestTag);
+            } else {
+                throw new QsException(QsExceptionType.NETWORK_ERROR, requestTag, "network error...  method:" + method.getName() + " message:network disable");
+            }
         } catch (IOException e) {
             throw new QsException(QsExceptionType.HTTP_ERROR, requestTag, "IOException...  method:" + method.getName() + " message:" + e.getMessage());
         }

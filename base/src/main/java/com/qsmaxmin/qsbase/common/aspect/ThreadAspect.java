@@ -2,9 +2,7 @@ package com.qsmaxmin.qsbase.common.aspect;
 
 import android.os.Looper;
 
-import com.qsmaxmin.qsbase.R;
 import com.qsmaxmin.qsbase.common.exception.QsException;
-import com.qsmaxmin.qsbase.common.exception.QsExceptionType;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
 
@@ -45,30 +43,8 @@ public class ThreadAspect {
     @Around(POINTCUT_METHOD_HTTP) public Object onCheckNetHttpExecutor(final ProceedingJoinPoint joinPoint) throws Throwable {
         QsHelper.getInstance().getThreadHelper().getHttpThreadPoll().execute(new Runnable() {
             @Override public void run() {
-                boolean networkAvailable = QsHelper.getInstance().isNetworkAvailable();
-                L.i("ThreadAspect", joinPoint.toShortString() + " in http thread... check network available:" + networkAvailable);
-                if (networkAvailable) {
-                    startOriginalMethod(joinPoint);
-                } else {
-                    try {
-                        final Object target = joinPoint.getTarget();
-                        final Method methodError = target.getClass().getMethod("methodError", QsException.class);
-                        if (methodError != null) {
-                            QsHelper.getInstance().getThreadHelper().getMainThread().execute(new Runnable() {
-                                @Override public void run() {
-                                    try {
-                                        QsException qsException = new QsException(QsExceptionType.NETWORK_ERROR, "", QsHelper.getInstance().getString(R.string.network_error));
-                                        methodError.invoke(target, qsException);
-                                    } catch (Exception e1) {
-                                        L.e("ThreadAspect", e1.getMessage());
-                                    }
-                                }
-                            });
-                        }
-                    } catch (NoSuchMethodException e2) {
-                        e2.printStackTrace();
-                    }
-                }
+                L.i("ThreadAspect", joinPoint.toShortString() + " in http thread... ");
+                startOriginalMethod(joinPoint);
             }
         });
         return null;
