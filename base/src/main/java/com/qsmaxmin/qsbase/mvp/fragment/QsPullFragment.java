@@ -89,11 +89,22 @@ public abstract class QsPullFragment<T extends QsPresenter> extends QsFragment<T
     }
 
     @Override @ThreadPoint(ThreadType.MAIN) public void closePullRefreshing() {
-        mPtrFrameLayout.setEnabled(false);
+        closePullRefreshing(false);
     }
 
     @Override public boolean canPullRefreshing() {
         return mPtrFrameLayout.isEnabled();
+    }
+
+    public void closePullRefreshing(boolean enableOverDrag) {
+        if (enableOverDrag) {
+            mPtrFrameLayout.setEnabled(true);
+            View headerView = mPtrFrameLayout.getHeaderView();
+            if (headerView != null) headerView.setVisibility(View.GONE);
+            mPtrFrameLayout.setKeepHeaderWhenRefresh(false);
+        } else {
+            mPtrFrameLayout.setEnabled(false);
+        }
     }
 
     @Override public final void onLoad() {
