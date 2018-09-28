@@ -386,7 +386,7 @@ public abstract class QsProperties {
      * 恢复初始值
      */
     private void writeDefaultPropertiesValues() {
-        L.i(initTag(), "writePropertiesValues()-写入所有的值");
+        L.i(initTag(), "writeDefaultPropertiesValues.... 写入默认值");
         Class<? extends QsProperties> thisClass = this.getClass();
         Field[] fields = thisClass.getDeclaredFields();
         for (Field field : fields) {
