@@ -2,6 +2,8 @@ package com.qsmaxmin.qsbase.common.utils;
 
 
 import android.content.Context;
+import android.os.Looper;
+import android.text.TextUtils;
 
 import com.google.gson.Gson;
 import com.qsmaxmin.qsbase.common.log.L;
@@ -26,7 +28,20 @@ public class CacheHelper {
     CacheHelper() {
     }
 
-    public <T extends QsModel> void saveObject2File(T model, String key) {
+    public <T extends QsModel> void saveObject2File(final T model, final String key) {
+        if (isMainThread()) {
+            executeAsync(new Runnable() {
+                @Override public void run() {
+                    saveObject2FileAsync(model, key);
+                }
+            });
+        } else {
+            saveObject2FileAsync(model, key);
+        }
+    }
+
+    private <T extends QsModel> void saveObject2FileAsync(T model, String key) {
+        if (model == null || TextUtils.isEmpty(key)) return;
         Gson gson = new Gson();
         String json = gson.toJson(model);
         FileOutputStream fos = null;
@@ -41,8 +56,20 @@ public class CacheHelper {
         }
     }
 
-    public <T extends QsModel> void saveObject2File(T model, File cacheFile) {
-        if (cacheFile == null) return;
+    public <T extends QsModel> void saveObject2File(final T model, final File cacheFile) {
+        if (isMainThread()) {
+            executeAsync(new Runnable() {
+                @Override public void run() {
+                    saveObject2FileAsync(model, cacheFile);
+                }
+            });
+        } else {
+            saveObject2FileAsync(model, cacheFile);
+        }
+    }
+
+    private <T extends QsModel> void saveObject2FileAsync(T model, File cacheFile) {
+        if (cacheFile == null || model == null) return;
         File parentFile = cacheFile.getParentFile();
         if (!parentFile.exists()) {
             boolean mkdirs = parentFile.mkdirs();
@@ -64,6 +91,8 @@ public class CacheHelper {
     }
 
     public <T extends QsModel> T getObjectFromFile(String key, Class<T> clazz) {
+        if (clazz == null || TextUtils.isEmpty(key)) return null;
+        if (isMainThread()) L.e("CacheHelper", "It is not recommended to execute this method(getObjectFromFile) on the main thread.....");
         FileInputStream fileInputStream = null;
         InputStreamReader inputStreamReader = null;
         try {
@@ -82,9 +111,8 @@ public class CacheHelper {
     }
 
     public <T extends QsModel> T getObjectFromFile(File cacheFile, Class<T> clazz) {
-        if (cacheFile == null || !cacheFile.exists()) {
-            return null;
-        }
+        if (cacheFile == null || !cacheFile.exists() || clazz == null) return null;
+        if (isMainThread()) L.e("CacheHelper", "It is not recommended to execute this method(getObjectFromFile) on the main thread.....");
         FileInputStream fileInputStream = null;
         InputStreamReader inputStreamReader = null;
         BufferedReader bufferedReader = null;
@@ -104,4 +132,13 @@ public class CacheHelper {
         }
         return null;
     }
+
+    private boolean isMainThread() {
+        return Thread.currentThread() == Looper.getMainLooper().getThread();
+    }
+
+    private void executeAsync(Runnable runnable) {
+        QsHelper.getInstance().getThreadHelper().getWorkThreadPoll().execute(runnable);
+    }
+
 }
