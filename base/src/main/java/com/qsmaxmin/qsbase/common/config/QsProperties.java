@@ -332,30 +332,32 @@ public abstract class QsProperties {
     /**
      * 提交
      */
-    public void commit(PropertyCallback callback) {
-        OutputStream out = null;
-        try {
-            File file = new File(propertyFilePath, mPropertiesFileName + EXTENSION);
-            if (!file.exists()) {
-                boolean success = file.createNewFile();
-                L.e(initTag(), "create new file isSuccess:" + success);
-                if (!success) {
-                    return;
+    public void commit(final PropertyCallback callback) {
+        QsHelper.getInstance().getThreadHelper().getWorkThreadPoll().execute(new Runnable() {
+            @Override public void run() {
+                OutputStream out = null;
+                try {
+                    File file = new File(propertyFilePath, mPropertiesFileName + EXTENSION);
+                    if (!file.exists()) {
+                        boolean success = file.createNewFile();
+                        L.e(initTag(), "create new file isSuccess:" + success);
+                        if (!success) {
+                            return;
+                        }
+                    }
+                    synchronized (mProperties) {
+                        out = new BufferedOutputStream(new FileOutputStream(file));
+                        writePropertiesValues();
+                        mProperties.store(out, "");
+                    }
+                    if (callback != null) callback.onSuccess();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                } finally {
+                    StreamCloseUtils.close(out);
                 }
             }
-            synchronized (mProperties) {
-                out = new BufferedOutputStream(new FileOutputStream(file));
-                writePropertiesValues();
-                mProperties.store(out, "");
-            }
-            if (callback != null) {
-                callback.onSuccess();
-            }
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        } finally {
-            StreamCloseUtils.close(out);
-        }
+        });
     }
 
     /**
