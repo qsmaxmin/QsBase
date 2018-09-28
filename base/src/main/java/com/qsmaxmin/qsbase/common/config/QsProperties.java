@@ -340,7 +340,7 @@ public abstract class QsProperties {
                     File file = new File(propertyFilePath, mPropertiesFileName + EXTENSION);
                     if (!file.exists()) {
                         boolean success = file.createNewFile();
-                        L.e(initTag(), "create new file isSuccess:" + success);
+                        L.i(initTag(), "create new file isSuccess:" + success + ",  file:" + file.getPath());
                         if (!success) {
                             return;
                         }
