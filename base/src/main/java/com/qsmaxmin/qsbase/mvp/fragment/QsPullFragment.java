@@ -24,15 +24,17 @@ import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
 
 public abstract class QsPullFragment<T extends QsPresenter> extends QsFragment<T> implements QsIPullFragment {
 
-    private PtrFrameLayout mPtrFrameLayout;
-    private ViewGroup      childView;
+    private PtrFrameLayout            mPtrFrameLayout;
+    private ViewGroup                 childView;
+    private BeautyCircleRefreshHeader header;
 
     @Override public int layoutId() {
         return R.layout.qs_fragment_pull_view;
     }
 
     @Override public PtrUIHandler getPtrUIHandlerView() {
-        return new BeautyCircleRefreshHeader(getContext());
+        if (header == null) header = new BeautyCircleRefreshHeader(getContext());
+        return header;
     }
 
     @Override protected View initView(LayoutInflater inflater) {

@@ -28,8 +28,9 @@ public abstract class QsPullRecyclerFragment<P extends QsPresenter, D> extends Q
     public static final byte    LOAD_WHEN_SCROLL_TO_BOTTOM = 0;
     public static final byte    LOAD_WHEN_SECOND_TO_LAST   = 1;
     private             boolean canLoadingMore             = true;
-    private   PtrFrameLayout mPtrFrameLayout;
-    protected LoadingFooter  mLoadingFooter;
+    private   PtrFrameLayout            mPtrFrameLayout;
+    protected LoadingFooter             mLoadingFooter;
+    private   BeautyCircleRefreshHeader header;
 
 
     @Override public int getFooterLayout() {
@@ -41,7 +42,8 @@ public abstract class QsPullRecyclerFragment<P extends QsPresenter, D> extends Q
     }
 
     @Override public PtrUIHandler getPtrUIHandlerView() {
-        return new BeautyCircleRefreshHeader(getContext());
+        if (header == null) header = new BeautyCircleRefreshHeader(getContext());
+        return header;
     }
 
     @Override protected View initView(LayoutInflater inflater) {

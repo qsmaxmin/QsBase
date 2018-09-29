@@ -22,14 +22,16 @@ import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
 
 public abstract class QsPullHeaderViewpagerFragment<P extends QsPresenter> extends QsHeaderViewpagerFragment<P> implements QsIPullToRefresh {
 
-    private PtrFrameLayout mPtrFrameLayout;
+    private PtrFrameLayout            mPtrFrameLayout;
+    private BeautyCircleRefreshHeader header;
 
     @Override public int layoutId() {
         return R.layout.qs_fragment_pull_header_viewpager;
     }
 
     @Override public PtrUIHandler getPtrUIHandlerView() {
-        return new BeautyCircleRefreshHeader(getContext());
+        if (header == null) header = new BeautyCircleRefreshHeader(getContext());
+        return header;
     }
 
     @ThreadPoint(ThreadType.MAIN) @Override public void startRefreshing() {
