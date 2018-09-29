@@ -3,7 +3,6 @@ package com.qsmaxmin.qsbase.common.widget.ptr.header;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.Gravity;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -40,10 +39,10 @@ public class BeautyCircleRefreshHeader extends RelativeLayout implements PtrUIHa
 
     private void initView() {
         setGravity(Gravity.CENTER);
-        addView(getHeaderView());
+        initHeaderView();
     }
 
-    private View getHeaderView() {
+    private void initHeaderView() {
         float density = getContext().getResources().getDisplayMetrics().density;
         headerHeight = (int) (density * 50);
         if (headerView == null) {
@@ -60,8 +59,8 @@ public class BeautyCircleRefreshHeader extends RelativeLayout implements PtrUIHa
             imageView.setLayoutParams(imageLayout);
 
             headerView.addView(imageView);
+            addView(headerView);
         }
-        return headerView;
     }
 
     /**
