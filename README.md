@@ -152,6 +152,7 @@ MVP架构+AOP面向切面编程，摒弃反射、代理等操作，稳定性和�
         /**
          * V层
          */
+        @Presenter(MainPresenter.class)
         public class MainActivity extends QsViewPagerActivity<MainPresenter> {
             @Bind(R.id.tv_name)TextView tv_Name;
 
@@ -168,6 +169,7 @@ MVP架构+AOP面向切面编程，摒弃反射、代理等操作，稳定性和�
         /**
          * P层
          */
+        @Presenter(MainActivity.class)
         public class MainPresenter extends QsPresenter<MainActivity> {
              @ThreadPoint(ThreadType.HTTP) public void requestData() {
                 UserHttp userHttp = createHttpRequest(UserHttp.class);
