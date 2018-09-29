@@ -24,17 +24,15 @@ import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
 
 public abstract class QsPullFragment<T extends QsPresenter> extends QsFragment<T> implements QsIPullFragment {
 
-    private PtrFrameLayout            mPtrFrameLayout;
-    private ViewGroup                 childView;
-    private BeautyCircleRefreshHeader header;
+    private PtrFrameLayout mPtrFrameLayout;
+    private ViewGroup      childView;
 
     @Override public int layoutId() {
         return R.layout.qs_fragment_pull_view;
     }
 
     @Override public PtrUIHandler getPtrUIHandlerView() {
-        if (header == null) header = new BeautyCircleRefreshHeader(getContext());
-        return header;
+        return new BeautyCircleRefreshHeader(getContext());
     }
 
     @Override protected View initView(LayoutInflater inflater) {
@@ -50,8 +48,9 @@ public abstract class QsPullFragment<T extends QsPresenter> extends QsFragment<T
             mPtrFrameLayout = view.findViewById(R.id.swipe_container);
         }
         if (mPtrFrameLayout == null) throw new RuntimeException("PtrFrameLayout is not exit or its id not 'R.id.swipe_container' in current layout!!");
-        mPtrFrameLayout.setHeaderView((View) getPtrUIHandlerView());
-        mPtrFrameLayout.addPtrUIHandler(getPtrUIHandlerView());
+        PtrUIHandler handlerView = getPtrUIHandlerView();
+        mPtrFrameLayout.setHeaderView((View) handlerView);
+        mPtrFrameLayout.addPtrUIHandler(handlerView);
         mPtrFrameLayout.setPtrHandler(new PtrHandler() {
             @Override public boolean checkCanDoRefresh(PtrFrameLayout frame, View content, View header) {
                 return PtrDefaultHandler.checkContentCanBePulledDown(frame, content, header);

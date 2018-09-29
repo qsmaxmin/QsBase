@@ -28,9 +28,8 @@ public abstract class QsPullRecyclerFragment<P extends QsPresenter, D> extends Q
     public static final byte    LOAD_WHEN_SCROLL_TO_BOTTOM = 0;
     public static final byte    LOAD_WHEN_SECOND_TO_LAST   = 1;
     private             boolean canLoadingMore             = true;
-    private   PtrFrameLayout            mPtrFrameLayout;
-    protected LoadingFooter             mLoadingFooter;
-    private   BeautyCircleRefreshHeader header;
+    private   PtrFrameLayout mPtrFrameLayout;
+    protected LoadingFooter  mLoadingFooter;
 
 
     @Override public int getFooterLayout() {
@@ -42,8 +41,7 @@ public abstract class QsPullRecyclerFragment<P extends QsPresenter, D> extends Q
     }
 
     @Override public PtrUIHandler getPtrUIHandlerView() {
-        if (header == null) header = new BeautyCircleRefreshHeader(getContext());
-        return header;
+        return new BeautyCircleRefreshHeader(getContext());
     }
 
     @Override protected View initView(LayoutInflater inflater) {
@@ -70,8 +68,9 @@ public abstract class QsPullRecyclerFragment<P extends QsPresenter, D> extends Q
             mPtrFrameLayout = view.findViewById(R.id.swipe_container);
         }
         if (mPtrFrameLayout == null) throw new RuntimeException("PtrFrameLayout is not exit or its id not 'R.id.swipe_container' in current layout!!");
-        mPtrFrameLayout.setHeaderView((View) getPtrUIHandlerView());
-        mPtrFrameLayout.addPtrUIHandler(getPtrUIHandlerView());
+        PtrUIHandler handlerView = getPtrUIHandlerView();
+        mPtrFrameLayout.setHeaderView((View) handlerView);
+        mPtrFrameLayout.addPtrUIHandler(handlerView);
         mPtrFrameLayout.setPtrHandler(new PtrHandler() {
             @Override public boolean checkCanDoRefresh(PtrFrameLayout frame, View content, View header) {
                 return PtrDefaultHandler.checkContentCanBePulledDown(frame, content, header);
