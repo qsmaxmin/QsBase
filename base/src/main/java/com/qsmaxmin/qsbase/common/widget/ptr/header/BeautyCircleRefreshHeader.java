@@ -25,10 +25,12 @@ public class BeautyCircleRefreshHeader extends RelativeLayout implements PtrUIHa
 
     public BeautyCircleRefreshHeader(Context context) {
         this(context, null);
+        initView();
     }
 
     public BeautyCircleRefreshHeader(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
+        initView();
     }
 
     public BeautyCircleRefreshHeader(Context context, AttributeSet attrs, int defStyleAttr) {
