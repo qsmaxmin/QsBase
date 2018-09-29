@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
@@ -18,9 +19,8 @@ import com.qsmaxmin.qsbase.common.widget.ptr.indicator.PtrIndicator;
  * @Description
  */
 public class BeautyCircleRefreshHeader extends RelativeLayout implements PtrUIHandler {
-
     private int                  headerHeight;
-    private ImageView            ivRefresh;
+    private ViewGroup            headerView;
     private BeautyCircleDrawable circleLogoDrawable;
 
     public BeautyCircleRefreshHeader(Context context) {
@@ -46,20 +46,22 @@ public class BeautyCircleRefreshHeader extends RelativeLayout implements PtrUIHa
     private View getHeaderView() {
         float density = getContext().getResources().getDisplayMetrics().density;
         headerHeight = (int) (density * 50);
-        if (ivRefresh == null) {
-            ivRefresh = new ImageView(getContext());
-            ivRefresh.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+        if (headerView == null) {
+            headerView = new RelativeLayout(getContext());
+            LayoutParams layoutParams = new LayoutParams(headerHeight, headerHeight);
+            headerView.setLayoutParams(layoutParams);
+
+            ImageView imageView = new ImageView(getContext());
+            imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
             circleLogoDrawable = new BeautyCircleDrawable((int) (2 * density));
-            ivRefresh.setBackgroundDrawable(circleLogoDrawable);
+            imageView.setBackgroundDrawable(circleLogoDrawable);
             LayoutParams imageLayout = new LayoutParams((int) (density * 35), (int) (density * 35));
             imageLayout.addRule(CENTER_IN_PARENT, TRUE);
-            ivRefresh.setLayoutParams(imageLayout);
+            imageView.setLayoutParams(imageLayout);
+
+            headerView.addView(imageView);
         }
-        RelativeLayout headerLayout = new RelativeLayout(getContext());
-        LayoutParams layoutParams = new LayoutParams(headerHeight, headerHeight);
-        headerLayout.setLayoutParams(layoutParams);
-        headerLayout.addView(ivRefresh);
-        return headerLayout;
+        return headerView;
     }
 
     /**
@@ -106,11 +108,11 @@ public class BeautyCircleRefreshHeader extends RelativeLayout implements PtrUIHa
         if (checkCanAnimation()) {
             circleLogoDrawable.setPercent(percent);
             circleLogoDrawable.setIsReachCriticalPoint(percent == ptrIndicator.getRatioOfHeaderToHeightRefresh());
-            ivRefresh.setTranslationY((1f - percent) * headerHeight / 2);
+            headerView.setTranslationY((1f - percent) * headerHeight / 2);
         }
     }
 
     private boolean checkCanAnimation() {
-        return circleLogoDrawable != null && ivRefresh != null;
+        return circleLogoDrawable != null && headerView != null;
     }
 }
