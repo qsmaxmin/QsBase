@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.qsmaxmin.qsbase.common.log.L;
+import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.common.viewbind.annotation.Bind;
 import com.qsmaxmin.qsbase.common.viewbind.annotation.BindBundle;
 import com.qsmaxmin.qsbase.common.viewbind.annotation.OnClick;
@@ -130,7 +131,7 @@ public final class ViewBindHelper {
     }
 
     private String getTag() {
-        return mTarget == null ? "null" : mTarget.getClass().getSimpleName();
+        return (mTarget == null || QsHelper.getInstance().getApplication().isLogOpen()) ? "null" : mTarget.getClass().getSimpleName();
     }
 
     private void setFieldValue(Field field, Object value) {
