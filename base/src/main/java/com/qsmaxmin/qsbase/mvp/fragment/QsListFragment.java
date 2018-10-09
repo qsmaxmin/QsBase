@@ -268,7 +268,7 @@ public abstract class QsListFragment<P extends QsPresenter, D> extends QsFragmen
                 } else {
                     item = getListAdapterItem(0);
                 }
-                convertView = LayoutInflater.from(getActivity()).inflate(item.getItemLayout(), null, false);
+                convertView = LayoutInflater.from(parent.getContext()).inflate(item.getItemLayout(), null, false);
                 item.init(convertView);
                 convertView.setTag(item);
             }
