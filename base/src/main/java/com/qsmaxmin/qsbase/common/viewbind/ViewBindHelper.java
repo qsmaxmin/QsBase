@@ -131,7 +131,7 @@ public final class ViewBindHelper {
     }
 
     private String getTag() {
-        return (mTarget == null || QsHelper.getInstance().getApplication().isLogOpen()) ? "null" : mTarget.getClass().getSimpleName();
+        return (mTarget == null || QsHelper.getInstance().getApplication().isLogOpen()) ? "ViewBindHelper" : mTarget.getClass().getName();
     }
 
     private void setFieldValue(Field field, Object value) {
