@@ -306,7 +306,11 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
     }
 
     @Override public void smoothScrollToTop(boolean autoRefresh) {
-        getRecyclerView().smoothScrollToPosition(0);
+        getRecyclerView().post(new Runnable() {
+            @Override public void run() {
+                getRecyclerView().smoothScrollToPosition(0);
+            }
+        });
     }
 
     /**

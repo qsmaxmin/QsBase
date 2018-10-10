@@ -419,9 +419,13 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
     @Override public void smoothScrollToTop(boolean autoRefresh) {
         View view = getView();
         if (view == null) return;
-        ScrollView scrollView = (ScrollView) tryGetTargetView(ScrollView.class, view);
+        final ScrollView scrollView = (ScrollView) tryGetTargetView(ScrollView.class, view);
         if (scrollView != null) {
-            scrollView.smoothScrollTo(0, 0);
+            scrollView.post(new Runnable() {
+                @Override public void run() {
+                    scrollView.smoothScrollTo(0, 0);
+                }
+            });
         }
 
         if (autoRefresh) {
