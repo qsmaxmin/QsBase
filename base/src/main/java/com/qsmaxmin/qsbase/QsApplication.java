@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.Application;
 import android.content.Context;
-import android.support.annotation.DrawableRes;
 import android.support.annotation.LayoutRes;
 
 import com.qsmaxmin.qsbase.common.http.HttpBuilder;
@@ -67,10 +66,6 @@ public abstract class QsApplication extends Application {
     }
 
     public @LayoutRes int errorLayoutId() {
-        return 0;
-    }
-
-    public @DrawableRes int defaultImageHolder() {
         return 0;
     }
 
