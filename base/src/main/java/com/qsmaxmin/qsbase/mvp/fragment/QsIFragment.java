@@ -24,12 +24,6 @@ public interface QsIFragment extends QsIView {
 
     boolean onKeyDown(int keyCode, KeyEvent event);
 
-    int emptyLayoutId();
-
-    int loadingLayoutId();
-
-    int errorLayoutId();
-
     void onBackPressed();
 
     void onFragmentSelectedInViewPager(boolean isSelected, int currentPosition, int totalCount);

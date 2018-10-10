@@ -8,12 +8,6 @@ package com.qsmaxmin.qsbase.mvp;
 
 public interface QsIActivity extends QsIView {
 
-    int emptyLayoutId();
-
-    int loadingLayoutId();
-
-    int errorLayoutId();
-
     boolean isTransparentStatusBar();
 
     boolean isBlackIconStatusBar();

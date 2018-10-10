@@ -8,6 +8,8 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.view.View;
 
+import com.qsmaxmin.qsbase.common.widget.dialog.QsProgressDialog;
+
 /**
  * @CreateBy qsmaxmin
  * @Date 2017/6/21 14:02
@@ -19,6 +21,14 @@ public interface QsIView<P> {
     String initTag();
 
     int layoutId();
+
+    int emptyLayoutId();
+
+    int loadingLayoutId();
+
+    int errorLayoutId();
+
+    QsProgressDialog getCommonProgressDialog();
 
     void initData(Bundle savedInstanceState);
 

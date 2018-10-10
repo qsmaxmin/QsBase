@@ -212,6 +212,10 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
         return QsHelper.getInstance().getApplication().errorLayoutId();
     }
 
+    @Override public QsProgressDialog getCommonProgressDialog() {
+        return QsHelper.getInstance().getApplication().getCommonProgressDialog();
+    }
+
     @Override public void loading() {
         loading(true);
     }
@@ -225,7 +229,7 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
     }
 
     @Override public void loading(int resId, boolean cancelAble) {
-        loading(getResources().getString(resId), cancelAble);
+        loading(QsHelper.getInstance().getString(resId), cancelAble);
     }
 
     @Override public void loading(String message) {
@@ -233,7 +237,7 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
     }
 
     @ThreadPoint(ThreadType.MAIN) @Override public void loading(String message, boolean cancelAble) {
-        if (mProgressDialog == null) mProgressDialog = QsHelper.getInstance().getApplication().getCommonProgressDialog();
+        if (mProgressDialog == null) mProgressDialog = getCommonProgressDialog();
         if (mProgressDialog != null) {
             mProgressDialog.setMessage(message);
             mProgressDialog.setCancelable(cancelAble);

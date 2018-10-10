@@ -196,6 +196,10 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         return QsHelper.getInstance().getApplication().errorLayoutId();
     }
 
+    @Override public QsProgressDialog getCommonProgressDialog() {
+        return QsHelper.getInstance().getApplication().getCommonProgressDialog();
+    }
+
     @Override public void onBackPressed() {
         FragmentActivity activity = getActivity();
         if (activity != null) activity.onBackPressed();
@@ -218,11 +222,11 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
     }
 
     @Override public void loading(int resId, boolean cancelAble) {
-        loading(getResources().getString(resId), cancelAble);
+        loading(QsHelper.getInstance().getString(resId), cancelAble);
     }
 
     @ThreadPoint(ThreadType.MAIN) @Override public void loading(String message, boolean cancelAble) {
-        if (mProgressDialog == null) mProgressDialog = QsHelper.getInstance().getApplication().getCommonProgressDialog();
+        if (mProgressDialog == null) mProgressDialog = getCommonProgressDialog();
         if (mProgressDialog != null) {
             mProgressDialog.setMessage(message);
             mProgressDialog.setCancelable(cancelAble);
