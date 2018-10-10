@@ -196,8 +196,8 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         return QsHelper.getInstance().getApplication().errorLayoutId();
     }
 
-    @Override public QsProgressDialog getCommonProgressDialog() {
-        return QsHelper.getInstance().getApplication().getCommonProgressDialog();
+    @Override public QsProgressDialog getLoadingDialog() {
+        return QsHelper.getInstance().getApplication().getLoadingDialog();
     }
 
     @Override public void onBackPressed() {
@@ -226,7 +226,7 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
     }
 
     @ThreadPoint(ThreadType.MAIN) @Override public void loading(String message, boolean cancelAble) {
-        if (mProgressDialog == null) mProgressDialog = getCommonProgressDialog();
+        if (mProgressDialog == null) mProgressDialog = getLoadingDialog();
         if (mProgressDialog != null) {
             mProgressDialog.setMessage(message);
             mProgressDialog.setCancelable(cancelAble);
@@ -234,7 +234,7 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
                 QsHelper.getInstance().commitDialogFragment(getFragmentManager(), mProgressDialog);
             }
         } else {
-            L.e(initTag(), "you should override the method 'Application.getCommonProgressDialog' and return a dialog when called the method : loading(...) ");
+            L.e(initTag(), "you should override the method 'Application.getLoadingDialog' and return a dialog when called the method : loading(...) ");
         }
     }
 

@@ -54,7 +54,7 @@ public abstract class QsApplication extends Application {
     /**
      * 公共progressDialog
      */
-    public QsProgressDialog getCommonProgressDialog() {
+    public QsProgressDialog getLoadingDialog() {
         return null;
     }
 

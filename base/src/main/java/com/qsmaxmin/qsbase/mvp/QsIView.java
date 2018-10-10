@@ -28,7 +28,7 @@ public interface QsIView<P> {
 
     int errorLayoutId();
 
-    QsProgressDialog getCommonProgressDialog();
+    QsProgressDialog getLoadingDialog();
 
     void initData(Bundle savedInstanceState);
 
