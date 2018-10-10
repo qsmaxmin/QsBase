@@ -27,21 +27,16 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:design:27.1.1'
-    compile 'com.android.support:recyclerview-v7:27.1.1'
-    /*Glide*/
-    compile 'com.github.bumptech.glide:glide:4.8.0'
-    compile 'com.github.bumptech.glide:annotations:4.8.0'
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.android.support:design:27.1.1'
+    implementation 'com.android.support:recyclerview-v7:27.1.1'
+    implementation 'com.github.bumptech.glide:glide:4.8.0'
+    implementation 'com.github.bumptech.glide:annotations:4.8.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.8.0'
-    /*EventBus*/
-    compile 'org.greenrobot:eventbus:3.0.0'
-    /*AspectJ*/
-    compile 'org.aspectj:aspectjrt:1.9.1'
-    /*okHttp*/
-    compile 'com.squareup.okhttp3:okhttp:3.10.0'
-    /*gson*/
-    compile 'com.google.code.gson:gson:2.8.2'
+    implementation 'org.greenrobot:eventbus:3.0.0'
+    implementation 'org.aspectj:aspectjrt:1.9.1'
+    api 'com.squareup.okhttp3:okhttp:3.10.0'
+    api 'com.google.code.gson:gson:2.8.2'
 }
 
 uploadArchives {
