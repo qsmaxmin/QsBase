@@ -27,6 +27,7 @@ import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.utils.PresenterUtils;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.common.utils.permission.PermissionUtils;
+import com.qsmaxmin.qsbase.common.viewbind.OnKeyDownListener;
 import com.qsmaxmin.qsbase.common.viewbind.ViewBindHelper;
 import com.qsmaxmin.qsbase.common.widget.dialog.QsProgressDialog;
 import com.qsmaxmin.qsbase.mvp.fragment.QsIFragment;
@@ -43,10 +44,11 @@ import java.util.List;
  * @Description
  */
 public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActivity implements QsIABActivity {
-    private   P                presenter;
-    protected QsProgressDialog mProgressDialog;
-    private   ViewAnimator     mViewAnimator;
-    private   boolean          hasInitData;
+    private   P                 presenter;
+    protected QsProgressDialog  mProgressDialog;
+    private   ViewAnimator      mViewAnimator;
+    private   boolean           hasInitData;
+    private   OnKeyDownListener onKeyDownListener;
 
     @Override public String initTag() {
         return QsHelper.getInstance().getApplication().isLogOpen() ? getClass().getSimpleName() : "QsABActivity";
@@ -59,7 +61,6 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
     @Override public int layoutId() {
         return R.layout.qs_framelayout;
     }
-
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -407,13 +408,15 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
      * 将onKeyDown事件传递到当前展示的Fragment
      */
     @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (onKeyDownListener != null) return onKeyDownListener.onKeyDown(keyCode, event);
+
         @SuppressLint("RestrictedApi") List<Fragment> fragmentList = getSupportFragmentManager().getFragments();
         if (fragmentList != null && !fragmentList.isEmpty()) {
             int size = fragmentList.size();
             for (int i = size - 1; i >= 0; i--) {
                 Fragment fragment = fragmentList.get(i);
                 if (fragment != null && !fragment.isDetached() && fragment.isResumed() && fragment.isAdded() && fragment instanceof QsIFragment) {
-                    L.i(initTag(), "onKeyDown... Fragment:" + fragment.getClass().getSimpleName() + "  isDetach:" + fragment.isDetached() + "  isAdded:" + fragment.isAdded() + "  isResumed:" + fragment.isResumed());
+                    L.i(initTag(), "onKeyDown... resume fragment:" + fragment.getClass().getSimpleName() + "  isDetach:" + fragment.isDetached() + "  isAdded:" + fragment.isAdded() + "  isResumed:" + fragment.isResumed());
                     boolean isIntercept = ((QsIFragment) fragment).onKeyDown(keyCode, event);
                     if (isIntercept) {
                         L.i(initTag(), "onKeyDown... Fragment:" + fragment.getClass().getSimpleName() + " 已拦截onKeyDown事件...");
@@ -474,7 +477,7 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
                     window.setStatusBarColor(Color.TRANSPARENT);
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && isBlackIconStatusBar()) {
                         window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
-                    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    } else {
                         window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
                     }
                 }
@@ -494,6 +497,10 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
                 window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
             }
         }
+    }
+
+    @Override public void setOnKeyDownListener(OnKeyDownListener listener) {
+        this.onKeyDownListener = listener;
     }
 
     @Override public boolean isShowBackButtonInDefaultView() {
