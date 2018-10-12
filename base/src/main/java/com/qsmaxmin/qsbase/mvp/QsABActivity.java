@@ -408,7 +408,7 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
      * 将onKeyDown事件传递到当前展示的Fragment
      */
     @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (onKeyDownListener != null) return onKeyDownListener.onKeyDown(keyCode, event);
+        if (onKeyDownListener != null && onKeyDownListener.onKeyDown(keyCode, event)) return true;
 
         @SuppressLint("RestrictedApi") List<Fragment> fragmentList = getSupportFragmentManager().getFragments();
         if (fragmentList != null && !fragmentList.isEmpty()) {
