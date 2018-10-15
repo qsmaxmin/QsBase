@@ -391,11 +391,13 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
     }
 
     /**
-     * 将onKeyDown事件传递到当前展示的Fragment
+     * onKeyDown事件处理顺序：
+     * 1，优先onKeyDownListener处理
+     * 2，将onKeyDown事件传递到当前展示的Fragment
+     * 3，重写onKeyDown处理
      */
-    @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
+    @Override public final boolean onKeyDown(int keyCode, KeyEvent event) {
         if (onKeyDownListener != null && onKeyDownListener.onKeyDown(keyCode, event)) return true;
-
         @SuppressLint("RestrictedApi") List<Fragment> fragmentList = getSupportFragmentManager().getFragments();
         if (fragmentList != null && !fragmentList.isEmpty()) {
             int size = fragmentList.size();
@@ -412,6 +414,10 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
                 }
             }
         }
+        return onKeyDown(event, keyCode);
+    }
+
+    @Override public boolean onKeyDown(KeyEvent event, int keyCode) {
         return super.onKeyDown(keyCode, event);
     }
 

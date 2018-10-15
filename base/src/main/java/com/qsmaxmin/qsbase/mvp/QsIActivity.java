@@ -1,5 +1,7 @@
 package com.qsmaxmin.qsbase.mvp;
 
+import android.view.KeyEvent;
+
 import com.qsmaxmin.qsbase.common.viewbind.OnKeyDownListener;
 
 /**
@@ -15,6 +17,8 @@ public interface QsIActivity extends QsIView {
     boolean isBlackIconStatusBar();
 
     boolean isTransparentNavigationBar();
+
+    boolean onKeyDown(KeyEvent event, int keyCode);
 
     void setOnKeyDownListener(OnKeyDownListener listener);
 }
