@@ -111,6 +111,7 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
             mProgressDialog = null;
         }
         mViewAnimator = null;
+        onKeyDownListener = null;
         if (isOpenEventBus() && EventBus.getDefault().isRegistered(this)) EventBus.getDefault().unregister(this);
         QsHelper.getInstance().getApplication().onActivityDestroy(this);
         QsHelper.getInstance().getScreenHelper().popActivity(this);

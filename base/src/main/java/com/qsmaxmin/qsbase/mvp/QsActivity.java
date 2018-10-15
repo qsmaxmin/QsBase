@@ -107,6 +107,7 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
             mProgressDialog = null;
         }
         mViewAnimator = null;
+        onKeyDownListener = null;
         if (isOpenEventBus() && EventBus.getDefault().isRegistered(this)) EventBus.getDefault().unregister(this);
         QsHelper.getInstance().getApplication().onActivityDestroy(this);
         QsHelper.getInstance().getScreenHelper().popActivity(this);
