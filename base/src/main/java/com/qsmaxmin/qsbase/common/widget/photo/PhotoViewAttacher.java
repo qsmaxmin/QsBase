@@ -42,7 +42,7 @@ public class PhotoViewAttacher implements View.OnTouchListener,
     private static float DEFAULT_MAX_SCALE     = 3.0f;
     private static float DEFAULT_MID_SCALE     = 1.75f;
     private static float DEFAULT_MIN_SCALE     = 1.0f;
-    private static int   DEFAULT_ZOOM_DURATION = 200;
+    private static int   DEFAULT_ZOOM_DURATION = 250;
 
     private static final int EDGE_NONE    = -1;
     private static final int EDGE_LEFT    = 0;
@@ -914,7 +914,7 @@ public class PhotoViewAttacher implements View.OnTouchListener,
         }
 
         private float interpolate() {
-            float t = 1f * (System.currentTimeMillis() - mStartTime) / 250;
+            float t = 1f * (System.currentTimeMillis() - mStartTime) / mZoomDuration;
             t = Math.min(1f, t);
             t = mInterpolator.getInterpolation(t);
             return t;
