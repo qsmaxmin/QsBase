@@ -58,7 +58,7 @@ public class PhotoViewAttacher implements View.OnTouchListener,
 
     private boolean mAllowParentInterceptOnEdge = true;
     private boolean mBlockParentIntercept       = false;
-    private boolean mCanScaleWhenDragDown       = true;
+    private boolean mCanScaleWhenDragDown       = false;
     private boolean canTouchScale               = true;
 
     private ImageView mImageView;
