@@ -20,7 +20,6 @@ import android.graphics.Matrix;
 import android.graphics.Matrix.ScaleToFit;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -902,8 +901,6 @@ public class PhotoViewAttacher implements View.OnTouchListener,
             float deltaX = shouldX - displayRect.left;
             float shouldY = (mEndY - mStartY) * value + mStartY;
             float deltaY = shouldY - displayRect.top;
-
-            Log.i("PhotoView", "transformation.... value:" + value + ", ds:" + deltaScale + ",  dx:" + deltaX + ", dy:" + deltaY);
 
             mSuppMatrix.postTranslate(deltaX, deltaY);
             setImageViewMatrix(getDrawMatrix());
