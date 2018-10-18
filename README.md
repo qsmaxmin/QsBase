@@ -228,26 +228,25 @@ MVP架构+AOP面向切面编程，摒弃反射、代理等操作，稳定性和�
             @POST("/api/v1/users") ModelUser requestUserData(@Body BaseModelReq req);
         }
 
-        View层和Presenter层通过getView和getPresenter方法相互调用
+        View层和Presenter层通过getView()和getPresenter()方法相互调用
         QsHelper里封装了很多常用的方法如：
         网络请求：QsHelper.getInstance().getHttpHelper()
         图片加载：QsHelper.getInstance().getImageHelper()
         线程池：QsHelper.getInstance().getThreadHelper()
-        activity栈管理：QsHelper.getInstance().getScreenHelper()
-        eventBus：QsHelper.getInstance().eventPost()
-        activity跳转：QsHelper.getInstance().intent2Activity()
+        Activity栈管理：QsHelper.getInstance().getScreenHelper()
+        EventBus：QsHelper.getInstance().eventPost()
+        Activity跳转：QsHelper.getInstance().intent2Activity()
         打开对话框：QsHelper.getInstance().commitDialogFragment()
         资源获取：QsHelper.getInstance().getString()，QsHelper.getInstance().getDrawable()....
 
         tips：框架使用了沉浸式actionbar，所有没有使用系统的actionbar，在设置系统主题时需要添加如下样式：
 
             <!-- 系统主题样式 -->
-            <style name="MyTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-                <!--不使用系统的toolbar-->
-                <item name="android:windowActionBar">false</item>
-                <item name="windowNoTitle">true</item>
+            <style name="YourTheme" parent="QsTheme">
+                <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+                <item name="colorPrimary">@color/colorPrimary</item>
+                <item name="colorAccent">@color/colorAccent</item>
             </style>
-
 
 
         3，Fragment的使用
