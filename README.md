@@ -10,7 +10,7 @@ MVP架构+AOP面向切面编程，摒弃反射、代理等操作，稳定性和�
 ## 如何使用？
 详细使用请参考完整项目[GrapeUniversity](https://github.com/qsmaxmin/GrapeUniversity)
 
-#### step 1：Module build.gradle添加依赖
+#### step 1：Project build.gradle 添加依赖
 
         buildscript {
             repositories {
@@ -36,7 +36,7 @@ MVP架构+AOP面向切面编程，摒弃反射、代理等操作，稳定性和�
             }
         }
 
-#### step 2：Project build.gradle添加依赖
+#### step 2：Module build.gradle 添加依赖
 
         apply plugin: 'android-aspectjx'
         ...
@@ -44,7 +44,7 @@ MVP架构+AOP面向切面编程，摒弃反射、代理等操作，稳定性和�
 
         dependencies {
             ...
-            compile 'com.github.qsmaxmin:QsBase:2.3.0'
+            compile 'com.github.qsmaxmin:QsBase:4.9.9'
         }
 
 #### step 3：自定义Application继承QsApplication
