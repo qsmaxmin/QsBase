@@ -18,12 +18,11 @@ public abstract class QsListAdapterItem<T> {
     public abstract int getItemLayout();
 
     @CallSuper public void init(View contentView) {
-        ViewBindHelper bindHelper = new ViewBindHelper(this);
-        bindHelper.bindView(contentView);
-        bindHelper.release();
+        ViewBindHelper.bindView(this, contentView);
     }
 
     public abstract void bindData(T t, int position, int count);
 
-    public void onViewClick(View view){}
+    public void onViewClick(View view) {
+    }
 }

@@ -72,11 +72,9 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
     }
 
     @Nullable @Override public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        ViewBindHelper bindHelper = new ViewBindHelper(this);
-        bindHelper.bindBundle(getArguments());
+        ViewBindHelper.bindBundle(this, getArguments());
         View rootView = initView(inflater);
-        bindHelper.bindView(rootView);
-        bindHelper.release();
+        ViewBindHelper.bindView(this, rootView);
         rootView.setOnTouchListener(this);
         if (isOpenEventBus() && !EventBus.getDefault().isRegistered(this)) EventBus.getDefault().register(this);
         return rootView;

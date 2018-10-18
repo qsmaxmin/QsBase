@@ -25,8 +25,7 @@ public abstract class QsDialogFragment extends DialogFragment {
     }
 
     @Override public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        ViewBindHelper bindHelper = new ViewBindHelper(this);
-        bindHelper.bindBundle(getArguments());
+        ViewBindHelper.bindBundle(this, getArguments());
         getDialog().setCanceledOnTouchOutside(true);
         final Window window = getDialog().getWindow();
         if (window != null) {
@@ -37,8 +36,7 @@ public abstract class QsDialogFragment extends DialogFragment {
             window.setAttributes(params);
         }
         View dialogView = getDialogView(inflater, container);
-        bindHelper.bindView(dialogView);
-        bindHelper.release();
+        ViewBindHelper.bindView(this, dialogView);
         return dialogView;
     }
 

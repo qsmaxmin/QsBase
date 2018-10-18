@@ -62,13 +62,11 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         super.onCreate(savedInstanceState);
         QsHelper.getInstance().getScreenHelper().pushActivity(this);
         QsHelper.getInstance().getApplication().onActivityCreate(this);
-        ViewBindHelper bindHelper = new ViewBindHelper(this);
-        bindHelper.bindBundle(getIntent().getExtras());
+        ViewBindHelper.bindBundle(this, getIntent().getExtras());
         initStatusBar();
         View view = initView();
         setContentView(view);
-        bindHelper.bindView(view);
-        bindHelper.release();
+        ViewBindHelper.bindView(this, view);
         if (isOpenEventBus() && !EventBus.getDefault().isRegistered(this)) EventBus.getDefault().register(this);
         if (!isDelayData()) {
             hasInitData = true;
