@@ -1,6 +1,7 @@
 package com.qsmaxmin.qsbase.common.viewbind;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.util.LruCache;
 import android.view.View;
 
@@ -10,13 +11,19 @@ import com.qsmaxmin.qsbase.common.viewbind.annotation.Bind;
 import com.qsmaxmin.qsbase.common.viewbind.annotation.BindBundle;
 import com.qsmaxmin.qsbase.common.viewbind.annotation.OnClick;
 import com.qsmaxmin.qsbase.common.widget.dialog.QsDialogFragment;
+import com.qsmaxmin.qsbase.mvp.QsIActivity;
 import com.qsmaxmin.qsbase.mvp.QsIView;
 import com.qsmaxmin.qsbase.mvp.adapter.QsListAdapterItem;
 import com.qsmaxmin.qsbase.mvp.adapter.QsRecycleAdapterItem;
+import com.qsmaxmin.qsbase.mvp.fragment.QsIFragment;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Enumeration;
 import java.util.Map;
+
+import dalvik.system.DexFile;
 
 /**
  * @CreateBy qsmaxmin
@@ -29,6 +36,47 @@ import java.util.Map;
 public class ViewBindHelper {
 
     private static LruCache<Class<?>, ViewBindData> viewCache = new LruCache<>(200);
+
+    /**
+     * 典型的以内存换时间，以后可能会用上
+     */
+    public static void preInit() {
+        if (QsHelper.getInstance().getApplication().isMainProcess()) {
+            QsHelper.getInstance().getThreadHelper().getWorkThreadPoll().execute(new Runnable() {
+                @Override public void run() {
+                    long start = System.nanoTime();
+                    try {
+                        String packageName = QsHelper.getInstance().getApplication().getPackageName();
+                        String packageCodePath = QsHelper.getInstance().getApplication().getPackageCodePath();
+                        DexFile df = new DexFile(packageCodePath);
+                        Enumeration<String> entries = df.entries();
+                        while (entries.hasMoreElements()) {
+                            String classPath = entries.nextElement();
+                            if (classPath.startsWith(packageName) && !classPath.contains("$") && !classPath.contains("\\.R\\.")) {
+                                try {
+                                    Class<?> aClass = Class.forName(classPath);
+                                    ViewBindData viewBindData = viewCache.get(aClass);
+                                    if (viewBindData == null && QsIActivity.class.isAssignableFrom(aClass) || QsIFragment.class.isAssignableFrom(aClass)
+                                            || QsListAdapterItem.class.isAssignableFrom(aClass) || QsRecycleAdapterItem.class.isAssignableFrom(aClass)
+                                            || QsDialogFragment.class.isAssignableFrom(aClass)) {
+                                        viewCache.put(aClass, new ViewBindData(aClass));
+                                    }
+                                } catch (ClassNotFoundException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    long end = System.nanoTime();
+                    Log.e("ViewBindHelper", "init...... cache size:" + viewCache.size() + ", use time:" + (end - start) / 1000000f + "ms");
+                }
+            });
+        }
+    }
 
     private static ViewBindData getBindData(Class<?> clazz) {
         ViewBindData cacheBindData = viewCache.get(clazz);
