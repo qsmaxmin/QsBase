@@ -28,8 +28,8 @@ public final class ScreenHelper {
     /**
      * FragmentActivity堆栈 单例模式
      */
-    private final Stack<FragmentActivity> fragmentActivities = new Stack<>();
-    private ArrayList<OnTaskChangeListener> listeners;
+    private final Stack<FragmentActivity>         fragmentActivities = new Stack<>();
+    private       ArrayList<OnTaskChangeListener> listeners;
 
     static ScreenHelper getInstance() {
         return instance;
@@ -75,20 +75,28 @@ public final class ScreenHelper {
             QsHelper.getInstance().getImageHelper().clearMemoryCache();
             QsHelper.getInstance().getThreadHelper().shutdown();
             if (listeners != null) listeners.clear();
+            L.i(TAG, "pop all Activity, app shutdown...");
         }
     }
 
     /**
-     * 退出堆栈中所有Activity, 当前的Activity除外
-     *
-     * @param clazz 当前活动窗口
+     * 从栈顶向下pop Activity, 直到传入Activity停止
+     * 若入参不为空而该栈中没有该Activity，则pop时留栈底一个Activity
      */
     public void popAllActivityExceptMain(Class clazz) {
         while (true) {
+            if (clazz != null && fragmentActivities.size() <= 1) break;
             FragmentActivity activity = currentActivity();
             if (activity == null) break;
             if (activity.getClass().equals(clazz)) break;
             popActivity(activity);
+        }
+    }
+
+    public void popAllActivity() {
+        while (fragmentActivities.size() > 0) {
+            FragmentActivity fragmentActivity = fragmentActivities.get(0);
+            popActivity(fragmentActivity);
         }
     }
 
