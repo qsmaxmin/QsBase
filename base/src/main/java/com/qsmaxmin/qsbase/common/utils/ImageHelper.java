@@ -106,7 +106,7 @@ public class ImageHelper {
     }
 
     public class Builder {
-        private boolean enableHolder = true;
+        private boolean              enableHolder = true;
         private RequestManager       manager;
         private Object               mObject;
         private int                  placeholderId;
@@ -157,7 +157,7 @@ public class ImageHelper {
         }
 
         public Builder load(String url) {
-            if (!TextUtils.isEmpty(url)) this.mObject = createGlideUrl(url, url);
+            this.mObject = url;
             return this;
         }
 
