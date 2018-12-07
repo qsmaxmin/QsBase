@@ -22,6 +22,8 @@ import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.load.model.GlideUrl;
+import com.bumptech.glide.load.model.Headers;
+import com.bumptech.glide.load.model.LazyHeaders;
 import com.bumptech.glide.load.resource.bitmap.BitmapTransformation;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
@@ -37,7 +39,6 @@ import com.qsmaxmin.qsbase.common.utils.glide.transform.RoundCornersTransformati
 
 import java.io.File;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -126,6 +127,7 @@ public class ImageHelper {
         private BitmapTransformation    mTransformation;
         private boolean                 mIsCircleCrop;
         private HashMap<String, String> headers;
+        private String                  mCacheKey;
 
         public Object getLoadObject() {
             return mObject;
@@ -163,16 +165,6 @@ public class ImageHelper {
             return load(url, url);
         }
 
-        public Builder load(String url, String cacheKey) {
-            if (!TextUtils.isEmpty(url)) this.mObject = createGlideUrl(url, cacheKey);
-            return this;
-        }
-
-        public Builder load(Object object) {
-            this.mObject = object;
-            return this;
-        }
-
         public Builder load(String url, boolean ignoreParamsKey) {
             if (TextUtils.isEmpty(url)) return this;
             if (ignoreParamsKey) {
@@ -180,8 +172,18 @@ public class ImageHelper {
                 String urlWithoutKey = uri.getScheme() + "://" + uri.getHost() + uri.getPath();
                 return load(url, urlWithoutKey);
             } else {
-                this.mObject = createGlideUrl(url, url);
+                return load(url, url);
             }
+        }
+
+        public Builder load(String url, String cacheKey) {
+            this.mObject = url;
+            this.mCacheKey = cacheKey;
+            return this;
+        }
+
+        public Builder load(Object object) {
+            this.mObject = object;
             return this;
         }
 
@@ -283,11 +285,11 @@ public class ImageHelper {
         public void into(final ImageView view, final ImageRequestListener listener) {
             onLoadImageBefore(this);
             if (headers != null) {
-                if (mObject instanceof QsGlideUrl) {
-                    Map<String, String> oldHeader = ((QsGlideUrl) mObject).getHeaders();
-                    oldHeader.putAll(headers);
+                if (mObject instanceof String) {
+                    String url = (String) this.mObject;
+                    mObject = createGlideUrl(url, mCacheKey);
                 } else {
-                    L.e("ImageHelper", "addHeader(key, value) only support network url......");
+                    L.e("ImageHelper", "addHeader(key, value) only support network url(String)......");
                 }
             }
             RequestBuilder<Drawable> requestBuilder = setRequestOptionsIfNeed(manager.load(mObject));
@@ -486,7 +488,17 @@ public class ImageHelper {
         }
 
         private QsGlideUrl createGlideUrl(String url, String cacheKey) {
-            QsGlideUrl qsGlideUrl = new QsGlideUrl(url);
+            QsGlideUrl qsGlideUrl;
+            if (this.headers != null) {
+                LazyHeaders.Builder builder = new LazyHeaders.Builder();
+                for (String key : this.headers.keySet()) {
+                    builder.addHeader(key, headers.get(key));
+                }
+                LazyHeaders lazyHeaders = builder.build();
+                qsGlideUrl = new QsGlideUrl(url, lazyHeaders);
+            } else {
+                qsGlideUrl = new QsGlideUrl(url);
+            }
             qsGlideUrl.setCacheKey(cacheKey);
             return qsGlideUrl;
         }
@@ -527,6 +539,11 @@ public class ImageHelper {
 
         QsGlideUrl(String url) {
             super(url);
+            this.mUrl = url;
+        }
+
+        QsGlideUrl(String url, Headers headers) {
+            super(url, headers);
             this.mUrl = url;
         }
 
