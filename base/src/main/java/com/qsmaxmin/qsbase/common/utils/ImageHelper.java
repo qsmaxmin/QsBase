@@ -36,6 +36,8 @@ import com.qsmaxmin.qsbase.common.utils.glide.transform.PhotoFrameTransform;
 import com.qsmaxmin.qsbase.common.utils.glide.transform.RoundCornersTransformation;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -106,23 +108,24 @@ public class ImageHelper {
     }
 
     public class Builder {
-        private boolean              enableHolder = true;
-        private RequestManager       manager;
-        private Object               mObject;
-        private int                  placeholderId;
-        private int                  errorId;
-        private Drawable             placeholderDrawable;
-        private Drawable             errorDrawable;
-        private boolean              centerCrop;
-        private boolean              fitCenter;
-        private boolean              centerInside;
-        private int[]                mCorners;
-        private int                  mWidth;
-        private int                  mHeight;
-        private boolean              noMemoryCache;
-        private DiskCacheStrategy    diskCacheStrategy;
-        private BitmapTransformation mTransformation;
-        private boolean              mIsCircleCrop;
+        private boolean                 enableHolder = true;
+        private RequestManager          manager;
+        private Object                  mObject;
+        private int                     placeholderId;
+        private int                     errorId;
+        private Drawable                placeholderDrawable;
+        private Drawable                errorDrawable;
+        private boolean                 centerCrop;
+        private boolean                 fitCenter;
+        private boolean                 centerInside;
+        private int[]                   mCorners;
+        private int                     mWidth;
+        private int                     mHeight;
+        private boolean                 noMemoryCache;
+        private DiskCacheStrategy       diskCacheStrategy;
+        private BitmapTransformation    mTransformation;
+        private boolean                 mIsCircleCrop;
+        private HashMap<String, String> headers;
 
         public Object getLoadObject() {
             return mObject;
@@ -157,7 +160,11 @@ public class ImageHelper {
         }
 
         public Builder load(String url) {
-            this.mObject = url;
+            return load(url, url);
+        }
+
+        public Builder load(String url, String cacheKey) {
+            if (!TextUtils.isEmpty(url)) this.mObject = createGlideUrl(url, cacheKey);
             return this;
         }
 
@@ -175,11 +182,6 @@ public class ImageHelper {
             } else {
                 this.mObject = createGlideUrl(url, url);
             }
-            return this;
-        }
-
-        public Builder load(String url, String cacheKey) {
-            if (!TextUtils.isEmpty(url)) this.mObject = createGlideUrl(url, cacheKey);
             return this;
         }
 
@@ -268,12 +270,26 @@ public class ImageHelper {
             return this;
         }
 
+        private Builder addHeader(String key, String value) {
+            if (headers == null) headers = new HashMap<>();
+            headers.put(key, value);
+            return this;
+        }
+
         public void into(ImageView view) {
             into(view, null);
         }
 
         public void into(final ImageView view, final ImageRequestListener listener) {
             onLoadImageBefore(this);
+            if (headers != null) {
+                if (mObject instanceof QsGlideUrl) {
+                    Map<String, String> oldHeader = ((QsGlideUrl) mObject).getHeaders();
+                    oldHeader.putAll(headers);
+                } else {
+                    L.e("ImageHelper", "addHeader(key, value) only support network url......");
+                }
+            }
             RequestBuilder<Drawable> requestBuilder = setRequestOptionsIfNeed(manager.load(mObject));
             if (listener != null) {
                 requestBuilder = requestBuilder.listener(new RequestListener<Drawable>() {
@@ -318,7 +334,7 @@ public class ImageHelper {
 
         public Bitmap getBitmap(String url, int width, int height) {
             if (TextUtils.isEmpty(url)) return null;
-            return getBitmap(new QsGlideUrl(url), width, height);
+            return getBitmap(createGlideUrl(url, url), width, height);
         }
 
         public Bitmap getBitmap(Object object, int width, int height) {
@@ -344,7 +360,7 @@ public class ImageHelper {
 
         public Drawable getDrawable(String url, int width, int height) {
             if (TextUtils.isEmpty(url)) return null;
-            return getDrawable(new QsGlideUrl(url), width, height);
+            return getDrawable(createGlideUrl(url, url), width, height);
         }
 
         public Drawable getDrawable(Object object, int width, int height) {
@@ -369,7 +385,7 @@ public class ImageHelper {
             if (TextUtils.isEmpty(url)) return null;
             onLoadImageBefore(this);
             RequestBuilder<File> requestBuilder = setRequestOptionsIfNeed(manager.asFile());
-            FutureTarget<File> submit = requestBuilder.load(new QsGlideUrl(url)).submit(width, height);
+            FutureTarget<File> submit = requestBuilder.load(createGlideUrl(url, url)).submit(width, height);
             try {
                 return submit.get();
             } catch (InterruptedException | ExecutionException e) {
