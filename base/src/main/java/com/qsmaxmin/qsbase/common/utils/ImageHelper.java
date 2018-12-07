@@ -270,7 +270,7 @@ public class ImageHelper {
             return this;
         }
 
-        private Builder addHeader(String key, String value) {
+        public Builder addHeader(String key, String value) {
             if (headers == null) headers = new HashMap<>();
             headers.put(key, value);
             return this;
