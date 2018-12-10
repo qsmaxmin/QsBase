@@ -288,7 +288,6 @@ public class ImageHelper {
                 String url = (String) this.mObject;
                 mObject = createGlideUrl(url, mCacheKey);
             }
-
             RequestBuilder<Drawable> requestBuilder = setRequestOptionsIfNeed(manager.load(mObject));
             if (listener != null) {
                 requestBuilder = requestBuilder.listener(new RequestListener<Drawable>() {
@@ -323,22 +322,17 @@ public class ImageHelper {
         }
 
 
-        public Bitmap getBitmap(String url) {
-            return getBitmap(url, Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL);
-        }
-
         public Bitmap getBitmap(Object object) {
             return getBitmap(object, Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL);
-        }
-
-        public Bitmap getBitmap(String url, int width, int height) {
-            if (TextUtils.isEmpty(url)) return null;
-            return getBitmap(createGlideUrl(url, url), width, height);
         }
 
         public Bitmap getBitmap(Object object, int width, int height) {
             if (object == null) return null;
             onLoadImageBefore(this);
+            if (object instanceof String) {
+                String url = (String) object;
+                object = createGlideUrl(url, url);
+            }
             RequestBuilder<Bitmap> requestBuilder = setRequestOptionsIfNeed(manager.asBitmap());
             FutureTarget<Bitmap> submit = requestBuilder.load(object).submit(width, height);
             try {
@@ -349,22 +343,17 @@ public class ImageHelper {
             return null;
         }
 
-        public Drawable getDrawable(String url) {
-            return getDrawable(url, Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL);
-        }
-
         public Drawable getDrawable(Object object) {
             return getDrawable(object, Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL);
-        }
-
-        public Drawable getDrawable(String url, int width, int height) {
-            if (TextUtils.isEmpty(url)) return null;
-            return getDrawable(createGlideUrl(url, url), width, height);
         }
 
         public Drawable getDrawable(Object object, int width, int height) {
             if (object == null) return null;
             onLoadImageBefore(this);
+            if (object instanceof String) {
+                String url = (String) object;
+                object = createGlideUrl(url, url);
+            }
             RequestBuilder<Drawable> requestBuilder = setRequestOptionsIfNeed(manager.asDrawable());
             FutureTarget<Drawable> submit = requestBuilder.load(object).submit(width, height);
             try {
@@ -383,8 +372,10 @@ public class ImageHelper {
         public File getImageFile(String url, int width, int height) {
             if (TextUtils.isEmpty(url)) return null;
             onLoadImageBefore(this);
+            QsGlideUrl object = createGlideUrl(url, url);
+
             RequestBuilder<File> requestBuilder = setRequestOptionsIfNeed(manager.asFile());
-            FutureTarget<File> submit = requestBuilder.load(createGlideUrl(url, url)).submit(width, height);
+            FutureTarget<File> submit = requestBuilder.load(object).submit(width, height);
             try {
                 return submit.get();
             } catch (InterruptedException | ExecutionException e) {
