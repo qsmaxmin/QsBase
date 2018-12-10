@@ -284,14 +284,13 @@ public class ImageHelper {
 
         public void into(final ImageView view, final ImageRequestListener listener) {
             onLoadImageBefore(this);
-            if (headers != null) {
-                if (mObject instanceof String) {
-                    String url = (String) this.mObject;
-                    mObject = createGlideUrl(url, mCacheKey);
-                } else {
-                    L.e("ImageHelper", "addHeader(key, value) only support network url(String)......");
-                }
+            if (mObject instanceof String) {
+                String url = (String) this.mObject;
+                mObject = createGlideUrl(url, mCacheKey);
+            } else {
+                L.e("ImageHelper", "addHeader(key, value) only support network url(String)......");
             }
+
             RequestBuilder<Drawable> requestBuilder = setRequestOptionsIfNeed(manager.load(mObject));
             if (listener != null) {
                 requestBuilder = requestBuilder.listener(new RequestListener<Drawable>() {
@@ -489,7 +488,7 @@ public class ImageHelper {
 
         private QsGlideUrl createGlideUrl(String url, String cacheKey) {
             QsGlideUrl qsGlideUrl;
-            if (this.headers != null) {
+            if (this.headers != null && !headers.isEmpty()) {
                 LazyHeaders.Builder builder = new LazyHeaders.Builder();
                 for (String key : this.headers.keySet()) {
                     builder.addHeader(key, headers.get(key));
@@ -534,29 +533,29 @@ public class ImageHelper {
     }
 
     public class QsGlideUrl extends GlideUrl {
-        private final String mUrl;
-        private       String mCacheKey;
+        private final String url;
+        private       String cacheKey;
 
         QsGlideUrl(String url) {
             super(url);
-            this.mUrl = url;
+            this.url = url;
         }
 
         QsGlideUrl(String url, Headers headers) {
             super(url, headers);
-            this.mUrl = url;
+            this.url = url;
         }
 
         void setCacheKey(String cacheKey) {
-            this.mCacheKey = cacheKey;
+            this.cacheKey = cacheKey;
         }
 
         public String getUrl() {
-            return mUrl;
+            return url;
         }
 
         @Override public String getCacheKey() {
-            return TextUtils.isEmpty(mCacheKey) ? super.getCacheKey() : mCacheKey;
+            return TextUtils.isEmpty(cacheKey) ? super.getCacheKey() : cacheKey;
         }
     }
 
