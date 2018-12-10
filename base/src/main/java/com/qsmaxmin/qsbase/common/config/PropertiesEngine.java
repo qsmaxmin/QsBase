@@ -75,9 +75,7 @@ class PropertiesEngine {
         for (Field field : fieldList) {
             try {
                 Object value = field.get(mTarget);
-                if (value != null) {
-                    putToSP(edit, field, value);
-                }
+                putToSP(edit, field, value);
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }
