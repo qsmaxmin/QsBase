@@ -287,8 +287,6 @@ public class ImageHelper {
             if (mObject instanceof String) {
                 String url = (String) this.mObject;
                 mObject = createGlideUrl(url, mCacheKey);
-            } else {
-                L.e("ImageHelper", "addHeader(key, value) only support network url(String)......");
             }
 
             RequestBuilder<Drawable> requestBuilder = setRequestOptionsIfNeed(manager.load(mObject));
