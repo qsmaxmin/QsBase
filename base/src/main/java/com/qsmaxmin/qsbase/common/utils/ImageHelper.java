@@ -485,6 +485,7 @@ public class ImageHelper {
         }
 
         private QsGlideUrl createGlideUrl(String url, String cacheKey) {
+            if (TextUtils.isEmpty(url)) return null;
             QsGlideUrl qsGlideUrl;
             if (this.headers != null && !headers.isEmpty()) {
                 LazyHeaders.Builder builder = new LazyHeaders.Builder();
