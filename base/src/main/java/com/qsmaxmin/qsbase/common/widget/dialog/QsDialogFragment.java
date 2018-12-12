@@ -47,8 +47,8 @@ public abstract class QsDialogFragment extends DialogFragment {
     }
 
     protected void setAttribute(WindowManager.LayoutParams params) {
-        params.gravity = Gravity.BOTTOM;
-        params.width = WindowManager.LayoutParams.MATCH_PARENT;
+        params.gravity = Gravity.CENTER;
+        params.width = WindowManager.LayoutParams.WRAP_CONTENT;
         params.height = WindowManager.LayoutParams.WRAP_CONTENT;
     }
 
