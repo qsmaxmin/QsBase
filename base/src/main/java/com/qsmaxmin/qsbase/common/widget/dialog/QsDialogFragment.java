@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,11 +32,7 @@ public abstract class QsDialogFragment extends DialogFragment {
 
         ViewGroup mainView = createMainView(inflater.getContext());
         View dialogView = getDialogView(inflater, container);
-        FrameLayout.LayoutParams childLayout = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        childLayout.gravity = Gravity.CENTER;
-        setAttribute(childLayout);
-        mainView.addView(dialogView, childLayout);
-
+        mainView.addView(dialogView);
         ViewBindHelper.bindView(this, dialogView);
         return mainView;
     }
@@ -63,8 +58,6 @@ public abstract class QsDialogFragment extends DialogFragment {
     protected int getDialogTheme() {
         return R.style.QsDialogTheme;
     }
-
-    protected abstract void setAttribute(FrameLayout.LayoutParams params);
 
     protected abstract View getDialogView(LayoutInflater inflater, ViewGroup container);
 
