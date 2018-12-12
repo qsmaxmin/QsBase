@@ -1,14 +1,15 @@
 package com.qsmaxmin.qsbase.common.widget.dialog;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
+import android.widget.FrameLayout;
 
 import com.qsmaxmin.qsbase.R;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
@@ -29,24 +30,29 @@ public abstract class QsDialogFragment extends DialogFragment {
     @Override public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         ViewBindHelper.bindBundle(this, getArguments());
         getDialog().setCanceledOnTouchOutside(true);
+
+        ViewGroup mainView = createMainView(inflater.getContext());
         View dialogView = getDialogView(inflater, container);
+        FrameLayout.LayoutParams childLayout = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        childLayout.gravity = Gravity.CENTER;
+        setAttribute(childLayout);
+        mainView.addView(dialogView, childLayout);
+
         ViewBindHelper.bindView(this, dialogView);
-        return dialogView;
+        return mainView;
     }
 
-    @Override public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        final Window window = getDialog().getWindow();
-        if (window != null) {
-            window.getDecorView().setPadding(0, 0, 0, 0);
-            WindowManager.LayoutParams params = window.getAttributes();
-            setAttribute(params);
-            window.setAttributes(params);
+    private ViewGroup createMainView(Context context) {
+        FrameLayout mainView = new FrameLayout(context);
+        mainView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        if (isCancelable()) {
+            mainView.setOnClickListener(new View.OnClickListener() {
+                @Override public void onClick(View v) {
+                    dismissAllowingStateLoss();
+                }
+            });
         }
-    }
-
-    protected void setAttribute(WindowManager.LayoutParams params) {
-        // custom you attribute
+        return mainView;
     }
 
     @Override public void onStart() {
@@ -55,8 +61,10 @@ public abstract class QsDialogFragment extends DialogFragment {
     }
 
     protected int getDialogTheme() {
-        return R.style.QsDialogTheme_Light;
+        return R.style.QsDialogTheme;
     }
+
+    protected abstract void setAttribute(FrameLayout.LayoutParams params);
 
     protected abstract View getDialogView(LayoutInflater inflater, ViewGroup container);
 

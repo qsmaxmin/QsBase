@@ -12,40 +12,14 @@
     <style name="QsDialogTheme" parent="Theme.AppCompat.Dialog">
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>
-        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowIsFloating">false</item>
         <item name="android:backgroundDimAmount">0.6</item>
         <item name="android:statusBarColor" tools:targetApi="lollipop">@color/colorPrimaryDark</item>
-    </style>
-
-    <style name="QsDialogTheme.FullScreen" parent="QsDialogTheme">
-        <item name="android:windowIsFloating">false</item>
-    </style>
-
-    <style name="QsDialogTheme.FullScreen.TranslucentStatus" parent="QsDialogTheme.FullScreen">
-        <item name="android:windowTranslucentStatus" tools:targetApi="kitkat">true</item>
-    </style>
-
-    <style name="QsDialogTheme.FullScreen.TranslucentStatusNavigate" parent="QsDialogTheme.FullScreen">
-        <item name="android:windowTranslucentStatus" tools:targetApi="kitkat">true</item>
-        <item name="android:windowTranslucentNavigation" tools:targetApi="kitkat">true</item>
-    </style>
-
-
-    <style name="QsDialogTheme.Light" parent="QsDialogTheme">
         <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
         <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
-
     </style>
 
-    <style name="QsDialogTheme.Light.FullScreen" parent="QsDialogTheme.Light">
-        <item name="android:windowIsFloating">false</item>
-    </style>
-
-    <style name="QsDialogTheme.Light.FullScreen.TranslucentStatus" parent="QsDialogTheme.Light.FullScreen">
-        <item name="android:windowTranslucentStatus" tools:targetApi="kitkat">true</item>
-    </style>
-
-    <style name="QsDialogTheme.Light.FullScreen.TranslucentStatusNavigate" parent="QsDialogTheme.Light.FullScreen">
+    <style name="QsDialogTheme.TranslucentStatusNavigate" parent="QsDialogTheme">
         <item name="android:windowTranslucentStatus" tools:targetApi="kitkat">true</item>
         <item name="android:windowTranslucentNavigation" tools:targetApi="kitkat">true</item>
     </style>
