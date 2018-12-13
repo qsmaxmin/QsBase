@@ -33,9 +33,7 @@ public abstract class QsDialogFragment extends DialogFragment {
         final Window window = getDialog().getWindow();
         if (window != null) {
             window.getDecorView().setPadding(0, 0, 0, 0);
-            WindowManager.LayoutParams params = window.getAttributes();
-            setAttribute(params);
-            window.setAttributes(params);
+            setAttribute(window.getAttributes());
         }
     }
 
@@ -47,19 +45,6 @@ public abstract class QsDialogFragment extends DialogFragment {
         return dialogView;
     }
 
-    private ViewGroup createMainView(Context context) {
-        FrameLayout mainView = new FrameLayout(context);
-        mainView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        if (isCancelable()) {
-            mainView.setOnClickListener(new View.OnClickListener() {
-                @Override public void onClick(View v) {
-                    dismissAllowingStateLoss();
-                }
-            });
-        }
-        return mainView;
-    }
-
     @Override public void onStart() {
         super.onStart();
         initData();
@@ -69,7 +54,8 @@ public abstract class QsDialogFragment extends DialogFragment {
         return R.style.QsDialogTheme_FullScreen_TranslucentStatus;
     }
 
-    protected abstract void setAttribute(WindowManager.LayoutParams params);
+    protected void setAttribute(WindowManager.LayoutParams params) {
+    }
 
     protected abstract View getDialogView(LayoutInflater inflater, ViewGroup container);
 
