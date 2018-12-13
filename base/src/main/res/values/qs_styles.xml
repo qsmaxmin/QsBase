@@ -20,10 +20,12 @@
     </style>
 
     <style name="QsDialogTheme.TranslucentStatus" parent="QsDialogTheme">
+        <item name="android:statusBarColor" tools:targetApi="lollipop">@android:color/transparent</item>
         <item name="android:windowTranslucentStatus" tools:targetApi="kitkat">true</item>
     </style>
 
     <style name="QsDialogTheme.TranslucentStatusNavigate" parent="QsDialogTheme.TranslucentStatus">
+        <item name="android:navigationBarColor" tools:targetApi="lollipop">@android:color/transparent</item>
         <item name="android:windowTranslucentNavigation" tools:targetApi="kitkat">true</item>
     </style>
 
