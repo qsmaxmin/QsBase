@@ -7,9 +7,6 @@ import android.view.View;
 
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
-import com.qsmaxmin.qsbase.common.viewbind.annotation.Bind;
-import com.qsmaxmin.qsbase.common.viewbind.annotation.BindBundle;
-import com.qsmaxmin.qsbase.common.viewbind.annotation.OnClick;
 import com.qsmaxmin.qsbase.common.widget.dialog.QsDialogFragment;
 import com.qsmaxmin.qsbase.mvp.QsIActivity;
 import com.qsmaxmin.qsbase.mvp.QsIView;
@@ -94,15 +91,15 @@ public class ViewBindHelper {
         if (target == null || bundle == null) return;
         Class<?> clazz = target.getClass();
         ViewBindData bindData = getBindData(clazz);
-        Map<Field, BindBundle> bundleFieldMap = bindData.bundleFieldMap;
+        Map<Field, String> bundleFieldMap = bindData.bundleFieldMap;
         if (bundleFieldMap != null) {
             for (Field field : bundleFieldMap.keySet()) {
-                BindBundle ann = bundleFieldMap.get(field);
-                Object value = bundle.get(ann.value());
+                String bundleKey = bundleFieldMap.get(field);
+                Object value = bundle.get(bundleKey);
                 if (value != null) {
                     setFieldValue(target, field, value);
                 } else {
-                    L.e(bindData.targetName, "not found key(" + ann.value() + ")in Bundle !");
+                    L.e(bindData.targetName, "not found key(" + bundleKey + ")in Bundle !");
                 }
             }
         }
@@ -112,11 +109,11 @@ public class ViewBindHelper {
         if (target == null || rootView == null) return;
         Class<?> clazz = target.getClass();
         final ViewBindData bindData = getBindData(clazz);
-        Map<Field, Bind> viewFieldMap = bindData.viewFieldMap;
+        Map<Field, Integer> viewFieldMap = bindData.viewFieldMap;
         if (viewFieldMap != null) {
             for (Field field : viewFieldMap.keySet()) {
-                Bind bind = viewFieldMap.get(field);
-                View view = rootView.findViewById(bind.value());
+                int viewId = viewFieldMap.get(field);
+                View view = rootView.findViewById(viewId);
                 if (view != null) {
                     setFieldValue(target, field, view);
                 } else {
@@ -125,38 +122,34 @@ public class ViewBindHelper {
             }
         }
 
-        if (bindData.onViewClickMethod != null) {
-            OnClick annotation = bindData.onViewClickMethod.getAnnotation(OnClick.class);
-            if (annotation != null) {
-                int[] values = annotation.value();
-                View.OnClickListener listener = new View.OnClickListener() {
-                    @Override public void onClick(View v) {
-                        if (target instanceof QsIView) {
-                            ((QsIView) target).onViewClick(v);
-                        } else if (target instanceof QsListAdapterItem) {
-                            ((QsListAdapterItem) target).onViewClick(v);
-                        } else if (target instanceof QsRecycleAdapterItem) {
-                            ((QsRecycleAdapterItem) target).onViewClick(v);
-                        } else if (target instanceof QsDialogFragment) {
-                            ((QsDialogFragment) target).onViewClick(v);
-                        } else {
-                            try {
-                                bindData.onViewClickMethod.invoke(target, v);
-                            } catch (IllegalAccessException e) {
-                                e.printStackTrace();
-                            } catch (InvocationTargetException e) {
-                                e.printStackTrace();
-                            }
+        if (bindData.onViewClickMethod != null && bindData.clickIds != null) {
+            View.OnClickListener listener = new View.OnClickListener() {
+                @Override public void onClick(View v) {
+                    if (target instanceof QsIView) {
+                        ((QsIView) target).onViewClick(v);
+                    } else if (target instanceof QsListAdapterItem) {
+                        ((QsListAdapterItem) target).onViewClick(v);
+                    } else if (target instanceof QsRecycleAdapterItem) {
+                        ((QsRecycleAdapterItem) target).onViewClick(v);
+                    } else if (target instanceof QsDialogFragment) {
+                        ((QsDialogFragment) target).onViewClick(v);
+                    } else {
+                        try {
+                            bindData.onViewClickMethod.invoke(target, v);
+                        } catch (IllegalAccessException e) {
+                            e.printStackTrace();
+                        } catch (InvocationTargetException e) {
+                            e.printStackTrace();
                         }
                     }
-                };
-                for (int value : values) {
-                    final View view = rootView.findViewById(value);
-                    if (view != null) {
-                        view.setOnClickListener(listener);
-                    } else {
-                        L.e(bindData.targetName, "Invalid @OnClick(id:" + value + ") view not found !");
-                    }
+                }
+            };
+            for (int value : bindData.clickIds) {
+                final View view = rootView.findViewById(value);
+                if (view != null) {
+                    view.setOnClickListener(listener);
+                } else {
+                    L.e(bindData.targetName, "Invalid @OnClick(id:" + value + ") view not found !");
                 }
             }
         }
