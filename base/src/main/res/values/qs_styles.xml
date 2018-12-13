@@ -19,8 +19,11 @@
         <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
     </style>
 
-    <style name="QsDialogTheme.TranslucentStatusNavigate" parent="QsDialogTheme">
+    <style name="QsDialogTheme.TranslucentStatus" parent="QsDialogTheme">
         <item name="android:windowTranslucentStatus" tools:targetApi="kitkat">true</item>
+    </style>
+
+    <style name="QsDialogTheme.TranslucentStatusNavigate" parent="QsDialogTheme.TranslucentStatus">
         <item name="android:windowTranslucentNavigation" tools:targetApi="kitkat">true</item>
     </style>
 

@@ -8,6 +8,8 @@ import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 
 import com.qsmaxmin.qsbase.R;
@@ -26,15 +28,23 @@ public abstract class QsDialogFragment extends DialogFragment {
         if (getDialogTheme() > 0) setStyle(DialogFragment.STYLE_NO_TITLE, getDialogTheme());
     }
 
+    @Override public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        final Window window = getDialog().getWindow();
+        if (window != null) {
+            window.getDecorView().setPadding(0, 0, 0, 0);
+            WindowManager.LayoutParams params = window.getAttributes();
+            setAttribute(params);
+            window.setAttributes(params);
+        }
+    }
+
     @Override public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         ViewBindHelper.bindBundle(this, getArguments());
         getDialog().setCanceledOnTouchOutside(true);
-
-        ViewGroup mainView = createMainView(inflater.getContext());
         View dialogView = getDialogView(inflater, container);
-        mainView.addView(dialogView);
         ViewBindHelper.bindView(this, dialogView);
-        return mainView;
+        return dialogView;
     }
 
     private ViewGroup createMainView(Context context) {
@@ -58,6 +68,8 @@ public abstract class QsDialogFragment extends DialogFragment {
     protected int getDialogTheme() {
         return R.style.QsDialogTheme;
     }
+
+    protected abstract void setAttribute(WindowManager.LayoutParams params);
 
     protected abstract View getDialogView(LayoutInflater inflater, ViewGroup container);
 
