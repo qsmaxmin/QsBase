@@ -66,7 +66,7 @@ public abstract class QsDialogFragment extends DialogFragment {
     }
 
     protected int getDialogTheme() {
-        return R.style.QsDialogTheme;
+        return R.style.QsDialogTheme_FullScreen_TranslucentStatus;
     }
 
     protected abstract void setAttribute(WindowManager.LayoutParams params);
