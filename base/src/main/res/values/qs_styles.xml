@@ -9,7 +9,7 @@
         <item name="windowActionBar">false</item>
     </style>
 
-    <style name="QsDialogTheme" parent="Theme.AppCompat.Dialog">
+    <style name="QsDialogTheme" parent="Theme.AppCompat.Light.Dialog">
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:backgroundDimAmount">0.6</item>
