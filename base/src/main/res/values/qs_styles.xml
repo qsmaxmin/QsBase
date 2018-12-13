@@ -28,7 +28,7 @@
         <item name="android:windowContentOverlay">@null</item><!--除去部分机型透明后的渐变阴影-->
     </style>
 
-    <style name="QsDialogTheme..FullScreen.TranslucentStatusNavigate" parent="QsDialogTheme.FullScreen.TranslucentStatus">
+    <style name="QsDialogTheme.FullScreen.TranslucentStatusNavigate" parent="QsDialogTheme.FullScreen.TranslucentStatus">
         <item name="android:navigationBarColor" tools:targetApi="lollipop">@android:color/transparent</item>
         <item name="android:windowTranslucentNavigation" tools:targetApi="kitkat">true</item>
     </style>
