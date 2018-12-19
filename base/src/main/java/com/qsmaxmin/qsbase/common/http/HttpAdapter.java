@@ -209,18 +209,18 @@ public class HttpAdapter {
         checkParamsAnnotation(annotations, args, method.getName(), requestTag);
 
         HttpBuilder httpBuilder = getHttpBuilder(requestTag, path, args, requestType);
-        StringBuilder url = getUrl(TextUtils.isEmpty(terminal) ? httpBuilder.getTerminal() : terminal, path, method, args, requestTag);
-
+        if (!TextUtils.isEmpty(terminal)) httpBuilder.setTerminal(terminal);
+        StringBuilder url = getUrl(httpBuilder.getTerminal(), path, method, args, requestTag);
         if (TextUtils.isEmpty(url)) throw new QsException(QsExceptionType.UNEXPECTED, requestTag, "url error... method:" + method.getName() + "  request url is null...");
 
         RequestBody requestBody = null;
         Object body = null;
         Object formBody = null;
-        HashMap<String, String> params = null;
+        HashMap<String, String> paramsMap = null;
         String mimeType = null;
 
         if (httpBuilder.getUrlParameters() != null && !httpBuilder.getUrlParameters().isEmpty()) {
-            params = new HashMap<>(httpBuilder.getUrlParameters());
+            paramsMap = new HashMap<>(httpBuilder.getUrlParameters());
         }
         for (int i = 0; i < annotations.length; i++) {
             Annotation[] annotationArr = annotations[i];
@@ -231,10 +231,10 @@ public class HttpAdapter {
                 if (TextUtils.isEmpty(mimeType)) throw new QsException(QsExceptionType.UNEXPECTED, requestTag, "request body exception...  method:" + method.getName() + "  the annotation @Body not have mimeType value");
                 break;
             } else if (annotation instanceof Query) {
-                if (params == null) params = new HashMap<>();
+                if (paramsMap == null) paramsMap = new HashMap<>();
                 Object arg = args[i];
                 String key = ((Query) annotation).value();
-                params.put(key, String.valueOf(arg));
+                paramsMap.put(key, String.valueOf(arg));
             } else if (annotation instanceof FormBody) {
                 formBody = args[i];
             }
@@ -255,12 +255,12 @@ public class HttpAdapter {
             }
         }
 
-        if (params != null && !params.isEmpty()) {
+        if (paramsMap != null && !paramsMap.isEmpty()) {
             int i = 0;
             Uri uri = Uri.parse(url.toString());
             String uriQuery = uri.getQuery();
-            for (String key : params.keySet()) {
-                Object value = params.get(key);
+            for (String key : paramsMap.keySet()) {
+                Object value = paramsMap.get(key);
                 if (value != null) {
                     url.append((i == 0 && TextUtils.isEmpty(uriQuery) && url.charAt(url.length() - 1) != '?') ? "?" : "&").append(key).append("=").append(String.valueOf(value));
                     i++;
@@ -276,7 +276,7 @@ public class HttpAdapter {
             if (QsHelper.getInstance().isNetworkAvailable()) {
                 Call call = client.newCall(request);
                 Response response = call.execute();
-                return createResult(method, response, requestTag);
+                return createResult(method, response, requestTag, httpBuilder);
             } else {
                 throw new QsException(QsExceptionType.NETWORK_ERROR, requestTag, "network error...  method:" + method.getName() + " message:network disable");
             }
@@ -285,11 +285,12 @@ public class HttpAdapter {
         }
     }
 
-    private Object createResult(Method method, Response response, Object requestTag) throws IOException {
+    private Object createResult(Method method, Response response, Object requestTag, HttpBuilder httpBuilder) throws IOException {
         if (response == null) return null;
         int responseCode = response.code();
         HttpResponse httpResponse = new HttpResponse();
         httpResponse.response = response;
+        httpResponse.httpBuilder = httpBuilder;
 
         if (responseCode >= 200 && responseCode < 300) {
             Class<?> returnType = method.getReturnType();

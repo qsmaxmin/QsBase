@@ -41,7 +41,7 @@ public class HttpBuilder {
         return this;
     }
 
-    Headers.Builder getHeaderBuilder() {
+    public Headers.Builder getHeaderBuilder() {
         return headerBuilder;
     }
 
@@ -57,7 +57,7 @@ public class HttpBuilder {
         return this;
     }
 
-    String getTerminal() {
+    public String getTerminal() {
         return terminal;
     }
 

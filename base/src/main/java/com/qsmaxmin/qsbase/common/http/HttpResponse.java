@@ -8,6 +8,23 @@ import okhttp3.Response;
  * @Description
  */
 public class HttpResponse {
-    public Response response;
-    public String   jsonStr;
+     Response    response;
+     String      jsonStr;
+     HttpBuilder httpBuilder;
+
+    public HttpBuilder getHttpBuilder() {
+        return httpBuilder;
+    }
+
+    public Response getResponse() {
+        return response;
+    }
+
+    public String getJsonStr() {
+        return jsonStr;
+    }
+
+    public void setJsonStr(String jsonStr) {
+        this.jsonStr = jsonStr;
+    }
 }
