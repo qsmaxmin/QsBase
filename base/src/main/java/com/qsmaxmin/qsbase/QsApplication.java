@@ -7,12 +7,11 @@ import android.content.Context;
 import android.support.annotation.LayoutRes;
 
 import com.qsmaxmin.qsbase.common.http.HttpBuilder;
+import com.qsmaxmin.qsbase.common.http.HttpResponse;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.utils.ImageHelper;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.common.widget.dialog.QsProgressDialog;
-
-import okhttp3.Response;
 
 /**
  * @CreateBy qsmaxmin
@@ -69,7 +68,7 @@ public abstract class QsApplication extends Application {
         return 0;
     }
 
-    public void onCommonHttpResponse(Response response) {
+    public void onCommonHttpResponse(HttpResponse response) {
     }
 
     /**

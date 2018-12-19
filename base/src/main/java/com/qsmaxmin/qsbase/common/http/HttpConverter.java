@@ -3,27 +3,16 @@ package com.qsmaxmin.qsbase.common.http;
 import android.text.TextUtils;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonIOException;
-import com.google.gson.JsonSyntaxException;
-import com.qsmaxmin.qsbase.common.exception.QsException;
-import com.qsmaxmin.qsbase.common.exception.QsExceptionType;
 import com.qsmaxmin.qsbase.common.log.L;
-import com.qsmaxmin.qsbase.common.utils.StreamCloseUtils;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
-import java.nio.charset.Charset;
 import java.util.Map;
 
 import okhttp3.FormBody;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
-import okhttp3.ResponseBody;
 
 
 class HttpConverter {
@@ -36,37 +25,8 @@ class HttpConverter {
         this.gson = new Gson();
     }
 
-
-    Object jsonFromBody(ResponseBody body, Type type, String methodName, Object requestTag) throws IOException {
-        if (body == null) return null;
-        Charset charset = Charset.forName("UTF-8");
-        MediaType mediaType = body.contentType();
-        if (mediaType != null) {
-            charset = mediaType.charset(charset);
-        }
-        InputStream is = body.byteStream();
-        if (is != null && charset != null) {
-            InputStreamReader inputStreamReader = new InputStreamReader(is, charset);
-            BufferedReader bufferedReader = null;
-            try {
-                bufferedReader = new BufferedReader(inputStreamReader);
-                StringBuilder result = new StringBuilder();
-                String line;
-                while ((line = bufferedReader.readLine()) != null) {
-                    result.append(line).append("\n");
-                }
-                String json = result.toString();
-                L.i(TAG, "methodName:" + methodName + "  响应体 Json:" + result.toString());
-                return gson.fromJson(json, type);
-            } catch (JsonSyntaxException e1) {
-                throw new QsException(QsExceptionType.UNEXPECTED, requestTag, "数据解析错误");
-            } catch (JsonIOException e2) {
-                throw new QsException(QsExceptionType.UNEXPECTED, requestTag, "Json IO 错误");
-            } finally {
-                StreamCloseUtils.close(inputStreamReader, is, bufferedReader);
-            }
-        }
-        return null;
+    Object jsonToObject(String jsonStr, Type type) {
+        return gson.fromJson(jsonStr, type);
     }
 
     RequestBody stringToBody(String methodName, String mimeType, String body) {

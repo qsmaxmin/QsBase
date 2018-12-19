@@ -4,6 +4,8 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
 import com.qsmaxmin.qsbase.common.aspect.Body;
 import com.qsmaxmin.qsbase.common.aspect.DELETE;
 import com.qsmaxmin.qsbase.common.aspect.FormBody;
@@ -20,18 +22,24 @@ import com.qsmaxmin.qsbase.common.exception.QsExceptionType;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.proxy.HttpHandler;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
+import com.qsmaxmin.qsbase.common.utils.StreamCloseUtils;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import okhttp3.Dispatcher;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -208,12 +216,11 @@ public class HttpAdapter {
         RequestBody requestBody = null;
         Object body = null;
         Object formBody = null;
-        HashMap<String, Object> params = null;
+        HashMap<String, String> params = null;
         String mimeType = null;
 
         if (httpBuilder.getUrlParameters() != null && !httpBuilder.getUrlParameters().isEmpty()) {
-            params = new HashMap<>();
-            params.putAll(httpBuilder.getUrlParameters());
+            params = new HashMap<>(httpBuilder.getUrlParameters());
         }
         for (int i = 0; i < annotations.length; i++) {
             Annotation[] annotationArr = annotations[i];
@@ -227,7 +234,7 @@ public class HttpAdapter {
                 if (params == null) params = new HashMap<>();
                 Object arg = args[i];
                 String key = ((Query) annotation).value();
-                params.put(key, arg);
+                params.put(key, String.valueOf(arg));
             } else if (annotation instanceof FormBody) {
                 formBody = args[i];
             }
@@ -279,27 +286,70 @@ public class HttpAdapter {
     }
 
     private Object createResult(Method method, Response response, Object requestTag) throws IOException {
-        Class<?> returnType = method.getReturnType();
-        if (returnType == void.class || response == null) return null;
+        if (response == null) return null;
         int responseCode = response.code();
+        HttpResponse httpResponse = new HttpResponse();
+        httpResponse.response = response;
 
-        QsHelper.getInstance().getApplication().onCommonHttpResponse(response);
-
-        if (responseCode < 200 || responseCode >= 300) {
+        if (responseCode >= 200 && responseCode < 300) {
+            Class<?> returnType = method.getReturnType();
+            if (returnType == void.class) {
+                QsHelper.getInstance().getApplication().onCommonHttpResponse(httpResponse);
+                response.close();
+                return null;
+            } else if (returnType.equals(Response.class)) {
+                QsHelper.getInstance().getApplication().onCommonHttpResponse(httpResponse);
+                return response;
+            } else {
+                ResponseBody body = response.body();
+                if (body == null) {
+                    throw new QsException(QsExceptionType.HTTP_ERROR, requestTag, "http response error... method:" + method.getName() + "  response body is null!!");
+                }
+                String jsonStr = getJsonFromBody(body, method.getName(), requestTag);
+                httpResponse.jsonStr = jsonStr;
+                QsHelper.getInstance().getApplication().onCommonHttpResponse(httpResponse);
+                response.close();
+                if (!TextUtils.isEmpty(httpResponse.jsonStr)) {
+                    return converter.jsonToObject(jsonStr, returnType);
+                }
+            }
+        } else {
+            QsHelper.getInstance().getApplication().onCommonHttpResponse(httpResponse);
             response.close();
             throw new QsException(QsExceptionType.HTTP_ERROR, requestTag, "http error... method:" + method.getName() + "  http response code = " + responseCode);
         }
-        if (returnType.equals(Response.class)) {
-            return response;
+        return null;
+    }
+
+    private String getJsonFromBody(ResponseBody body, String methodName, Object requestTag) throws IOException {
+        Charset charset = Charset.forName("UTF-8");
+        MediaType mediaType = body.contentType();
+        if (mediaType != null) {
+            charset = mediaType.charset(charset);
         }
-        ResponseBody body = response.body();
-        if (body == null) {
-            response.close();
-            throw new QsException(QsExceptionType.HTTP_ERROR, requestTag, "http response error... method:" + method.getName() + "  response body is null!!");
+        InputStream is = body.byteStream();
+        if (is != null && charset != null) {
+            InputStreamReader inputStreamReader = new InputStreamReader(is, charset);
+            BufferedReader bufferedReader = null;
+            try {
+                bufferedReader = new BufferedReader(inputStreamReader);
+                StringBuilder result = new StringBuilder();
+                String line;
+                while ((line = bufferedReader.readLine()) != null) {
+                    result.append(line).append("\n");
+                }
+                String json = result.toString();
+                L.i(TAG, "methodName:" + methodName + "  响应体 Json:" + result.toString());
+                return json;
+            } catch (JsonSyntaxException e1) {
+                throw new QsException(QsExceptionType.UNEXPECTED, requestTag, "数据解析错误");
+            } catch (JsonIOException e2) {
+                throw new QsException(QsExceptionType.UNEXPECTED, requestTag, "Json IO 错误");
+            } finally {
+                StreamCloseUtils.close(inputStreamReader, is, bufferedReader);
+            }
         }
-        Object result = converter.jsonFromBody(body, returnType, method.getName(), requestTag);
-        response.close();
-        return result;
+        return null;
     }
 
     @NonNull private StringBuilder getUrl(String terminal, String path, Method method, Object[] args, Object requestTag) {
