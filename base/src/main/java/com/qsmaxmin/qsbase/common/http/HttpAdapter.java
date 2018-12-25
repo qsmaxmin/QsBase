@@ -308,11 +308,15 @@ public class HttpAdapter {
                 if (body == null) {
                     throw new QsException(QsExceptionType.HTTP_ERROR, requestTag, "http response error... method:" + method.getName() + "  response body is null!!");
                 }
-                String jsonStr = getJsonFromBody(body, method.getName(), requestTag);
-                httpResponse.jsonStr = jsonStr;
                 QsHelper.getInstance().getApplication().onCommonHttpResponse(httpResponse);
+                String jsonStr;
+                if (httpResponse.decryptionBytes == null) {
+                    jsonStr = getJsonFromBody(body, method.getName(), requestTag);
+                } else {
+                    jsonStr = new String(httpResponse.decryptionBytes, getCharset(body));
+                }
                 response.close();
-                if (!TextUtils.isEmpty(httpResponse.jsonStr)) {
+                if (!TextUtils.isEmpty(jsonStr)) {
                     return converter.jsonToObject(jsonStr, returnType);
                 }
             }
@@ -325,13 +329,9 @@ public class HttpAdapter {
     }
 
     private String getJsonFromBody(ResponseBody body, String methodName, Object requestTag) throws IOException {
-        Charset charset = Charset.forName("UTF-8");
-        MediaType mediaType = body.contentType();
-        if (mediaType != null) {
-            charset = mediaType.charset(charset);
-        }
+        Charset charset = getCharset(body);
         InputStream is = body.byteStream();
-        if (is != null && charset != null) {
+        if (is != null) {
             InputStreamReader inputStreamReader = new InputStreamReader(is, charset);
             BufferedReader bufferedReader = null;
             try {
@@ -353,6 +353,16 @@ public class HttpAdapter {
             }
         }
         return null;
+    }
+
+    @NonNull private Charset getCharset(ResponseBody body) {
+        Charset charset = Charset.forName("UTF-8");
+        MediaType mediaType = body.contentType();
+        if (mediaType != null) {
+            Charset c = mediaType.charset(charset);
+            if (c != null) charset = c;
+        }
+        return charset;
     }
 
     @NonNull private StringBuilder getUrl(String terminal, String path, Method method, Object[] args, Object requestTag) {

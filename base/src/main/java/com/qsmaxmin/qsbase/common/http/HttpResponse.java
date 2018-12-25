@@ -8,9 +8,9 @@ import okhttp3.Response;
  * @Description
  */
 public class HttpResponse {
-     Response    response;
-     String      jsonStr;
-     HttpBuilder httpBuilder;
+    Response    response;
+    HttpBuilder httpBuilder;
+    byte[]      decryptionBytes;
 
     public HttpBuilder getHttpBuilder() {
         return httpBuilder;
@@ -20,11 +20,7 @@ public class HttpResponse {
         return response;
     }
 
-    public String getJsonStr() {
-        return jsonStr;
-    }
-
-    public void setJsonStr(String jsonStr) {
-        this.jsonStr = jsonStr;
+    public void setDecryptionBytes(byte[] decryptionBytes) {
+        this.decryptionBytes = decryptionBytes;
     }
 }
