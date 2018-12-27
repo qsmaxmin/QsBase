@@ -4,8 +4,6 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
-import com.google.gson.JsonIOException;
-import com.google.gson.JsonSyntaxException;
 import com.qsmaxmin.qsbase.common.aspect.Body;
 import com.qsmaxmin.qsbase.common.aspect.DELETE;
 import com.qsmaxmin.qsbase.common.aspect.FormBody;
@@ -287,7 +285,7 @@ public class HttpAdapter {
         }
     }
 
-    private Object createResult(Method method, Response response, Object requestTag, HttpBuilder httpBuilder) throws IOException {
+    private Object createResult(Method method, Response response, Object requestTag, HttpBuilder httpBuilder) {
         if (response == null) return null;
         int responseCode = response.code();
         HttpResponse httpResponse = new HttpResponse();
@@ -311,11 +309,14 @@ public class HttpAdapter {
                 QsHelper.getInstance().getApplication().onCommonHttpResponse(httpResponse);
                 String jsonStr;
                 if (httpResponse.decryptionBytes == null) {
-                    jsonStr = getJsonFromBody(body, method.getName(), requestTag);
+                    jsonStr = getJsonFromBody(body, requestTag);
                 } else {
                     jsonStr = new String(httpResponse.decryptionBytes, getCharset(body));
                 }
                 response.close();
+                if (QsHelper.getInstance().getApplication().isLogOpen()) {
+                    L.i(TAG, "methodName:" + method.getName() + "  响应体 Json:" + converter.formatJson(jsonStr));
+                }
                 if (!TextUtils.isEmpty(jsonStr)) {
                     return converter.jsonToObject(jsonStr, returnType);
                 }
@@ -328,7 +329,7 @@ public class HttpAdapter {
         return null;
     }
 
-    private String getJsonFromBody(ResponseBody body, String methodName, Object requestTag) throws IOException {
+    private String getJsonFromBody(ResponseBody body, Object requestTag) {
         Charset charset = getCharset(body);
         InputStream is = body.byteStream();
         if (is != null) {
@@ -341,13 +342,11 @@ public class HttpAdapter {
                 while ((line = bufferedReader.readLine()) != null) {
                     result.append(line).append("\n");
                 }
-                String json = result.toString();
-                L.i(TAG, "methodName:" + methodName + "  响应体 Json:" + result.toString());
-                return json;
-            } catch (JsonSyntaxException e1) {
-                throw new QsException(QsExceptionType.UNEXPECTED, requestTag, "数据解析错误");
-            } catch (JsonIOException e2) {
-                throw new QsException(QsExceptionType.UNEXPECTED, requestTag, "Json IO 错误");
+                return result.toString();
+            } catch (IOException e) {
+                throw new QsException(QsExceptionType.UNEXPECTED, requestTag, e.getMessage());
+            } catch (Exception e) {
+                throw new QsException(QsExceptionType.UNEXPECTED, requestTag, e.getMessage());
             } finally {
                 StreamCloseUtils.close(inputStreamReader, is, bufferedReader);
             }

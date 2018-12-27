@@ -88,4 +88,45 @@ class HttpConverter {
         }
         return builder.build();
     }
+
+    String formatJson(String s) {
+        if (TextUtils.isEmpty(s)) return null;
+        int level = 0;
+        StringBuilder builder = new StringBuilder();
+        for (int index = 0; index < s.length(); index++) {
+            char c = s.charAt(index);
+            if (level > 0 && '\n' == builder.charAt(builder.length() - 1)) {
+                builder.append(getLevelStr(level));
+            }
+            switch (c) {
+                case '{':
+                case '[':
+                    builder.append(c).append("\n");
+                    level++;
+                    break;
+                case ',':
+                    builder.append(c).append("\n");
+                    break;
+                case '}':
+                case ']':
+                    builder.append("\n");
+                    level--;
+                    builder.append(getLevelStr(level));
+                    builder.append(c);
+                    break;
+                default:
+                    builder.append(c);
+                    break;
+            }
+        }
+        return builder.toString();
+    }
+
+    private String getLevelStr(int level) {
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < level; i++) {
+            builder.append("\t");
+        }
+        return builder.toString();
+    }
 }
