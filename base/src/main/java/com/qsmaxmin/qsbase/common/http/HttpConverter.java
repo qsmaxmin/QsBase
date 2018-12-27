@@ -9,6 +9,7 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import okhttp3.FormBody;
 import okhttp3.MediaType;
@@ -89,12 +90,16 @@ class HttpConverter {
         return builder.build();
     }
 
-    String formatJson(String s) {
-        if (TextUtils.isEmpty(s)) return null;
+    /**
+     * 将json格式化输出
+     */
+    String formatJson(String sourceStr) {
+        if (TextUtils.isEmpty(sourceStr)) return null;
+        String str = unicodeToCn(sourceStr);
         int level = 0;
         StringBuilder builder = new StringBuilder();
-        for (int index = 0; index < s.length(); index++) {
-            char c = s.charAt(index);
+        for (int index = 0; index < str.length(); index++) {
+            char c = str.charAt(index);
             if (level > 0 && '\n' == builder.charAt(builder.length() - 1)) {
                 builder.append(getLevelStr(level));
             }
@@ -128,5 +133,46 @@ class HttpConverter {
             builder.append("\t");
         }
         return builder.toString();
+    }
+
+    /**
+     * 字符串中，所有以 \\u 开头的UNICODE字符串，全部替换成汉字
+     */
+    private String unicodeToCn(final String str) {
+        String singlePattern = "[0-9|a-f|A-F]";
+        String pattern = singlePattern + singlePattern + singlePattern + singlePattern;
+        StringBuilder sb = new StringBuilder();
+        int length = str.length();
+        for (int i = 0; i < length; ) {
+            String tmpStr = str.substring(i);
+            if (isStartWithUnicode(pattern, tmpStr)) { // 分支1
+                sb.append(unicodeToCnSingle(tmpStr));
+                i += 6;
+            } else {
+                sb.append(str, i, i + 1);
+                i++;
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * 字符串是否以Unicode字符开头。约定Unicode字符以 \\u开头。
+     */
+    private boolean isStartWithUnicode(String pattern, String str) {
+        if (TextUtils.isEmpty(str) || !str.startsWith("\\u") || str.length() < 6) {
+            return false;
+        }
+        String content = str.substring(2, 6);
+        return Pattern.matches(pattern, content);
+    }
+
+    /**
+     * 把'\\u'开头的单字转成汉字，如 \\u6B65 ->　步
+     */
+    private String unicodeToCnSingle(final String str) {
+        int code = Integer.decode("0x" + str.substring(2, 6));
+        char c = (char) code;
+        return String.valueOf(c);
     }
 }

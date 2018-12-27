@@ -315,7 +315,7 @@ public class HttpAdapter {
                 }
                 response.close();
                 if (QsHelper.getInstance().getApplication().isLogOpen()) {
-                    L.i(TAG, "methodName:" + method.getName() + "  响应体 Json:" + converter.formatJson(jsonStr));
+                    L.i(TAG, "methodName:" + method.getName() + "  响应体 Json:\n" + converter.formatJson(jsonStr));
                 }
                 if (!TextUtils.isEmpty(jsonStr)) {
                     return converter.jsonToObject(jsonStr, returnType);
