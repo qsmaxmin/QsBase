@@ -229,10 +229,12 @@ public class HttpAdapter {
                 if (TextUtils.isEmpty(mimeType)) throw new QsException(QsExceptionType.UNEXPECTED, requestTag, "request body exception...  method:" + method.getName() + "  the annotation @Body not have mimeType value");
                 break;
             } else if (annotation instanceof Query) {
-                if (paramsMap == null) paramsMap = new HashMap<>();
                 Object arg = args[i];
-                String key = ((Query) annotation).value();
-                paramsMap.put(key, String.valueOf(arg));
+                if (arg != null) {
+                    if (paramsMap == null) paramsMap = new HashMap<>();
+                    String key = ((Query) annotation).value();
+                    paramsMap.put(key, String.valueOf(arg));
+                }
             } else if (annotation instanceof FormBody) {
                 formBody = args[i];
             }
@@ -259,10 +261,8 @@ public class HttpAdapter {
             String uriQuery = uri.getQuery();
             for (String key : paramsMap.keySet()) {
                 Object value = paramsMap.get(key);
-                if (value != null) {
-                    url.append((i == 0 && TextUtils.isEmpty(uriQuery) && url.charAt(url.length() - 1) != '?') ? "?" : "&").append(key).append("=").append(String.valueOf(value));
-                    i++;
-                }
+                url.append((i == 0 && TextUtils.isEmpty(uriQuery) && url.charAt(url.length() - 1) != '?') ? "?" : "&").append(key).append("=").append(String.valueOf(value));
+                i++;
             }
         }
         Request.Builder requestBuilder = new Request.Builder();
