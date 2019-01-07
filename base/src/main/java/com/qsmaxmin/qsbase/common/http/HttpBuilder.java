@@ -62,13 +62,13 @@ public class HttpBuilder {
     }
 
     public HttpBuilder addUrlParameters(String key, String value) {
-        if (!TextUtils.isEmpty(key) && !TextUtils.isEmpty(value)) {
+        if (!TextUtils.isEmpty(key)) {
             if (urlParameters == null) {
                 synchronized (HttpBuilder.class) {
                     if (urlParameters == null) urlParameters = new HashMap<>();
                 }
             }
-            urlParameters.put(key, value);
+            urlParameters.put(key, value == null ? "" : value);
         }
         return this;
     }

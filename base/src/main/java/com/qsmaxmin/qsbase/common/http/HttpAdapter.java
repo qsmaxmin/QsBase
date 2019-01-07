@@ -230,11 +230,9 @@ public class HttpAdapter {
                 break;
             } else if (annotation instanceof Query) {
                 Object arg = args[i];
-                if (arg != null) {
-                    if (paramsMap == null) paramsMap = new HashMap<>();
-                    String key = ((Query) annotation).value();
-                    paramsMap.put(key, String.valueOf(arg));
-                }
+                if (paramsMap == null) paramsMap = new HashMap<>();
+                String key = ((Query) annotation).value();
+                paramsMap.put(key, arg == null ? "" : String.valueOf(arg));
             } else if (annotation instanceof FormBody) {
                 formBody = args[i];
             }
@@ -260,8 +258,8 @@ public class HttpAdapter {
             Uri uri = Uri.parse(url.toString());
             String uriQuery = uri.getQuery();
             for (String key : paramsMap.keySet()) {
-                Object value = paramsMap.get(key);
-                url.append((i == 0 && TextUtils.isEmpty(uriQuery) && url.charAt(url.length() - 1) != '?') ? "?" : "&").append(key).append("=").append(String.valueOf(value));
+                String value = paramsMap.get(key);
+                url.append((i == 0 && TextUtils.isEmpty(uriQuery) && url.charAt(url.length() - 1) != '?') ? "?" : "&").append(key).append("=").append(value);
                 i++;
             }
         }
