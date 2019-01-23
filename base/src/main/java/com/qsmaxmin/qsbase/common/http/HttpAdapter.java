@@ -302,6 +302,7 @@ public class HttpAdapter {
             } else {
                 ResponseBody body = response.body();
                 if (body == null) {
+                    response.close();
                     throw new QsException(QsExceptionType.HTTP_ERROR, requestTag, "http response error... method:" + method.getName() + "  response body is null!!");
                 }
                 QsHelper.getInstance().getApplication().onCommonHttpResponse(httpResponse);
