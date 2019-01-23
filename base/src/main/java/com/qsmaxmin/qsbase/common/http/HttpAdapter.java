@@ -305,12 +305,7 @@ public class HttpAdapter {
                     throw new QsException(QsExceptionType.HTTP_ERROR, requestTag, "http response error... method:" + method.getName() + "  response body is null!!");
                 }
                 QsHelper.getInstance().getApplication().onCommonHttpResponse(httpResponse);
-                String jsonStr;
-                if (httpResponse.decryptionBytes == null) {
-                    jsonStr = getJsonFromBody(body, requestTag);
-                } else {
-                    jsonStr = new String(httpResponse.decryptionBytes, getCharset(body));
-                }
+                String jsonStr = httpResponse.getJsonString();
                 response.close();
                 if (QsHelper.getInstance().getApplication().isLogOpen()) {
                     L.i(TAG, "methodName:" + method.getName() + "  响应体 Json:\n" + converter.formatJson(jsonStr));

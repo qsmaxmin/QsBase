@@ -1,6 +1,20 @@
 package com.qsmaxmin.qsbase.common.http;
 
+import android.support.annotation.NonNull;
+
+import com.qsmaxmin.qsbase.common.exception.QsException;
+import com.qsmaxmin.qsbase.common.exception.QsExceptionType;
+import com.qsmaxmin.qsbase.common.utils.StreamCloseUtils;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+
+import okhttp3.MediaType;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 /**
  * @CreateBy qsmaxmin
@@ -10,7 +24,7 @@ import okhttp3.Response;
 public class HttpResponse {
     Response    response;
     HttpBuilder httpBuilder;
-    byte[]      decryptionBytes;
+    private DecryptionProvider decryptionProvider;
 
     public HttpBuilder getHttpBuilder() {
         return httpBuilder;
@@ -20,7 +34,69 @@ public class HttpResponse {
         return response;
     }
 
-    public void setDecryptionBytes(byte[] decryptionBytes) {
-        this.decryptionBytes = decryptionBytes;
+    /**
+     * 向响应体提供解密对象
+     */
+    public void registerDecription(DecryptionProvider provider) {
+        this.decryptionProvider = provider;
+    }
+
+    String getJsonString() {
+        if (decryptionProvider != null) {
+            try {
+                ResponseBody body = response.body();
+                if (body != null) {
+                    byte[] decryptionBytes = decryptionProvider.decryption(body.bytes());
+                    return new String(decryptionBytes, getCharset(body));
+                } else {
+                    return null;
+                }
+            } catch (IOException e) {
+                throw new QsException(QsExceptionType.HTTP_ERROR, httpBuilder.getRequestTag(), e.getMessage());
+            } catch (Exception e) {
+                throw new QsException(QsExceptionType.HTTP_ERROR, httpBuilder.getRequestTag(), e.getMessage());
+            }
+        } else {
+            return getJsonFromBody(response.body(), httpBuilder.getRequestTag());
+        }
+    }
+
+    public interface DecryptionProvider {
+        byte[] decryption(byte[] secretBytes);
+    }
+
+    private String getJsonFromBody(ResponseBody body, Object requestTag) {
+        Charset charset = getCharset(body);
+        InputStream is = body.byteStream();
+        if (is != null) {
+            InputStreamReader inputStreamReader = new InputStreamReader(is, charset);
+            BufferedReader bufferedReader = null;
+            try {
+                bufferedReader = new BufferedReader(inputStreamReader);
+                StringBuilder result = new StringBuilder();
+                String line;
+                while ((line = bufferedReader.readLine()) != null) {
+                    result.append(line).append("\n");
+                }
+                return result.toString();
+            } catch (IOException e) {
+                throw new QsException(QsExceptionType.UNEXPECTED, requestTag, e.getMessage());
+            } catch (Exception e) {
+                throw new QsException(QsExceptionType.UNEXPECTED, requestTag, e.getMessage());
+            } finally {
+                StreamCloseUtils.close(inputStreamReader, is, bufferedReader);
+            }
+        }
+        return null;
+    }
+
+    @NonNull private Charset getCharset(ResponseBody body) {
+        Charset charset = Charset.forName("UTF-8");
+        MediaType mediaType = body.contentType();
+        if (mediaType != null) {
+            Charset c = mediaType.charset(charset);
+            if (c != null) charset = c;
+        }
+        return charset;
     }
 }
