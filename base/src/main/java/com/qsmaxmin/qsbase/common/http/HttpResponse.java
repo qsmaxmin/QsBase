@@ -37,7 +37,7 @@ public class HttpResponse {
     /**
      * 向响应体提供解密对象
      */
-    public void registerDecription(DecryptionProvider provider) {
+    public void registerDecriptionProvider(DecryptionProvider provider) {
         this.decryptionProvider = provider;
     }
 
@@ -59,10 +59,6 @@ public class HttpResponse {
         } else {
             return getJsonFromBody(response.body(), httpBuilder.getRequestTag());
         }
-    }
-
-    public interface DecryptionProvider {
-        byte[] decryption(byte[] secretBytes);
     }
 
     private String getJsonFromBody(ResponseBody body, Object requestTag) {
@@ -98,5 +94,12 @@ public class HttpResponse {
             if (c != null) charset = c;
         }
         return charset;
+    }
+
+    /**
+     * 解密提供者
+     */
+    public interface DecryptionProvider {
+        byte[] decryption(byte[] secretBytes);
     }
 }
