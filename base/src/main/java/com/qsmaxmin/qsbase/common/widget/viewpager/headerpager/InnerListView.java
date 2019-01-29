@@ -13,9 +13,9 @@ import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
-import android.widget.ListView;
 
 import com.qsmaxmin.qsbase.R;
+import com.qsmaxmin.qsbase.common.widget.listview.QsListView;
 import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.base.InnerScroller;
 import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.base.OuterScroller;
 import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.help.InnerSpecialViewHelper;
@@ -30,7 +30,7 @@ import java.util.List;
  * @Date 16/11/20  下午7:21
  * @Description ListView in Fragment in ViewPager of MagicHeaderViewPager.
  */
-public class InnerListView extends ListView implements InnerScroller, AbsListView.OnScrollListener {
+public class InnerListView extends QsListView implements InnerScroller, AbsListView.OnScrollListener {
 
     public static final    String          TAG                            = "InnerListView";
     private                IntegerVariable mEmptyHeaderHeight             = new IntegerVariable(0);
@@ -197,7 +197,7 @@ public class InnerListView extends ListView implements InnerScroller, AbsListVie
     }
 
     protected OuterScroller mOuterScroller;
-    private int mIndex = -1;
+    private   int           mIndex = -1;
 
     @Override public OuterScroller getOuterScroller() {
         return mOuterScroller;
@@ -714,8 +714,8 @@ public class InnerListView extends ListView implements InnerScroller, AbsListVie
 
     private static final int INVALID_RESULT = -1;
     // Their value will be update before use every time, so no need to clear them.
-    private int old_FirstVisiblePosition;
-    private int old_LastVisiblePosition;
+    private              int old_FirstVisiblePosition;
+    private              int old_LastVisiblePosition;
 
     /**
      * Get ListView pixel scrollY
