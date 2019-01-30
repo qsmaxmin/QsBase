@@ -78,7 +78,7 @@ public abstract class QsApplication extends Application {
      *                {@link HttpBuilder#getFormBody()} ()} ()}获取请求表单对象
      *                ......
      */
-    public abstract void initHttpAdapter(HttpBuilder builder);
+    public abstract void initHttpAdapter(HttpBuilder builder) throws Exception;
 
     public void onCommonHttpResponse(HttpResponse response) {
     }

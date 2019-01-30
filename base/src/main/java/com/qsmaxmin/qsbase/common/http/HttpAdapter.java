@@ -90,7 +90,7 @@ public class HttpAdapter {
         }
     }
 
-    private HttpBuilder getHttpBuilder(Object requestTag, String terminal, String path, Object[] args, String requestType, Object body, Object formBody, HashMap<String, String> paramsMap) {
+    private HttpBuilder getHttpBuilder(Object requestTag, String terminal, String path, Object[] args, String requestType, Object body, Object formBody, HashMap<String, String> paramsMap) throws Exception {
         HttpBuilder httpBuilder = new HttpBuilder(requestTag, terminal, path, args, requestType, body, formBody, paramsMap);
         QsHelper.getInstance().getApplication().initHttpAdapter(httpBuilder);
         return httpBuilder;
@@ -230,7 +230,12 @@ public class HttpAdapter {
             }
         }
 
-        HttpBuilder httpBuilder = getHttpBuilder(requestTag, terminal, path, args, requestType, body, formBody, paramsMap);
+        HttpBuilder httpBuilder;
+        try {
+            httpBuilder = getHttpBuilder(requestTag, terminal, path, args, requestType, body, formBody, paramsMap);
+        } catch (Exception e) {
+            throw new QsException(QsExceptionType.UNEXPECTED, "http 公共处理逻辑出错", "error:" + e.getMessage());
+        }
         StringBuilder url = getUrl(httpBuilder.getTerminal(), path, method, args, requestTag);
         if (TextUtils.isEmpty(url)) throw new QsException(QsExceptionType.UNEXPECTED, requestTag, "url error... method:" + method.getName() + "  request url is null...");
         paramsMap = httpBuilder.getUrlParameters();

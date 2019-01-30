@@ -5,7 +5,6 @@ import android.text.TextUtils;
 import com.google.gson.Gson;
 import com.qsmaxmin.qsbase.common.log.L;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -54,7 +53,7 @@ class HttpConverter {
         return RequestBody.create(MediaType.parse(mimeType), bytes);
     }
 
-    RequestBody stringToFormBody(String methodName, Object formBody) throws JSONException {
+    RequestBody stringToFormBody(String methodName, Object formBody) throws Exception {
         L.i(TAG, "methodName:" + methodName + "  提交表单:" + formBody.getClass().getSimpleName());
         FormBody.Builder builder = new FormBody.Builder();
         if (formBody instanceof Map) {
@@ -77,15 +76,11 @@ class HttpConverter {
         } else {
             Field[] fieldArr = formBody.getClass().getFields();
             if (fieldArr != null && fieldArr.length > 0) {
-                try {
-                    for (Field field : fieldArr) {
-                        Object value = field.get(formBody);
-                        if (value != null) {
-                            builder.add(field.getName(), String.valueOf(value));
-                        }
+                for (Field field : fieldArr) {
+                    Object value = field.get(formBody);
+                    if (value != null) {
+                        builder.add(field.getName(), String.valueOf(value));
                     }
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
                 }
             }
         }
