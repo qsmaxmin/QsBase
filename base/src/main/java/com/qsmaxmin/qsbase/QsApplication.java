@@ -72,6 +72,8 @@ public abstract class QsApplication extends Application {
      *                {@link HttpBuilder#getPath()}获取路径
      *                {@link HttpBuilder#getHeaderBuilder()} ()}获取header
      *                {@link HttpBuilder#getTerminal()} ()}获取主机地址
+     *                {@link HttpBuilder#getUrlParameters()} ()}获取url参数
+     *                {@link HttpBuilder#getRequestTag()} ()} ()}获取请求tag
      */
     public abstract void initHttpAdapter(HttpBuilder builder);
 

@@ -90,8 +90,8 @@ public class HttpAdapter {
         }
     }
 
-    private HttpBuilder getHttpBuilder(Object requestTag, String path, Object[] args, String requestType) {
-        HttpBuilder httpBuilder = new HttpBuilder(requestTag, path, args, requestType);
+    private HttpBuilder getHttpBuilder(Object requestTag, String terminal, String path, Object[] args, String requestType, Object body, Object formBody, HashMap<String, String> paramsMap) {
+        HttpBuilder httpBuilder = new HttpBuilder(requestTag, terminal, path, args, requestType, body, formBody, paramsMap);
         QsHelper.getInstance().getApplication().initHttpAdapter(httpBuilder);
         return httpBuilder;
     }
@@ -206,20 +206,12 @@ public class HttpAdapter {
 
         checkParamsAnnotation(annotations, args, method.getName(), requestTag);
 
-        HttpBuilder httpBuilder = getHttpBuilder(requestTag, path, args, requestType);
-        if (!TextUtils.isEmpty(terminal)) httpBuilder.setTerminal(terminal);
-        StringBuilder url = getUrl(httpBuilder.getTerminal(), path, method, args, requestTag);
-        if (TextUtils.isEmpty(url)) throw new QsException(QsExceptionType.UNEXPECTED, requestTag, "url error... method:" + method.getName() + "  request url is null...");
-
         RequestBody requestBody = null;
         Object body = null;
         Object formBody = null;
         HashMap<String, String> paramsMap = null;
         String mimeType = null;
 
-        if (httpBuilder.getUrlParameters() != null && !httpBuilder.getUrlParameters().isEmpty()) {
-            paramsMap = new HashMap<>(httpBuilder.getUrlParameters());
-        }
         for (int i = 0; i < annotations.length; i++) {
             Annotation[] annotationArr = annotations[i];
             Annotation annotation = annotationArr[0];
@@ -237,6 +229,12 @@ public class HttpAdapter {
                 formBody = args[i];
             }
         }
+
+        HttpBuilder httpBuilder = getHttpBuilder(requestTag, terminal, path, args, requestType, body, formBody, paramsMap);
+        StringBuilder url = getUrl(httpBuilder.getTerminal(), path, method, args, requestTag);
+        if (TextUtils.isEmpty(url)) throw new QsException(QsExceptionType.UNEXPECTED, requestTag, "url error... method:" + method.getName() + "  request url is null...");
+        paramsMap = httpBuilder.getUrlParameters();
+
         if ((!"GET".equals(requestType)) && (!"HEAD".equals(requestType))) {
             if (body != null) {
                 if (body instanceof String) {
@@ -249,7 +247,11 @@ public class HttpAdapter {
                     requestBody = converter.jsonToBody(method.getName(), mimeType, body, body.getClass());
                 }
             } else if (formBody != null) {
-                requestBody = converter.stringToFormBody(method.getName(), formBody);
+                try {
+                    requestBody = converter.stringToFormBody(method.getName(), formBody);
+                } catch (Exception e) {
+                    throw new QsException(QsExceptionType.UNEXPECTED, requestTag, "String to FormBody exception... method:" + method.getName() + e.getMessage());
+                }
             }
         }
 
