@@ -234,6 +234,8 @@ public class HttpAdapter {
         StringBuilder url = getUrl(httpBuilder.getTerminal(), path, method, args, requestTag);
         if (TextUtils.isEmpty(url)) throw new QsException(QsExceptionType.UNEXPECTED, requestTag, "url error... method:" + method.getName() + "  request url is null...");
         paramsMap = httpBuilder.getUrlParameters();
+        formBody = httpBuilder.getFormBody();
+        body = httpBuilder.getBody();
 
         if ((!"GET".equals(requestType)) && (!"HEAD".equals(requestType))) {
             if (body != null) {
