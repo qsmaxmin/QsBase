@@ -22,14 +22,14 @@ public class HttpBuilder {
     private final Object[]                args;
     private final String                  requestType;
     private       Object                  body;
-    private       Object                  formBody;
+    private       HashMap<String, String> formBody;
     private       HashMap<String, String> paramsMap;
 
 
     private Headers.Builder headerBuilder = new Headers.Builder();
 
 
-    HttpBuilder(Object requestTag, String terminal, String path, Object[] args, String requestType, Object body, Object formBody, HashMap<String, String> paramsMap) {
+    HttpBuilder(Object requestTag, String terminal, String path, Object[] args, String requestType, Object body, HashMap<String, String> formBody, HashMap<String, String> paramsMap) {
         this.requestTag = requestTag;
         this.terminal = terminal;
         this.path = path;
@@ -104,7 +104,7 @@ public class HttpBuilder {
         return body;
     }
 
-    public Object getFormBody() {
+    public HashMap<String, String> getFormBody() {
         return formBody;
     }
 
@@ -113,7 +113,7 @@ public class HttpBuilder {
         return this;
     }
 
-    public HttpBuilder setFormBody(Object formBody) {
+    public HttpBuilder setFormBody(HashMap<String, String> formBody) {
         this.formBody = formBody;
         return this;
     }

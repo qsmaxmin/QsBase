@@ -10,10 +10,10 @@ import org.json.JSONObject;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import okhttp3.FormBody;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 
@@ -53,38 +53,40 @@ class HttpConverter {
         return RequestBody.create(MediaType.parse(mimeType), bytes);
     }
 
-    RequestBody stringToFormBody(String methodName, Object formBody) throws Exception {
-        L.i(TAG, "methodName:" + methodName + "  提交表单:" + formBody.getClass().getSimpleName());
-        FormBody.Builder builder = new FormBody.Builder();
+    HashMap<String, String> parseFormBody(String methodName, Object formBody) throws Exception {
+        HashMap<String, String> map = new HashMap<>();
         if (formBody instanceof Map) {
+            L.i(TAG, "methodName:" + methodName + "  FormBody类型为Map，将key和value映射到表单");
             Map dataMap = (Map) formBody;
             for (Object key : dataMap.keySet()) {
                 String keyStr = String.valueOf(key);
                 String valueStr = String.valueOf(dataMap.get(key));
-                if (!TextUtils.isEmpty(keyStr) && !TextUtils.isEmpty(valueStr)) builder.add(keyStr, valueStr);
+                if (!TextUtils.isEmpty(keyStr) && !TextUtils.isEmpty(valueStr)) map.put(keyStr, valueStr);
             }
         } else if (formBody instanceof String) {
+            L.i(TAG, "methodName:" + methodName + "  FormBody类型为String，尝试解析成Json格式（非Json格式不支持）");
             JSONObject jsonObject = new JSONObject((String) formBody);
             while (jsonObject.keys().hasNext()) {
                 String key = jsonObject.keys().next();
                 Object value = jsonObject.get(key);
                 if (key != null && value != null) {
-                    builder.add(key, String.valueOf(value));
+                    map.put(key, String.valueOf(value));
                 }
             }
 
         } else {
+            L.i(TAG, "methodName:" + methodName + "  FormBody类型为Object，尝试通过反射获取表单数据");
             Field[] fieldArr = formBody.getClass().getFields();
             if (fieldArr != null && fieldArr.length > 0) {
                 for (Field field : fieldArr) {
                     Object value = field.get(formBody);
                     if (value != null) {
-                        builder.add(field.getName(), String.valueOf(value));
+                        map.put(field.getName(), String.valueOf(value));
                     }
                 }
             }
         }
-        return builder.build();
+        return map;
     }
 
     /**

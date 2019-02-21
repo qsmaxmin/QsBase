@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import com.qsmaxmin.qsbase.common.aspect.Body;
 import com.qsmaxmin.qsbase.common.aspect.DELETE;
 import com.qsmaxmin.qsbase.common.aspect.FormBody;
+import com.qsmaxmin.qsbase.common.aspect.FormParam;
 import com.qsmaxmin.qsbase.common.aspect.GET;
 import com.qsmaxmin.qsbase.common.aspect.HEAD;
 import com.qsmaxmin.qsbase.common.aspect.PATCH;
@@ -90,7 +91,7 @@ public class HttpAdapter {
         }
     }
 
-    private HttpBuilder getHttpBuilder(Object requestTag, String terminal, String path, Object[] args, String requestType, Object body, Object formBody, HashMap<String, String> paramsMap) throws Exception {
+    private HttpBuilder getHttpBuilder(Object requestTag, String terminal, String path, Object[] args, String requestType, Object body, HashMap<String, String> formBody, HashMap<String, String> paramsMap) throws Exception {
         HttpBuilder httpBuilder = new HttpBuilder(requestTag, terminal, path, args, requestType, body, formBody, paramsMap);
         QsHelper.getInstance().getApplication().initHttpAdapter(httpBuilder);
         return httpBuilder;
@@ -208,7 +209,7 @@ public class HttpAdapter {
 
         RequestBody requestBody = null;
         Object body = null;
-        Object formBody = null;
+        HashMap<String, String> formMap = null;
         HashMap<String, String> paramsMap = null;
         String mimeType = null;
 
@@ -226,20 +227,39 @@ public class HttpAdapter {
                 String key = ((Query) annotation).value();
                 paramsMap.put(key, arg == null ? "" : String.valueOf(arg));
             } else if (annotation instanceof FormBody) {
-                formBody = args[i];
+                Object formBody = args[i];
+                if (formBody != null) {
+                    try {
+                        HashMap<String, String> map = converter.parseFormBody(method.getName(), formBody);
+                        if (formMap == null) {
+                            formMap = new HashMap<>(map);
+                        } else {
+                            formMap.putAll(map);
+                        }
+                    } catch (Exception e) {
+                        throw new QsException(QsExceptionType.UNEXPECTED, requestTag, "method:" + method.getName() + " message:" + e.getMessage());
+                    }
+                }
+            } else if (annotation instanceof FormParam) {
+                Object arg = args[i];
+                if (arg != null && !TextUtils.isEmpty(String.valueOf(arg))) {
+                    String key = ((FormParam) annotation).value();
+                    if (formMap == null) formMap = new HashMap<>();
+                    formMap.put(key, String.valueOf(arg));
+                }
             }
         }
 
         HttpBuilder httpBuilder;
         try {
-            httpBuilder = getHttpBuilder(requestTag, terminal, path, args, requestType, body, formBody, paramsMap);
+            httpBuilder = getHttpBuilder(requestTag, terminal, path, args, requestType, body, formMap, paramsMap);
         } catch (Exception e) {
             throw new QsException(QsExceptionType.UNEXPECTED, "http 公共处理逻辑出错", "error:" + e.getMessage());
         }
         StringBuilder url = getUrl(httpBuilder.getTerminal(), path, method, args, requestTag);
         if (TextUtils.isEmpty(url)) throw new QsException(QsExceptionType.UNEXPECTED, requestTag, "url error... method:" + method.getName() + "  request url is null...");
         paramsMap = httpBuilder.getUrlParameters();
-        formBody = httpBuilder.getFormBody();
+        formMap = httpBuilder.getFormBody();
         body = httpBuilder.getBody();
 
         if ((!"GET".equals(requestType)) && (!"HEAD".equals(requestType))) {
@@ -253,12 +273,13 @@ public class HttpAdapter {
                 } else {
                     requestBody = converter.jsonToBody(method.getName(), mimeType, body, body.getClass());
                 }
-            } else if (formBody != null) {
-                try {
-                    requestBody = converter.stringToFormBody(method.getName(), formBody);
-                } catch (Exception e) {
-                    throw new QsException(QsExceptionType.UNEXPECTED, requestTag, "String to FormBody exception... method:" + method.getName() + e.getMessage());
+            } else if (formMap != null) {
+                okhttp3.FormBody.Builder builder = new okhttp3.FormBody.Builder();
+                for (String key : formMap.keySet()) {
+                    String valueStr = formMap.get(key);
+                    if (!TextUtils.isEmpty(key) && !TextUtils.isEmpty(valueStr)) builder.add(key, valueStr);
                 }
+                requestBody = builder.build();
             }
         }
 
