@@ -285,8 +285,8 @@ public class HttpAdapter {
         requestBuilder.headers(httpBuilder.getHeaderBuilder().build());
         if (requestTag != null) requestBuilder.tag(requestTag);
         L.i(TAG, "method:" + method.getName() + "  http request url:" + url.toString());
-        Request request = requestBuilder.url(url.toString()).method(requestType, requestBody).build();
         try {
+            Request request = requestBuilder.url(url.toString()).method(requestType, requestBody).build();
             if (QsHelper.getInstance().isNetworkAvailable()) {
                 Call call = client.newCall(request);
                 Response response = call.execute();
