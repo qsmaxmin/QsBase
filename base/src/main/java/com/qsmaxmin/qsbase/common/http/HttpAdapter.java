@@ -203,7 +203,7 @@ public class HttpAdapter {
 
         RequestBody requestBody = null;
         Object body = null;
-        HashMap<String, String> formMap = null;
+        HashMap<String, String> formMap = new HashMap<>();
         HashMap<String, String> paramsMap = null;
         String mimeType = null;
 
@@ -224,12 +224,7 @@ public class HttpAdapter {
                 Object formBody = args[i];
                 if (formBody != null) {
                     try {
-                        HashMap<String, String> map = converter.parseFormBody(method.getName(), formBody);
-                        if (formMap == null) {
-                            formMap = new HashMap<>(map);
-                        } else {
-                            formMap.putAll(map);
-                        }
+                        converter.parseFormBody(formMap, method.getName(), formBody);
                     } catch (Exception e) {
                         throw new QsException(QsExceptionType.UNEXPECTED, requestTag, "method:" + method.getName() + " message:" + e.getMessage());
                     }
@@ -238,7 +233,6 @@ public class HttpAdapter {
                 Object arg = args[i];
                 if (arg != null && !TextUtils.isEmpty(String.valueOf(arg))) {
                     String key = ((FormParam) annotation).value();
-                    if (formMap == null) formMap = new HashMap<>();
                     formMap.put(key, String.valueOf(arg));
                 }
             }
