@@ -21,24 +21,18 @@ import com.qsmaxmin.qsbase.common.exception.QsExceptionType;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.proxy.HttpHandler;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
-import com.qsmaxmin.qsbase.common.utils.StreamCloseUtils;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import okhttp3.Dispatcher;
-import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -350,41 +344,6 @@ public class HttpAdapter {
             throw new QsException(QsExceptionType.HTTP_ERROR, requestTag, "http error... method:" + method.getName() + "  http response code = " + responseCode);
         }
         return null;
-    }
-
-    private String getJsonFromBody(ResponseBody body, Object requestTag) {
-        Charset charset = getCharset(body);
-        InputStream is = body.byteStream();
-        if (is != null) {
-            InputStreamReader inputStreamReader = new InputStreamReader(is, charset);
-            BufferedReader bufferedReader = null;
-            try {
-                bufferedReader = new BufferedReader(inputStreamReader);
-                StringBuilder result = new StringBuilder();
-                String line;
-                while ((line = bufferedReader.readLine()) != null) {
-                    result.append(line).append("\n");
-                }
-                return result.toString();
-            } catch (IOException e) {
-                throw new QsException(QsExceptionType.UNEXPECTED, requestTag, e.getMessage());
-            } catch (Exception e) {
-                throw new QsException(QsExceptionType.UNEXPECTED, requestTag, e.getMessage());
-            } finally {
-                StreamCloseUtils.close(inputStreamReader, is, bufferedReader);
-            }
-        }
-        return null;
-    }
-
-    @NonNull private Charset getCharset(ResponseBody body) {
-        Charset charset = Charset.forName("UTF-8");
-        MediaType mediaType = body.contentType();
-        if (mediaType != null) {
-            Charset c = mediaType.charset(charset);
-            if (c != null) charset = c;
-        }
-        return charset;
     }
 
     @NonNull private StringBuilder getUrl(String terminal, String path, Method method, Object[] args, Object requestTag) {
