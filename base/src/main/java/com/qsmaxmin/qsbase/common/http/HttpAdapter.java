@@ -204,7 +204,7 @@ public class HttpAdapter {
         RequestBody requestBody = null;
         Object body = null;
         HashMap<String, String> formMap = new HashMap<>();
-        HashMap<String, String> paramsMap = null;
+        HashMap<String, String> paramsMap = new HashMap<>();
         String mimeType = null;
 
         for (int i = 0; i < annotations.length; i++) {
@@ -217,7 +217,6 @@ public class HttpAdapter {
                 break;
             } else if (annotation instanceof Query) {
                 Object arg = args[i];
-                if (paramsMap == null) paramsMap = new HashMap<>();
                 String key = ((Query) annotation).value();
                 paramsMap.put(key, arg == null ? "" : String.valueOf(arg));
             } else if (annotation instanceof FormBody) {
