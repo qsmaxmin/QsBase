@@ -67,7 +67,7 @@ public abstract class QsPullRecyclerFragment<P extends QsPresenter, D> extends Q
         } else {
             mPtrFrameLayout = view.findViewById(R.id.swipe_container);
         }
-        if (mPtrFrameLayout == null) throw new RuntimeException("PtrFrameLayout is not exit or its id not 'R.id.swipe_container' in current layout!!");
+        if (mPtrFrameLayout == null) throw new RuntimeException("PtrFrameLayout is not exist or its id not 'R.id.swipe_container' in current layout!!");
         PtrUIHandler handlerView = getPtrUIHandlerView();
         mPtrFrameLayout.setHeaderView((View) handlerView);
         mPtrFrameLayout.addPtrUIHandler(handlerView);
