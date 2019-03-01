@@ -320,9 +320,12 @@ public class ImageHelper {
             }
         }
 
-
         public Bitmap getBitmap(Object object) {
             return getBitmap(object, Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL, false);
+        }
+
+        public Bitmap getBitmap(Object object, boolean ignoreParamsKey) {
+            return getBitmap(object, Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL, ignoreParamsKey);
         }
 
         public Bitmap getBitmap(Object object, int width, int height) {
@@ -348,6 +351,10 @@ public class ImageHelper {
 
         public Drawable getDrawable(Object object) {
             return getDrawable(object, Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL, false);
+        }
+
+        public Drawable getDrawable(Object object, boolean ignoreParamsKey) {
+            return getDrawable(object, Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL, ignoreParamsKey);
         }
 
         public Drawable getDrawable(Object object, int width, int height) {
