@@ -168,8 +168,7 @@ public class ImageHelper {
         public Builder load(String url, boolean ignoreParamsKey) {
             if (TextUtils.isEmpty(url)) return this;
             if (ignoreParamsKey) {
-                Uri uri = Uri.parse(url);
-                String urlWithoutKey = uri.getScheme() + "://" + uri.getHost() + uri.getPath();
+                String urlWithoutKey = filterOutUrlParams(url);
                 return load(url, urlWithoutKey);
             } else {
                 return load(url, url);
@@ -323,15 +322,19 @@ public class ImageHelper {
 
 
         public Bitmap getBitmap(Object object) {
-            return getBitmap(object, Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL);
+            return getBitmap(object, Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL, false);
         }
 
         public Bitmap getBitmap(Object object, int width, int height) {
+            return getBitmap(object, width, height, false);
+        }
+
+        public Bitmap getBitmap(Object object, int width, int height, boolean ignoreParamsKey) {
             if (object == null) return null;
             onLoadImageBefore(this);
             if (object instanceof String) {
                 String url = (String) object;
-                object = createGlideUrl(url, url);
+                object = createGlideUrl(url, ignoreParamsKey ? filterOutUrlParams(url) : url);
             }
             RequestBuilder<Bitmap> requestBuilder = setRequestOptionsIfNeed(manager.asBitmap());
             FutureTarget<Bitmap> submit = requestBuilder.load(object).submit(width, height);
@@ -344,15 +347,19 @@ public class ImageHelper {
         }
 
         public Drawable getDrawable(Object object) {
-            return getDrawable(object, Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL);
+            return getDrawable(object, Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL, false);
         }
 
         public Drawable getDrawable(Object object, int width, int height) {
+            return getDrawable(object, width, height, false);
+        }
+
+        public Drawable getDrawable(Object object, int width, int height, boolean ignoreParamsKey) {
             if (object == null) return null;
             onLoadImageBefore(this);
             if (object instanceof String) {
                 String url = (String) object;
-                object = createGlideUrl(url, url);
+                object = createGlideUrl(url, ignoreParamsKey ? filterOutUrlParams(url) : url);
             }
             RequestBuilder<Drawable> requestBuilder = setRequestOptionsIfNeed(manager.asDrawable());
             FutureTarget<Drawable> submit = requestBuilder.load(object).submit(width, height);
@@ -364,16 +371,22 @@ public class ImageHelper {
             return null;
         }
 
-
         public File getImageFile(String url) {
-            return getImageFile(url, Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL);
+            return getImageFile(url, Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL, false);
+        }
+
+        public File getImageFile(String url, boolean ignoreParamsKey) {
+            return getImageFile(url, Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL, ignoreParamsKey);
         }
 
         public File getImageFile(String url, int width, int height) {
+            return getImageFile(url, width, height, false);
+        }
+
+        public File getImageFile(String url, int width, int height, boolean ignoreParamsKey) {
             if (TextUtils.isEmpty(url)) return null;
             onLoadImageBefore(this);
-            QsGlideUrl object = createGlideUrl(url, url);
-
+            QsGlideUrl object = createGlideUrl(url, ignoreParamsKey ? filterOutUrlParams(url) : url);
             RequestBuilder<File> requestBuilder = setRequestOptionsIfNeed(manager.asFile());
             FutureTarget<File> submit = requestBuilder.load(object).submit(width, height);
             try {
@@ -491,6 +504,11 @@ public class ImageHelper {
             qsGlideUrl.setCacheKey(cacheKey);
             return qsGlideUrl;
         }
+    }
+
+    @NonNull private String filterOutUrlParams(String url) {
+        Uri uri = Uri.parse(url);
+        return uri.getScheme() + "://" + uri.getHost() + uri.getPath();
     }
 
     private void onLoadImageBefore(Builder builder) {
