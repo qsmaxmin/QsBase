@@ -522,16 +522,16 @@ public class ImageHelper {
         void onSuccess(Drawable drawable, Object model);
     }
 
-    public class QsGlideUrl extends GlideUrl {
+    public static class QsGlideUrl extends GlideUrl {
         private final String url;
         private       String cacheKey;
 
-        QsGlideUrl(String url) {
+        public QsGlideUrl(String url) {
             super(url);
             this.url = url;
         }
 
-        QsGlideUrl(String url, Headers headers) {
+        public QsGlideUrl(String url, Headers headers) {
             super(url, headers);
             this.url = url;
         }
