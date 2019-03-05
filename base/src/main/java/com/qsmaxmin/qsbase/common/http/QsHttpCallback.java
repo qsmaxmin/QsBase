@@ -36,5 +36,5 @@ public interface QsHttpCallback {
      *
      * @param result 响应体映射成的实体
      */
-    void onResult(Object result) throws Exception;
+    void onResult(HttpBuilder builder, Object result) throws Exception;
 }

@@ -294,9 +294,7 @@ public class HttpAdapter {
             Request request = requestBuilder.url(url.toString()).method(requestType, requestBody).build();
             Call call = client.newCall(request);
             Response response = call.execute();
-            Object result = createResult(method, response, requestTag, httpBuilder);
-            if (callback != null) callback.onResult(result);
-            return result;
+            return createResult(method, response, requestTag, httpBuilder);
         } catch (IOException e) {
             throw new QsException(QsExceptionType.HTTP_ERROR, requestTag, "IOException...  method:" + method.getName() + " message:" + e.getMessage());
         } catch (Throwable e) {
@@ -314,11 +312,17 @@ public class HttpAdapter {
         if (responseCode >= 200 && responseCode < 300) {
             Class<?> returnType = method.getReturnType();
             if (returnType == void.class) {
-                if (callback != null) callback.onHttpResponse(httpResponse);
+                if (callback != null) {
+                    callback.onHttpResponse(httpResponse);
+                    callback.onResult(httpBuilder, null);
+                }
                 response.close();
                 return null;
             } else if (returnType.equals(Response.class)) {
-                if (callback != null) callback.onHttpResponse(httpResponse);
+                if (callback != null) {
+                    callback.onHttpResponse(httpResponse);
+                    callback.onResult(httpBuilder, response);
+                }
                 return response;
             } else {
                 ResponseBody body = response.body();
@@ -332,7 +336,12 @@ public class HttpAdapter {
                     L.i(TAG, "methodName:" + method.getName() + "  响应体 Json:" + converter.formatJson(jsonStr));
                 }
                 if (!TextUtils.isEmpty(jsonStr)) {
-                    return converter.jsonToObject(jsonStr, returnType);
+                    Object result = converter.jsonToObject(jsonStr, returnType);
+                    if (callback != null) callback.onResult(httpBuilder, result);
+                    return result;
+                } else {
+                    if (callback != null) callback.onResult(httpBuilder, null);
+                    return null;
                 }
             }
         } else {
@@ -340,7 +349,6 @@ public class HttpAdapter {
             response.close();
             throw new QsException(QsExceptionType.HTTP_ERROR, requestTag, "http error... method:" + method.getName() + "  http response code = " + responseCode);
         }
-        return null;
     }
 
     @NonNull private StringBuilder getUrl(String terminal, String path, Method method, Object[] args, Object requestTag) {
