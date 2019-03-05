@@ -31,7 +31,9 @@ public abstract class QsApplication extends Application {
     /**
      * http请求全局回调
      */
-    public abstract QsHttpCallback registerGlobalHttpListener();
+    public QsHttpCallback registerGlobalHttpListener() {
+        return null;
+    }
 
     public void onActivityCreate(Activity activity) {
     }
