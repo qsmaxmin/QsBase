@@ -6,8 +6,7 @@ import android.app.Application;
 import android.content.Context;
 import android.support.annotation.LayoutRes;
 
-import com.qsmaxmin.qsbase.common.http.HttpBuilder;
-import com.qsmaxmin.qsbase.common.http.HttpResponse;
+import com.qsmaxmin.qsbase.common.http.QsHttpCallback;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.utils.ImageHelper;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
@@ -28,6 +27,11 @@ public abstract class QsApplication extends Application {
     }
 
     public abstract boolean isLogOpen();
+
+    /**
+     * http请求全局回调
+     */
+    public abstract QsHttpCallback registerGlobalHttpListener();
 
     public void onActivityCreate(Activity activity) {
     }
@@ -64,23 +68,6 @@ public abstract class QsApplication extends Application {
 
     public @LayoutRes int errorLayoutId() {
         return 0;
-    }
-
-    /**
-     * @param builder http请求参数封装
-     *                {@link HttpBuilder#setTerminal(String)}设置主机地址
-     *                {@link HttpBuilder#getPath()}获取路径
-     *                {@link HttpBuilder#getHeaderBuilder()} ()}获取header
-     *                {@link HttpBuilder#getTerminal()} ()}获取主机地址
-     *                {@link HttpBuilder#getUrlParameters()} ()}获取url参数
-     *                {@link HttpBuilder#getRequestTag()} ()} ()}获取请求tag
-     *                {@link HttpBuilder#getBody()} ()} ()}获取请求体对象
-     *                {@link HttpBuilder#getFormBody()} ()} ()}获取请求表单对象
-     *                ......
-     */
-    public abstract void initHttpAdapter(HttpBuilder builder) throws Exception;
-
-    public void onCommonHttpResponse(HttpResponse response) {
     }
 
     /**

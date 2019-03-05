@@ -46,12 +46,12 @@ import okhttp3.ResponseBody;
  */
 
 public class HttpAdapter {
-    private static final String        TAG          = "HttpAdapter";
-    private static final String        PATH_REPLACE = "\\{\\w*\\}";
-    private final static int           timeOut      = 10;
-    private              OkHttpClient  client;
-    private              HttpConverter converter;
-
+    private static final String         TAG          = "HttpAdapter";
+    private static final String         PATH_REPLACE = "\\{\\w*\\}";
+    private final static int            timeOut      = 10;
+    private              OkHttpClient   client;
+    private              HttpConverter  converter;
+    private              QsHttpCallback callback;
 
     public HttpAdapter() {
         initDefaults();
@@ -83,11 +83,12 @@ public class HttpAdapter {
         if (converter == null) {
             converter = new HttpConverter();
         }
+        callback = QsHelper.getInstance().getApplication().registerGlobalHttpListener();
     }
 
     private HttpBuilder getHttpBuilder(Object requestTag, String terminal, String path, Object[] args, String requestType, Object body, HashMap<String, String> formBody, HashMap<String, String> paramsMap) throws Exception {
         HttpBuilder httpBuilder = new HttpBuilder(requestTag, terminal, path, args, requestType, body, formBody, paramsMap);
-        QsHelper.getInstance().getApplication().initHttpAdapter(httpBuilder);
+        if (callback != null) callback.initHttpAdapter(httpBuilder);
         return httpBuilder;
     }
 
@@ -293,7 +294,9 @@ public class HttpAdapter {
             Request request = requestBuilder.url(url.toString()).method(requestType, requestBody).build();
             Call call = client.newCall(request);
             Response response = call.execute();
-            return createResult(method, response, requestTag, httpBuilder);
+            Object result = createResult(method, response, requestTag, httpBuilder);
+            if (callback != null) callback.onResult(result);
+            return result;
         } catch (IOException e) {
             throw new QsException(QsExceptionType.HTTP_ERROR, requestTag, "IOException...  method:" + method.getName() + " message:" + e.getMessage());
         } catch (Throwable e) {
@@ -301,7 +304,7 @@ public class HttpAdapter {
         }
     }
 
-    private Object createResult(Method method, Response response, Object requestTag, HttpBuilder httpBuilder) {
+    private Object createResult(Method method, Response response, Object requestTag, HttpBuilder httpBuilder) throws Exception {
         if (response == null) return null;
         int responseCode = response.code();
         HttpResponse httpResponse = new HttpResponse();
@@ -311,18 +314,18 @@ public class HttpAdapter {
         if (responseCode >= 200 && responseCode < 300) {
             Class<?> returnType = method.getReturnType();
             if (returnType == void.class) {
-                QsHelper.getInstance().getApplication().onCommonHttpResponse(httpResponse);
+                if (callback != null) callback.onHttpResponse(httpResponse);
                 response.close();
                 return null;
             } else if (returnType.equals(Response.class)) {
-                QsHelper.getInstance().getApplication().onCommonHttpResponse(httpResponse);
+                if (callback != null) callback.onHttpResponse(httpResponse);
                 return response;
             } else {
                 ResponseBody body = response.body();
                 if (body == null) {
                     throw new QsException(QsExceptionType.HTTP_ERROR, requestTag, "http response error... method:" + method.getName() + "  response body is null!!");
                 }
-                QsHelper.getInstance().getApplication().onCommonHttpResponse(httpResponse);
+                if (callback != null) callback.onHttpResponse(httpResponse);
                 String jsonStr = httpResponse.getJsonString();
                 response.close();
                 if (QsHelper.getInstance().getApplication().isLogOpen()) {
@@ -333,7 +336,7 @@ public class HttpAdapter {
                 }
             }
         } else {
-            QsHelper.getInstance().getApplication().onCommonHttpResponse(httpResponse);
+            if (callback != null) callback.onHttpResponse(httpResponse);
             response.close();
             throw new QsException(QsExceptionType.HTTP_ERROR, requestTag, "http error... method:" + method.getName() + "  http response code = " + responseCode);
         }
