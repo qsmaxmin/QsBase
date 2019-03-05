@@ -41,20 +41,14 @@ public class HttpResponse {
         this.decryptionProvider = provider;
     }
 
-    String getJsonString() {
+    String getJsonString() throws Exception {
         if (decryptionProvider != null) {
-            try {
-                ResponseBody body = response.body();
-                if (body != null) {
-                    byte[] decryptionBytes = decryptionProvider.decryption(body.bytes());
-                    return new String(decryptionBytes, getCharset(body));
-                } else {
-                    return null;
-                }
-            } catch (IOException e) {
-                throw new QsException(QsExceptionType.HTTP_ERROR, httpBuilder.getRequestTag(), e.getMessage());
-            } catch (Exception e) {
-                throw new QsException(QsExceptionType.HTTP_ERROR, httpBuilder.getRequestTag(), e.getMessage());
+            ResponseBody body = response.body();
+            if (body != null) {
+                byte[] decryptionBytes = decryptionProvider.decryption(body.bytes());
+                return new String(decryptionBytes, getCharset(body));
+            } else {
+                return null;
             }
         } else {
             return getJsonFromBody(response.body(), httpBuilder.getRequestTag());

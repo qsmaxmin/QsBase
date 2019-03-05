@@ -295,6 +295,8 @@ public class HttpAdapter {
             Call call = client.newCall(request);
             Response response = call.execute();
             return createResult(method, response, requestTag, httpBuilder);
+        } catch (QsException e) {
+            throw e;
         } catch (IOException e) {
             throw new QsException(QsExceptionType.HTTP_ERROR, requestTag, "IOException...  method:" + method.getName() + " message:" + e.getMessage());
         } catch (Throwable e) {
