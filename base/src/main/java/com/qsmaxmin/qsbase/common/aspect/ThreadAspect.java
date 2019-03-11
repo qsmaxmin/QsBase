@@ -90,10 +90,14 @@ public class ThreadAspect {
                     }
                 });
             } catch (NoSuchMethodException e2) {
-                e2.printStackTrace();
+                L.e("ThreadAspect", "被@ThreadAspect注解的函数在执行出现错误时会将异常抛到该类的putlic void methodError(QsException e)函数里，所以该类必须要有这个函数。\n" +
+                        "也可以自己开启异步线程请求网络(QsHelper.getInstance().getHttpHelper().create(XXX.class, Object o))，并用try catch把网络请求代码包起来，自己处理异常。\n" +
+                        e2.getMessage());
+            } catch (Throwable t) {
+                t.printStackTrace();
             }
-        } catch (Throwable throwable) {
-            throwable.printStackTrace();
+        } catch (Throwable th) {
+            th.printStackTrace();
         }
     }
 }
