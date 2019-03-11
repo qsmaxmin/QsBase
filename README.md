@@ -23,7 +23,7 @@ MVP架构+AOP面向切面编程，摒弃反射、代理等操作，稳定性和�
             dependencies {
                 ...
                 classpath 'org.aspectj:aspectjtools:1.9.1'
-                classpath 'com.github.qsmaxmin:gradle_plugin_android_aspectjx:2.0.1'
+                classpath 'com.github.qsmaxmin:gradle_plugin_android_aspectjx:2.0.4'
             }
         }
 
@@ -44,7 +44,7 @@ MVP架构+AOP面向切面编程，摒弃反射、代理等操作，稳定性和�
 
         dependencies {
             ...
-            compile 'com.github.qsmaxmin:QsBase:4.9.9'
+            compile 'com.github.qsmaxmin:QsBase:5.4.0'
         }
 
 #### step 3：自定义Application继承QsApplication
