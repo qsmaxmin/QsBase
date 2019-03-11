@@ -7,11 +7,12 @@ package com.qsmaxmin.qsbase.common.http;
  */
 public interface QsHttpCallback {
     /**
-     * 可以在该回调里处理http请求前的参数
+     * 可以在该回调里处理http请求公共参数
      *
      * @param builder http请求参数封装
      *                {@link HttpBuilder#setTerminal(String)}设置主机地址
      *                {@link HttpBuilder#getPath()}获取路径
+     *                {@link HttpBuilder#getRequestType()} ()}获取请求类型(GET,POST...)
      *                {@link HttpBuilder#getHeaderBuilder()} ()}获取header
      *                {@link HttpBuilder#getTerminal()} ()}获取主机地址
      *                {@link HttpBuilder#getUrlParameters()} ()}获取url参数

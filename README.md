@@ -62,16 +62,10 @@ MVP架构+AOP面向切面编程，摒弃反射、代理等操作，稳定性和�
             }
 
             /**
-             * 必须重写
-             * 网络请求所需的参数
-             * 每个新的http请求都会调用一下这里
-             * 给http设置终端地址
-             * 给http设置请求头
+             * 注册http请求公共回调
              */
-            @Override public void initHttpAdapter(HttpBuilder httpBuilder) {
-                httpBuilder.setTerminal("https://www.baidu.com");
-                httpBuilder.addHeader("Content-Type", "application/json");
-                httpBuilder.addHeader("token", "123456");
+            @Override  public QsHttpCallback registerGlobalHttpListener() {
+                return new CustomHttpCallback();
             }
 
             /**
@@ -114,17 +108,6 @@ MVP架构+AOP面向切面编程，摒弃反射、代理等操作，稳定性和�
              */
             @Override public void onActivityPause(Activity activity) {
                 ...
-            }
-
-            /**
-             * http请求公共回调，可用来处理自定义异常等逻辑
-             */
-            @Override public void onCommonHttpResponse(Response response) {
-                if (response != null) {
-                    if (response.code() == 500) {
-                        ....
-                    }
-                }
             }
 
             ...
