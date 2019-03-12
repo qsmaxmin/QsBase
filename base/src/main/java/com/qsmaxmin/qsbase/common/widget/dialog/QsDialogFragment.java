@@ -7,7 +7,6 @@ import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.view.WindowManager;
 
 import com.qsmaxmin.qsbase.R;
@@ -28,24 +27,22 @@ public abstract class QsDialogFragment extends DialogFragment {
 
     @Override public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        final Window window = getDialog().getWindow();
-        if (window != null) {
-            window.getDecorView().setPadding(0, 0, 0, 0);
-            setAttribute(window.getAttributes());
+        if (getDialog() != null && getDialog().getWindow() != null) {
+            getDialog().getWindow().getDecorView().setPadding(0, 0, 0, 0);
+            setAttribute(getDialog().getWindow().getAttributes());
         }
+        initData();
     }
 
     @Override public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         ViewBindHelper.bindBundle(this, getArguments());
-        getDialog().setCanceledOnTouchOutside(true);
+        if (getDialog() != null) {
+            getDialog().setCanceledOnTouchOutside(true);
+            getDialog().setCancelable(true);
+        }
         View customView = inflater.inflate(layoutId(), null);
         ViewBindHelper.bindView(this, customView);
         return customView;
-    }
-
-    @Override public void onStart() {
-        super.onStart();
-        initData();
     }
 
     protected int getDialogTheme() {
