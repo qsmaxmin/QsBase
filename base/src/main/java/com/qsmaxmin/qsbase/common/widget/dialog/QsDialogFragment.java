@@ -1,6 +1,5 @@
 package com.qsmaxmin.qsbase.common.widget.dialog;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -10,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.FrameLayout;
 
 import com.qsmaxmin.qsbase.R;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
@@ -40,9 +38,9 @@ public abstract class QsDialogFragment extends DialogFragment {
     @Override public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         ViewBindHelper.bindBundle(this, getArguments());
         getDialog().setCanceledOnTouchOutside(true);
-        View dialogView = getDialogView(inflater, container);
-        ViewBindHelper.bindView(this, dialogView);
-        return dialogView;
+        View customView = inflater.inflate(layoutId(), null);
+        ViewBindHelper.bindView(this, customView);
+        return customView;
     }
 
     @Override public void onStart() {
@@ -57,8 +55,6 @@ public abstract class QsDialogFragment extends DialogFragment {
     protected void setAttribute(WindowManager.LayoutParams params) {
     }
 
-    protected abstract View getDialogView(LayoutInflater inflater, ViewGroup container);
-
     protected String initTag() {
         return QsHelper.getInstance().getApplication().isLogOpen() ? getClass().getSimpleName() : "QsDialogFragment";
     }
@@ -66,11 +62,18 @@ public abstract class QsDialogFragment extends DialogFragment {
     public void onViewClick(View view) {
     }
 
-    protected void initData() {
+    protected abstract int layoutId();
 
-    }
+    protected abstract void initData();
 
     public void show() {
+        show(null);
+    }
+
+    public void show(Bundle bundle) {
+        if (bundle != null) {
+            setArguments(bundle);
+        }
         QsHelper.getInstance().commitDialogFragment(this);
     }
 }
