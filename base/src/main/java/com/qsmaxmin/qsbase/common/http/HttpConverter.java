@@ -155,7 +155,7 @@ class HttpConverter {
     }
 
     /**
-     * 字符串是否以Unicode字符开头。约定Unicode字符以\u开头。
+     * 字符串是否以Unicode字符开头。约定Unicode字符以\\u开头。
      */
     private boolean isStartWithUnicode(String pattern, String str) {
         if (TextUtils.isEmpty(str) || !str.startsWith("\\u") || str.length() < 6) {
