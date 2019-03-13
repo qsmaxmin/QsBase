@@ -138,10 +138,11 @@ class HttpConverter {
     private String unicodeToCn(final String str) {
         String singlePattern = "[0-9|a-f|A-F]";
         String pattern = singlePattern + singlePattern + singlePattern + singlePattern;
+
         StringBuilder sb = new StringBuilder();
         int length = str.length();
         for (int i = 0; i < length; ) {
-            String tmpStr = str.substring(i);
+            String tmpStr = str.substring(i, (i < length - 6) ? (i + 6) : length);
             if (isStartWithUnicode(pattern, tmpStr)) { // 分支1
                 sb.append(unicodeToCnSingle(tmpStr));
                 i += 6;
@@ -154,7 +155,7 @@ class HttpConverter {
     }
 
     /**
-     * 字符串是否以Unicode字符开头。约定Unicode字符以 \\u开头。
+     * 字符串是否以Unicode字符开头。约定Unicode字符以\u开头。
      */
     private boolean isStartWithUnicode(String pattern, String str) {
         if (TextUtils.isEmpty(str) || !str.startsWith("\\u") || str.length() < 6) {
@@ -169,7 +170,6 @@ class HttpConverter {
      */
     private String unicodeToCnSingle(final String str) {
         int code = Integer.decode("0x" + str.substring(2, 6));
-        char c = (char) code;
-        return String.valueOf(c);
+        return String.valueOf((char) code);
     }
 }

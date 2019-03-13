@@ -59,13 +59,13 @@ public class HttpResponse {
         Charset charset = getCharset(body);
         InputStream is = body.byteStream();
         if (is != null) {
-            InputStreamReader inputStreamReader = new InputStreamReader(is, charset);
-            BufferedReader bufferedReader = null;
+            InputStreamReader isr = new InputStreamReader(is, charset);
+            BufferedReader br = null;
             try {
-                bufferedReader = new BufferedReader(inputStreamReader);
+                br = new BufferedReader(isr);
                 StringBuilder result = new StringBuilder();
                 String line;
-                while ((line = bufferedReader.readLine()) != null) {
+                while ((line = br.readLine()) != null) {
                     result.append(line).append("\n");
                 }
                 return result.toString();
@@ -74,7 +74,7 @@ public class HttpResponse {
             } catch (Exception e) {
                 throw new QsException(QsExceptionType.UNEXPECTED, requestTag, e.getMessage());
             } finally {
-                StreamCloseUtils.close(inputStreamReader, is, bufferedReader);
+                StreamCloseUtils.close(isr, is, br);
             }
         }
         return null;
