@@ -12,6 +12,8 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 
 import com.qsmaxmin.qsbase.R;
+import com.qsmaxmin.qsbase.common.aspect.ThreadPoint;
+import com.qsmaxmin.qsbase.common.aspect.ThreadType;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.common.viewbind.ViewBindHelper;
@@ -78,6 +80,7 @@ public abstract class QsDialogFragment extends DialogFragment {
         show(activity, null);
     }
 
+    @ThreadPoint(ThreadType.MAIN)
     public void show(FragmentActivity activity, Bundle bundle) {
         if (activity == null || activity.isFinishing()) {
             L.e(initTag(), "activity is null or activity is finished!");
