@@ -23,8 +23,8 @@ import java.security.MessageDigest;
 public class PhotoFrameTransform extends BitmapTransformation {
     private static final String CUSTOM_ID       = "com.qsmaxmin.qsbase.common.utils.glide.transformation.PhotoFrameTransform";
     private static final byte[] CUSTOM_ID_BYTES = CUSTOM_ID.getBytes(CHARSET);
-    private int    sourceId;
-    private Bitmap mBitmap;
+    private              int    sourceId;
+    private              Bitmap mBitmap;
 
     public PhotoFrameTransform(@DrawableRes int sourceId) {
         this.sourceId = sourceId;
@@ -69,7 +69,7 @@ public class PhotoFrameTransform extends BitmapTransformation {
 
     @Override
     public boolean equals(Object o) {
-        return (o instanceof PhotoFrameTransform) && ((PhotoFrameTransform) o).sourceId == sourceId;
+        return (o instanceof PhotoFrameTransform) && ((PhotoFrameTransform) o).sourceId == sourceId && ((PhotoFrameTransform) o).mBitmap == mBitmap;
     }
 
     @Override

@@ -112,13 +112,9 @@ public class ImageHelper {
         private boolean                 enableHolder = true;
         private RequestManager          manager;
         private Object                  mObject;
-        private int                     placeholderId;
-        private int                     errorId;
         private Drawable                placeholderDrawable;
         private Drawable                errorDrawable;
-        private boolean                 centerCrop;
-        private boolean                 fitCenter;
-        private boolean                 centerInside;
+        private int                     scaleType;
         private int[]                   mCorners;
         private int                     mWidth;
         private int                     mHeight;
@@ -193,7 +189,7 @@ public class ImageHelper {
         }
 
         public Builder placeholder(int resourceId) {
-            this.placeholderId = resourceId;
+            this.placeholderDrawable = QsHelper.getInstance().getDrawable(resourceId);
             return this;
         }
 
@@ -202,8 +198,12 @@ public class ImageHelper {
             return this;
         }
 
+        public Drawable getPlaceholder() {
+            return placeholderDrawable;
+        }
+
         public Builder error(int resourceId) {
-            this.errorId = resourceId;
+            this.errorDrawable = QsHelper.getInstance().getDrawable(resourceId);
             return this;
         }
 
@@ -212,18 +212,22 @@ public class ImageHelper {
             return this;
         }
 
+        public Drawable getErrorDrawable() {
+            return errorDrawable;
+        }
+
         public Builder centerCrop() {
-            this.centerCrop = true;
+            this.scaleType = 1;
             return this;
         }
 
         public Builder fitCenter() {
-            this.fitCenter = true;
+            this.scaleType = 2;
             return this;
         }
 
         public Builder centerInside() {
-            this.centerInside = true;
+            this.scaleType = 3;
             return this;
         }
 
@@ -235,6 +239,10 @@ public class ImageHelper {
         public Builder circleCrop() {
             this.mIsCircleCrop = true;
             return this;
+        }
+
+        public boolean isCircleCrop() {
+            return mIsCircleCrop;
         }
 
         public Builder addFrame(int frameId) {
@@ -261,9 +269,17 @@ public class ImageHelper {
             return this;
         }
 
+        public boolean isNoMemoryCache() {
+            return noMemoryCache;
+        }
+
         public Builder noDiskCache() {
             diskCacheStrategy = DiskCacheStrategy.NONE;
             return this;
+        }
+
+        public boolean isNoDiskCache() {
+            return diskCacheStrategy == DiskCacheStrategy.NONE;
         }
 
         public Builder enableHolder(boolean enable) {
@@ -271,10 +287,18 @@ public class ImageHelper {
             return this;
         }
 
+        public boolean isEnableHolder() {
+            return enableHolder;
+        }
+
         public Builder addHeader(String key, String value) {
             if (headers == null) headers = new HashMap<>();
             headers.put(key, value);
             return this;
+        }
+
+        public HashMap<String, String> getHeaders() {
+            return headers;
         }
 
         public void into(ImageView view) {
@@ -297,7 +321,7 @@ public class ImageHelper {
                                 L.e("ImageHelper", "Caused by " + t.getMessage());
                             }
                         } else {
-                            listener.onLoadFailed("");
+                            listener.onLoadFailed("unknown error!");
                         }
                         return false;
                     }
@@ -425,13 +449,9 @@ public class ImageHelper {
          * private int            mHeight;
          */
         private boolean shouldCreateRequestOptions() {
-            return placeholderId > 0
-                    || errorId > 0
-                    || placeholderDrawable != null
+            return placeholderDrawable != null
                     || errorDrawable != null
-                    || centerCrop
-                    || fitCenter
-                    || centerInside
+                    || scaleType > 0
                     || mCorners != null
                     || (mWidth > 0 && mHeight > 0)
                     || noMemoryCache
@@ -443,25 +463,18 @@ public class ImageHelper {
         @NonNull private RequestOptions createRequestOptions() {
             RequestOptions requestOptions = new RequestOptions();
             if (enableHolder) {
-                if (placeholderId > 0) {
-                    requestOptions = requestOptions.placeholder(placeholderId);
-                } else if (placeholderDrawable != null) {
-                    requestOptions = requestOptions.placeholder(placeholderDrawable);
-                }
-                if (errorId > 0) {
-                    requestOptions = requestOptions.error(placeholderId);
-                } else if (errorDrawable != null) {
-                    requestOptions = requestOptions.error(placeholderId);
-                }
+                if (placeholderDrawable != null) requestOptions = requestOptions.placeholder(placeholderDrawable);
+                if (errorDrawable != null) requestOptions = requestOptions.error(errorDrawable);
             }
 
-            if (centerCrop) {
+            if (scaleType == 1) {
                 requestOptions = requestOptions.optionalCenterCrop();
-            } else if (fitCenter) {
+            } else if (scaleType == 2) {
                 requestOptions = requestOptions.optionalFitCenter();
-            } else if (centerInside) {
+            } else if (scaleType == 3) {
                 requestOptions = requestOptions.optionalCenterInside();
             }
+
             if (mTransformation != null) {
                 if (mIsCircleCrop) {
                     requestOptions = requestOptions.transforms(new CircleCrop(), mTransformation);
