@@ -233,7 +233,7 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
                 QsHelper.getInstance().commitDialogFragment(getFragmentManager(), mProgressDialog);
             }
         } else {
-            L.e(initTag(), "you should override the method 'Application.getLoadingDialog' and return a dialog when called the method : loading(...) ");
+            L.e(initTag(), "you should override the method 'Application.getLoadingDialog() or this.getLoadingDialog()' and return a dialog when called the method : loading(...) ");
         }
     }
 

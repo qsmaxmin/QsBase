@@ -248,7 +248,7 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
                 QsHelper.getInstance().commitDialogFragment(getSupportFragmentManager(), mProgressDialog);
             }
         } else {
-            L.e(initTag(), "you should override the method 'Application.getLoadingDialog' and return a dialog when called the method : loading(...) ");
+            L.e(initTag(), "you should override the method 'Application.getLoadingDialog() or this.getLoadingDialog()' and return a dialog when called the method : loading(...) ");
         }
     }
 
