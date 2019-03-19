@@ -52,10 +52,28 @@ public final class ScreenHelper {
     public void pushActivity(FragmentActivity activity) {
         if (activity != null) {
             fragmentActivities.add(activity);
-            onActivityCallback(activity);
-            L.i(TAG, "activity入栈:" + activity.getClass().getSimpleName() + "   当前栈大小：" + fragmentActivities.size());
+            onActivityAdded(activity);
+            if (QsHelper.getInstance().getApplication().isLogOpen()) {
+                L.i(TAG, "activity入栈:" + activity.getClass().getSimpleName() + "，当前栈大小：" + fragmentActivities.size());
+            }
         } else {
             L.e(TAG, "pushActivity 传入的参数为空!");
+        }
+    }
+
+    public void bringActivityToTop(FragmentActivity activity) {
+        if (activity == null) return;
+        if (currentActivity() == activity) return;
+        for (int i = fragmentActivities.size() - 1; i >= 0; i--) {
+            FragmentActivity a = fragmentActivities.get(i);
+            if (a == activity) {
+                if (QsHelper.getInstance().getApplication().isLogOpen()) {
+                    L.i(TAG, "activity(" + activity.getClass().getSimpleName() + ")获取到焦点移到栈顶，当前栈大小：" + fragmentActivities.size());
+                }
+                boolean success = fragmentActivities.remove(a);
+                if (success) fragmentActivities.add(a);
+                break;
+            }
         }
     }
 
@@ -66,8 +84,10 @@ public final class ScreenHelper {
         if (activity != null) {
             activity.finish();
             fragmentActivities.remove(activity);
-            onActivityRemoveCallback(activity);
-            L.i(TAG, "activity出栈:" + activity.getClass().getSimpleName() + "   当前栈大小：" + fragmentActivities.size());
+            onActivityRemoved(activity);
+            if (QsHelper.getInstance().getApplication().isLogOpen()) {
+                L.i(TAG, "activity出栈:" + activity.getClass().getSimpleName() + "，当前栈大小：" + fragmentActivities.size());
+            }
         } else {
             L.e(TAG, "popActivity 传入的参数为空!");
         }
@@ -123,7 +143,7 @@ public final class ScreenHelper {
         void onActivityRemove(FragmentActivity activity);
     }
 
-    private void onActivityCallback(FragmentActivity activity) {
+    private void onActivityAdded(FragmentActivity activity) {
         if (listeners != null) {
             for (OnTaskChangeListener listener : listeners) {
                 listener.onActivityAdd(activity);
@@ -131,7 +151,7 @@ public final class ScreenHelper {
         }
     }
 
-    private void onActivityRemoveCallback(FragmentActivity activity) {
+    private void onActivityRemoved(FragmentActivity activity) {
         if (listeners != null) {
             for (OnTaskChangeListener listener : listeners) {
                 listener.onActivityRemove(activity);

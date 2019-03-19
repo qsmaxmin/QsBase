@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
@@ -62,7 +63,7 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
         return R.layout.qs_framelayout;
     }
 
-    @Override protected void onCreate(Bundle savedInstanceState) {
+    @CallSuper @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         QsHelper.getInstance().getScreenHelper().pushActivity(this);
         QsHelper.getInstance().getApplication().onActivityCreate(this);
@@ -83,8 +84,9 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
         QsHelper.getInstance().getApplication().onActivityStart(this);
     }
 
-    @Override protected void onResume() {
+    @CallSuper @Override protected void onResume() {
         super.onResume();
+        QsHelper.getInstance().getScreenHelper().bringActivityToTop(this);
         QsHelper.getInstance().getApplication().onActivityResume(this);
     }
 
