@@ -4,12 +4,15 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 
 import com.qsmaxmin.qsbase.R;
+import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.common.viewbind.ViewBindHelper;
 
@@ -64,13 +67,33 @@ public abstract class QsDialogFragment extends DialogFragment {
     protected abstract void initData();
 
     public void show() {
-        show(null);
+        show(QsHelper.getInstance().getScreenHelper().currentActivity(), null);
     }
 
     public void show(Bundle bundle) {
-        if (bundle != null) {
-            setArguments(bundle);
+        show(QsHelper.getInstance().getScreenHelper().currentActivity(), bundle);
+    }
+
+    public void show(FragmentActivity activity) {
+        show(activity, null);
+    }
+
+    public void show(FragmentActivity activity, Bundle bundle) {
+        if (activity == null) {
+            L.e(initTag(), "activity is null");
+            return;
         }
-        QsHelper.getInstance().commitDialogFragment(this);
+        L.i(initTag(), "show......activity:" + activity.getClass().getSimpleName());
+        FragmentManager fragmentManager = activity.getSupportFragmentManager();
+        if (fragmentManager != null) {
+            if (isAdded()) {
+                L.e(initTag(), "show......dialog is added");
+                return;
+            }
+            if (bundle != null) setArguments(bundle);
+            fragmentManager.beginTransaction().add(this, getClass().getSimpleName()).commitAllowingStateLoss();
+        } else {
+            L.e(initTag(), "show......fragmentManager is null");
+        }
     }
 }
