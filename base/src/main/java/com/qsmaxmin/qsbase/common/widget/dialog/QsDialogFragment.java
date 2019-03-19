@@ -79,8 +79,8 @@ public abstract class QsDialogFragment extends DialogFragment {
     }
 
     public void show(FragmentActivity activity, Bundle bundle) {
-        if (activity == null) {
-            L.e(initTag(), "activity is null");
+        if (activity == null || activity.isFinishing()) {
+            L.e(initTag(), "activity is null or activity is finished!");
             return;
         }
         L.i(initTag(), "show......activity:" + activity.getClass().getSimpleName());
