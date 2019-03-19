@@ -228,7 +228,8 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         if (mProgressDialog != null) {
             mProgressDialog.setMessage(message);
             mProgressDialog.setCancelable(cancelAble);
-            if (!mProgressDialog.isAdded()) {
+            if (!mProgressDialog.isAdded() && !mProgressDialog.isShowing()) {
+                mProgressDialog.setIsShowing(true);
                 QsHelper.getInstance().commitDialogFragment(getSupportFragmentManager(), mProgressDialog);
             }
         } else {

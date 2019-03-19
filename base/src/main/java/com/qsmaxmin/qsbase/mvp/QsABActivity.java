@@ -243,7 +243,8 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
         if (mProgressDialog != null) {
             mProgressDialog.setMessage(message);
             mProgressDialog.setCancelable(cancelAble);
-            if (!mProgressDialog.isAdded()) {
+            if (!mProgressDialog.isAdded() && !mProgressDialog.isShowing()) {
+                mProgressDialog.setIsShowing(true);
                 QsHelper.getInstance().commitDialogFragment(getSupportFragmentManager(), mProgressDialog);
             }
         } else {
