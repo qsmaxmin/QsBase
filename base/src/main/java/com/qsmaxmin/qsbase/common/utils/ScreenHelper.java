@@ -61,6 +61,9 @@ public final class ScreenHelper {
         }
     }
 
+    /**
+     * 将元素置顶
+     */
     public void bringActivityToTop(FragmentActivity activity) {
         if (activity == null) return;
         if (currentActivity() == activity) return;
