@@ -67,15 +67,12 @@ public final class ScreenHelper {
     public void bringActivityToTop(FragmentActivity activity) {
         if (activity == null) return;
         if (currentActivity() == activity) return;
-        for (int i = fragmentActivities.size() - 1; i >= 0; i--) {
-            FragmentActivity a = fragmentActivities.get(i);
-            if (a == activity) {
-                if (QsHelper.getInstance().getApplication().isLogOpen()) {
-                    L.i(TAG, "activity(" + activity.getClass().getSimpleName() + ")获取到焦点移到栈顶，当前栈大小：" + fragmentActivities.size());
-                }
-                boolean success = fragmentActivities.remove(a);
-                if (success) fragmentActivities.add(a);
-                break;
+        int index = fragmentActivities.indexOf(activity);
+        if (index > 0) {
+            FragmentActivity remove = fragmentActivities.remove(index);
+            if (remove != null) fragmentActivities.add(remove);
+            if (QsHelper.getInstance().getApplication().isLogOpen()) {
+                L.i(TAG, "activity(" + activity.getClass().getSimpleName() + ")获取到焦点移到栈顶，当前栈大小：" + fragmentActivities.size());
             }
         }
     }
