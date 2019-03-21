@@ -46,7 +46,7 @@ public abstract class QsTopBottomLoadListFragment<P extends QsPresenter, D> exte
 
     @Override public void onScrollStateChanged(AbsListView view, int scrollState) {
         super.onScrollStateChanged(view, scrollState);
-        if (scrollState == SCROLL_STATE_IDLE && !canListScrollUp()) {
+        if (scrollState == SCROLL_STATE_IDLE) {
             if (canTopLoading && !canListScrollDown()) {
                 L.i(initTag(), "onScrollStateChanged...... scroll to top, so loadingTopData()");
                 loadingTopData();
