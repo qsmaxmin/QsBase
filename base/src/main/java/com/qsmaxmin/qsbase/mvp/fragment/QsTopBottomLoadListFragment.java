@@ -99,6 +99,7 @@ public abstract class QsTopBottomLoadListFragment<P extends QsPresenter, D> exte
         canBottomLoading = false;
     }
 
+    @ThreadPoint(ThreadType.MAIN)
     @Override public void addTopData(List<D> list) {
         if (list != null && !list.isEmpty()) {
             mList.addAll(0, list);
