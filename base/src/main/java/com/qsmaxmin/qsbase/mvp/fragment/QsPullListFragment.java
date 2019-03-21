@@ -27,11 +27,11 @@ import java.util.List;
  */
 
 public abstract class QsPullListFragment<T extends QsPresenter, D> extends QsListFragment<T, D> implements QsIPullToRefresh {
-    public static final byte    LOAD_WHEN_SCROLL_TO_BOTTOM = 0;
-    public static final byte    LOAD_WHEN_SECOND_TO_LAST   = 1;
-    private             boolean canLoadingMore             = true;
-    private   PtrFrameLayout            mPtrFrameLayout;
-    protected LoadingFooter             mLoadingFooter;
+    public static final byte           LOAD_WHEN_SCROLL_TO_BOTTOM = 0;
+    public static final byte           LOAD_WHEN_SECOND_TO_LAST   = 1;
+    private             boolean        canLoadingMore             = true;
+    private             PtrFrameLayout mPtrFrameLayout;
+    protected           LoadingFooter  mLoadingFooter;
 
     @Override public int layoutId() {
         return (!isOpenViewState() && (getTopLayout() > 0 || getBottomLayout() > 0)) ? R.layout.qs_fragment_pull_listview_with_top_bottom : R.layout.qs_fragment_pull_listview;
@@ -183,7 +183,7 @@ public abstract class QsPullListFragment<T extends QsPresenter, D> extends QsLis
 
     @Override public void onScrollStateChanged(AbsListView view, int scrollState) {
         super.onScrollStateChanged(view, scrollState);
-        if (onLoadTriggerCondition() == LOAD_WHEN_SCROLL_TO_BOTTOM && !canListScrollUp() && scrollState == SCROLL_STATE_IDLE) {
+        if (onLoadTriggerCondition() == LOAD_WHEN_SCROLL_TO_BOTTOM && scrollState == SCROLL_STATE_IDLE && !canListScrollUp()) {
             L.i(initTag(), "onScrollStateChanged...... scroll to bottom, so loadingMoreData()");
             loadingMoreData();
         }
