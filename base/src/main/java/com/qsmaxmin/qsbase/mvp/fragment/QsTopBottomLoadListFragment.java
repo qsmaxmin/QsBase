@@ -102,8 +102,14 @@ public abstract class QsTopBottomLoadListFragment<P extends QsPresenter, D> exte
     @ThreadPoint(ThreadType.MAIN)
     @Override public void addTopData(List<D> list) {
         if (list != null && !list.isEmpty()) {
+            int index = getListView().getFirstVisiblePosition();
+            View childAt = getListView().getChildAt(0);
+            int topMargin = (childAt == null) ? 0 : childAt.getHeight();
+
             mList.addAll(0, list);
             updateAdapter(true);
+
+            getListView().setSelectionFromTop(list.size() + index + 1, topMargin);
         }
     }
 
