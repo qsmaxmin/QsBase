@@ -62,12 +62,12 @@ public abstract class QsTopBottomLoadListFragment<P extends QsPresenter, D> exte
     @Override public void onAdapterGetView(int position, int totalCount) {
         super.onAdapterGetView(position, totalCount);
         if (onLoadTriggerCondition() == LOAD_WHEN_SECOND_TO_LAST) {
-            if (position == totalCount - 2 || totalCount == 1) {
-                loadingBottomData();
+            if (canTopLoading && position == 0) {
+                loadingTopData();
             }
 
-            if (position == 0) {
-                loadingTopData();
+            if (canBottomLoading && position == totalCount - 2 || totalCount == 1) {
+                loadingBottomData();
             }
         }
     }
