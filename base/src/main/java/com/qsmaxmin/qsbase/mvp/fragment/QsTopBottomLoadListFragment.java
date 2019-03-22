@@ -104,7 +104,7 @@ public abstract class QsTopBottomLoadListFragment<P extends QsPresenter, D> exte
         if (list != null && !list.isEmpty()) {
             int index = getListView().getFirstVisiblePosition();
             View childAt = getListView().getChildAt(0);
-            int topMargin = (childAt == null) ? 0 : childAt.getHeight();
+            int topMargin = (childAt == null) ? 0 : childAt.getHeight() + childAt.getTop();
 
             mList.addAll(0, list);
             updateAdapter(true);
