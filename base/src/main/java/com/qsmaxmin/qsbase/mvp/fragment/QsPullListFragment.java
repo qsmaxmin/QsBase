@@ -176,7 +176,6 @@ public abstract class QsPullListFragment<T extends QsPresenter, D> extends QsLis
     @Override public void onAdapterGetView(int position, int totalCount) {
         super.onAdapterGetView(position, totalCount);
         if (onLoadTriggerCondition() == LOAD_WHEN_SECOND_TO_LAST && (position == totalCount - 2 || totalCount == 1)) {
-            L.i(initTag(), "onAdapterGetView...... position:" + position + "  totalCount:" + totalCount + ", so loadingMoreData()");
             loadingMoreData();
         }
     }
@@ -184,7 +183,6 @@ public abstract class QsPullListFragment<T extends QsPresenter, D> extends QsLis
     @Override public void onScrollStateChanged(AbsListView view, int scrollState) {
         super.onScrollStateChanged(view, scrollState);
         if (onLoadTriggerCondition() == LOAD_WHEN_SCROLL_TO_BOTTOM && scrollState == SCROLL_STATE_IDLE && !canListScrollUp()) {
-            L.i(initTag(), "onScrollStateChanged...... scroll to bottom, so loadingMoreData()");
             loadingMoreData();
         }
     }

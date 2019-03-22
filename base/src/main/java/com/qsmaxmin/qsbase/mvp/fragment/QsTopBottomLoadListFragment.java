@@ -19,10 +19,12 @@ import java.util.List;
  * @Description listView滑动到顶部和底部都能加载更多数据
  */
 public abstract class QsTopBottomLoadListFragment<P extends QsPresenter, D> extends QsListFragment<P, D> implements QsITopBottomLoadListFragment<D> {
-    private boolean       canTopLoading;
-    private boolean       canBottomLoading;
-    private LoadingFooter topLoadingView;
-    private LoadingFooter bottomLoadingView;
+    public static final byte          LOAD_WHEN_SCROLL_TO_BOTTOM = 0;
+    public static final byte          LOAD_WHEN_SECOND_TO_LAST   = 1;
+    private             boolean       canTopLoading              = true;
+    private             boolean       canBottomLoading           = true;
+    private             LoadingFooter topLoadingView;
+    private             LoadingFooter bottomLoadingView;
 
     @Override protected void initListView(LayoutInflater inflater, View view) {
         super.initListView(inflater, view);
@@ -46,15 +48,26 @@ public abstract class QsTopBottomLoadListFragment<P extends QsPresenter, D> exte
 
     @Override public void onScrollStateChanged(AbsListView view, int scrollState) {
         super.onScrollStateChanged(view, scrollState);
-        if (scrollState == SCROLL_STATE_IDLE) {
+        if (onLoadTriggerCondition() == LOAD_WHEN_SCROLL_TO_BOTTOM && scrollState == SCROLL_STATE_IDLE) {
             if (canTopLoading && !canListScrollDown()) {
-                L.i(initTag(), "onScrollStateChanged...... scroll to top, so loadingTopData()");
                 loadingTopData();
             }
 
             if (canBottomLoading && !canListScrollUp()) {
-                L.i(initTag(), "onScrollStateChanged...... scroll to bottom, so loadingBottomData()");
                 loadingBottomData();
+            }
+        }
+    }
+
+    @Override public void onAdapterGetView(int position, int totalCount) {
+        super.onAdapterGetView(position, totalCount);
+        if (onLoadTriggerCondition() == LOAD_WHEN_SECOND_TO_LAST) {
+            if (position == totalCount - 2 || totalCount == 1) {
+                loadingBottomData();
+            }
+
+            if (position == 0) {
+                loadingTopData();
             }
         }
     }
@@ -115,6 +128,10 @@ public abstract class QsTopBottomLoadListFragment<P extends QsPresenter, D> exte
 
     @Override public void addBottomData(List<D> list) {
         addData(list);
+    }
+
+    protected int onLoadTriggerCondition() {
+        return LOAD_WHEN_SECOND_TO_LAST;
     }
 
     private void loadingBottomData() {
