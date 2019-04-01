@@ -29,11 +29,11 @@ import java.util.ArrayList;
  */
 public class QsPresenter<V extends QsIView> {
     private ArrayList<String> tagList = new ArrayList<>();
-    private boolean isAttach;
-    private V       mView;
+    private boolean           isAttach;
+    private V                 mView;
 
     protected String initTag() {
-        return QsHelper.getInstance().getApplication().isLogOpen() ? getClass().getSimpleName() : "QsPresenter";
+        return L.isEnable() ? getClass().getSimpleName() : "QsPresenter";
     }
 
     public Context getContext() {

@@ -5,7 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.qsmaxmin.qsbase.common.utils.QsHelper;
+import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.viewbind.ViewBindHelper;
 
 
@@ -25,7 +25,7 @@ public abstract class QsRecycleAdapterItem<T> {
     }
 
     protected String initTag() {
-        return QsHelper.getInstance().getApplication().isLogOpen() ? getClass().getSimpleName() : "QsRecycleAdapterItem";
+        return L.isEnable() ? getClass().getSimpleName() : "QsRecycleAdapterItem";
     }
 
     protected abstract int itemViewLayoutId();

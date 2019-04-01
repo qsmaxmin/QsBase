@@ -21,7 +21,7 @@ public class HttpHandler implements InvocationHandler {
     }
 
     @Override public Object invoke(Object proxy, Method method, final Object[] args) throws Throwable {
-        if (QsHelper.getInstance().getApplication().isLogOpen()) {
+        if (L.isEnable()) {
             L.i("HttpHandler", "网络请求代理方法：" + method.getName() + "  requestTag:" + tag);
         }
         return adapter.startRequest(method, args, tag);

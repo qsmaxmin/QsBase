@@ -53,7 +53,7 @@ public final class ScreenHelper {
         if (activity != null) {
             fragmentActivities.add(activity);
             onActivityAdded(activity);
-            if (QsHelper.getInstance().getApplication().isLogOpen()) {
+            if (L.isEnable()) {
                 L.i(TAG, "activity入栈:" + activity.getClass().getSimpleName() + "，当前栈大小：" + fragmentActivities.size());
             }
         } else {
@@ -71,7 +71,7 @@ public final class ScreenHelper {
         if (index > 0) {
             FragmentActivity remove = fragmentActivities.remove(index);
             if (remove != null) fragmentActivities.add(remove);
-            if (QsHelper.getInstance().getApplication().isLogOpen()) {
+            if (L.isEnable()) {
                 L.i(TAG, "activity(" + activity.getClass().getSimpleName() + ")获取到焦点移到栈顶，当前栈大小：" + fragmentActivities.size());
             }
         }
@@ -85,7 +85,7 @@ public final class ScreenHelper {
             activity.finish();
             fragmentActivities.remove(activity);
             onActivityRemoved(activity);
-            if (QsHelper.getInstance().getApplication().isLogOpen()) {
+            if (L.isEnable()) {
                 L.i(TAG, "activity出栈:" + activity.getClass().getSimpleName() + "，当前栈大小：" + fragmentActivities.size());
             }
         } else {

@@ -37,7 +37,7 @@ public final class PresenterUtils {
                 e.printStackTrace();
             }
         } else {
-            String viewName = QsHelper.getInstance().getApplication().isLogOpen() ? iView.getClass().getSimpleName() : "QsIView";
+            String viewName = L.isEnable() ? iView.getClass().getSimpleName() : "QsIView";
             L.i(viewName, "该类未添加@Presenter注解，将尝试使用泛型第一个参数创建Presenter实体");
         }
 
@@ -60,7 +60,7 @@ public final class PresenterUtils {
             }
         }
 
-        String viewName = QsHelper.getInstance().getApplication().isLogOpen() ? iView.getClass().getSimpleName() : "QsIView";
+        String viewName = L.isEnable() ? iView.getClass().getSimpleName() : "QsIView";
         L.i(viewName, "该类未自定义Presenter类，将创建QsPresenter实体");
         presenterImpl = (P) new QsPresenter<>();
         presenterImpl.initPresenter(iView);

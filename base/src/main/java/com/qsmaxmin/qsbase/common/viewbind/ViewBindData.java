@@ -31,7 +31,7 @@ public final class ViewBindData {
      * 貌似field的getAnnotations方法比较耗时，所以只调用一次
      */
     ViewBindData(Class<?> target) {
-        if (QsHelper.getInstance().getApplication().isLogOpen()) {
+        if (L.isEnable()) {
             targetName = target.getSimpleName();
         }
 

@@ -5,7 +5,6 @@ import android.util.LruCache;
 import android.view.View;
 
 import com.qsmaxmin.qsbase.common.log.L;
-import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.common.widget.dialog.QsDialogFragment;
 import com.qsmaxmin.qsbase.mvp.QsIView;
 import com.qsmaxmin.qsbase.mvp.adapter.QsListAdapterItem;
@@ -32,7 +31,7 @@ public class ViewBindHelper {
         if (cacheBindData == null) {
             cacheBindData = new ViewBindData(clazz);
             viewCache.put(clazz, cacheBindData);
-            if (QsHelper.getInstance().getApplication().isLogOpen()) {
+            if (L.isEnable()) {
                 L.i(cacheBindData.targetName, "create new ViewBindData by class, cache size:" + viewCache.size());
             }
         }

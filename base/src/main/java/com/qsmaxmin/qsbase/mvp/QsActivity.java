@@ -50,7 +50,7 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
     private   OnKeyDownListener onKeyDownListener;
 
     @Override public String initTag() {
-        return QsHelper.getInstance().getApplication().isLogOpen() ? getClass().getSimpleName() : "QsActivity";
+        return L.isEnable() ? getClass().getSimpleName() : "QsActivity";
     }
 
 

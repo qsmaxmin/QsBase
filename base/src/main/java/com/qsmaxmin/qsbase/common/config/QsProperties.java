@@ -1,5 +1,6 @@
 package com.qsmaxmin.qsbase.common.config;
 
+import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
 
 /**
@@ -12,7 +13,7 @@ public abstract class QsProperties {
     private PropertiesEngine engine;
 
     public String initTag() {
-        return QsHelper.getInstance().getApplication().isLogOpen() ? getClass().getSimpleName() : "QsProperties";
+        return L.isEnable() ? getClass().getSimpleName() : "QsProperties";
     }
 
     private QsProperties() {

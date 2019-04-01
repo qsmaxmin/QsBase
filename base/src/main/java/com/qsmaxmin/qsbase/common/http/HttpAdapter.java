@@ -334,7 +334,7 @@ public class HttpAdapter {
                 if (callback != null) callback.onHttpResponse(httpResponse);
                 String jsonStr = httpResponse.getJsonString();
                 response.close();
-                if (QsHelper.getInstance().getApplication().isLogOpen()) {
+                if (L.isEnable()) {
                     L.i(TAG, "methodName:" + method.getName() + "  响应体 Json:" + converter.formatJson(jsonStr));
                 }
                 if (!TextUtils.isEmpty(jsonStr)) {

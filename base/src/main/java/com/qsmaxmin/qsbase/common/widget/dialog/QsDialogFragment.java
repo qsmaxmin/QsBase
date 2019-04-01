@@ -58,7 +58,7 @@ public abstract class QsDialogFragment extends DialogFragment {
     }
 
     protected String initTag() {
-        return QsHelper.getInstance().getApplication().isLogOpen() ? getClass().getSimpleName() : "QsDialogFragment";
+        return L.isEnable() ? getClass().getSimpleName() : "QsDialogFragment";
     }
 
     public void onViewClick(View view) {

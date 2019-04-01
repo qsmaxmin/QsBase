@@ -52,7 +52,7 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
     private   OnKeyDownListener onKeyDownListener;
 
     @Override public String initTag() {
-        return QsHelper.getInstance().getApplication().isLogOpen() ? getClass().getSimpleName() : "QsABActivity";
+        return L.isEnable() ? getClass().getSimpleName() : "QsABActivity";
     }
 
     @Override public void setActivityTitle(Object value, int code) {

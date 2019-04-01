@@ -3,7 +3,7 @@ package com.qsmaxmin.qsbase.mvp.adapter;
 import android.support.annotation.CallSuper;
 import android.view.View;
 
-import com.qsmaxmin.qsbase.common.utils.QsHelper;
+import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.viewbind.ViewBindHelper;
 
 /**
@@ -12,7 +12,7 @@ import com.qsmaxmin.qsbase.common.viewbind.ViewBindHelper;
 public abstract class QsListAdapterItem<T> {
 
     protected String initTag() {
-        return QsHelper.getInstance().getApplication().isLogOpen() ? getClass().getSimpleName() : "QsListAdapterItem";
+        return L.isEnable() ? getClass().getSimpleName() : "QsListAdapterItem";
     }
 
     public abstract int getItemLayout();

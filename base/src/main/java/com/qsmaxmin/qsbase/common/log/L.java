@@ -22,6 +22,10 @@ public final class L {
         enable = isLogOpen;
     }
 
+    public static boolean isEnable() {
+        return enable;
+    }
+
     public static void i(String tag, String message) {
         println(Log.INFO, tag, message);
     }
