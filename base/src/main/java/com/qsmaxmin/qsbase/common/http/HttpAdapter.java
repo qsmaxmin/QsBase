@@ -375,7 +375,7 @@ public class HttpAdapter {
                 }
                 String[] param = (String[]) arg;
                 if (split.length - param.length > 1) {
-                    throw new QsException(QsExceptionType.UNEXPECTED, requestTag, "params error method:" + method.getName() + "  the path with '{xx}' is more than @Path annotation arg length!");
+                    throw new QsException(QsExceptionType.UNEXPECTED, requestTag, "params error method:" + method.getName() + "  the path with '{xx}' count  is more than @Path annotation arg length!");
                 }
                 for (int index = 0; index < split.length; index++) {
                     if (index < param.length) {
