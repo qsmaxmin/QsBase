@@ -49,7 +49,6 @@ public final class AutoScrollViewPager extends QsViewPager {
     private             float                  distanceY;
     private             float                  lastX;
     private             float                  lastY;
-    private             PageIndicator          indicator;
 
     public AutoScrollViewPager(Context context) {
         super(context);
@@ -108,16 +107,10 @@ public final class AutoScrollViewPager extends QsViewPager {
         }
     }
 
-    public void setPageIndicator(PageIndicator pageIndicator) {
-        if (pageIndicator != null && this.indicator != pageIndicator) {
-            indicator = pageIndicator;
-            pageIndicator.setViewPager(this);
+    public void setPageIndicator(PageIndicator indicator) {
+        if (indicator != null) {
+            indicator.setViewPager(this);
         }
-    }
-
-    public void notifyDataSetChanged() {
-        if (getAdapter() != null) getAdapter().notifyDataSetChanged();
-        if (indicator != null) indicator.updateView();
     }
 
     private void sendScrollMessage(long delay) {

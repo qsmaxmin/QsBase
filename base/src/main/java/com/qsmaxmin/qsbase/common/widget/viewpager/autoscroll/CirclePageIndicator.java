@@ -189,7 +189,6 @@ public class CirclePageIndicator extends View implements PageIndicator {
         }
         if (count == 0) return;
         if (mCurrentPage >= count) {
-            setCurrentItem(count - 1);
             return;
         }
         centerY = getPaddingTop() + mRadius;
@@ -345,14 +344,6 @@ public class CirclePageIndicator extends View implements PageIndicator {
         if (pager != null) {
             mViewPager = pager;
             pager.addOnPageChangeListener(this);
-            invalidate();
-        }
-    }
-
-    private void setCurrentItem(int item) {
-        if (mViewPager != null) {
-            mViewPager.setCurrentItem(item);
-            mCurrentPage = item;
             invalidate();
         }
     }
