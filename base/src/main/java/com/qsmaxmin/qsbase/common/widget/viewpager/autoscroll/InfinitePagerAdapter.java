@@ -5,13 +5,11 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
-import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.qsmaxmin.qsbase.R;
-import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.utils.ImageHelper;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
 
@@ -24,14 +22,11 @@ import java.util.List;
  * @Description 自动轮播适配器
  */
 public class InfinitePagerAdapter extends PagerAdapter {
-
-    private final        List<Object> urls                   = new ArrayList<>();
-    private static final float        PAGE_WIDTH_SINGLE_ITEM = 1.0f;
-    private              boolean      infinitePagesEnabled   = true;
-
-    private OnPageClickListener listener;
-    private int                 holderId;
-    private int                 corners;
+    private final List<Object>        urls                 = new ArrayList<>();
+    private       boolean             infinitePagesEnabled = true;
+    private       OnPageClickListener listener;
+    private       int                 holderId;
+    private       int                 corners;
 
     public void setOnPageClickListener(OnPageClickListener listener) {
         this.listener = listener;
@@ -41,28 +36,13 @@ public class InfinitePagerAdapter extends PagerAdapter {
         this.holderId = holderId;
     }
 
-    public void addData(String url) {
-        synchronized (urls) {
-            if (!TextUtils.isEmpty(url)) {
-                urls.add(url);
-            }
-        }
-    }
-
-    public void addData(List data) {
-        synchronized (urls) {
-            if (data != null && !data.isEmpty()) {
-                urls.addAll(data);
-            }
-        }
-    }
-
     public void setData(List data) {
         synchronized (urls) {
             urls.clear();
             if (data != null && !data.isEmpty()) {
                 urls.addAll(data);
             }
+            notifyDataSetChanged();
         }
     }
 
@@ -70,9 +50,10 @@ public class InfinitePagerAdapter extends PagerAdapter {
         return new ArrayList<>(urls);
     }
 
-    public void removeData() {
+    public void clear() {
         synchronized (urls) {
             urls.clear();
+            notifyDataSetChanged();
         }
     }
 
@@ -80,15 +61,18 @@ public class InfinitePagerAdapter extends PagerAdapter {
         this.corners = corners;
     }
 
-    public int getRealCount() {
+    int getRealCount() {
         return urls.size();
     }
 
     public void enableInfinite(boolean enable) {
-        infinitePagesEnabled = enable;
+        if (infinitePagesEnabled != enable) {
+            infinitePagesEnabled = enable;
+            notifyDataSetChanged();
+        }
     }
 
-    public boolean isEnableInfinite() {
+    boolean isEnableInfinite() {
         return infinitePagesEnabled;
     }
 
@@ -107,16 +91,11 @@ public class InfinitePagerAdapter extends PagerAdapter {
         return imageView;
     }
 
-    @Override public float getPageWidth(int position) {
-        return PAGE_WIDTH_SINGLE_ITEM;
-    }
-
     @NonNull @Override public Object instantiateItem(@NonNull ViewGroup container, final int position) {
         final int virtualPosition = getVirtualPosition(position);
+
         final View pageView = getPageView(container.getContext(), virtualPosition, urls.size());
-
         ImageView imageView = (pageView instanceof ImageView) ? (ImageView) pageView : (ImageView) pageView.findViewById(R.id.qs_banner_image);
-
         if (imageView == null) throw new IllegalStateException("InfinitePageAdapter getPageView(Context) should return a ImageView or ViewGroup Contains a ID of 'R.id.qs_banner_image' ImageView");
 
         if (virtualPosition < urls.size()) {
@@ -172,8 +151,6 @@ public class InfinitePagerAdapter extends PagerAdapter {
     }
 
     @Override public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
-        int virtualPosition = getVirtualPosition(position);
-        L.i("destroyItem", virtualPosition + ":" + position);
         container.removeView((View) object);
     }
 

@@ -84,16 +84,14 @@ public final class AutoScrollViewPager extends QsViewPager {
         if (getAdapter() == null) return;
         if (item < 0) item = 0;
         int realCount = getAdapter().getRealCount();
+        item = item % realCount;
+
         if (getAdapter().isEnableInfinite()) {
             int halfCount = getAdapter().getCount() / 2;
-            super.setCurrentItem(halfCount - halfCount % realCount + item);
+            super.setCurrentItem(halfCount - halfCount % realCount + item, false);
         } else {
-            super.setCurrentItem(item >= realCount ? realCount - 1 : realCount);
+            super.setCurrentItem(item >= realCount ? realCount - 1 : realCount, false);
         }
-    }
-
-    @Override public void setCurrentItem(int item, boolean smoothScroll) {
-        super.setCurrentItem(item, smoothScroll);
     }
 
     @Override protected void onWindowVisibilityChanged(int visibility) {
@@ -104,7 +102,7 @@ public final class AutoScrollViewPager extends QsViewPager {
             handler.removeMessages(SCROLL_WHAT);
             sendScrollMessage((int) (interval + scroller.getDuration() / autoScrollFactor * swipeScrollFactor));
         } else {
-            L.i(initTag(), "onWindowVisibilityChanged............stop auto scroll, isAutoScroll:" + isAutoScroll + "  view visibility:" + visibility);
+            L.i(initTag(), "onWindowVisibilityChanged............view not VISIBLE, stop auto scroll if auto scrolled");
             handler.removeMessages(SCROLL_WHAT);
         }
     }
