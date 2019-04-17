@@ -101,6 +101,7 @@ public final class AutoScrollViewPager extends QsViewPager {
         if (getAdapter() == null) return;
         if (visibility == View.VISIBLE && isAutoScroll) {
             L.i(initTag(), "onWindowVisibilityChanged............view VISIBLE, start auto scroll !");
+            handler.removeMessages(SCROLL_WHAT);
             sendScrollMessage((int) (interval + scroller.getDuration() / autoScrollFactor * swipeScrollFactor));
         } else {
             L.i(initTag(), "onWindowVisibilityChanged............stop auto scroll, isAutoScroll:" + isAutoScroll + "  view visibility:" + visibility);
