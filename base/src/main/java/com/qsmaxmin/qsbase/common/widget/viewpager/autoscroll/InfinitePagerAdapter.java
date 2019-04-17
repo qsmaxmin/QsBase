@@ -8,7 +8,6 @@ import android.support.v4.view.PagerAdapter;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.qsmaxmin.qsbase.R;
@@ -103,8 +102,7 @@ public class InfinitePagerAdapter extends PagerAdapter {
 
     protected View getPageView(Context context, int currentIndex, int totalPage) {
         ImageView imageView = new ImageView(context);
-        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        imageView.setLayoutParams(layoutParams);
+        imageView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         imageView.setScaleType(ImageView.ScaleType.FIT_XY);
         return imageView;
     }
