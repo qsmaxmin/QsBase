@@ -163,7 +163,7 @@ public class InfinitePagerAdapter extends PagerAdapter {
     }
 
     int getVirtualPosition(int position) {
-        return infinitePagesEnabled ? position % getRealCount() : position;
+        return infinitePagesEnabled ? (getRealCount() > 0 ? position % getRealCount() : 0) : position;
     }
 
     public interface OnPageClickListener {
