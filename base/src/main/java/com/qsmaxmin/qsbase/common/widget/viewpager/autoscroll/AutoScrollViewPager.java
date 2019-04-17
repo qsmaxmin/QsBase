@@ -51,12 +51,13 @@ public final class AutoScrollViewPager extends QsViewPager {
     private             float                  lastY;
     private             PageIndicator          indicator;
 
-    public AutoScrollViewPager(Context paramContext) {
-        this(paramContext, null);
+    public AutoScrollViewPager(Context context) {
+        super(context);
+        init();
     }
 
-    public AutoScrollViewPager(Context paramContext, AttributeSet paramAttributeSet) {
-        super(paramContext, paramAttributeSet);
+    public AutoScrollViewPager(Context context, AttributeSet attrs) {
+        super(context, attrs);
         init();
     }
 
