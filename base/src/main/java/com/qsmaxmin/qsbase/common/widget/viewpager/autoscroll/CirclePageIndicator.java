@@ -22,11 +22,8 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
-import android.graphics.Path;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
@@ -44,7 +41,6 @@ import static android.graphics.Paint.ANTI_ALIAS_FLAG;
  * @Description 无限viewpager指示器
  */
 public class CirclePageIndicator extends View implements PageIndicator {
-
     private final Paint                mPaintUnSelectedFill = new Paint(ANTI_ALIAS_FLAG);
     private final Paint                mPaintOutside        = new Paint(ANTI_ALIAS_FLAG);
     private final Paint                mPaintSelectedFill   = new Paint(ANTI_ALIAS_FLAG);
@@ -60,7 +56,6 @@ public class CirclePageIndicator extends View implements PageIndicator {
     private       boolean              mCentered;
     private       float                strokeWidth;
     private       float                outsideSize;
-    private       Path                 path;
     private       float                longOffset;
     private       float                centerY;
     private       float                centerMargin;
@@ -382,12 +377,8 @@ public class CirclePageIndicator extends View implements PageIndicator {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * @see android.view.View#onMeasure(int, int)
-     */
     @Override protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        setMeasuredDimension(measureLong(widthMeasureSpec), measureShort(heightMeasureSpec));
+        setMeasuredDimension(measureWidth(widthMeasureSpec), measureHeight(heightMeasureSpec));
     }
 
     /**
@@ -396,7 +387,7 @@ public class CirclePageIndicator extends View implements PageIndicator {
      * @param measureSpec A measureSpec packed into an int
      * @return The width of the view, honoring constraints from measureSpec
      */
-    private int measureLong(int measureSpec) {
+    private int measureWidth(int measureSpec) {
         int result = 0;
         int specMode = MeasureSpec.getMode(measureSpec);
         int specSize = MeasureSpec.getSize(measureSpec);
@@ -430,7 +421,7 @@ public class CirclePageIndicator extends View implements PageIndicator {
      * @param measureSpec A measureSpec packed into an int
      * @return The height of the view, honoring constraints from measureSpec
      */
-    private int measureShort(int measureSpec) {
+    private int measureHeight(int measureSpec) {
         int result;
         int specMode = MeasureSpec.getMode(measureSpec);
         int specSize = MeasureSpec.getSize(measureSpec);
@@ -448,50 +439,5 @@ public class CirclePageIndicator extends View implements PageIndicator {
             }
         }
         return result;
-    }
-
-    @Override public void onRestoreInstanceState(Parcelable state) {
-        SavedState savedState = (SavedState) state;
-        super.onRestoreInstanceState(savedState.getSuperState());
-        mCurrentPage = savedState.currentPage;
-        mSnapPage = savedState.currentPage;
-        requestLayout();
-    }
-
-    @Override public Parcelable onSaveInstanceState() {
-        Parcelable superState = super.onSaveInstanceState();
-        SavedState savedState = new SavedState(superState);
-        savedState.currentPage = mCurrentPage;
-        return savedState;
-    }
-
-    private static class SavedState extends BaseSavedState {
-
-        int currentPage;
-
-        SavedState(Parcelable superState) {
-            super(superState);
-        }
-
-        private SavedState(Parcel in) {
-            super(in);
-            currentPage = in.readInt();
-        }
-
-        @Override public void writeToParcel(Parcel dest, int flags) {
-            super.writeToParcel(dest, flags);
-            dest.writeInt(currentPage);
-        }
-
-        @SuppressWarnings("UnusedDeclaration") public static final Creator<SavedState> CREATOR = new Creator<SavedState>() {
-
-            @Override public SavedState createFromParcel(Parcel in) {
-                return new SavedState(in);
-            }
-
-            @Override public SavedState[] newArray(int size) {
-                return new SavedState[size];
-            }
-        };
     }
 }
