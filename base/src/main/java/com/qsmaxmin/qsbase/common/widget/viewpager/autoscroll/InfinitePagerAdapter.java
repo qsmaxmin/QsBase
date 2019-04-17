@@ -109,52 +109,35 @@ public class InfinitePagerAdapter extends PagerAdapter {
         return imageView;
     }
 
-    protected ImageView getPlaceholderView(Context context) {
-        ImageView imageView = new ImageView(context);
-        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        imageView.setLayoutParams(layoutParams);
-        imageView.setScaleType(ImageView.ScaleType.CENTER);
-        return imageView;
-    }
-
     @Override public float getPageWidth(int position) {
         return PAGE_WIDTH_SINGLE_ITEM;
     }
 
     @NonNull @Override public Object instantiateItem(@NonNull ViewGroup container, final int position) {
         final int virtualPosition = getVirtualPosition(position);
-        FrameLayout frameLayout = new FrameLayout(container.getContext());
         final View pageView = getPageView(container.getContext(), virtualPosition, urls.size());
-        ImageView imageView;
-        if (pageView instanceof ImageView) {
-            imageView = (ImageView) pageView;
-        } else {
-            imageView = pageView.findViewById(R.id.qs_banner_image);
-        }
-        if (imageView == null) throw new IllegalStateException("InfinitePageAdapter getPageView(Context) should return a ImageView or ViewGroup Contains a ID of 'R.id.qs_banner_image' ImageView");
-        if (holderId > 0) {
-            final ImageView holderImage = getPlaceholderView(container.getContext());
-            holderImage.setImageDrawable(container.getContext().getResources().getDrawable(holderId));
-            frameLayout.addView(holderImage);
-            frameLayout.addView(pageView);
 
-            if (virtualPosition < urls.size()) {
+        ImageView imageView = (pageView instanceof ImageView) ? (ImageView) pageView : (ImageView) pageView.findViewById(R.id.qs_banner_image);
+
+        if (imageView == null) throw new IllegalStateException("InfinitePageAdapter getPageView(Context) should return a ImageView or ViewGroup Contains a ID of 'R.id.qs_banner_image' ImageView");
+
+        if (virtualPosition < urls.size()) {
+            if (holderId > 0) {
                 Object object = urls.get(virtualPosition);
                 if (object instanceof String) {
-                    ImageHelper.ImageRequestListener listener = createImageRequestCallback(pageView, holderImage);
+                    imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                    imageView.setImageDrawable(container.getContext().getResources().getDrawable(holderId));
+                    ImageHelper.ImageRequestListener listener = createImageRequestCallback(imageView);
                     QsHelper.getInstance().getImageHelper().createRequest().roundedCorners(corners).load(object).into(imageView, listener);
                 } else if (object instanceof Bitmap) {
-                    pageView.setVisibility(View.VISIBLE);
-                    holderImage.setVisibility(View.GONE);
                     imageView.setImageBitmap((Bitmap) object);
                 } else {
-                    ImageHelper.ImageRequestListener listener = createImageRequestCallback(pageView, holderImage);
+                    imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                    imageView.setImageDrawable(container.getContext().getResources().getDrawable(holderId));
+                    ImageHelper.ImageRequestListener listener = createImageRequestCallback(imageView);
                     QsHelper.getInstance().getImageHelper().createRequest().roundedCorners(corners).load(object).into(imageView, listener);
                 }
-            }
-        } else {
-            frameLayout.addView(pageView);
-            if (virtualPosition < urls.size()) {
+            } else {
                 Object object = urls.get(virtualPosition);
                 if (object instanceof String) {
                     QsHelper.getInstance().getImageHelper().createRequest().roundedCorners(corners).load((String) object).into(imageView);
@@ -165,6 +148,7 @@ public class InfinitePagerAdapter extends PagerAdapter {
                 }
             }
         }
+
         if (listener != null) {
             pageView.setOnClickListener(new View.OnClickListener() {
                 @Override public void onClick(View v) {
@@ -174,20 +158,17 @@ public class InfinitePagerAdapter extends PagerAdapter {
                 }
             });
         }
-        container.addView(frameLayout);
-        return frameLayout;
+        container.addView(pageView);
+        return pageView;
     }
 
-    @NonNull private ImageHelper.ImageRequestListener createImageRequestCallback(final View pageView, final ImageView holderImage) {
+    @NonNull private ImageHelper.ImageRequestListener createImageRequestCallback(final ImageView imageView) {
         return new ImageHelper.ImageRequestListener() {
             @Override public void onLoadFailed(String message) {
-                pageView.setVisibility(View.GONE);
-                holderImage.setVisibility(View.VISIBLE);
             }
 
             @Override public void onSuccess(Drawable drawable, Object model) {
-                pageView.setVisibility(View.VISIBLE);
-                holderImage.setVisibility(View.GONE);
+                imageView.setScaleType(ImageView.ScaleType.FIT_XY);
             }
         };
     }
