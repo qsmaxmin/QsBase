@@ -42,13 +42,14 @@ public final class AutoScrollViewPager extends QsViewPager {
     private             CustomDurationScroller scroller                    = null;
     public static final int                    SCROLL_WHAT                 = 0;
     private             float                  mFactor                     = 1.0f;
-    private MyHandler handler;
-    private Field     mIsBeingDraggedField;
-    private Method    setScrollStateMethod;
-    private float     distanceX;
-    private float     distanceY;
-    private float     lastX;
-    private float     lastY;
+    private             MyHandler              handler;
+    private             Field                  mIsBeingDraggedField;
+    private             Method                 setScrollStateMethod;
+    private             float                  distanceX;
+    private             float                  distanceY;
+    private             float                  lastX;
+    private             float                  lastY;
+    private             PageIndicator          indicator;
 
     public AutoScrollViewPager(Context paramContext) {
         this(paramContext, null);
@@ -104,6 +105,19 @@ public final class AutoScrollViewPager extends QsViewPager {
             L.i(initTag(), "onWindowVisibilityChanged............stop auto scroll, isAutoScroll:" + isAutoScroll + "  view visibility:" + visibility);
             handler.removeMessages(SCROLL_WHAT);
         }
+    }
+
+    public void setPageIndicator(PageIndicator pageIndicator) {
+        if (this.indicator != null) {
+            removeOnPageChangeListener(indicator);
+        }
+        addOnPageChangeListener(pageIndicator);
+        pageIndicator.setViewPager(this);
+    }
+
+    public void notifyDataSetChanged() {
+        if (getAdapter() != null) getAdapter().notifyDataSetChanged();
+        if (indicator != null) indicator.updateView();
     }
 
     private void sendScrollMessage(long delay) {

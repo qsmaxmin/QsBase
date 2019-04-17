@@ -44,28 +44,26 @@ import static android.graphics.Paint.ANTI_ALIAS_FLAG;
  * @Description 无限viewpager指示器
  */
 public class CirclePageIndicator extends View implements PageIndicator {
-
     private final Paint                mPaintUnSelectedFill = new Paint(ANTI_ALIAS_FLAG);
     private final Paint                mPaintOutside        = new Paint(ANTI_ALIAS_FLAG);
     private final Paint                mPaintSelectedFill   = new Paint(ANTI_ALIAS_FLAG);
     private       ArrayList<Indicator> indicators           = new ArrayList<>();
-    private ViewPager.OnPageChangeListener mListener;
-    private int                            transformMode;
-    private float                          mRadius;
-    private Drawable                       fillDrawable;
-    private ViewPager                      mViewPager;
-    private int                            mCurrentPage;
-    private int                            mSnapPage;
-    private float                          mPageOffset;
-    private int                            mScrollState;
-    private boolean                        mCentered;
-    private float                          strokeWidth;
-    private float                          outsideSize;
-    private Path                           path;
-    private float                          longOffset;
-    private float                          centerY;
-    private float                          centerMargin;
-    private float                          selectedWidth;
+    private       int                  transformMode;
+    private       float                mRadius;
+    private       Drawable             fillDrawable;
+    private       ViewPager            mViewPager;
+    private       int                  mCurrentPage;
+    private       int                  mSnapPage;
+    private       float                mPageOffset;
+    private       int                  mScrollState;
+    private       boolean              mCentered;
+    private       float                strokeWidth;
+    private       float                outsideSize;
+    private       Path                 path;
+    private       float                longOffset;
+    private       float                centerY;
+    private       float                centerMargin;
+    private       float                selectedWidth;
 
     public CirclePageIndicator(Context context) {
         this(context, null);
@@ -190,7 +188,6 @@ public class CirclePageIndicator extends View implements PageIndicator {
         }
         if (count == 0) return;
         if (mCurrentPage >= count) {
-            setCurrentItem(count - 1);
             return;
         }
         centerY = getPaddingTop() + mRadius;
@@ -351,49 +348,20 @@ public class CirclePageIndicator extends View implements PageIndicator {
     }
 
     @Override public void setViewPager(ViewPager view) {
-        if (mViewPager == view) {
-            return;
-        }
-        if (mViewPager != null) {
-            mViewPager.removeOnPageChangeListener(this);
-        }
-        if (view.getAdapter() == null) {
-            throw new IllegalStateException("ViewPager does not have adapter instance.");
-        }
         mViewPager = view;
-        mViewPager.addOnPageChangeListener(this);
+    }
+
+    @Override public void updateView() {
+        requestLayout();
         invalidate();
-    }
-
-    @Override public void setViewPager(ViewPager view, int initialPosition) {
-        setViewPager(view);
-        setCurrentItem(initialPosition);
-    }
-
-    @Override public void setCurrentItem(int item) {
-        if (mViewPager == null) {
-            throw new IllegalStateException("ViewPager has not been bound.");
-        }
-        mViewPager.setCurrentItem(item);
-        mCurrentPage = item;
-        invalidate();
-    }
-
-    @Override public void notifyDataSetChanged() {
-        if (mViewPager.getAdapter() != null) {
-            mViewPager.getAdapter().notifyDataSetChanged();
-            invalidate();
-        }
     }
 
     @Override public void onPageScrollStateChanged(int state) {
         mScrollState = state;
-        if (mListener != null) mListener.onPageScrollStateChanged(state);
     }
 
     @Override public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
         PagerAdapter adapter = mViewPager.getAdapter();
-        if (adapter == null) return;
         if (adapter instanceof InfinitePagerAdapter) {
             mCurrentPage = ((InfinitePagerAdapter) adapter).getVirtualPosition(position);
         } else {
@@ -401,7 +369,6 @@ public class CirclePageIndicator extends View implements PageIndicator {
         }
         mPageOffset = positionOffset;
         invalidate();
-        if (mListener != null) mListener.onPageScrolled(position, positionOffset, positionOffsetPixels);
     }
 
     @Override public void onPageSelected(int position) {
@@ -415,11 +382,6 @@ public class CirclePageIndicator extends View implements PageIndicator {
             mSnapPage = mCurrentPage;
             invalidate();
         }
-        if (mListener != null) mListener.onPageSelected(position);
-    }
-
-    @Override public void setOnPageChangeListener(ViewPager.OnPageChangeListener listener) {
-        mListener = listener;
     }
 
     /*
