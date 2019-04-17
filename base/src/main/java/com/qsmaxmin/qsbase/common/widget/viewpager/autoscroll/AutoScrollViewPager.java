@@ -110,6 +110,7 @@ public final class AutoScrollViewPager extends QsViewPager {
 
     public void setPageIndicator(PageIndicator pageIndicator) {
         if (pageIndicator != null && this.indicator != pageIndicator) {
+            indicator = pageIndicator;
             pageIndicator.setViewPager(this);
         }
     }
