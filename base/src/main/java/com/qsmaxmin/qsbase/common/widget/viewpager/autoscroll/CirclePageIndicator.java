@@ -44,6 +44,7 @@ import static android.graphics.Paint.ANTI_ALIAS_FLAG;
  * @Description 无限viewpager指示器
  */
 public class CirclePageIndicator extends View implements PageIndicator {
+
     private final Paint                mPaintUnSelectedFill = new Paint(ANTI_ALIAS_FLAG);
     private final Paint                mPaintOutside        = new Paint(ANTI_ALIAS_FLAG);
     private final Paint                mPaintSelectedFill   = new Paint(ANTI_ALIAS_FLAG);
@@ -188,6 +189,7 @@ public class CirclePageIndicator extends View implements PageIndicator {
         }
         if (count == 0) return;
         if (mCurrentPage >= count) {
+            setCurrentItem(count - 1);
             return;
         }
         centerY = getPaddingTop() + mRadius;
@@ -277,20 +279,6 @@ public class CirclePageIndicator extends View implements PageIndicator {
         }
     }
 
-    private void drawPath(Canvas canvas, float leftX, float rightX) {
-        if (path == null) {
-            path = new Path();
-        }
-        path.reset();
-        path.moveTo(leftX, getPaddingTop());
-        path.lineTo(rightX, getPaddingTop());
-        path.lineTo(rightX, mRadius * 2 + getPaddingTop());
-        path.lineTo(leftX, mRadius * 2 + getPaddingTop());
-        path.close();
-        canvas.drawPath(path, mPaintSelectedFill);
-    }
-
-
     private void drawNormalUnSelected(Canvas canvas, int count) {
         for (int iLoop = 0; iLoop < count; iLoop++) {
             float dX = longOffset + (iLoop * centerMargin);
@@ -347,8 +335,26 @@ public class CirclePageIndicator extends View implements PageIndicator {
         return rectF;
     }
 
-    @Override public void setViewPager(ViewPager view) {
-        mViewPager = view;
+    @Override public void setViewPager(ViewPager pager) {
+        if (mViewPager == pager) {
+            return;
+        }
+        if (mViewPager != null) {
+            mViewPager.removeOnPageChangeListener(this);
+        }
+        if (pager != null) {
+            mViewPager = pager;
+            pager.addOnPageChangeListener(this);
+            invalidate();
+        }
+    }
+
+    private void setCurrentItem(int item) {
+        if (mViewPager != null) {
+            mViewPager.setCurrentItem(item);
+            mCurrentPage = item;
+            invalidate();
+        }
     }
 
     @Override public void updateView() {
@@ -362,6 +368,7 @@ public class CirclePageIndicator extends View implements PageIndicator {
 
     @Override public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
         PagerAdapter adapter = mViewPager.getAdapter();
+        if (adapter == null) return;
         if (adapter instanceof InfinitePagerAdapter) {
             mCurrentPage = ((InfinitePagerAdapter) adapter).getVirtualPosition(position);
         } else {
