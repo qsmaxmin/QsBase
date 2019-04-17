@@ -81,9 +81,10 @@ public final class AutoScrollViewPager extends QsViewPager {
      * 计算位置
      */
     @Override public void setCurrentItem(int item) {
-        if (getAdapter() == null) return;
         if (item < 0) item = 0;
+        if (getAdapter() == null) return;
         int realCount = getAdapter().getRealCount();
+        if (realCount <= 0) return;
         item = item % realCount;
 
         if (getAdapter().isEnableInfinite()) {
