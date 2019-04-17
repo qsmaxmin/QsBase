@@ -157,13 +157,10 @@ public class InfinitePagerAdapter extends PagerAdapter {
             if (virtualPosition < urls.size()) {
                 Object object = urls.get(virtualPosition);
                 if (object instanceof String) {
-                    L.i("InfinitePagerAdapter", "instantiateItem... type:String(no holder), position:" + virtualPosition + ", totalCount:" + urls.size());
                     QsHelper.getInstance().getImageHelper().createRequest().roundedCorners(corners).load((String) object).into(imageView);
                 } else if (object instanceof Bitmap) {
-                    L.i("InfinitePagerAdapter", "instantiateItem... type:Bitmap(no holder), position:" + virtualPosition + ", totalCount:" + urls.size());
                     imageView.setImageBitmap((Bitmap) object);
                 } else {
-                    L.i("InfinitePagerAdapter", "instantiateItem... type:Object(no holder), position:" + virtualPosition + ", totalCount:" + urls.size());
                     QsHelper.getInstance().getImageHelper().createRequest().roundedCorners(corners).load(urls.get(virtualPosition)).into(imageView);
                 }
             }
