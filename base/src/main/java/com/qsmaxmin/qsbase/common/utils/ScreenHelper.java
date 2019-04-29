@@ -68,7 +68,7 @@ public final class ScreenHelper {
         if (activity == null) return;
         if (currentActivity() == activity) return;
         int index = fragmentActivities.indexOf(activity);
-        if (index > 0) {
+        if (index >= 0) {
             FragmentActivity remove = fragmentActivities.remove(index);
             if (remove != null) fragmentActivities.add(remove);
             if (L.isEnable()) {
