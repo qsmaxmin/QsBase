@@ -17,8 +17,8 @@ import android.widget.ScrollView;
  */
 public class PercentLinearLayout extends LinearLayout {
 
-    private static final String TAG = "PercentLinearLayout";
-    private PercentLayoutHelper mPercentLayoutHelper;
+    private static final String              TAG = "PercentLinearLayout";
+    private              PercentLayoutHelper mPercentLayoutHelper;
 
     public PercentLinearLayout(Context context, AttributeSet attrs) {
         super(context, attrs);

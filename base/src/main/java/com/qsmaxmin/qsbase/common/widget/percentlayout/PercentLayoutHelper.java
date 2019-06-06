@@ -80,8 +80,7 @@ import java.util.regex.Pattern;
  * </pre>
  * </ol>
  */
-public class PercentLayoutHelper
-{
+public class PercentLayoutHelper {
     private static final String TAG = "PercentLayout";
 
     private final ViewGroup mHost;
@@ -89,14 +88,12 @@ public class PercentLayoutHelper
     private static int mWidthScreen;
     private static int mHeightScreen;
 
-    public PercentLayoutHelper(ViewGroup host)
-    {
+    public PercentLayoutHelper(ViewGroup host) {
         mHost = host;
         getScreenSize();
     }
 
-    private void getScreenSize()
-    {
+    private void getScreenSize() {
         WindowManager wm = (WindowManager) mHost.getContext().getSystemService(Context.WINDOW_SERVICE);
         DisplayMetrics outMetrics = new DisplayMetrics();
         wm.getDefaultDisplay().getMetrics(outMetrics);
@@ -111,8 +108,7 @@ public class PercentLayoutHelper
      * they aren't present.
      */
     public static void fetchWidthAndHeight(ViewGroup.LayoutParams params, TypedArray array,
-                                           int widthAttr, int heightAttr)
-    {
+            int widthAttr, int heightAttr) {
         params.width = array.getLayoutDimension(widthAttr, 0);
         params.height = array.getLayoutDimension(heightAttr, 0);
     }
@@ -124,10 +120,8 @@ public class PercentLayoutHelper
      * @param widthMeasureSpec  Width MeasureSpec of the parent ViewGroup.
      * @param heightMeasureSpec Height MeasureSpec of the parent ViewGroup.
      */
-    public void adjustChildren(int widthMeasureSpec, int heightMeasureSpec)
-    {
-        if (Log.isLoggable(TAG, Log.DEBUG))
-        {
+    public void adjustChildren(int widthMeasureSpec, int heightMeasureSpec) {
+        if (Log.isLoggable(TAG, Log.DEBUG)) {
             Log.d(TAG, "adjustChildren: " + mHost + " widthMeasureSpec: "
                     + View.MeasureSpec.toString(widthMeasureSpec) + " heightMeasureSpec: "
                     + View.MeasureSpec.toString(heightMeasureSpec));
@@ -138,36 +132,29 @@ public class PercentLayoutHelper
         if (Log.isLoggable(TAG, Log.DEBUG))
             Log.d(TAG, "widthHint = " + widthHint + " , heightHint = " + heightHint);
 
-        for (int i = 0, N = mHost.getChildCount(); i < N; i++)
-        {
+        for (int i = 0, N = mHost.getChildCount(); i < N; i++) {
             View view = mHost.getChildAt(i);
             ViewGroup.LayoutParams params = view.getLayoutParams();
 
-            if (Log.isLoggable(TAG, Log.DEBUG))
-            {
+            if (Log.isLoggable(TAG, Log.DEBUG)) {
                 Log.d(TAG, "should adjust " + view + " " + params);
             }
 
-            if (params instanceof PercentLayoutParams)
-            {
+            if (params instanceof PercentLayoutParams) {
                 PercentLayoutInfo info =
                         ((PercentLayoutParams) params).getPercentLayoutInfo();
-                if (Log.isLoggable(TAG, Log.DEBUG))
-                {
+                if (Log.isLoggable(TAG, Log.DEBUG)) {
                     Log.d(TAG, "using " + info);
                 }
-                if (info != null)
-                {
+                if (info != null) {
                     supportTextSize(widthHint, heightHint, view, info);
                     supportPadding(widthHint, heightHint, view, info);
                     supportMinOrMaxDimesion(widthHint, heightHint, view, info);
 
-                    if (params instanceof ViewGroup.MarginLayoutParams)
-                    {
+                    if (params instanceof ViewGroup.MarginLayoutParams) {
                         info.fillMarginLayoutParams((ViewGroup.MarginLayoutParams) params,
                                 widthHint, heightHint);
-                    } else
-                    {
+                    } else {
                         info.fillLayoutParams(params, widthHint, heightHint);
                     }
                 }
@@ -177,32 +164,27 @@ public class PercentLayoutHelper
 
     }
 
-    private void supportPadding(int widthHint, int heightHint, View view, PercentLayoutInfo info)
-    {
+    private void supportPadding(int widthHint, int heightHint, View view, PercentLayoutInfo info) {
         int left = view.getPaddingLeft(), right = view.getPaddingRight(), top = view.getPaddingTop(), bottom = view.getPaddingBottom();
         PercentLayoutInfo.PercentVal percentVal = info.paddingLeftPercent;
-        if (percentVal != null)
-        {
+        if (percentVal != null) {
             int base = getBaseByModeAndVal(widthHint, heightHint, percentVal.basemode);
             left = (int) (base * percentVal.percent);
         }
         percentVal = info.paddingRightPercent;
-        if (percentVal != null)
-        {
+        if (percentVal != null) {
             int base = getBaseByModeAndVal(widthHint, heightHint, percentVal.basemode);
             right = (int) (base * percentVal.percent);
         }
 
         percentVal = info.paddingTopPercent;
-        if (percentVal != null)
-        {
+        if (percentVal != null) {
             int base = getBaseByModeAndVal(widthHint, heightHint, percentVal.basemode);
             top = (int) (base * percentVal.percent);
         }
 
         percentVal = info.paddingBottomPercent;
-        if (percentVal != null)
-        {
+        if (percentVal != null) {
             int base = getBaseByModeAndVal(widthHint, heightHint, percentVal.basemode);
             bottom = (int) (base * percentVal.percent);
         }
@@ -211,35 +193,28 @@ public class PercentLayoutHelper
 
     }
 
-    private void supportMinOrMaxDimesion(int widthHint, int heightHint, View view, PercentLayoutInfo info)
-    {
-        try
-        {
+    private void supportMinOrMaxDimesion(int widthHint, int heightHint, View view, PercentLayoutInfo info) {
+        try {
             Class clazz = view.getClass();
             invokeMethod("setMaxWidth", widthHint, heightHint, view, clazz, info.maxWidthPercent);
             invokeMethod("setMaxHeight", widthHint, heightHint, view, clazz, info.maxHeightPercent);
             invokeMethod("setMinWidth", widthHint, heightHint, view, clazz, info.minWidthPercent);
             invokeMethod("setMinHeight", widthHint, heightHint, view, clazz, info.minHeightPercent);
 
-        } catch (NoSuchMethodException e)
-        {
+        } catch (NoSuchMethodException e) {
             e.printStackTrace();
-        } catch (InvocationTargetException e)
-        {
+        } catch (InvocationTargetException e) {
             e.printStackTrace();
-        } catch (IllegalAccessException e)
-        {
+        } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
 
     }
 
-    private void invokeMethod(String methodName, int widthHint, int heightHint, View view, Class clazz, PercentLayoutInfo.PercentVal percentVal) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException
-    {
+    private void invokeMethod(String methodName, int widthHint, int heightHint, View view, Class clazz, PercentLayoutInfo.PercentVal percentVal) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         if (Log.isLoggable(TAG, Log.DEBUG))
             Log.d(TAG, methodName + " ==> " + percentVal);
-        if (percentVal != null)
-        {
+        if (percentVal != null) {
             Method setMaxWidthMethod = clazz.getMethod(methodName, int.class);
             setMaxWidthMethod.setAccessible(true);
             int base = getBaseByModeAndVal(widthHint, heightHint, percentVal.basemode);
@@ -247,8 +222,7 @@ public class PercentLayoutHelper
         }
     }
 
-    private void supportTextSize(int widthHint, int heightHint, View view, PercentLayoutInfo info)
-    {
+    private void supportTextSize(int widthHint, int heightHint, View view, PercentLayoutInfo info) {
         //textsize percent support
 
         PercentLayoutInfo.PercentVal textSizePercent = info.textSizePercent;
@@ -258,16 +232,13 @@ public class PercentLayoutHelper
         float textSize = (int) (base * textSizePercent.percent);
 
         //Button 和 EditText 是TextView的子类
-        if (view instanceof TextView)
-        {
+        if (view instanceof TextView) {
             ((TextView) view).setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
         }
     }
 
-    private static int getBaseByModeAndVal(int widthHint, int heightHint, PercentLayoutInfo.BASEMODE basemode)
-    {
-        switch (basemode)
-        {
+    private static int getBaseByModeAndVal(int widthHint, int heightHint, PercentLayoutInfo.BASEMODE basemode) {
+        switch (basemode) {
             case BASE_HEIGHT:
                 return heightHint;
             case BASE_WIDTH:
@@ -286,8 +257,7 @@ public class PercentLayoutHelper
      * {@code LayoutParams(Context c, AttributeSet attrs)} constructor.
      */
     public static PercentLayoutInfo getPercentLayoutInfo(Context context,
-                                                         AttributeSet attrs)
-    {
+            AttributeSet attrs) {
         PercentLayoutInfo info = null;
         TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.PercentLayout_Layout);
 
@@ -304,20 +274,16 @@ public class PercentLayoutHelper
 
         array.recycle();
 
-        if (Log.isLoggable(TAG, Log.DEBUG))
-        {
+        if (Log.isLoggable(TAG, Log.DEBUG)) {
             Log.d(TAG, "constructed: " + info);
         }
         return info;
     }
 
-    private static PercentLayoutInfo setWidthAndHeightVal(TypedArray array, PercentLayoutInfo info)
-    {
+    private static PercentLayoutInfo setWidthAndHeightVal(TypedArray array, PercentLayoutInfo info) {
         PercentLayoutInfo.PercentVal percentVal = getPercentVal(array, R.styleable.PercentLayout_Layout_layout_widthPercent, true);
-        if (percentVal != null)
-        {
-            if (Log.isLoggable(TAG, Log.VERBOSE))
-            {
+        if (percentVal != null) {
+            if (Log.isLoggable(TAG, Log.VERBOSE)) {
                 Log.v(TAG, "percent width: " + percentVal.percent);
             }
             info = checkForInfoExists(info);
@@ -325,10 +291,8 @@ public class PercentLayoutHelper
         }
         percentVal = getPercentVal(array, R.styleable.PercentLayout_Layout_layout_heightPercent, false);
 
-        if (percentVal != null)
-        {
-            if (Log.isLoggable(TAG, Log.VERBOSE))
-            {
+        if (percentVal != null) {
+            if (Log.isLoggable(TAG, Log.VERBOSE)) {
                 Log.v(TAG, "percent height: " + percentVal.percent);
             }
             info = checkForInfoExists(info);
@@ -338,14 +302,11 @@ public class PercentLayoutHelper
         return info;
     }
 
-    private static PercentLayoutInfo setTextSizeSupportVal(TypedArray array, PercentLayoutInfo info)
-    {
+    private static PercentLayoutInfo setTextSizeSupportVal(TypedArray array, PercentLayoutInfo info) {
         //textSizePercent 默认以高度作为基准
         PercentLayoutInfo.PercentVal percentVal = getPercentVal(array, R.styleable.PercentLayout_Layout_layout_textSizePercent, false);
-        if (percentVal != null)
-        {
-            if (Log.isLoggable(TAG, Log.VERBOSE))
-            {
+        if (percentVal != null) {
+            if (Log.isLoggable(TAG, Log.VERBOSE)) {
                 Log.v(TAG, "percent text size: " + percentVal.percent);
             }
             info = checkForInfoExists(info);
@@ -355,14 +316,12 @@ public class PercentLayoutHelper
         return info;
     }
 
-    private static PercentLayoutInfo setMinMaxWidthHeightRelatedVal(TypedArray array, PercentLayoutInfo info)
-    {
+    private static PercentLayoutInfo setMinMaxWidthHeightRelatedVal(TypedArray array, PercentLayoutInfo info) {
         //maxWidth
         PercentLayoutInfo.PercentVal percentVal = getPercentVal(array,
                 R.styleable.PercentLayout_Layout_layout_maxWidthPercent,
                 true);
-        if (percentVal != null)
-        {
+        if (percentVal != null) {
             info = checkForInfoExists(info);
             info.maxWidthPercent = percentVal;
         }
@@ -370,8 +329,7 @@ public class PercentLayoutHelper
         percentVal = getPercentVal(array,
                 R.styleable.PercentLayout_Layout_layout_maxHeightPercent,
                 false);
-        if (percentVal != null)
-        {
+        if (percentVal != null) {
             info = checkForInfoExists(info);
             info.maxHeightPercent = percentVal;
         }
@@ -379,8 +337,7 @@ public class PercentLayoutHelper
         percentVal = getPercentVal(array,
                 R.styleable.PercentLayout_Layout_layout_minWidthPercent,
                 true);
-        if (percentVal != null)
-        {
+        if (percentVal != null) {
             info = checkForInfoExists(info);
             info.minWidthPercent = percentVal;
         }
@@ -388,8 +345,7 @@ public class PercentLayoutHelper
         percentVal = getPercentVal(array,
                 R.styleable.PercentLayout_Layout_layout_minHeightPercent,
                 false);
-        if (percentVal != null)
-        {
+        if (percentVal != null) {
             info = checkForInfoExists(info);
             info.minHeightPercent = percentVal;
         }
@@ -397,18 +353,15 @@ public class PercentLayoutHelper
         return info;
     }
 
-    private static PercentLayoutInfo setMarginRelatedVal(TypedArray array, PercentLayoutInfo info)
-    {
+    private static PercentLayoutInfo setMarginRelatedVal(TypedArray array, PercentLayoutInfo info) {
         //默认margin参考宽度
         PercentLayoutInfo.PercentVal percentVal =
                 getPercentVal(array,
                         R.styleable.PercentLayout_Layout_layout_marginPercent,
                         true);
 
-        if (percentVal != null)
-        {
-            if (Log.isLoggable(TAG, Log.VERBOSE))
-            {
+        if (percentVal != null) {
+            if (Log.isLoggable(TAG, Log.VERBOSE)) {
                 Log.v(TAG, "percent margin: " + percentVal.percent);
             }
             info = checkForInfoExists(info);
@@ -419,10 +372,8 @@ public class PercentLayoutHelper
         }
 
         percentVal = getPercentVal(array, R.styleable.PercentLayout_Layout_layout_marginLeftPercent, true);
-        if (percentVal != null)
-        {
-            if (Log.isLoggable(TAG, Log.VERBOSE))
-            {
+        if (percentVal != null) {
+            if (Log.isLoggable(TAG, Log.VERBOSE)) {
                 Log.v(TAG, "percent left margin: " + percentVal.percent);
             }
             info = checkForInfoExists(info);
@@ -430,10 +381,8 @@ public class PercentLayoutHelper
         }
 
         percentVal = getPercentVal(array, R.styleable.PercentLayout_Layout_layout_marginTopPercent, false);
-        if (percentVal != null)
-        {
-            if (Log.isLoggable(TAG, Log.VERBOSE))
-            {
+        if (percentVal != null) {
+            if (Log.isLoggable(TAG, Log.VERBOSE)) {
                 Log.v(TAG, "percent top margin: " + percentVal.percent);
             }
             info = checkForInfoExists(info);
@@ -441,10 +390,8 @@ public class PercentLayoutHelper
         }
 
         percentVal = getPercentVal(array, R.styleable.PercentLayout_Layout_layout_marginRightPercent, true);
-        if (percentVal != null)
-        {
-            if (Log.isLoggable(TAG, Log.VERBOSE))
-            {
+        if (percentVal != null) {
+            if (Log.isLoggable(TAG, Log.VERBOSE)) {
                 Log.v(TAG, "percent right margin: " + percentVal.percent);
             }
             info = checkForInfoExists(info);
@@ -452,20 +399,16 @@ public class PercentLayoutHelper
         }
 
         percentVal = getPercentVal(array, R.styleable.PercentLayout_Layout_layout_marginBottomPercent, false);
-        if (percentVal != null)
-        {
-            if (Log.isLoggable(TAG, Log.VERBOSE))
-            {
+        if (percentVal != null) {
+            if (Log.isLoggable(TAG, Log.VERBOSE)) {
                 Log.v(TAG, "percent bottom margin: " + percentVal.percent);
             }
             info = checkForInfoExists(info);
             info.bottomMarginPercent = percentVal;
         }
         percentVal = getPercentVal(array, R.styleable.PercentLayout_Layout_layout_marginStartPercent, true);
-        if (percentVal != null)
-        {
-            if (Log.isLoggable(TAG, Log.VERBOSE))
-            {
+        if (percentVal != null) {
+            if (Log.isLoggable(TAG, Log.VERBOSE)) {
                 Log.v(TAG, "percent start margin: " + percentVal.percent);
             }
             info = checkForInfoExists(info);
@@ -473,10 +416,8 @@ public class PercentLayoutHelper
         }
 
         percentVal = getPercentVal(array, R.styleable.PercentLayout_Layout_layout_marginEndPercent, true);
-        if (percentVal != null)
-        {
-            if (Log.isLoggable(TAG, Log.VERBOSE))
-            {
+        if (percentVal != null) {
+            if (Log.isLoggable(TAG, Log.VERBOSE)) {
                 Log.v(TAG, "percent end margin: " + percentVal.percent);
             }
             info = checkForInfoExists(info);
@@ -492,14 +433,12 @@ public class PercentLayoutHelper
      * @param array
      * @param info
      */
-    private static PercentLayoutInfo setPaddingRelatedVal(TypedArray array, PercentLayoutInfo info)
-    {
+    private static PercentLayoutInfo setPaddingRelatedVal(TypedArray array, PercentLayoutInfo info) {
         //默认padding以宽度为标准
         PercentLayoutInfo.PercentVal percentVal = getPercentVal(array,
                 R.styleable.PercentLayout_Layout_layout_paddingPercent,
                 true);
-        if (percentVal != null)
-        {
+        if (percentVal != null) {
             info = checkForInfoExists(info);
             info.paddingLeftPercent = percentVal;
             info.paddingRightPercent = percentVal;
@@ -511,8 +450,7 @@ public class PercentLayoutHelper
         percentVal = getPercentVal(array,
                 R.styleable.PercentLayout_Layout_layout_paddingLeftPercent,
                 true);
-        if (percentVal != null)
-        {
+        if (percentVal != null) {
             info = checkForInfoExists(info);
             info.paddingLeftPercent = percentVal;
         }
@@ -520,8 +458,7 @@ public class PercentLayoutHelper
         percentVal = getPercentVal(array,
                 R.styleable.PercentLayout_Layout_layout_paddingRightPercent,
                 true);
-        if (percentVal != null)
-        {
+        if (percentVal != null) {
             info = checkForInfoExists(info);
             info.paddingRightPercent = percentVal;
         }
@@ -529,8 +466,7 @@ public class PercentLayoutHelper
         percentVal = getPercentVal(array,
                 R.styleable.PercentLayout_Layout_layout_paddingTopPercent,
                 true);
-        if (percentVal != null)
-        {
+        if (percentVal != null) {
             info = checkForInfoExists(info);
             info.paddingTopPercent = percentVal;
         }
@@ -538,8 +474,7 @@ public class PercentLayoutHelper
         percentVal = getPercentVal(array,
                 R.styleable.PercentLayout_Layout_layout_paddingBottomPercent,
                 true);
-        if (percentVal != null)
-        {
+        if (percentVal != null) {
             info = checkForInfoExists(info);
             info.paddingBottomPercent = percentVal;
         }
@@ -547,8 +482,7 @@ public class PercentLayoutHelper
         return info;
     }
 
-    private static PercentLayoutInfo.PercentVal getPercentVal(TypedArray array, int index, boolean baseWidth)
-    {
+    private static PercentLayoutInfo.PercentVal getPercentVal(TypedArray array, int index, boolean baseWidth) {
         String sizeStr = array.getString(index);
         PercentLayoutInfo.PercentVal percentVal = getPercentVal(sizeStr, baseWidth);
         return percentVal;
@@ -556,8 +490,7 @@ public class PercentLayoutHelper
 
 
     @NonNull
-    private static PercentLayoutInfo checkForInfoExists(PercentLayoutInfo info)
-    {
+    private static PercentLayoutInfo checkForInfoExists(PercentLayoutInfo info) {
         info = info != null ? info : new PercentLayoutInfo();
         return info;
     }
@@ -574,17 +507,14 @@ public class PercentLayoutHelper
      * @param isOnWidth
      * @return
      */
-    private static PercentLayoutInfo.PercentVal getPercentVal(String percentStr, boolean isOnWidth)
-    {
+    private static PercentLayoutInfo.PercentVal getPercentVal(String percentStr, boolean isOnWidth) {
         //valid param
-        if (percentStr == null)
-        {
+        if (percentStr == null) {
             return null;
         }
         Pattern p = Pattern.compile(REGEX_PERCENT);
         Matcher matcher = p.matcher(percentStr);
-        if (!matcher.matches())
-        {
+        if (!matcher.matches()) {
             throw new RuntimeException("the value of layout_xxxPercent invalid! ==>" + percentStr);
         }
         int len = percentStr.length();
@@ -596,29 +526,21 @@ public class PercentLayoutHelper
 
         PercentLayoutInfo.PercentVal percentVal = new PercentLayoutInfo.PercentVal();
         percentVal.percent = percent;
-        if (percentStr.endsWith(PercentLayoutInfo.BASEMODE.SW))
-        {
+        if (percentStr.endsWith(PercentLayoutInfo.BASEMODE.SW)) {
             percentVal.basemode = PercentLayoutInfo.BASEMODE.BASE_SCREEN_WIDTH;
-        } else if (percentStr.endsWith(PercentLayoutInfo.BASEMODE.SH))
-        {
+        } else if (percentStr.endsWith(PercentLayoutInfo.BASEMODE.SH)) {
             percentVal.basemode = PercentLayoutInfo.BASEMODE.BASE_SCREEN_HEIGHT;
-        } else if (percentStr.endsWith(PercentLayoutInfo.BASEMODE.PERCENT))
-        {
-            if (isOnWidth)
-            {
+        } else if (percentStr.endsWith(PercentLayoutInfo.BASEMODE.PERCENT)) {
+            if (isOnWidth) {
                 percentVal.basemode = PercentLayoutInfo.BASEMODE.BASE_WIDTH;
-            } else
-            {
+            } else {
                 percentVal.basemode = PercentLayoutInfo.BASEMODE.BASE_HEIGHT;
             }
-        } else if (percentStr.endsWith(PercentLayoutInfo.BASEMODE.W))
-        {
+        } else if (percentStr.endsWith(PercentLayoutInfo.BASEMODE.W)) {
             percentVal.basemode = PercentLayoutInfo.BASEMODE.BASE_WIDTH;
-        } else if (percentStr.endsWith(PercentLayoutInfo.BASEMODE.H))
-        {
+        } else if (percentStr.endsWith(PercentLayoutInfo.BASEMODE.H)) {
             percentVal.basemode = PercentLayoutInfo.BASEMODE.BASE_HEIGHT;
-        } else
-        {
+        } else {
             throw new IllegalArgumentException("the " + percentStr + " must be endWith [%|w|h|sw|sh]");
         }
 
@@ -631,31 +553,23 @@ public class PercentLayoutHelper
      * {@link PercentLayoutHelper#adjustChildren(int, int)}.
      */
 
-    public void restoreOriginalParams()
-    {
-        for (int i = 0, N = mHost.getChildCount(); i < N; i++)
-        {
+    public void restoreOriginalParams() {
+        for (int i = 0, N = mHost.getChildCount(); i < N; i++) {
             View view = mHost.getChildAt(i);
             ViewGroup.LayoutParams params = view.getLayoutParams();
-            if (Log.isLoggable(TAG, Log.DEBUG))
-            {
+            if (Log.isLoggable(TAG, Log.DEBUG)) {
                 Log.d(TAG, "should restore " + view + " " + params);
             }
-            if (params instanceof PercentLayoutParams)
-            {
+            if (params instanceof PercentLayoutParams) {
                 PercentLayoutInfo info =
                         ((PercentLayoutParams) params).getPercentLayoutInfo();
-                if (Log.isLoggable(TAG, Log.DEBUG))
-                {
+                if (Log.isLoggable(TAG, Log.DEBUG)) {
                     Log.d(TAG, "using " + info);
                 }
-                if (info != null)
-                {
-                    if (params instanceof ViewGroup.MarginLayoutParams)
-                    {
+                if (info != null) {
+                    if (params instanceof ViewGroup.MarginLayoutParams) {
                         info.restoreMarginLayoutParams((ViewGroup.MarginLayoutParams) params);
-                    } else
-                    {
+                    } else {
                         info.restoreLayoutParams(params);
                     }
                 }
@@ -677,59 +591,47 @@ public class PercentLayoutHelper
      * @return True if the measure phase needs to be rerun because one of the children would like
      * to receive more space.
      */
-    public boolean handleMeasuredStateTooSmall()
-    {
+    public boolean handleMeasuredStateTooSmall() {
         boolean needsSecondMeasure = false;
-        for (int i = 0, N = mHost.getChildCount(); i < N; i++)
-        {
+        for (int i = 0, N = mHost.getChildCount(); i < N; i++) {
             View view = mHost.getChildAt(i);
             ViewGroup.LayoutParams params = view.getLayoutParams();
-            if (Log.isLoggable(TAG, Log.DEBUG))
-            {
+            if (Log.isLoggable(TAG, Log.DEBUG)) {
                 Log.d(TAG, "should handle measured state too small " + view + " " + params);
             }
-            if (params instanceof PercentLayoutParams)
-            {
+            if (params instanceof PercentLayoutParams) {
                 PercentLayoutInfo info =
                         ((PercentLayoutParams) params).getPercentLayoutInfo();
-                if (info != null)
-                {
-                    if (shouldHandleMeasuredWidthTooSmall(view, info))
-                    {
+                if (info != null) {
+                    if (shouldHandleMeasuredWidthTooSmall(view, info)) {
                         needsSecondMeasure = true;
                         params.width = ViewGroup.LayoutParams.WRAP_CONTENT;
                     }
-                    if (shouldHandleMeasuredHeightTooSmall(view, info))
-                    {
+                    if (shouldHandleMeasuredHeightTooSmall(view, info)) {
                         needsSecondMeasure = true;
                         params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
                     }
                 }
             }
         }
-        if (Log.isLoggable(TAG, Log.DEBUG))
-        {
+        if (Log.isLoggable(TAG, Log.DEBUG)) {
             Log.d(TAG, "should trigger second measure pass: " + needsSecondMeasure);
         }
         return needsSecondMeasure;
     }
 
-    private static boolean shouldHandleMeasuredWidthTooSmall(View view, PercentLayoutInfo info)
-    {
+    private static boolean shouldHandleMeasuredWidthTooSmall(View view, PercentLayoutInfo info) {
         int state = ViewCompat.getMeasuredWidthAndState(view) & ViewCompat.MEASURED_STATE_MASK;
-        if (info == null || info.widthPercent == null)
-        {
+        if (info == null || info.widthPercent == null) {
             return false;
         }
         return state == ViewCompat.MEASURED_STATE_TOO_SMALL && info.widthPercent.percent >= 0 &&
                 info.mPreservedParams.width == ViewGroup.LayoutParams.WRAP_CONTENT;
     }
 
-    private static boolean shouldHandleMeasuredHeightTooSmall(View view, PercentLayoutInfo info)
-    {
+    private static boolean shouldHandleMeasuredHeightTooSmall(View view, PercentLayoutInfo info) {
         int state = ViewCompat.getMeasuredHeightAndState(view) & ViewCompat.MEASURED_STATE_MASK;
-        if (info == null || info.heightPercent == null)
-        {
+        if (info == null || info.heightPercent == null) {
             return false;
         }
         return state == ViewCompat.MEASURED_STATE_TOO_SMALL && info.heightPercent.percent >= 0 &&
@@ -741,13 +643,14 @@ public class PercentLayoutHelper
      * Container for information about percentage dimensions and margins. It acts as an extension
      * for {@code LayoutParams}.
      */
-    public static class PercentLayoutInfo
-    {
+    public static class PercentLayoutInfo {
 
-        private enum BASEMODE
-        {
+        private enum BASEMODE {
 
-            BASE_WIDTH, BASE_HEIGHT, BASE_SCREEN_WIDTH, BASE_SCREEN_HEIGHT;
+            BASE_WIDTH,
+            BASE_HEIGHT,
+            BASE_SCREEN_WIDTH,
+            BASE_SCREEN_HEIGHT;
 
             /**
              * width_parent
@@ -771,25 +674,21 @@ public class PercentLayoutHelper
             public static final String SH      = "sh";
         }
 
-        public static class PercentVal
-        {
+        public static class PercentVal {
 
-            public float percent = -1;
+            public float    percent = -1;
             public BASEMODE basemode;
 
-            public PercentVal()
-            {
+            public PercentVal() {
             }
 
-            public PercentVal(float percent, BASEMODE baseMode)
-            {
+            public PercentVal(float percent, BASEMODE baseMode) {
                 this.percent = percent;
                 this.basemode = baseMode;
             }
 
             @Override
-            public String toString()
-            {
+            public String toString() {
                 return "PercentVal{" +
                         "percent=" + percent +
                         ", basemode=" + basemode.name() +
@@ -825,8 +724,7 @@ public class PercentLayoutHelper
         /* package */ final ViewGroup.MarginLayoutParams mPreservedParams;
 
 
-        public PercentLayoutInfo()
-        {
+        public PercentLayoutInfo() {
             mPreservedParams = new ViewGroup.MarginLayoutParams(0, 0);
         }
 
@@ -834,25 +732,21 @@ public class PercentLayoutHelper
          * Fills {@code ViewGroup.LayoutParams} dimensions based on percentage values.
          */
         public void fillLayoutParams(ViewGroup.LayoutParams params, int widthHint,
-                                     int heightHint)
-        {
+                int heightHint) {
             // Preserve the original layout params, so we can restore them after the measure step.
             mPreservedParams.width = params.width;
             mPreservedParams.height = params.height;
 
-            if (widthPercent != null)
-            {
+            if (widthPercent != null) {
                 int base = getBaseByModeAndVal(widthHint, heightHint, widthPercent.basemode);
                 params.width = (int) (base * widthPercent.percent);
             }
-            if (heightPercent != null)
-            {
+            if (heightPercent != null) {
                 int base = getBaseByModeAndVal(widthHint, heightHint, heightPercent.basemode);
                 params.height = (int) (base * heightPercent.percent);
             }
 
-            if (Log.isLoggable(TAG, Log.DEBUG))
-            {
+            if (Log.isLoggable(TAG, Log.DEBUG)) {
                 Log.d(TAG, "after fillLayoutParams: (" + params.width + ", " + params.height + ")");
             }
         }
@@ -862,8 +756,7 @@ public class PercentLayoutHelper
          * values.
          */
         public void fillMarginLayoutParams(ViewGroup.MarginLayoutParams params, int widthHint,
-                                           int heightHint)
-        {
+                int heightHint) {
             fillLayoutParams(params, widthHint, heightHint);
 
             // Preserver the original margins, so we can restore them after the measure step.
@@ -876,48 +769,40 @@ public class PercentLayoutHelper
             MarginLayoutParamsCompat.setMarginEnd(mPreservedParams,
                     MarginLayoutParamsCompat.getMarginEnd(params));
 
-            if (leftMarginPercent != null)
-            {
+            if (leftMarginPercent != null) {
                 int base = getBaseByModeAndVal(widthHint, heightHint, leftMarginPercent.basemode);
                 params.leftMargin = (int) (base * leftMarginPercent.percent);
             }
-            if (topMarginPercent != null)
-            {
+            if (topMarginPercent != null) {
                 int base = getBaseByModeAndVal(widthHint, heightHint, topMarginPercent.basemode);
                 params.topMargin = (int) (base * topMarginPercent.percent);
             }
-            if (rightMarginPercent != null)
-            {
+            if (rightMarginPercent != null) {
                 int base = getBaseByModeAndVal(widthHint, heightHint, rightMarginPercent.basemode);
                 params.rightMargin = (int) (base * rightMarginPercent.percent);
             }
-            if (bottomMarginPercent != null)
-            {
+            if (bottomMarginPercent != null) {
                 int base = getBaseByModeAndVal(widthHint, heightHint, bottomMarginPercent.basemode);
                 params.bottomMargin = (int) (base * bottomMarginPercent.percent);
             }
-            if (startMarginPercent != null)
-            {
+            if (startMarginPercent != null) {
                 int base = getBaseByModeAndVal(widthHint, heightHint, startMarginPercent.basemode);
                 MarginLayoutParamsCompat.setMarginStart(params,
                         (int) (base * startMarginPercent.percent));
             }
-            if (endMarginPercent != null)
-            {
+            if (endMarginPercent != null) {
                 int base = getBaseByModeAndVal(widthHint, heightHint, endMarginPercent.basemode);
                 MarginLayoutParamsCompat.setMarginEnd(params,
                         (int) (base * endMarginPercent.percent));
             }
-            if (Log.isLoggable(TAG, Log.DEBUG))
-            {
+            if (Log.isLoggable(TAG, Log.DEBUG)) {
                 Log.d(TAG, "after fillMarginLayoutParams: (" + params.width + ", " + params.height
                         + ")");
             }
         }
 
         @Override
-        public String toString()
-        {
+        public String toString() {
             return "PercentLayoutInfo{" +
                     "widthPercent=" + widthPercent +
                     ", heightPercent=" + heightPercent +
@@ -945,8 +830,7 @@ public class PercentLayoutHelper
          * values. Calling this method only makes sense if you previously called
          * {@link PercentLayoutInfo#fillMarginLayoutParams}.
          */
-        public void restoreMarginLayoutParams(ViewGroup.MarginLayoutParams params)
-        {
+        public void restoreMarginLayoutParams(ViewGroup.MarginLayoutParams params) {
             restoreLayoutParams(params);
             params.leftMargin = mPreservedParams.leftMargin;
             params.topMargin = mPreservedParams.topMargin;
@@ -963,8 +847,7 @@ public class PercentLayoutHelper
          * this method only makes sense if you previously called
          * {@link PercentLayoutInfo#fillLayoutParams}.
          */
-        public void restoreLayoutParams(ViewGroup.LayoutParams params)
-        {
+        public void restoreLayoutParams(ViewGroup.LayoutParams params) {
             params.width = mPreservedParams.width;
             params.height = mPreservedParams.height;
         }
@@ -977,8 +860,7 @@ public class PercentLayoutHelper
      * Your {@code LayoutParams} subclass should contain an instance of {@code PercentLayoutInfo}
      * and the implementation of this interface should be a simple accessor.
      */
-    public interface PercentLayoutParams
-    {
+    public interface PercentLayoutParams {
         PercentLayoutInfo getPercentLayoutInfo();
     }
 }
