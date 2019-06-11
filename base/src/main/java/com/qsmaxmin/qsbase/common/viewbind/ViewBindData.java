@@ -36,11 +36,11 @@ public final class ViewBindData {
         }
 
         Field[] fields = target.getDeclaredFields();
-        if (fields != null && fields.length > 0) {
+        if (fields.length > 0) {
             out:
             for (Field field : fields) {
                 Annotation[] annotations = field.getAnnotations();
-                if (annotations == null || annotations.length <= 0) continue;
+                if (annotations.length <= 0) continue;
                 for (Annotation ann : annotations) {
                     if (ann instanceof Bind) {
                         if (viewFieldMap == null) viewFieldMap = new HashMap<>();
@@ -59,13 +59,11 @@ public final class ViewBindData {
 
         try {
             Method method = target.getDeclaredMethod("onViewClick", View.class);
-            if (method != null) {
-                OnClick onClick = method.getAnnotation(OnClick.class);
-                if (onClick != null && onClick.value().length > 0) {
-                    clickIds = onClick.value();
-                    method.setAccessible(true);
-                    this.onViewClickMethod = method;
-                }
+            OnClick onClick = method.getAnnotation(OnClick.class);
+            if (onClick != null && onClick.value().length > 0) {
+                clickIds = onClick.value();
+                method.setAccessible(true);
+                this.onViewClickMethod = method;
             }
         } catch (NoSuchMethodException e) {
             L.i(targetName, "never override method:onViewClick(View view), When you need to add click events, you must rewrite it.");

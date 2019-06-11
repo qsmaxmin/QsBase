@@ -23,23 +23,28 @@ import java.util.Map;
  * 3，Bundle值寻找
  */
 public class ViewBindHelper {
-
-    private static LruCache<Class<?>, ViewBindData> viewCache = new LruCache<>(200);
-
-    private static ViewBindData getBindData(Class<?> clazz) {
-        ViewBindData cacheBindData = viewCache.get(clazz);
-        if (cacheBindData == null) {
-            cacheBindData = new ViewBindData(clazz);
-            viewCache.put(clazz, cacheBindData);
-            if (L.isEnable()) {
-                L.i(cacheBindData.targetName, "create new ViewBindData by class, cache size:" + viewCache.size());
-            }
-        }
-        return cacheBindData;
-    }
+    private static final boolean                          FAST_MODE = true;
+    private static       LruCache<Class<?>, ViewBindData> viewCache = new LruCache<>(200);
 
     public static void bindBundle(Object target, Bundle bundle) {
         if (target == null || bundle == null) return;
+        if (FAST_MODE) {
+            AnnotationHelper.bindBundle(target, bundle);
+        } else {
+            bindBundleInner(target, bundle);
+        }
+    }
+
+    public static void bindView(final Object target, View rootView) {
+        if (target == null || rootView == null) return;
+        if (FAST_MODE) {
+            AnnotationHelper.bindView(target, rootView);
+        } else {
+            bindViewInner(target, rootView);
+        }
+    }
+
+    private static void bindBundleInner(Object target, Bundle bundle) {
         Class<?> clazz = target.getClass();
         ViewBindData bindData = getBindData(clazz);
         Map<Field, String> bundleFieldMap = bindData.bundleFieldMap;
@@ -56,19 +61,20 @@ public class ViewBindHelper {
         }
     }
 
-    public static void bindView(final Object target, View rootView) {
-        if (target == null || rootView == null) return;
+    private static void bindViewInner(final Object target, View rootView) {
         Class<?> clazz = target.getClass();
         final ViewBindData bindData = getBindData(clazz);
         Map<Field, Integer> viewFieldMap = bindData.viewFieldMap;
         if (viewFieldMap != null) {
             for (Field field : viewFieldMap.keySet()) {
-                int viewId = viewFieldMap.get(field);
-                View view = rootView.findViewById(viewId);
-                if (view != null) {
-                    setFieldValue(target, field, view);
-                } else {
-                    L.e(bindData.targetName, "Invalid @Bind(" + field.getName() + ")view not found !");
+                Integer viewId = viewFieldMap.get(field);
+                if (viewId != null) {
+                    View view = rootView.findViewById(viewId);
+                    if (view != null) {
+                        setFieldValue(target, field, view);
+                    } else {
+                        L.e(bindData.targetName, "Invalid @Bind(" + field.getName() + ")view not found !");
+                    }
                 }
             }
         }
@@ -104,6 +110,18 @@ public class ViewBindHelper {
                 }
             }
         }
+    }
+
+    private static ViewBindData getBindData(Class<?> clazz) {
+        ViewBindData cacheBindData = viewCache.get(clazz);
+        if (cacheBindData == null) {
+            cacheBindData = new ViewBindData(clazz);
+            viewCache.put(clazz, cacheBindData);
+            if (L.isEnable()) {
+                L.i(cacheBindData.targetName, "create new ViewBindData by class, cache size:" + viewCache.size());
+            }
+        }
+        return cacheBindData;
     }
 
     private static void setFieldValue(Object target, Field field, Object value) {
