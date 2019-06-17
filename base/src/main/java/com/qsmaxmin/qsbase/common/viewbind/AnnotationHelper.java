@@ -31,7 +31,17 @@ class AnnotationHelper {
         if (executor == null) {
             try {
                 long startTime = System.nanoTime();
-                Class<?> myClass = Class.forName(clazz.getName() + "_QsAnn");
+                Class<?> myClass;
+                Class<?> enclosingClass = clazz.getEnclosingClass();
+                if (enclosingClass != null) {//内部类
+                    Package clazzPackage = clazz.getPackage();
+                    if (clazzPackage == null) return new DefaultExecutor();
+                    String packageName = clazzPackage.getName();
+                    myClass = Class.forName(packageName + "." + clazz.getSimpleName() + "_QsAnn");
+                } else {
+                    myClass = Class.forName(clazz.getCanonicalName() + "_QsAnn");
+                }
+
                 executor = (AnnotationExecutor) myClass.newInstance();
                 viewCache.put(clazz, executor);
                 if (L.isEnable()) {
