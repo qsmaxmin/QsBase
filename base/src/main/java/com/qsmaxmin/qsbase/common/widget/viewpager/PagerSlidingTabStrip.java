@@ -74,7 +74,6 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
     private       int                       tabTypefaceStyle       = Typeface.NORMAL;
     private       int                       lastScrollX            = 0;
     private       boolean                   isCurrentItemAnimation = false;
-    private       int                       tabBackgroundResId;
     private       Paint                     rectPaint;
     private       Paint                     dividerPaint;
     private       int                       tabWidth;
@@ -134,7 +133,6 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
             underlineHeight = typedArray.getDimensionPixelSize(R.styleable.PagerSlidingTabStrip_psts_UnderlineHeight, underlineHeight);
             dividerPadding = typedArray.getDimensionPixelSize(R.styleable.PagerSlidingTabStrip_psts_DividerPadding, dividerPadding);
             tabPadding = typedArray.getDimensionPixelSize(R.styleable.PagerSlidingTabStrip_psts_TabPaddingLeftRight, tabPadding);
-            tabBackgroundResId = typedArray.getResourceId(R.styleable.PagerSlidingTabStrip_psts_TabBackground, tabBackgroundResId);
             shouldExpand = typedArray.getBoolean(R.styleable.PagerSlidingTabStrip_psts_ShouldExpand, shouldExpand);
             scrollOffset = typedArray.getDimensionPixelSize(R.styleable.PagerSlidingTabStrip_psts_ScrollOffset, scrollOffset);
             textAllCaps = typedArray.getBoolean(R.styleable.PagerSlidingTabStrip_psts_TextAllCaps, textAllCaps);
@@ -306,8 +304,6 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 
         for (int i = 0; i < tabCount; i++) {
             View v = tabsContainer.getChildAt(i);
-            v.setBackgroundResource(tabBackgroundResId);
-
             if (v instanceof TextView) {
                 TextView tab = (TextView) v;
                 tab.setTextSize(TypedValue.COMPLEX_UNIT_PX, tabTextSize);
@@ -611,15 +607,6 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
         this.tabTypeface = typeface;
         this.tabTypefaceStyle = style;
         updateTabStyles();
-    }
-
-    public void setTabBackground(int resId) {
-        this.tabBackgroundResId = resId;
-        updateTabStyles();
-    }
-
-    public int getTabBackground() {
-        return tabBackgroundResId;
     }
 
     public void setTabPaddingLeftRight(int paddingPx) {

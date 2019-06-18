@@ -16,7 +16,6 @@
         <attr name="psts_DividerPadding" format="dimension"/>
         <attr name="psts_TabPaddingLeftRight" format="dimension"/>
         <attr name="psts_ScrollOffset" format="dimension"/>
-        <attr name="psts_TabBackground" format="reference"/>
         <attr name="psts_ShouldExpand" format="boolean"/>
         <attr name="psts_TextAllCaps" format="boolean"/>
     </declare-styleable>

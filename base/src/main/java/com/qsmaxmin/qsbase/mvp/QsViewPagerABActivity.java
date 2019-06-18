@@ -76,15 +76,13 @@ public abstract class QsViewPagerABActivity<P extends QsPresenter> extends QsABA
             tab.setDividerColor(getTabsDividerColor());
             tab.setUnderlineHeight((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, getTabsUnderlineHeight(), dm));
             tab.setUnderlineColor(getTabsUnderlineColor());
-            if (getTabsIndicatorHeight() > 0)tab.setIndicatorHeight((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, getTabsIndicatorHeight(), dm));
-            if (getTabsIndicatorWidth() > 0)tab.setIndicatorWidth((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, getTabsIndicatorWidth(), dm));
+            if (getTabsIndicatorHeight() > 0) tab.setIndicatorHeight((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, getTabsIndicatorHeight(), dm));
+            if (getTabsIndicatorWidth() > 0) tab.setIndicatorWidth((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, getTabsIndicatorWidth(), dm));
             tab.setIndicatorCorner((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, getTabsIndicatorCorner(), dm));
             tab.setTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, getTabsTitleSize(), dm));
             tab.setIndicatorColor(getTabsIndicatorColor());
             tab.setSelectedTextColor(getTabsSelectedTitleColor());
             tab.setTextColor(getTabsTitleColor());
-            tab.setTabBackground(getTabsOnClickTitleColor());
-            tab.setBackgroundResource(getTabsBackgroundResource());
             tab.setTabWidth(getTabWidth());
             tab.setTabMarginsLeftRight(getTabMargins());
             tab.setTabPaddingLeftRight(getTabPaddingLeftRight());
@@ -165,14 +163,6 @@ public abstract class QsViewPagerABActivity<P extends QsPresenter> extends QsABA
     }
 
     protected int getTabWidth() {
-        return 0;
-    }
-
-    protected int getTabsBackgroundResource() {
-        return android.R.color.transparent;
-    }
-
-    protected int getTabsOnClickTitleColor() {
         return 0;
     }
 

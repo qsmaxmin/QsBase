@@ -86,8 +86,6 @@ public abstract class QsViewPagerFragment<P extends QsPresenter> extends QsFragm
             tab.setIndicatorColor(getTabsIndicatorColor());
             tab.setSelectedTextColor(getTabsSelectedTitleColor());
             tab.setTextColor(getTabsTitleColor());
-            tab.setTabBackground(getTabsOnClickTitleColor());
-            tab.setBackgroundResource(getTabsBackgroundResource());
             tab.setTabWidth(getTabWidth());
             tab.setTabMarginsLeftRight(getTabMargins());
             tab.setTabPaddingLeftRight(getTabPaddingLeftRight());
@@ -176,14 +174,6 @@ public abstract class QsViewPagerFragment<P extends QsPresenter> extends QsFragm
     }
 
     protected int getTabWidth() {
-        return 0;
-    }
-
-    protected int getTabsBackgroundResource() {
-        return android.R.color.white;
-    }
-
-    protected int getTabsOnClickTitleColor() {
         return 0;
     }
 
