@@ -26,6 +26,7 @@ import com.qsmaxmin.qsbase.common.aspect.ThreadType;
 import com.qsmaxmin.qsbase.common.http.HttpAdapter;
 import com.qsmaxmin.qsbase.common.threadpoll.QsThreadPollHelper;
 import com.qsmaxmin.qsbase.common.utils.permission.PermissionUtils;
+import com.qsmaxmin.qsbase.common.viewbind.ViewBindHelper;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -269,6 +270,10 @@ public class QsHelper {
 
     public void closeStream(Closeable... closeables) {
         StreamCloseUtils.close(closeables);
+    }
+
+    public void enableFastBindView() {
+        ViewBindHelper.FAST_MODE = true;
     }
 
     public PermissionUtils getPermissionHelper() {

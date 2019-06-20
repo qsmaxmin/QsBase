@@ -23,8 +23,8 @@ import java.util.Map;
  * 3，Bundle值寻找
  */
 public class ViewBindHelper {
-    private static final boolean                          FAST_MODE = true;
-    private static       LruCache<Class<?>, ViewBindData> viewCache = new LruCache<>(200);
+    public static  boolean                          FAST_MODE = false;
+    private static LruCache<Class<?>, ViewBindData> viewCache = new LruCache<>(200);
 
     public static void bindBundle(Object target, Bundle bundle) {
         if (target == null || bundle == null) return;
