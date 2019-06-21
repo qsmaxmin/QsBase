@@ -249,10 +249,16 @@ MVP架构+AOP面向切面编程，摒弃反射、代理等操作，稳定性和�
         #View注入
         -keep class * extends java.lang.annotation.Annotation { *; }
 
-        #okio
-        -dontwarn okio.
-        -dontwarn in.srain.cube.
-        -keep class in.srain.cube.**
+        #okhttp
+        -dontwarn okio.**
+        -dontwarn okhttp3.**
+        -dontwarn in.srain.cube.**
+        -keep class in.srain.cube.**{*;}
+        -keep class okhttp3.**{*;}
+
+        -dontwarn javax.annotation.**
+        -dontwarn org.conscrypt.**
+        -keepnames class okhttp3.internal.publicsuffix.PublicSuffixDatabase
 
         #EventBus
         -keep class de.greenrobot.event.** {*;}
@@ -265,33 +271,34 @@ MVP架构+AOP面向切面编程，摒弃反射、代理等操作，稳定性和�
         -keep class sun.misc.Unsafe { *; }
         -keep class com.google.gson.examples.android.model. { *; }
 
-        #AVAX
-        -dontwarn javax.annotation.
-        -keep class javax.annotation.
-        -dontwarn javax.inject.
-        -keep class javax.inject.
+        #JAVAX
+        -dontwarn javax.annotation.*
+        -keep class javax.annotation.**{*;}
+        -dontwarn javax.inject.*
+        -keep class javax.inject.**{*;}
 
         #model防止混淆
-        -keepclassmembers class * extends com.qsmaxmin.qsbase.common.model.QsModel {*;}
-        -keepclassmembers class $ extends com.qsmaxmin.qsbase.common.model.QsModel {*;}
-
-        #adapter防止混淆
-        -keepclassmembers class * extends com.qsmaxmin.qsbase.mvp.adapter.QsListAdapterItem {*;}
-        -keepclassmembers class * extends com.qsmaxmin.qsbase.mvp.adapter.QsRecycleAdapterItem {*;}
-
-       #Glide防止混淆
-       -keep class * extends com.bumptech.glide.module.AppGlideModule{*;}
-       -keep class * extends com.bumptech.glide.module.LibraryGlideModule{*;}
-       -keep class com.bumptech.glide.GeneratedAppGlideModuleImpl{*;}
-       -keep class * implements com.bumptech.glide.module.GlideModule
-       -keep public enum com.bumptech.glide.load.ImageHeaderParser$** {
-         **[] $VALUES;
-         public *;
-       }
-       -dontwarn com.bumptech.glide.load.resource.bitmap.VideoDecoder
+        -keep class * extends com.qsmaxmin.qsbase.common.model.QsModel {*;}
+        -keep class $ extends com.qsmaxmin.qsbase.common.model.QsModel {*;}
+        -keep class * extends com.qsmaxmin.qsbase.mvp.adapter.QsListAdapterItem {*;}
+        -keep class $ extends com.qsmaxmin.qsbase.mvp.adapter.QsListAdapterItem {*;}
+        -keep class * extends com.qsmaxmin.qsbase.mvp.adapter.QsRecycleAdapterItem {*;}
+        -keep class $ extends com.qsmaxmin.qsbase.mvp.adapter.QsRecycleAdapterItem {*;}
+        -keep class * extends com.qsmaxmin.qsbase.common.viewbind.AnnotationExecutor {*;}
 
         #Presenter防止混淆
-        -keepclassmembers class * extends com.qsmaxmin.qsbase.mvp.presenter.QsPresenter {*;}
+        -keep class * extends com.qsmaxmin.qsbase.mvp.presenter.QsPresenter {*;}
 
         #Config防止混淆
-        -keepclassmembers class * extends com.qsmaxmin.qsbase.common.config.QsProperties{*;}
+        -keep class * extends com.qsmaxmin.qsbase.common.config.QsProperties{*;}
+
+        #Glide防止混淆
+        -keep class * extends com.bumptech.glide.module.AppGlideModule{*;}
+        -keep class * extends com.bumptech.glide.module.LibraryGlideModule{*;}
+        -keep class com.bumptech.glide.GeneratedAppGlideModuleImpl{*;}
+        -keep class * implements com.bumptech.glide.module.GlideModule
+        -keep public enum com.bumptech.glide.load.ImageHeaderParser$** {
+          **[] $VALUES;
+          public *;
+        }
+        -dontwarn com.bumptech.glide.load.resource.bitmap.VideoDecoder
