@@ -272,8 +272,12 @@ public class QsHelper {
         StreamCloseUtils.close(closeables);
     }
 
-    public void enableFastBindView() {
-        ViewBindHelper.FAST_MODE = true;
+    /**
+     * 默认使用Annotation processor绑定View及OnClick事件
+     * 如果使用时有bug可以在application onCreate时调用该方法以关闭
+     */
+    public void disableFastBindView() {
+        ViewBindHelper.FAST_MODE = false;
     }
 
     public PermissionUtils getPermissionHelper() {
