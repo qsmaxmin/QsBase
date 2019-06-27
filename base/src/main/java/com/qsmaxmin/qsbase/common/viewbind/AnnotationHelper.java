@@ -31,16 +31,8 @@ class AnnotationHelper {
         if (executor == null) {
             try {
                 long startTime = System.nanoTime();
-                Class<?> myClass;
-                Class<?> enclosingClass = clazz.getEnclosingClass();
-                if (enclosingClass != null) {//内部类
-                    Package clazzPackage = clazz.getPackage();
-                    if (clazzPackage == null) return new DefaultExecutor();
-                    String packageName = clazzPackage.getName();
-                    myClass = Class.forName(packageName + "." + clazz.getSimpleName() + "_QsAnn");
-                } else {
-                    myClass = Class.forName(clazz.getCanonicalName() + "_QsAnn");
-                }
+                String className = getExecuteClassName(clazz);
+                Class<?> myClass = Class.forName(className);
 
                 executor = (AnnotationExecutor) myClass.newInstance();
                 viewCache.put(clazz, executor);
@@ -55,5 +47,18 @@ class AnnotationHelper {
             }
         }
         return executor;
+    }
+
+    private static String getExecuteClassName(Class clazz) {
+        String name = clazz.getName();
+        int index_$ = name.indexOf('$');
+        if (index_$ > 0) {//内部类
+            int pointIndex = name.lastIndexOf('.');
+            String packageName = name.substring(0, pointIndex);
+            String simpleName = name.substring(index_$ + 1);
+            return packageName + "." + simpleName + "_QsAnn";
+        } else {
+            return name + "_QsAnn";
+        }
     }
 }
