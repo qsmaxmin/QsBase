@@ -30,7 +30,9 @@ class AnnotationHelper {
         AnnotationExecutor executor = viewCache.get(clazz);
         if (executor == null) {
             try {
-                long startTime = System.nanoTime();
+                long startTime = 0;
+                if (L.isEnable()) startTime = System.nanoTime();
+
                 String className = getExecuteClassName(clazz);
                 Class<?> myClass = Class.forName(className);
 
