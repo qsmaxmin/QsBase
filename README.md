@@ -44,8 +44,8 @@ MVP架构+AOP面向切面编程，摒弃反射、代理等操作，稳定性和�
 
         dependencies {
             ...
-            implementation 'com.github.qsmaxmin:QsBase:5.7.0'
-            annotationProcessor 'com.github.qsmaxmin:QsPlugin:1.2.0'
+            implementation 'com.github.qsmaxmin:QsBase:5.8.0'
+            annotationProcessor 'com.github.qsmaxmin:QsPlugin:5.8.0'
         }
 
 #### step 3：自定义Application继承QsApplication
