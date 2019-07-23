@@ -24,6 +24,7 @@ import java.util.Properties;
  * @CreateBy qsmaxmin
  * @Date 2018/12/7 10:07
  * @Description
+ * @deprecated
  */
 class PropertiesEngine {
     private final Object            mTarget;

@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
  * @Description
  */
 @Target(ElementType.FIELD)
-@Retention(RetentionPolicy.RUNTIME)
+@Retention(RetentionPolicy.SOURCE)
 public @interface BindBundle {
     String value();
 }

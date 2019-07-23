@@ -1,7 +1,6 @@
 package com.qsmaxmin.qsbase.common.config;
 
 import com.qsmaxmin.qsbase.common.log.L;
-import com.qsmaxmin.qsbase.common.utils.QsHelper;
 
 /**
  * @CreateBy sky
@@ -10,7 +9,7 @@ import com.qsmaxmin.qsbase.common.utils.QsHelper;
  */
 
 public abstract class QsProperties {
-    private PropertiesEngine engine;
+    private PropertiesEngineNew<QsProperties> engine;
 
     public String initTag() {
         return L.isEnable() ? getClass().getSimpleName() : "QsProperties";
@@ -20,7 +19,7 @@ public abstract class QsProperties {
     }
 
     public QsProperties(String key) {
-        engine = new PropertiesEngine(this, key, initTag());
+        engine = new PropertiesEngineNew<>(this, key);
     }
 
     /**

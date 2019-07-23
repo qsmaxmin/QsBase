@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
  * 3. 参数签名和type的接口要求的参数签名一致.
  */
 @Target(ElementType.METHOD)
-@Retention(RetentionPolicy.RUNTIME)
+@Retention(RetentionPolicy.SOURCE)
 public @interface OnClick {
     /**
      * 控件的id集合, id小于1时不执行ui事件绑定.
