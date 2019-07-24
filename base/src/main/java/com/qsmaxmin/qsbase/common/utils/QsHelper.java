@@ -68,7 +68,7 @@ public class QsHelper {
         return mApplication;
     }
 
-    public boolean isLoginOpen() {
+    public boolean isLogOpen() {
         return mApplication.isLogOpen();
     }
 
