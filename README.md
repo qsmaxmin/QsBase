@@ -16,7 +16,7 @@ MVP架构+AOP面向切面编程，摒弃反射、代理等操作，稳定性和�
             repositories {
                     jcenter()
                     mavenCentral()
-                    **maven {**
+                    maven {
                         url 'https://jitpack.io'
                     }
                 }
