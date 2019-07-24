@@ -83,7 +83,7 @@ public class HttpAdapter {
         if (converter == null) {
             converter = new HttpConverter();
         }
-        callback = QsHelper.getInstance().getApplication().registerGlobalHttpListener();
+        callback = QsHelper.getInstance().getAppInterface().registerGlobalHttpListener();
     }
 
     private HttpBuilder getHttpBuilder(Object requestTag, String terminal, String path, Object[] args, String requestType, Object body, HashMap<String, String> formBody, HashMap<String, String> paramsMap) throws Exception {

@@ -183,19 +183,19 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
     }
 
     @Override public int loadingLayoutId() {
-        return QsHelper.getInstance().getApplication().loadingLayoutId();
+        return QsHelper.getInstance().getAppInterface().loadingLayoutId();
     }
 
     @Override public int emptyLayoutId() {
-        return QsHelper.getInstance().getApplication().emptyLayoutId();
+        return QsHelper.getInstance().getAppInterface().emptyLayoutId();
     }
 
     @Override public int errorLayoutId() {
-        return QsHelper.getInstance().getApplication().errorLayoutId();
+        return QsHelper.getInstance().getAppInterface().errorLayoutId();
     }
 
     @Override public QsProgressDialog getLoadingDialog() {
-        return QsHelper.getInstance().getApplication().getLoadingDialog();
+        return QsHelper.getInstance().getAppInterface().getLoadingDialog();
     }
 
     @Override public void onBackPressed() {

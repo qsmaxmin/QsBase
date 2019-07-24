@@ -1,6 +1,7 @@
 package com.qsmaxmin.qsbase.common.utils;
 
 import android.annotation.SuppressLint;
+import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
@@ -20,10 +21,11 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 
-import com.qsmaxmin.qsbase.QsApplication;
+import com.qsmaxmin.qsbase.QsIApplication;
 import com.qsmaxmin.qsbase.common.aspect.ThreadPoint;
 import com.qsmaxmin.qsbase.common.aspect.ThreadType;
 import com.qsmaxmin.qsbase.common.http.HttpAdapter;
+import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.threadpoll.QsThreadPollHelper;
 import com.qsmaxmin.qsbase.common.utils.permission.PermissionUtils;
 import com.qsmaxmin.qsbase.common.viewbind.ViewBindHelper;
@@ -41,8 +43,8 @@ import java.io.Closeable;
 public class QsHelper {
     private static QsHelper helper = new QsHelper();
 
-    private QsApplication mApplication;
-    private HttpAdapter   httpAdapter;
+    private QsIApplication mApplication;
+    private HttpAdapter    httpAdapter;
 
     private QsHelper() {
     }
@@ -51,12 +53,23 @@ public class QsHelper {
         return helper;
     }
 
-    public void init(QsApplication application) {
+    public void init(QsIApplication application) {
         mApplication = application;
+        if (application.isLogOpen()) {
+            L.init(true);
+        }
     }
 
-    public QsApplication getApplication() {
+    public Application getApplication() {
+        return mApplication.getApplication();
+    }
+
+    public QsIApplication getAppInterface() {
         return mApplication;
+    }
+
+    public boolean isLoginOpen() {
+        return mApplication.isLogOpen();
     }
 
     public ImageHelper getImageHelper() {

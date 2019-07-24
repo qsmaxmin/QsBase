@@ -532,7 +532,7 @@ public class ImageHelper {
     }
 
     private void onLoadImageBefore(Builder builder) {
-        QsHelper.getInstance().getApplication().onCommonLoadImage(builder);
+        QsHelper.getInstance().getAppInterface().onCommonLoadImage(builder);
     }
 
     private long getFolderSize(File file) {

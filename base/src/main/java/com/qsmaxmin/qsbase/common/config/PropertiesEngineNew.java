@@ -1,9 +1,9 @@
 package com.qsmaxmin.qsbase.common.config;
 
+import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.qsmaxmin.qsbase.QsApplication;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
 
 /**
@@ -18,7 +18,7 @@ class PropertiesEngineNew<T> {
 
     @SuppressWarnings("unchecked") PropertiesEngineNew(T config, String key) {
         this.mConfig = config;
-        QsApplication application = QsHelper.getInstance().getApplication();
+        Application application = QsHelper.getInstance().getApplication();
         sp = application.getSharedPreferences(key, Context.MODE_PRIVATE);
 
         Class<?> configClass = mConfig.getClass();

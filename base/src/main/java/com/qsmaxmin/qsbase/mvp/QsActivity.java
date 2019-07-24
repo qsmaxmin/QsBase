@@ -62,7 +62,7 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
     @CallSuper @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         QsHelper.getInstance().getScreenHelper().pushActivity(this);
-        QsHelper.getInstance().getApplication().onActivityCreate(this);
+        QsHelper.getInstance().getAppInterface().onActivityCreate(this);
         ViewBindHelper.bindBundle(this, getIntent().getExtras());
         initStatusBar();
         View view = initView();
@@ -77,23 +77,23 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
 
     @Override protected void onStart() {
         super.onStart();
-        QsHelper.getInstance().getApplication().onActivityStart(this);
+        QsHelper.getInstance().getAppInterface().onActivityStart(this);
     }
 
     @CallSuper @Override protected void onResume() {
         super.onResume();
         QsHelper.getInstance().getScreenHelper().bringActivityToTop(this);
-        QsHelper.getInstance().getApplication().onActivityResume(this);
+        QsHelper.getInstance().getAppInterface().onActivityResume(this);
     }
 
     @Override protected void onPause() {
         super.onPause();
-        QsHelper.getInstance().getApplication().onActivityPause(this);
+        QsHelper.getInstance().getAppInterface().onActivityPause(this);
     }
 
     @Override protected void onStop() {
         super.onStop();
-        QsHelper.getInstance().getApplication().onActivityStop(this);
+        QsHelper.getInstance().getAppInterface().onActivityStop(this);
     }
 
     @Override protected void onDestroy() {
@@ -109,7 +109,7 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         mViewAnimator = null;
         onKeyDownListener = null;
         if (isOpenEventBus() && EventBus.getDefault().isRegistered(this)) EventBus.getDefault().unregister(this);
-        QsHelper.getInstance().getApplication().onActivityDestroy(this);
+        QsHelper.getInstance().getAppInterface().onActivityDestroy(this);
         QsHelper.getInstance().getScreenHelper().popActivity(this);
     }
 
@@ -188,19 +188,19 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
     }
 
     @Override public int loadingLayoutId() {
-        return QsHelper.getInstance().getApplication().loadingLayoutId();
+        return QsHelper.getInstance().getAppInterface().loadingLayoutId();
     }
 
     @Override public int emptyLayoutId() {
-        return QsHelper.getInstance().getApplication().emptyLayoutId();
+        return QsHelper.getInstance().getAppInterface().emptyLayoutId();
     }
 
     @Override public int errorLayoutId() {
-        return QsHelper.getInstance().getApplication().errorLayoutId();
+        return QsHelper.getInstance().getAppInterface().errorLayoutId();
     }
 
     @Override public QsProgressDialog getLoadingDialog() {
-        return QsHelper.getInstance().getApplication().getLoadingDialog();
+        return QsHelper.getInstance().getAppInterface().getLoadingDialog();
     }
 
     @Override public void loading() {

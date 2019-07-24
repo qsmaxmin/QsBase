@@ -1,11 +1,11 @@
 package com.qsmaxmin.qsbase.common.config;
 
+import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
 
 import com.google.gson.Gson;
-import com.qsmaxmin.qsbase.QsApplication;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.common.utils.StreamCloseUtils;
@@ -38,7 +38,7 @@ class PropertiesEngine {
         this.TAG = tag;
         this.mTarget = target;
         this.mKey = key;
-        QsApplication application = QsHelper.getInstance().getApplication();
+        Application application = QsHelper.getInstance().getApplication();
         sp = application.getSharedPreferences(key, Context.MODE_PRIVATE);
 
         Map<String, ?> spAll = sp.getAll();
