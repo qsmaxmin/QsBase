@@ -10,18 +10,13 @@ MVP架构+AOP面向切面编程，摒弃反射、代理等操作，稳定性和�
 ## 如何使用？
 详细使用请参考完整项目[GrapeUniversity](https://github.com/qsmaxmin/GrapeUniversity)
 
-<font color="green"> Some green text </font>
-<span style="color: green"> Some green text </span>
-
 #### step 1：Project build.gradle 添加依赖
 
         buildscript {
             repositories {
                     jcenter()
                     mavenCentral()
-                    <font color="green">AAAAAA</font>
-                    <span style="color: green"> Some green text </span>
-                    maven {
+                    **maven {**
                         url 'https://jitpack.io'
                     }
                 }
