@@ -26,6 +26,11 @@ MVP架构+AOP面向切面编程，摒弃反射、代理等操作，稳定性和�
                 classpath 'com.github.qsmaxmin:gradle_plugin_android_aspectjx:2.0.4'
             }
         }
+        
+        //AOP编译白名单，第一个是框架包名，第二个替换成你当前项目的包名
+        aspectjx {
+            include 'com.qsmaxmin.qsbase', '替换当前项目包名'
+        }
 
         allprojects {
             repositories {
