@@ -52,9 +52,11 @@ MVP架构+AOP面向切面编程，摒弃反射、代理等操作，稳定性和�
             annotationProcessor 'com.github.qsmaxmin:QsPlugin:5.8.0'
         }
 
-#### step 3：自定义Application继承QsApplication
+#### step 3：自定义Application
 
-        application里有很多方法，开发者可以自行重写：
+        该步有两种方案：
+        1，继承QsApplication，开发者可以自行重写回调方法
+        2，实现QsIApplication接口并在onCreate回调里调用QsHelper.getInstance().init(this);
 
         public class GrapeApplication extends QsApplication {
 
