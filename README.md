@@ -291,7 +291,8 @@ MVP架构+AOP面向切面编程，摒弃反射、代理等操作，稳定性和�
         -keep class * extends com.qsmaxmin.qsbase.mvp.adapter.QsRecycleAdapterItem {*;}
         -keep class $ extends com.qsmaxmin.qsbase.mvp.adapter.QsRecycleAdapterItem {*;}
         -keep class * extends com.qsmaxmin.qsbase.common.viewbind.AnnotationExecutor {*;}
-
+        -keep class * extends com.qsmaxmin.qsbase.common.config.PropertiesExecutor {*;}
+        
         #Presenter防止混淆
         -keep class * extends com.qsmaxmin.qsbase.mvp.presenter.QsPresenter {*;}
 
