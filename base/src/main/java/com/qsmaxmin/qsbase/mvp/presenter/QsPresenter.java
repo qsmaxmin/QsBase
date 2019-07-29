@@ -28,9 +28,9 @@ import java.util.ArrayList;
  * @Description
  */
 public class QsPresenter<V extends QsIView> {
-    private ArrayList<String> tagList = new ArrayList<>();
-    private boolean           isAttach;
-    private V                 mView;
+    private final ArrayList<String> tagList = new ArrayList<>();
+    private       boolean           isAttach;
+    private       V                 mView;
 
     protected String initTag() {
         return L.isEnable() ? getClass().getSimpleName() : "QsPresenter";
@@ -79,38 +79,44 @@ public class QsPresenter<V extends QsIView> {
     }
 
     protected <T> T createHttpRequest(Class<T> clazz, String requestTag) {
-        if (!tagList.contains(requestTag)) {
-            tagList.add(requestTag);
-        } else {
-            L.e(initTag(), "createHttpRequest Repeated tag:" + requestTag);
+        synchronized (tagList) {
+            if (!tagList.contains(requestTag)) {
+                tagList.add(requestTag);
+            } else {
+                L.e(initTag(), "createHttpRequest Repeated tag:" + requestTag);
+            }
+            return QsHelper.getInstance().getHttpHelper().create(clazz, requestTag);
         }
-        return QsHelper.getInstance().getHttpHelper().create(clazz, requestTag);
     }
 
     /**
      * 取消由当前presenter发起的http请求
      */
     protected void cancelAllHttpRequest() {
-        try {
+        synchronized (tagList) {
             for (String tag : tagList) {
-                QsHelper.getInstance().getHttpHelper().cancelRequest(tag);
+                try {
+                    QsHelper.getInstance().getHttpHelper().cancelRequest(tag);
+                } catch (Exception e) {
+                    L.e(initTag(), "cancel http request failed :" + e.getMessage());
+                }
             }
             tagList.clear();
-        } catch (Exception e) {
-            L.e(initTag(), "cancel http request failed :" + e.getMessage());
         }
     }
 
     protected void cancelHttpRequest(String requestTag) {
-        if (tagList.contains(requestTag)) {
-            tagList.remove(requestTag);
-            try {
-                QsHelper.getInstance().getHttpHelper().cancelRequest(requestTag);
-            } catch (Exception e) {
-                L.e(initTag(), "cancel http request failed :" + e.getMessage());
+        synchronized (tagList) {
+            if (tagList.contains(requestTag)) {
+                tagList.remove(requestTag);
+                try {
+                    QsHelper.getInstance().getHttpHelper().cancelRequest(requestTag);
+                } catch (Exception e) {
+                    L.e(initTag(), "cancel http request failed :" + e.getMessage());
+                }
+            } else {//当前http请求已经被取消
+                L.i(initTag(), "The current HTTP request has been cancelled! requestTag:" + requestTag);
             }
-        } else {//当前http请求已经被取消
-            L.i(initTag(), "The current HTTP request has been cancelled! requestTag:" + requestTag);
         }
     }
 
