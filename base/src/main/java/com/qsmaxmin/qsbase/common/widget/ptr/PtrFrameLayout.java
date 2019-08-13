@@ -238,7 +238,7 @@ public class PtrFrameLayout extends ViewGroup {
         if (!isEnabled() || mContent == null || mHeaderView == null) {
             return dispatchTouchEventSupper(e);
         }
-        int action = e.getAction() & MotionEvent.ACTION_MASK;
+        int action = e.getActionMasked();
         switch (action) {
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
@@ -253,6 +253,10 @@ public class PtrFrameLayout extends ViewGroup {
                 } else {
                     return dispatchTouchEventSupper(e);
                 }
+            case MotionEvent.ACTION_POINTER_DOWN:
+                break;
+            case MotionEvent.ACTION_POINTER_UP:
+                break;
 
             case MotionEvent.ACTION_DOWN:
                 mHasSendCancelEvent = false;
