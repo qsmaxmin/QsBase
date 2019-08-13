@@ -13,12 +13,12 @@ public class PtrIndicator {
     private             int     mOffsetToKeepHeaderWhileLoading = -1;
     // record the refresh complete position
     private             int     mRefreshCompleteY               = 0;
-    private float mOffsetX;
-    private float mOffsetY;
-    private int mCurrentPos = 0;
-    private int mLastPos    = 0;
-    private int mHeaderHeight;
-    private int mPressedPos = 0;
+    private             float   mOffsetX;
+    private             float   mOffsetY;
+    private             int     mCurrentPos                     = 0;
+    private             int     mLastPos                        = 0;
+    private             int     mHeaderHeight;
+    private             int     mPressedPos                     = 0;
 
 
     public boolean isUnderTouch() {
@@ -45,7 +45,7 @@ public class PtrIndicator {
         return mCurrentPos >= mRefreshCompleteY;
     }
 
-    protected void processOnMove(float currentX, float currentY, float offsetX, float offsetY) {
+    private void processOnMove(float offsetX, float offsetY) {
         setOffset(offsetX, offsetY / mResistance);
     }
 
@@ -76,11 +76,11 @@ public class PtrIndicator {
     public final void onMove(float x, float y) {
         float offsetX = x - mPtLastMove.x;
         float offsetY = (y - mPtLastMove.y);
-        processOnMove(x, y, offsetX, offsetY);
+        processOnMove(offsetX, offsetY);
         mPtLastMove.set(x, y);
     }
 
-    protected void setOffset(float x, float y) {
+    private void setOffset(float x, float y) {
         mOffsetX = x;
         mOffsetY = y;
     }
@@ -110,7 +110,7 @@ public class PtrIndicator {
         onUpdatePos(current, mLastPos);
     }
 
-    protected void onUpdatePos(int current, int last) {
+    private void onUpdatePos(int current, int last) {
 
     }
 
@@ -123,7 +123,7 @@ public class PtrIndicator {
         updateHeight();
     }
 
-    protected void updateHeight() {
+    private void updateHeight() {
         mOffsetToRefresh = (int) (mRatioOfHeaderHeightToRefresh * mHeaderHeight);
     }
 

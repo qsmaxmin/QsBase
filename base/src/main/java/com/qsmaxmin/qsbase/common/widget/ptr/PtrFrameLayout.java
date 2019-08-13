@@ -1,5 +1,6 @@
 package com.qsmaxmin.qsbase.common.widget.ptr;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
@@ -68,7 +69,6 @@ public class PtrFrameLayout extends ViewGroup {
         }
     };
 
-
     public PtrFrameLayout(Context context) {
         super(context);
         init(null);
@@ -105,6 +105,7 @@ public class PtrFrameLayout extends ViewGroup {
         mPtrIndicator.setRatioOfHeaderHeightToRefresh(ratio);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override protected void onFinishInflate() {
         final int childCount = getChildCount();
         if (childCount > 2) {
@@ -116,10 +117,7 @@ public class PtrFrameLayout extends ViewGroup {
             if (mContainerId != 0 && mContent == null) {
                 mContent = findViewById(mContainerId);
             }
-
-            // not specify header or content
             if (mContent == null || mHeaderView == null) {
-
                 View child1 = getChildAt(0);
                 View child2 = getChildAt(1);
                 if (child1 instanceof PtrUIHandler) {
@@ -129,13 +127,10 @@ public class PtrFrameLayout extends ViewGroup {
                     mHeaderView = child2;
                     mContent = child1;
                 } else {
-                    // both are not specified
                     if (mContent == null && mHeaderView == null) {
                         mHeaderView = child1;
                         mContent = child2;
-                    }
-                    // only one is specified
-                    else {
+                    } else {
                         if (mHeaderView == null) {
                             mHeaderView = mContent == child1 ? child2 : child1;
                         } else {
@@ -152,7 +147,7 @@ public class PtrFrameLayout extends ViewGroup {
             errorView.setTextColor(0xffff6600);
             errorView.setGravity(Gravity.CENTER);
             errorView.setTextSize(20);
-            errorView.setText(String.valueOf("The content view in PtrFrameLayout is empty. Do you forget to specify its id in xml layout file?"));
+            errorView.setText("The content view in PtrFrameLayout is empty. Do you forget to specify its id in xml layout file?");
             mContent = errorView;
             addView(mContent);
         }
@@ -279,7 +274,6 @@ public class PtrFrameLayout extends ViewGroup {
                 boolean moveDown = offsetY > 0;
                 boolean moveUp = !moveDown;
                 boolean canMoveUp = mPtrIndicator.hasLeftStartPosition();
-                // disable move when header not reach top
                 if (moveDown && mPtrHandler != null && !mPtrHandler.checkCanDoRefresh(this, mContent, mHeaderView)) {
                     return dispatchTouchEventSupper(e);
                 }
