@@ -22,40 +22,39 @@ import com.qsmaxmin.qsbase.common.widget.ptr.util.PtrCLog;
  * It defines {@link PtrUIHandler}, which allows you customize the UI easily.
  */
 public class PtrFrameLayout extends ViewGroup {
-
     // status enum
-    public final static  byte    PTR_STATUS_INIT              = 1;
-    public final static  byte    PTR_STATUS_PREPARE           = 2;
-    public final static  byte    PTR_STATUS_LOADING           = 3;
-    public final static  byte    PTR_STATUS_COMPLETE          = 4;
-    private              byte    mStatus                      = PTR_STATUS_INIT;
-    private static final boolean DEBUG_LAYOUT                 = true;
-    public static        boolean DEBUG                        = false;
-    private static       int     ID                           = 1;
-    protected final      String  LOG_TAG                      = "ptr-frame-" + ++ID;
+    public final static  byte               PTR_STATUS_INIT              = 1;
+    public final static  byte               PTR_STATUS_PREPARE           = 2;
+    public final static  byte               PTR_STATUS_LOADING           = 3;
+    public final static  byte               PTR_STATUS_COMPLETE          = 4;
+    private              byte               mStatus                      = PTR_STATUS_INIT;
+    private static final boolean            DEBUG_LAYOUT                 = true;
+    public static        boolean            DEBUG                        = false;
+    private static       int                ID                           = 1;
+    protected final      String             LOG_TAG                      = "ptr-frame-" + ++ID;
     // auto refresh status
-    private final static byte    FLAG_AUTO_REFRESH_AT_ONCE    = 0x01;
-    private final static byte    FLAG_AUTO_REFRESH_BUT_LATER  = 0x01 << 1;
-    private final static byte    FLAG_ENABLE_NEXT_PTR_AT_ONCE = 0x01 << 2;
-    private final static byte    FLAG_PIN_CONTENT             = 0x01 << 3;
-    private final static byte    MASK_AUTO_REFRESH            = 0x03;
-    protected View mContent;
+    private final static byte               FLAG_AUTO_REFRESH_AT_ONCE    = 0x01;
+    private final static byte               FLAG_AUTO_REFRESH_BUT_LATER  = 0x01 << 1;
+    private final static byte               FLAG_ENABLE_NEXT_PTR_AT_ONCE = 0x01 << 2;
+    private final static byte               FLAG_PIN_CONTENT             = 0x01 << 3;
+    private final static byte               MASK_AUTO_REFRESH            = 0x03;
+    protected            View               mContent;
     // optional config for define header and content in xml file
-    private int     mHeaderId              = 0;
-    private int     mContainerId           = 0;
+    private              int                mHeaderId                    = 0;
+    private              int                mContainerId                 = 0;
     // config
-    private int     mDurationToClose       = 200;
-    private int     mDurationToCloseHeader = 1000;
-    private boolean mKeepHeaderWhenRefresh = true;
-    private boolean mPullToRefresh         = false;
-    private View mHeaderView;
-    private PtrUIHandlerHolder mPtrUIHandlerHolder = PtrUIHandlerHolder.create();
-    private PtrHandler    mPtrHandler;
+    private              int                mDurationToClose             = 200;
+    private              int                mDurationToCloseHeader       = 1000;
+    private              boolean            mKeepHeaderWhenRefresh       = true;
+    private              boolean            mPullToRefresh               = false;
+    private              View               mHeaderView;
+    private              PtrUIHandlerHolder mPtrUIHandlerHolder          = PtrUIHandlerHolder.create();
+    private              PtrHandler         mPtrHandler;
     // working parameters
-    private ScrollChecker mScrollChecker;
-    private int           mHeaderHeight;
-    private boolean mDisableWhenHorizontalMove = true;
-    private int     mFlag                      = 0x00;
+    private              ScrollChecker      mScrollChecker;
+    private              int                mHeaderHeight;
+    private              boolean            mDisableWhenHorizontalMove   = true;
+    private              int                mFlag                        = 0x00;
 
     // disable when detect moving horizontally
     private boolean mPreventForHorizontal = false;
@@ -64,11 +63,11 @@ public class PtrFrameLayout extends ViewGroup {
     private int              mHeaderOffsetY;
     private PtrUIHandlerHook mRefreshCompleteHook;
 
-    private int  mLoadingMinTime   = 500;
-    private long mLoadingStartTime = 0;
+    private int          mLoadingMinTime              = 500;
+    private long         mLoadingStartTime            = 0;
     private PtrIndicator mPtrIndicator;
-    private boolean  mHasSendCancelEvent          = false;
-    private Runnable mPerformRefreshCompleteDelay = new Runnable() {
+    private boolean      mHasSendCancelEvent          = false;
+    private Runnable     mPerformRefreshCompleteDelay = new Runnable() {
         @Override public void run() {
             performRefreshComplete();
         }
@@ -259,7 +258,7 @@ public class PtrFrameLayout extends ViewGroup {
         if (!isEnabled() || mContent == null || mHeaderView == null) {
             return dispatchTouchEventSupper(e);
         }
-        int action = e.getAction();
+        int action = e.getAction() & MotionEvent.ACTION_MASK;
         switch (action) {
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
@@ -914,9 +913,9 @@ public class PtrFrameLayout extends ViewGroup {
     class ScrollChecker implements Runnable {
         private int      mLastFlingY;
         private Scroller mScroller;
-        private boolean mIsRunning = false;
-        private int mStart;
-        private int mTo;
+        private boolean  mIsRunning = false;
+        private int      mStart;
+        private int      mTo;
 
         ScrollChecker() {
             mScroller = new Scroller(getContext());
