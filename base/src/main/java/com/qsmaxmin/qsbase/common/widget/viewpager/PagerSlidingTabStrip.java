@@ -31,24 +31,8 @@ import com.qsmaxmin.qsbase.R;
  * Created by sky on 14-11-20.ViewPager Tab
  */
 public class PagerSlidingTabStrip extends HorizontalScrollView {
-
-    private OnTabItemClickListener mClickListener;
-    private OnTabItemClickListener mLongClickListener;
-
-    public interface IconTabProvider {
-        int getPageIconResId(int position);
-    }
-
-    public interface TitleCountTabProvider {
-        String getPageCount(int position);
-    }
-
-    public interface CustomTabProvider {
-        int getCustomTabView();
-
-        void initTabsItem(View view, int position);
-    }
-
+    private       OnTabItemClickListener    mClickListener;
+    private       OnTabItemClickListener    mLongClickListener;
     private final PageListener              pageListener           = new PageListener();
     private       int                       currentPosition        = 0;
     private       int                       selectedPosition       = 0;
@@ -85,6 +69,20 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
     private       LinearLayout.LayoutParams defaultTabLayoutParams;
     private       LinearLayout.LayoutParams expandedTabLayoutParams;
 
+    public interface IconTabProvider {
+        int getPageIconResId(int position);
+    }
+
+    public interface TitleCountTabProvider {
+        String getPageCount(int position);
+    }
+
+    public interface CustomTabProvider {
+        int getCustomTabView();
+
+        void initTabsItem(View view, int position);
+    }
+
     public PagerSlidingTabStrip(Context context) {
         super(context);
         initView(context, null);
@@ -103,6 +101,7 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
     private void initView(Context context, AttributeSet attrs) {
         setFillViewport(true);
         setWillNotDraw(false);
+        setHorizontalScrollBarEnabled(false);
 
         tabsContainer = new LinearLayout(context);
         tabsContainer.setOrientation(LinearLayout.HORIZONTAL);
