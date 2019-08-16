@@ -41,13 +41,16 @@ public class QsToast {
      * 弹出提示
      */
     private static void showToast(Context context, String text, int duration) {
-        if (mToast == null) {
-            mToast = Toast.makeText(context, text, duration);
-            mToast.show();
-        } else {
-            mToast.setText(text);
-            mToast.setDuration(duration);
-            mToast.show();
+        try {
+            if (mToast == null) {
+                mToast = Toast.makeText(context, text, duration);
+                mToast.show();
+            } else {
+                mToast.setText(text);
+                mToast.setDuration(duration);
+                mToast.show();
+            }
+        } catch (Exception ignored) {
         }
     }
 }
