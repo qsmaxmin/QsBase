@@ -230,7 +230,7 @@ public class QsHelper {
     @ThreadPoint(ThreadType.MAIN) public void commitBackStackFragment(FragmentManager fragmentManager, int layoutId, Fragment fragment, String tag, int enterAnim, int exitAnim) {
         if (layoutId > 0 && fragment != null && !fragment.isAdded() && fragmentManager != null) {
             FragmentTransaction transaction = fragmentManager.beginTransaction();
-            if (enterAnim > 0 || exitAnim > 0) transaction.setCustomAnimations(enterAnim, exitAnim, enterAnim, exitAnim);
+            if (enterAnim != 0 || exitAnim != 0) transaction.setCustomAnimations(enterAnim, exitAnim, enterAnim, exitAnim);
             transaction.add(layoutId, fragment, tag).addToBackStack(null).setTransition(FragmentTransaction.TRANSIT_NONE).commitAllowingStateLoss();
         }
     }
