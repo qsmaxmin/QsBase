@@ -16,7 +16,6 @@ import com.qsmaxmin.qsbase.R;
 import com.qsmaxmin.qsbase.common.aspect.ThreadPoint;
 import com.qsmaxmin.qsbase.common.aspect.ThreadType;
 import com.qsmaxmin.qsbase.common.log.L;
-import com.qsmaxmin.qsbase.common.viewbind.ViewBindData;
 import com.qsmaxmin.qsbase.common.viewbind.ViewBindHelper;
 import com.qsmaxmin.qsbase.common.widget.recyclerview.HeaderFooterRecyclerView;
 import com.qsmaxmin.qsbase.mvp.adapter.MyRecycleViewHolder;
@@ -73,21 +72,21 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
 
     @Override protected View initView(LayoutInflater inflater) {
         View rootView = super.initView(inflater);
-        if (getTopLayout() > 0 || getBottomLayout() > 0) initTopBottomView(rootView, inflater);
+        if (getTopLayout() != 0 || getBottomLayout() != 0) initTopBottomView(rootView, inflater);
         initRecycleView(inflater, rootView);
         return rootView;
     }
 
     @Override protected int rootViewLayoutId() {
-        return (getTopLayout() > 0 || getBottomLayout() > 0) ? R.layout.qs_fragment_state_with_top_bottom : super.rootViewLayoutId();
+        return (getTopLayout() != 0 || getBottomLayout() != 0) ? R.layout.qs_fragment_state_with_top_bottom : super.rootViewLayoutId();
     }
 
     protected void initTopBottomView(View rootView, LayoutInflater inflater) {
         if (rootView instanceof LinearLayout) {
-            if (getTopLayout() > 0) {
+            if (getTopLayout() != 0) {
                 ((LinearLayout) rootView).addView(inflater.inflate(getTopLayout(), null), 0);
             }
-            if (getBottomLayout() > 0) {
+            if (getBottomLayout() != 0) {
                 int childCount = ((LinearLayout) rootView).getChildCount();
                 ((LinearLayout) rootView).addView(inflater.inflate(getBottomLayout(), null), childCount);
             }
@@ -106,12 +105,12 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
             mRecyclerView = view.findViewById(android.R.id.list);
         }
         if (mRecyclerView == null) throw new RuntimeException("HeaderFooterRecyclerView is not exit or its id not 'android.R.id.list' in current layout!!");
-        if (getHeaderLayout() > 0) {
+        if (getHeaderLayout() != 0) {
             headerView = inflater.inflate(getHeaderLayout(), null);
             mRecyclerView.addHeaderView(headerView);
             ViewBindHelper.bindView(this, headerView);
         }
-        if (getFooterLayout() > 0) {
+        if (getFooterLayout() != 0) {
             footerView = inflater.inflate(getFooterLayout(), null);
             mRecyclerView.addFooterView(footerView);
             ViewBindHelper.bindView(this, footerView);
@@ -156,11 +155,11 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
                     @Override public int getSpanSize(int position) {
                         /*当有footer或者header时特殊处理，让它占满整个一条*/
                         L.i(initTag(), "getSpanSize   position:" + position);
-                        if (getHeaderLayout() > 0 && position == 0) {
+                        if (getHeaderLayout() != 0 && position == 0) {
                             return getSpanCount();
-                        } else if (getHeaderLayout() > 0 && getFooterLayout() > 0 && position == mList.size() + 1) {
+                        } else if (getHeaderLayout() != 0 && getFooterLayout() != 0 && position == mList.size() + 1) {
                             return getSpanCount();
-                        } else if (getHeaderLayout() == 0 && getFooterLayout() > 0 && position == mList.size()) {
+                        } else if (getHeaderLayout() == 0 && getFooterLayout() != 0 && position == mList.size()) {
                             return getSpanCount();
                         } else {
                             return 1;

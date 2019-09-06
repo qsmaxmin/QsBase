@@ -71,22 +71,22 @@ public abstract class QsListFragment<P extends QsPresenter, D> extends QsFragmen
 
     @Override protected View initView(LayoutInflater inflater) {
         View rootView = super.initView(inflater);
-        if (getTopLayout() > 0 || getBottomLayout() > 0) initTopBottomView(rootView, inflater);
+        if (getTopLayout() != 0 || getBottomLayout() != 0) initTopBottomView(rootView, inflater);
         initListView(inflater, rootView);
         return rootView;
     }
 
 
     @Override protected int rootViewLayoutId() {
-        return (getTopLayout() > 0 || getBottomLayout() > 0) ? R.layout.qs_fragment_state_with_top_bottom : super.rootViewLayoutId();
+        return (getTopLayout() != 0 || getBottomLayout() != 0) ? R.layout.qs_fragment_state_with_top_bottom : super.rootViewLayoutId();
     }
 
     protected void initTopBottomView(View rootView, LayoutInflater inflater) {
         if (rootView instanceof LinearLayout) {
-            if (getTopLayout() > 0) {
+            if (getTopLayout() != 0) {
                 ((LinearLayout) rootView).addView(inflater.inflate(getTopLayout(), null), 0);
             }
-            if (getBottomLayout() > 0) {
+            if (getBottomLayout() != 0) {
                 int childCount = ((LinearLayout) rootView).getChildCount();
                 ((LinearLayout) rootView).addView(inflater.inflate(getBottomLayout(), null), childCount);
             }

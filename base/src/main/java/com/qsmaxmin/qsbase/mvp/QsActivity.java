@@ -18,7 +18,6 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.ViewAnimator;
 
 import com.qsmaxmin.qsbase.R;
@@ -117,7 +116,7 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
 
     protected View initView() {
         View rootView;
-        if (isOpenViewState() && loadingLayoutId() > 0 && emptyLayoutId() > 0 && errorLayoutId() > 0) {
+        if (isOpenViewState() && loadingLayoutId() != 0 && emptyLayoutId() != 0 && errorLayoutId() != 0) {
             rootView = View.inflate(this, rootViewLayoutId(), null);
             mViewAnimator = rootView.findViewById(android.R.id.home);
             initViewAnimator(mViewAnimator);
@@ -337,10 +336,10 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
             if (optionsCompat == null) {
                 if (requestCode > 0) {
                     startActivityForResult(intent, requestCode);
-                    if (inAnimId > 0 || outAnimId > 0) overridePendingTransition(inAnimId, outAnimId);
+                    if (inAnimId != 0 || outAnimId != 0) overridePendingTransition(inAnimId, outAnimId);
                 } else {
                     startActivity(intent);
-                    if (inAnimId > 0 || outAnimId > 0) overridePendingTransition(inAnimId, outAnimId);
+                    if (inAnimId != 0 || outAnimId != 0) overridePendingTransition(inAnimId, outAnimId);
                 }
             } else {
                 if (requestCode > 0) {

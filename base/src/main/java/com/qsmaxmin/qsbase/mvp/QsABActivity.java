@@ -121,7 +121,7 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
     protected View initView() {
         View rootView;
         Toolbar mToolbar;
-        if (isOpenViewState() && loadingLayoutId() > 0 && emptyLayoutId() > 0 && errorLayoutId() > 0) {
+        if (isOpenViewState() && loadingLayoutId() != 0 && emptyLayoutId() != 0 && errorLayoutId() != 0) {
             rootView = View.inflate(this, rootViewLayoutId(), null);
             mViewAnimator = rootView.findViewById(android.R.id.home);
             initViewAnimator(mViewAnimator);
@@ -138,7 +138,7 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
             View.inflate(this, layoutId(), mainView);
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) mToolbar.setElevation(0);
-        if (actionbarLayoutId() > 0) {
+        if (actionbarLayoutId() != 0) {
             ViewGroup actionbarContainer = mToolbar.findViewById(R.id.vg_toolbar);
             View.inflate(getContext(), actionbarLayoutId(), actionbarContainer);
         }
@@ -351,10 +351,10 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
             if (optionsCompat == null) {
                 if (requestCode > 0) {
                     startActivityForResult(intent, requestCode);
-                    if (inAnimId > 0 || outAnimId > 0) overridePendingTransition(inAnimId, outAnimId);
+                    if (inAnimId != 0 || outAnimId != 0) overridePendingTransition(inAnimId, outAnimId);
                 } else {
                     startActivity(intent);
-                    if (inAnimId > 0 || outAnimId > 0) overridePendingTransition(inAnimId, outAnimId);
+                    if (inAnimId != 0 || outAnimId != 0) overridePendingTransition(inAnimId, outAnimId);
                 }
             } else {
                 if (requestCode > 0) {

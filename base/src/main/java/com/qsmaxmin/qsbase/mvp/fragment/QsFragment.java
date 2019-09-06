@@ -108,7 +108,7 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
 
     protected View initView(LayoutInflater inflater) {
         View view;
-        if (isOpenViewState() && loadingLayoutId() > 0 && emptyLayoutId() > 0 && errorLayoutId() > 0) {
+        if (isOpenViewState() && loadingLayoutId() != 0 && emptyLayoutId() != 0 && errorLayoutId() != 0) {
             view = inflater.inflate(rootViewLayoutId(), null);
             mViewAnimator = view.findViewById(android.R.id.home);
             initViewAnimator(mViewAnimator);
@@ -336,10 +336,10 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
             if (optionsCompat == null) {
                 if (requestCode > 0) {
                     startActivityForResult(intent, requestCode);
-                    if (inAnimId > 0 || outAnimId > 0) activity.overridePendingTransition(inAnimId, outAnimId);
+                    if (inAnimId != 0 || outAnimId != 0) activity.overridePendingTransition(inAnimId, outAnimId);
                 } else {
                     startActivity(intent);
-                    if (inAnimId > 0 || outAnimId > 0) activity.overridePendingTransition(inAnimId, outAnimId);
+                    if (inAnimId != 0 || outAnimId != 0) activity.overridePendingTransition(inAnimId, outAnimId);
                 }
             } else {
                 if (requestCode > 0) {
