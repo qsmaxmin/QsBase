@@ -246,7 +246,7 @@ public class ImageHelper {
         }
 
         public Builder addFrame(int frameId) {
-            if (frameId > 0) {
+            if (frameId != 0) {
                 this.mTransformation = new PhotoFrameTransform(frameId);
             }
             return this;
