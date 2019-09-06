@@ -60,7 +60,7 @@ public abstract class QsViewPagerActivity<P extends QsPresenter> extends QsActiv
     }
 
     protected QsViewPagerAdapter createPagerAdapter(ViewPagerHelper pagerHelper) {
-        if (getTabItemLayout() > 0) {
+        if (getTabItemLayout() != 0) {
             return new QsTabViewPagerAdapter(getSupportFragmentManager(), pagerHelper);
         } else {
             return new QsViewPagerAdapter(getSupportFragmentManager(), pagerHelper);
