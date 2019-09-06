@@ -34,7 +34,7 @@ public abstract class QsPullListFragment<T extends QsPresenter, D> extends QsLis
     protected           LoadingFooter  mLoadingFooter;
 
     @Override public int layoutId() {
-        return (!isOpenViewState() && (getTopLayout() > 0 || getBottomLayout() > 0)) ? R.layout.qs_fragment_pull_listview_with_top_bottom : R.layout.qs_fragment_pull_listview;
+        return (!isOpenViewState() && (getTopLayout() != 0 || getBottomLayout() != 0)) ? R.layout.qs_fragment_pull_listview_with_top_bottom : R.layout.qs_fragment_pull_listview;
     }
 
     @Override public int getFooterLayout() {

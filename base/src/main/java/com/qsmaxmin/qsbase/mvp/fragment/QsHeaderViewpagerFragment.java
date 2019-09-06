@@ -37,7 +37,7 @@ public abstract class QsHeaderViewpagerFragment<P extends QsPresenter> extends Q
         if (tabView == null) throw new RuntimeException("tabView should not be null!!");
         headerViewPager.setTabsLayout(tabView);
         headerViewPager.initView();
-        if (getHeaderLayout() > 0) {
+        if (getHeaderLayout() != 0) {
             headerViewPager.addPagerHeaderView(View.inflate(getContext(), getHeaderLayout(), null));
         }
         pager = headerViewPager.getViewPager();

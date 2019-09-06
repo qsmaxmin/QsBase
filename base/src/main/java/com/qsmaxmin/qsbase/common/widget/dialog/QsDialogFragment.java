@@ -27,7 +27,7 @@ public abstract class QsDialogFragment extends DialogFragment {
 
     @Override public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getDialogTheme() > 0) setStyle(DialogFragment.STYLE_NO_TITLE, getDialogTheme());
+        if (getDialogTheme() != 0) setStyle(DialogFragment.STYLE_NO_TITLE, getDialogTheme());
     }
 
     @Override public void onActivityCreated(Bundle savedInstanceState) {
