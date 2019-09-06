@@ -134,10 +134,10 @@ public class QsHelper {
             if (optionsCompat == null) {
                 if (requestCode > 0) {
                     activity.startActivityForResult(intent, requestCode);
-                    if (inAnimId > 0 || outAnimId > 0) activity.overridePendingTransition(inAnimId, outAnimId);
+                    if (inAnimId != 0 || outAnimId != 0) activity.overridePendingTransition(inAnimId, outAnimId);
                 } else {
                     activity.startActivity(intent);
-                    if (inAnimId > 0 || outAnimId > 0) activity.overridePendingTransition(inAnimId, outAnimId);
+                    if (inAnimId != 0 || outAnimId != 0) activity.overridePendingTransition(inAnimId, outAnimId);
                 }
             } else {
                 if (requestCode > 0) {
@@ -228,7 +228,7 @@ public class QsHelper {
     }
 
     @ThreadPoint(ThreadType.MAIN) public void commitBackStackFragment(FragmentManager fragmentManager, int layoutId, Fragment fragment, String tag, int enterAnim, int exitAnim) {
-        if (layoutId > 0 && fragment != null && !fragment.isAdded() && fragmentManager != null) {
+        if (layoutId != 0 && fragment != null && !fragment.isAdded() && fragmentManager != null) {
             FragmentTransaction transaction = fragmentManager.beginTransaction();
             if (enterAnim != 0 || exitAnim != 0) transaction.setCustomAnimations(enterAnim, exitAnim, enterAnim, exitAnim);
             transaction.add(layoutId, fragment, tag).addToBackStack(null).setTransition(FragmentTransaction.TRANSIT_NONE).commitAllowingStateLoss();
