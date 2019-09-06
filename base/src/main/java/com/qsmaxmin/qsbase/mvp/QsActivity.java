@@ -17,6 +17,8 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ViewAnimator;
 
 import com.qsmaxmin.qsbase.R;
@@ -45,7 +47,7 @@ import java.util.List;
 public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity implements QsIActivity {
     private   P                 presenter;
     protected QsProgressDialog  mProgressDialog;
-    private   ViewAnimator      mViewAnimator;
+    protected ViewAnimator      mViewAnimator;
     private   boolean           hasInitData;
     private   OnKeyDownListener onKeyDownListener;
 
@@ -57,7 +59,6 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
     @Override public int layoutId() {
         return R.layout.qs_framelayout;
     }
-
 
     @CallSuper @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -119,6 +120,7 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         if (isOpenViewState() && loadingLayoutId() > 0 && emptyLayoutId() > 0 && errorLayoutId() > 0) {
             rootView = View.inflate(this, rootViewLayoutId(), null);
             mViewAnimator = rootView.findViewById(android.R.id.home);
+            initViewAnimator(mViewAnimator);
             View.inflate(this, loadingLayoutId(), mViewAnimator);
             View.inflate(this, layoutId(), mViewAnimator);
             View.inflate(this, emptyLayoutId(), mViewAnimator);
@@ -128,6 +130,22 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
             rootView = View.inflate(this, layoutId(), null);
         }
         return rootView;
+    }
+
+    private void initViewAnimator(ViewAnimator viewAnimator) {
+        Animation inAnimation = viewStateInAnimation();
+        if (inAnimation != null) {
+            viewAnimator.setInAnimation(inAnimation);
+        } else if (viewStateInAnimationId() != 0) {
+            viewAnimator.setInAnimation(getContext(), viewStateInAnimationId());
+        }
+        Animation outAnimation = viewStateOutAnimation();
+        if (outAnimation != null) {
+            viewAnimator.setOutAnimation(outAnimation);
+        } else if (viewStateOutAnimationId() != 0) {
+            viewAnimator.setOutAnimation(getContext(), viewStateOutAnimationId());
+        }
+        viewAnimator.setAnimateFirstView(viewStateAnimateFirstView());
     }
 
     protected int rootViewLayoutId() {
@@ -169,6 +187,26 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         return false;
     }
 
+    @Override public Animation viewStateInAnimation() {
+        return null;
+    }
+
+    @Override public int viewStateInAnimationId() {
+        return 0;
+    }
+
+    @Override public Animation viewStateOutAnimation() {
+        return null;
+    }
+
+    @Override public int viewStateOutAnimationId() {
+        return 0;
+    }
+
+    @Override public boolean viewStateAnimateFirstView() {
+        return false;
+    }
+
     @Override public boolean isDelayData() {
         return false;
     }
@@ -199,6 +237,9 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         return QsHelper.getInstance().getAppInterface().errorLayoutId();
     }
 
+    /**
+     * 重写该方法以便自定义进度条样式
+     */
     @Override public QsProgressDialog getLoadingDialog() {
         return QsHelper.getInstance().getAppInterface().getLoadingDialog();
     }
@@ -400,7 +441,7 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
     @Override public final boolean onKeyDown(int keyCode, KeyEvent event) {
         if (onKeyDownListener != null && onKeyDownListener.onKeyDown(keyCode, event)) return true;
         @SuppressLint("RestrictedApi") List<Fragment> fragmentList = getSupportFragmentManager().getFragments();
-        if (fragmentList != null && !fragmentList.isEmpty()) {
+        if (!fragmentList.isEmpty()) {
             int size = fragmentList.size();
             for (int i = size - 1; i >= 0; i--) {
                 Fragment fragment = fragmentList.get(i);

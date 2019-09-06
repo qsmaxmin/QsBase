@@ -16,6 +16,7 @@ import android.view.MenuInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
 import android.widget.ScrollView;
 import android.widget.ViewAnimator;
 
@@ -39,9 +40,7 @@ import org.greenrobot.eventbus.EventBus;
  * @Date 2017/6/21 11:40
  * @Description
  */
-
 public abstract class QsFragment<P extends QsPresenter> extends Fragment implements QsIFragment, View.OnTouchListener {
-
     private   P                presenter;
     private   boolean          hasInitData;
     protected QsProgressDialog mProgressDialog;
@@ -58,7 +57,7 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
     @Override @ThreadPoint(ThreadType.MAIN) public void setActivityTitle(Object value, int code) {
         FragmentActivity activity = getActivity();
         if (activity instanceof QsIABActivity) {
-            L.i(initTag(), "setActivityTitle(" + String.valueOf(value) + ", " + code + ")");
+            L.i(initTag(), "setActivityTitle(" + value + ", " + code + ")");
             ((QsIABActivity) activity).setActivityTitle(value, code);
         }
     }
@@ -112,6 +111,7 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         if (isOpenViewState() && loadingLayoutId() > 0 && emptyLayoutId() > 0 && errorLayoutId() > 0) {
             view = inflater.inflate(rootViewLayoutId(), null);
             mViewAnimator = view.findViewById(android.R.id.home);
+            initViewAnimator(mViewAnimator);
             inflater.inflate(loadingLayoutId(), mViewAnimator);
             inflater.inflate(layoutId(), mViewAnimator);
             inflater.inflate(emptyLayoutId(), mViewAnimator);
@@ -121,6 +121,22 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
             view = inflater.inflate(layoutId(), null);
         }
         return view;
+    }
+
+    private void initViewAnimator(ViewAnimator viewAnimator) {
+        Animation inAnimation = viewStateInAnimation();
+        if (inAnimation != null) {
+            viewAnimator.setInAnimation(inAnimation);
+        } else if (viewStateInAnimationId() != 0) {
+            viewAnimator.setInAnimation(getContext(), viewStateInAnimationId());
+        }
+        Animation outAnimation = viewStateOutAnimation();
+        if (outAnimation != null) {
+            viewAnimator.setOutAnimation(outAnimation);
+        } else if (viewStateOutAnimationId() != 0) {
+            viewAnimator.setOutAnimation(getContext(), viewStateOutAnimationId());
+        }
+        viewAnimator.setAnimateFirstView(viewStateAnimateFirstView());
     }
 
     protected int rootViewLayoutId() {
@@ -156,6 +172,26 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
 
     @Override public boolean isOpenViewState() {
         return true;
+    }
+
+    @Override public Animation viewStateInAnimation() {
+        return null;
+    }
+
+    @Override public int viewStateInAnimationId() {
+        return 0;
+    }
+
+    @Override public Animation viewStateOutAnimation() {
+        return null;
+    }
+
+    @Override public int viewStateOutAnimationId() {
+        return 0;
+    }
+
+    @Override public boolean viewStateAnimateFirstView() {
+        return false;
     }
 
     @Override public boolean isDelayData() {
@@ -194,6 +230,9 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         return QsHelper.getInstance().getAppInterface().errorLayoutId();
     }
 
+    /**
+     * 重写该方法以便自定义进度条样式
+     */
     @Override public QsProgressDialog getLoadingDialog() {
         return QsHelper.getInstance().getAppInterface().getLoadingDialog();
     }

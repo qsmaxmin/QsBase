@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.Animation;
 import android.widget.ViewAnimator;
 
 import com.qsmaxmin.qsbase.R;
@@ -47,7 +48,7 @@ import java.util.List;
 public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActivity implements QsIABActivity {
     private   P                 presenter;
     protected QsProgressDialog  mProgressDialog;
-    private   ViewAnimator      mViewAnimator;
+    protected ViewAnimator      mViewAnimator;
     private   boolean           hasInitData;
     private   OnKeyDownListener onKeyDownListener;
 
@@ -56,7 +57,6 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
     }
 
     @Override public void setActivityTitle(Object value, int code) {
-
     }
 
     @Override public int layoutId() {
@@ -124,6 +124,7 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
         if (isOpenViewState() && loadingLayoutId() > 0 && emptyLayoutId() > 0 && errorLayoutId() > 0) {
             rootView = View.inflate(this, rootViewLayoutId(), null);
             mViewAnimator = rootView.findViewById(android.R.id.home);
+            initViewAnimator(mViewAnimator);
             mToolbar = rootView.findViewById(R.id.toolbar);
             View.inflate(this, loadingLayoutId(), mViewAnimator);
             View.inflate(this, layoutId(), mViewAnimator);
@@ -143,6 +144,22 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
         }
         setSupportActionBar(mToolbar);
         return rootView;
+    }
+
+    private void initViewAnimator(ViewAnimator viewAnimator) {
+        Animation inAnimation = viewStateInAnimation();
+        if (inAnimation != null) {
+            viewAnimator.setInAnimation(inAnimation);
+        } else if (viewStateInAnimationId() != 0) {
+            viewAnimator.setInAnimation(getContext(), viewStateInAnimationId());
+        }
+        Animation outAnimation = viewStateOutAnimation();
+        if (outAnimation != null) {
+            viewAnimator.setOutAnimation(outAnimation);
+        } else if (viewStateOutAnimationId() != 0) {
+            viewAnimator.setOutAnimation(getContext(), viewStateOutAnimationId());
+        }
+        viewAnimator.setAnimateFirstView(viewStateAnimateFirstView());
     }
 
     protected int rootViewLayoutId() {
@@ -184,6 +201,26 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
         return false;
     }
 
+    @Override public Animation viewStateInAnimation() {
+        return null;
+    }
+
+    @Override public int viewStateInAnimationId() {
+        return 0;
+    }
+
+    @Override public Animation viewStateOutAnimation() {
+        return null;
+    }
+
+    @Override public int viewStateOutAnimationId() {
+        return 0;
+    }
+
+    @Override public boolean viewStateAnimateFirstView() {
+        return false;
+    }
+
     @Override public boolean isDelayData() {
         return false;
     }
@@ -214,6 +251,9 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
         return QsHelper.getInstance().getAppInterface().errorLayoutId();
     }
 
+    /**
+     * 重写该方法以便自定义进度条样式
+     */
     @Override public QsProgressDialog getLoadingDialog() {
         return QsHelper.getInstance().getAppInterface().getLoadingDialog();
     }
@@ -415,7 +455,7 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
     @Override public final boolean onKeyDown(int keyCode, KeyEvent event) {
         if (onKeyDownListener != null && onKeyDownListener.onKeyDown(keyCode, event)) return true;
         @SuppressLint("RestrictedApi") List<Fragment> fragmentList = getSupportFragmentManager().getFragments();
-        if (fragmentList != null && !fragmentList.isEmpty()) {
+        if (!fragmentList.isEmpty()) {
             int size = fragmentList.size();
             for (int i = size - 1; i >= 0; i--) {
                 Fragment fragment = fragmentList.get(i);

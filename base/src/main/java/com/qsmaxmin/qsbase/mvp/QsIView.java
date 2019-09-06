@@ -7,6 +7,7 @@ import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.view.View;
+import android.view.animation.Animation;
 
 import com.qsmaxmin.qsbase.common.widget.dialog.QsProgressDialog;
 
@@ -45,6 +46,16 @@ public interface QsIView<P> {
     boolean isOpenEventBus();
 
     boolean isOpenViewState();
+
+    Animation viewStateInAnimation();
+
+    Animation viewStateOutAnimation();
+
+    int viewStateInAnimationId();
+
+    int viewStateOutAnimationId();
+
+    boolean viewStateAnimateFirstView();
 
     boolean isShowBackButtonInDefaultView();
 
