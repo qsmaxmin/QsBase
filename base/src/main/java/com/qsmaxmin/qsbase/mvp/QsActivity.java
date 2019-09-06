@@ -204,7 +204,7 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
     }
 
     @Override public boolean viewStateAnimateFirstView() {
-        return false;
+        return true;
     }
 
     @Override public boolean isDelayData() {

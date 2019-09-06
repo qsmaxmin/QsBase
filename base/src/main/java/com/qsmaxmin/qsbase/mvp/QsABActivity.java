@@ -218,7 +218,7 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
     }
 
     @Override public boolean viewStateAnimateFirstView() {
-        return false;
+        return true;
     }
 
     @Override public boolean isDelayData() {
