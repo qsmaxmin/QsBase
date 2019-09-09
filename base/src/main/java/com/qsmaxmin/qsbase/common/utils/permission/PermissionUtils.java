@@ -26,10 +26,10 @@ import java.util.List;
  */
 
 public class PermissionUtils {
-    private static final String TAG = "PermissionUtils";
-    private static PermissionUtils util;
-    private        int             requestCode;
-    private HashMap<String, PermissionBuilder> maps = new HashMap<>();
+    private static final String                             TAG  = "PermissionUtils";
+    private static       PermissionUtils                    util;
+    private              int                                requestCode;
+    private              HashMap<String, PermissionBuilder> maps = new HashMap<>();
 
     private PermissionUtils() {
     }
@@ -73,13 +73,12 @@ public class PermissionUtils {
         L.i(TAG, "startRequestPermission:" + builder.toString());
         ArrayList<String> unGrantedPermission = getUnGrantedPermissionArr(builder.getWantPermissionArr());
         if (unGrantedPermission.size() > 0) {
-            if (builder.getActivity() != null) {
-                requestCode++;
-                L.i(TAG, "start request permission  requestCode=" + requestCode + "   wantPermission=" + unGrantedPermission.toString());
-                builder.setRequestCode(requestCode);
-                maps.put(String.valueOf(requestCode), builder);
-                ActivityCompat.requestPermissions(builder.getActivity(), unGrantedPermission.toArray(new String[unGrantedPermission.size()]), requestCode);
-            }
+            requestCode++;
+            L.i(TAG, "start request permission  requestCode=" + requestCode + "   wantPermission=" + unGrantedPermission.toString());
+            builder.setRequestCode(requestCode);
+            maps.put(String.valueOf(requestCode), builder);
+            String[] permissionArr = new String[unGrantedPermission.size()];
+            ActivityCompat.requestPermissions(builder.getActivity(), unGrantedPermission.toArray(permissionArr), requestCode);
         } else {
             L.i(TAG, "all permission is granted....");
             if (builder.getListener() != null) {
@@ -108,7 +107,7 @@ public class PermissionUtils {
         for (int i = 0; i < grantResults.length; i++) {
             if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {//用户不同意，向用户展示该权限作用
                 grantedAll = false;
-                if (i < permissions.length && i >= 0) {
+                if (i < permissions.length) {
                     L.i(TAG, "user un granted permission:" + permissions[i]);
                     unGrantedArr.add(permissions[i]);
                 }
