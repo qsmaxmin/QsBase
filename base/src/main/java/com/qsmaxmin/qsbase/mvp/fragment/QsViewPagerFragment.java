@@ -57,8 +57,7 @@ public abstract class QsViewPagerFragment<P extends QsPresenter> extends QsFragm
             ViewPagerHelper pagerHelper = new ViewPagerHelper(this, pager, tabs, modelPagers);
             adapter = createPagerAdapter(pagerHelper);
             pager.setAdapter(adapter);
-            int pageMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4, getResources().getDisplayMetrics());
-            pager.setPageMargin(pageMargin);
+            pager.setPageMargin(getPageMargin());
             pager.setOffscreenPageLimit(offScreenPageLimit);
             if (tabs != null) tabs.setViewPager(pager);
         }
@@ -222,7 +221,11 @@ public abstract class QsViewPagerFragment<P extends QsPresenter> extends QsFragm
     }
 
     protected int getOffscreenPageLimit() {
-        return 3;
+        return 1;
+    }
+
+    protected int getPageMargin() {
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4, getResources().getDisplayMetrics());
     }
 
     @Override public void smoothScrollToTop(boolean autoRefresh) {

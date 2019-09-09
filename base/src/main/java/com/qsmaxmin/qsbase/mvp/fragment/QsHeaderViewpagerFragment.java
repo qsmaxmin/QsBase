@@ -1,6 +1,5 @@
 package com.qsmaxmin.qsbase.mvp.fragment;
 
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,7 +42,7 @@ public abstract class QsHeaderViewpagerFragment<P extends QsPresenter> extends Q
         pager = headerViewPager.getViewPager();
         tabs = headerViewPager.getPagerSlidingTabStrip();
         initTabsValue(tabs);
-        initViewPager(getModelPagers(), 3);
+        initViewPager(getModelPagers(), getOffscreenPageLimit());
     }
 
     @Override public ViewGroup createTabView() {
@@ -58,7 +57,7 @@ public abstract class QsHeaderViewpagerFragment<P extends QsPresenter> extends Q
             ViewPagerHelper pagerHelper = new ViewPagerHelper(this, pager, tabs, modelPagers);
             adapter = createPagerAdapter(pagerHelper);
             adapter.setModelPagers(modelPagers);
-            pager.setPageMargin((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4, getResources().getDisplayMetrics()));
+            pager.setPageMargin(getPageMargin());
             pager.setOffscreenPageLimit(offScreenPageLimit);
             headerViewPager.setPagerAdapter(adapter);
         }
