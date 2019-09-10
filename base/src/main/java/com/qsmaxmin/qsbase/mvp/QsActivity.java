@@ -61,8 +61,8 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
 
     @CallSuper @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        QsHelper.getInstance().getScreenHelper().pushActivity(this);
-        QsHelper.getInstance().getAppInterface().onActivityCreate(this);
+        QsHelper.getScreenHelper().pushActivity(this);
+        QsHelper.getAppInterface().onActivityCreate(this);
         ViewBindHelper.bindBundle(this, getIntent().getExtras());
         initStatusBar();
         View view = initView();
@@ -77,23 +77,23 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
 
     @Override protected void onStart() {
         super.onStart();
-        QsHelper.getInstance().getAppInterface().onActivityStart(this);
+        QsHelper.getAppInterface().onActivityStart(this);
     }
 
     @CallSuper @Override protected void onResume() {
         super.onResume();
-        QsHelper.getInstance().getScreenHelper().bringActivityToTop(this);
-        QsHelper.getInstance().getAppInterface().onActivityResume(this);
+        QsHelper.getScreenHelper().bringActivityToTop(this);
+        QsHelper.getAppInterface().onActivityResume(this);
     }
 
     @Override protected void onPause() {
         super.onPause();
-        QsHelper.getInstance().getAppInterface().onActivityPause(this);
+        QsHelper.getAppInterface().onActivityPause(this);
     }
 
     @Override protected void onStop() {
         super.onStop();
-        QsHelper.getInstance().getAppInterface().onActivityStop(this);
+        QsHelper.getAppInterface().onActivityStop(this);
     }
 
     @Override protected void onDestroy() {
@@ -109,8 +109,8 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         mViewAnimator = null;
         onKeyDownListener = null;
         if (isOpenEventBus() && EventBus.getDefault().isRegistered(this)) EventBus.getDefault().unregister(this);
-        QsHelper.getInstance().getAppInterface().onActivityDestroy(this);
-        QsHelper.getInstance().getScreenHelper().popActivity(this);
+        QsHelper.getAppInterface().onActivityDestroy(this);
+        QsHelper.getScreenHelper().popActivity(this);
     }
 
 
@@ -225,22 +225,22 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
     }
 
     @Override public int loadingLayoutId() {
-        return QsHelper.getInstance().getAppInterface().loadingLayoutId();
+        return QsHelper.getAppInterface().loadingLayoutId();
     }
 
     @Override public int emptyLayoutId() {
-        return QsHelper.getInstance().getAppInterface().emptyLayoutId();
+        return QsHelper.getAppInterface().emptyLayoutId();
     }
 
     @Override public int errorLayoutId() {
-        return QsHelper.getInstance().getAppInterface().errorLayoutId();
+        return QsHelper.getAppInterface().errorLayoutId();
     }
 
     /**
      * 重写该方法以便自定义进度条样式
      */
     @Override public QsProgressDialog getLoadingDialog() {
-        return QsHelper.getInstance().getAppInterface().getLoadingDialog();
+        return QsHelper.getAppInterface().getLoadingDialog();
     }
 
     @Override public void loading() {
@@ -260,7 +260,7 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
     }
 
     @Override public void loading(int resId, boolean cancelAble) {
-        loading(QsHelper.getInstance().getString(resId), cancelAble);
+        loading(QsHelper.getString(resId), cancelAble);
     }
 
     @ThreadPoint(ThreadType.MAIN) @Override public void loading(String message, boolean cancelAble) {
@@ -270,7 +270,7 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
             mProgressDialog.setCancelable(cancelAble);
             if (!mProgressDialog.isAdded() && !mProgressDialog.isShowing()) {
                 mProgressDialog.setIsShowing(true);
-                QsHelper.getInstance().commitDialogFragment(getSupportFragmentManager(), mProgressDialog);
+                QsHelper.commitDialogFragment(getSupportFragmentManager(), mProgressDialog);
             }
         } else {
             L.e(initTag(), "you should override the method 'Application.getLoadingDialog() or this.getLoadingDialog()' and return a dialog when called the method : loading(...) ");
@@ -364,7 +364,7 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
     }
 
     @Override public void commitFragment(int layoutId, Fragment fragment, String tag) {
-        QsHelper.getInstance().commitFragment(getSupportFragmentManager(), layoutId, fragment, tag);
+        QsHelper.commitFragment(getSupportFragmentManager(), layoutId, fragment, tag);
     }
 
     @Override public void commitFragment(Fragment old, Fragment fragment) {
@@ -380,7 +380,7 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
     }
 
     @Override public void commitFragment(Fragment old, int layoutId, Fragment fragment, String tag) {
-        QsHelper.getInstance().commitFragment(getSupportFragmentManager(), old, layoutId, fragment, tag);
+        QsHelper.commitFragment(getSupportFragmentManager(), old, layoutId, fragment, tag);
     }
 
     @Override public void commitBackStackFragment(Fragment fragment) {
@@ -396,19 +396,19 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
     }
 
     @Override public void commitBackStackFragment(Fragment fragment, int enterAnim, int exitAnim) {
-        QsHelper.getInstance().commitBackStackFragment(fragment, enterAnim, exitAnim);
+        QsHelper.commitBackStackFragment(fragment, enterAnim, exitAnim);
     }
 
     @Override public void commitBackStackFragment(int layoutId, Fragment fragment, String tag) {
-        QsHelper.getInstance().commitBackStackFragment(getSupportFragmentManager(), layoutId, fragment, tag);
+        QsHelper.commitBackStackFragment(getSupportFragmentManager(), layoutId, fragment, tag);
     }
 
     @Override public void commitDialogFragment(DialogFragment fragment) {
-        QsHelper.getInstance().commitDialogFragment(getSupportFragmentManager(), fragment);
+        QsHelper.commitDialogFragment(getSupportFragmentManager(), fragment);
     }
 
     @Override public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        PermissionUtils.getInstance().parsePermissionResultData(requestCode, permissions, grantResults, this);
+        PermissionUtils.parsePermissionResultData(requestCode, permissions, grantResults, this);
     }
 
     @ThreadPoint(ThreadType.MAIN) protected void setViewState(int showState) {

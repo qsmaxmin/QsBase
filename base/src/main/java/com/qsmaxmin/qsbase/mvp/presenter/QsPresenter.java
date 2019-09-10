@@ -85,7 +85,7 @@ public class QsPresenter<V extends QsIView> {
             } else {
                 L.e(initTag(), "createHttpRequest Repeated tag:" + requestTag);
             }
-            return QsHelper.getInstance().getHttpHelper().create(clazz, requestTag);
+            return QsHelper.getHttpHelper().create(clazz, requestTag);
         }
     }
 
@@ -96,7 +96,7 @@ public class QsPresenter<V extends QsIView> {
         synchronized (tagList) {
             for (String tag : tagList) {
                 try {
-                    QsHelper.getInstance().getHttpHelper().cancelRequest(tag);
+                    QsHelper.getHttpHelper().cancelRequest(tag);
                 } catch (Exception e) {
                     L.e(initTag(), "cancel http request failed :" + e.getMessage());
                 }
@@ -110,7 +110,7 @@ public class QsPresenter<V extends QsIView> {
             if (tagList.contains(requestTag)) {
                 tagList.remove(requestTag);
                 try {
-                    QsHelper.getInstance().getHttpHelper().cancelRequest(requestTag);
+                    QsHelper.getHttpHelper().cancelRequest(requestTag);
                 } catch (Exception e) {
                     L.e(initTag(), "cancel http request failed :" + e.getMessage());
                 }
@@ -192,30 +192,30 @@ public class QsPresenter<V extends QsIView> {
     }
 
     public String getString(@StringRes int stringId) {
-        return QsHelper.getInstance().getString(stringId);
+        return QsHelper.getString(stringId);
     }
 
     public String getString(@StringRes int resId, Object... formatArgs) {
-        return QsHelper.getInstance().getString(resId, formatArgs);
+        return QsHelper.getString(resId, formatArgs);
     }
 
     public Drawable getDrawable(@DrawableRes int resId) {
-        return QsHelper.getInstance().getDrawable(resId);
+        return QsHelper.getDrawable(resId);
     }
 
     public int getColor(@ColorRes int resId) {
-        return QsHelper.getInstance().getColor(resId);
+        return QsHelper.getColor(resId);
     }
 
     public float getDimension(@DimenRes int resId) {
-        return QsHelper.getInstance().getDimension(resId);
+        return QsHelper.getDimension(resId);
     }
 
     public boolean isSdCardAvailable() {
-        return QsHelper.getInstance().isSdCardAvailable();
+        return QsHelper.isSdCardAvailable();
     }
 
     public boolean isNetworkAvailable() {
-        return QsHelper.getInstance().isNetworkAvailable();
+        return QsHelper.isNetworkAvailable();
     }
 }

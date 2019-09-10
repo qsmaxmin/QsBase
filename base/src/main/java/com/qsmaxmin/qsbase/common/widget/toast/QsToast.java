@@ -21,19 +21,19 @@ public class QsToast {
         }
         // 判断是否在主线程
         if (Looper.getMainLooper().getThread() != Thread.currentThread()) {
-            QsHelper.getInstance().getThreadHelper().getMainThread().execute(new Runnable() {
+            QsHelper.getThreadHelper().getMainThread().execute(new Runnable() {
                 @Override public void run() {
-                    showToast(QsHelper.getInstance().getApplication(), msg, Toast.LENGTH_SHORT);
+                    showToast(QsHelper.getApplication(), msg, Toast.LENGTH_SHORT);
                 }
             });
         } else {
-            showToast(QsHelper.getInstance().getApplication(), msg, Toast.LENGTH_SHORT);
+            showToast(QsHelper.getApplication(), msg, Toast.LENGTH_SHORT);
         }
     }
 
     public static void show(@StringRes int resId) {
         if (resId != 0) {
-            show(QsHelper.getInstance().getString(resId));
+            show(QsHelper.getString(resId));
         }
     }
 

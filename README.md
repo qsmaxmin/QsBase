@@ -220,14 +220,14 @@ MVP架构+AOP面向切面编程，摒弃反射、代理等操作，稳定性和�
 
         View层和Presenter层通过getView()和getPresenter()方法相互调用
         QsHelper里封装了很多常用的方法如：
-        网络请求：QsHelper.getInstance().getHttpHelper()
-        图片加载：QsHelper.getInstance().getImageHelper()
-        线程池：QsHelper.getInstance().getThreadHelper()
-        Activity栈管理：QsHelper.getInstance().getScreenHelper()
-        EventBus：QsHelper.getInstance().eventPost()
-        Activity跳转：QsHelper.getInstance().intent2Activity()
-        打开对话框：QsHelper.getInstance().commitDialogFragment()
-        资源获取：QsHelper.getInstance().getString()，QsHelper.getInstance().getDrawable()....
+        网络请求：QsHelper.getHttpHelper()
+        图片加载：QsHelper.getImageHelper()
+        线程池：QsHelper.getThreadHelper()
+        Activity栈管理：QsHelper.getScreenHelper()
+        EventBus：QsHelper.eventPost()
+        Activity跳转：QsHelper.intent2Activity()
+        打开对话框：QsHelper.commitDialogFragment()
+        资源获取：QsHelper.getString()，QsHelper.getDrawable()....
 
         tips：框架使用了沉浸式actionbar，所有没有使用系统的actionbar，在设置系统主题时需要添加如下样式：
 

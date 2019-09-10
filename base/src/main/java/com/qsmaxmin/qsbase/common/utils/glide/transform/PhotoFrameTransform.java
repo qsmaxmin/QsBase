@@ -52,7 +52,7 @@ public class PhotoFrameTransform extends BitmapTransformation {
 
     private void drawFrame(Canvas canvas, int width, int height) {
         if (sourceId != 0) {
-            Drawable drawable = QsHelper.getInstance().getDrawable(sourceId);
+            Drawable drawable = QsHelper.getDrawable(sourceId);
             if (drawable != null) {
                 drawable.setBounds(0, 0, width, height);
                 drawable.draw(canvas);

@@ -26,39 +26,45 @@ import java.util.List;
  */
 
 public class PermissionUtils {
-    private static final String                             TAG  = "PermissionUtils";
-    private static       PermissionUtils                    util;
+    private static final String                             TAG = "PermissionUtils";
+    private static       PermissionUtils                    instance;
     private              int                                requestCode;
-    private              HashMap<String, PermissionBuilder> maps = new HashMap<>();
+    private              HashMap<String, PermissionBuilder> maps;
 
     private PermissionUtils() {
+        maps = new HashMap<>();
     }
 
-    public static PermissionUtils getInstance() {
-        if (util == null) {
+    private static PermissionUtils getInstance() {
+        if (instance == null) {
             synchronized (PermissionUtils.class) {
-                if (util == null) util = new PermissionUtils();
+                if (instance == null) instance = new PermissionUtils();
             }
         }
-        return util;
+        return instance;
     }
 
-    public PermissionBuilder createBuilder() {
-        return new PermissionBuilder();
+    public static void release() {
+        if (instance != null) {
+            if (instance.maps != null) {
+                instance.maps.clear();
+                instance.maps = null;
+            }
+            instance = null;
+        }
     }
 
-
-    public boolean isPermissionGranted(String... permissionArr) {
+    public static boolean isPermissionGranted(String... permissionArr) {
         if (permissionArr == null) return true;
         for (String permission : permissionArr) {
-            if (!(ContextCompat.checkSelfPermission(QsHelper.getInstance().getApplication(), permission) == PackageManager.PERMISSION_GRANTED)) return false;
+            if (!(ContextCompat.checkSelfPermission(QsHelper.getApplication(), permission) == PackageManager.PERMISSION_GRANTED)) return false;
         }
         return true;
     }
 
-    void startRequestPermission(PermissionBuilder builder) {
+    public static void startRequestPermission(PermissionBuilder builder) {
         if (builder == null) return;
-        if (maps.containsValue(builder)) {
+        if (getInstance().maps.containsValue(builder)) {
             L.e(TAG, "current permission is requesting, please don't request again....");
             return;
         }
@@ -73,21 +79,21 @@ public class PermissionUtils {
         L.i(TAG, "startRequestPermission:" + builder.toString());
         ArrayList<String> unGrantedPermission = getUnGrantedPermissionArr(builder.getWantPermissionArr());
         if (unGrantedPermission.size() > 0) {
-            requestCode++;
-            L.i(TAG, "start request permission  requestCode=" + requestCode + "   wantPermission=" + unGrantedPermission.toString());
-            builder.setRequestCode(requestCode);
-            maps.put(String.valueOf(requestCode), builder);
+            getInstance().requestCode++;
+            L.i(TAG, "start request permission  requestCode=" + getInstance().requestCode + "   wantPermission=" + unGrantedPermission.toString());
+            builder.setRequestCode(getInstance().requestCode);
+            getInstance().maps.put(String.valueOf(getInstance().requestCode), builder);
             String[] permissionArr = new String[unGrantedPermission.size()];
-            ActivityCompat.requestPermissions(builder.getActivity(), unGrantedPermission.toArray(permissionArr), requestCode);
+            ActivityCompat.requestPermissions(builder.getActivity(), unGrantedPermission.toArray(permissionArr), getInstance().requestCode);
         } else {
             L.i(TAG, "all permission is granted....");
             if (builder.getListener() != null) {
-                builder.getListener().onPermissionCallback(-1, true);
+                builder.getListener().onPermissionCallback();
             }
         }
     }
 
-    private ArrayList<String> getUnGrantedPermissionArr(List<String> list) {
+    private static ArrayList<String> getUnGrantedPermissionArr(List<String> list) {
         ArrayList<String> arrayList = new ArrayList<>();
         for (String permission : list) {
             if (!isPermissionGranted(permission)) {//用户未授权
@@ -99,8 +105,9 @@ public class PermissionUtils {
 
 
     /*------------------------------------- 以下是申请权限回调的数据解析 ---------------------------------------*/
-    public void parsePermissionResultData(int requestCode, String[] permissions, int[] grantResults, Activity activity) {
-        PermissionBuilder builder = maps.remove(String.valueOf(requestCode));
+    public static void parsePermissionResultData(int requestCode, String[] permissions, int[] grantResults, Activity activity) {
+        if (instance == null) return;
+        PermissionBuilder builder = instance.maps.remove(String.valueOf(requestCode));
         if (builder == null) return;
         boolean grantedAll = true;
         ArrayList<String> unGrantedArr = new ArrayList<>();
@@ -115,14 +122,13 @@ public class PermissionUtils {
         }
         if (grantedAll) {
             L.i(TAG, "user granted all permission....");
-            if (builder.getListener() != null) {
-                builder.getListener().onPermissionCallback(builder.getRequestCode(), true);
-            }
+            if (builder.getListener() != null) builder.getListener().onPermissionCallback();
 
         } else {
-            if (builder.getListener() != null) {
-                builder.getListener().onPermissionCallback(builder.getRequestCode(), false);
+            if (builder.isForceGoOn() && builder.getListener() != null) {
+                builder.getListener().onPermissionCallback();
             }
+
             if (builder.isShowCustomDialog()) {
                 boolean shouldShowDialog = false;
                 ArrayList<String> shouldShowDialogArr = new ArrayList<>();
@@ -143,26 +149,26 @@ public class PermissionUtils {
     /**
      * 当系统提醒请求权限的对话框勾选不再提醒时，弹出的自定义对话框
      */
-    private void showPermissionTipsDialog(Activity activity, ArrayList<String> showDialogPermission) {
-        if (activity == null || showDialogPermission == null || showDialogPermission.size() < 1) {
+    private static void showPermissionTipsDialog(Activity activity, ArrayList<String> permissionList) {
+        if (activity == null || permissionList == null || permissionList.size() < 1) {
             return;
         }
-        String message = getPermissionDialogMessage(showDialogPermission);
+        String message = getPermissionDialogMessage(permissionList);
         if (TextUtils.isEmpty(message)) return;
-        L.i(TAG, "勾选了不在提醒所以弹出自定义对话框：" + showDialogPermission.toString());
+        L.i(TAG, "勾选了不在提醒所以弹出自定义对话框：" + permissionList.toString());
         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(activity);
-        builder.setTitle(QsHelper.getInstance().getString(android.R.string.dialog_alert_title))//
+        builder.setTitle(QsHelper.getString(android.R.string.dialog_alert_title))//
                 .setMessage(message)//
-                .setPositiveButton(QsHelper.getInstance().getString(android.R.string.ok), new DialogInterface.OnClickListener() {//
+                .setPositiveButton(QsHelper.getString(android.R.string.ok), new DialogInterface.OnClickListener() {//
                     @Override public void onClick(DialogInterface dialog, int which) {
                         Intent intent = new Intent();
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                        intent.setData(Uri.fromParts("package", QsHelper.getInstance().getApplication().getPackageName(), null));
-                        QsHelper.getInstance().getApplication().startActivity(intent);
+                        intent.setData(Uri.fromParts("package", QsHelper.getApplication().getPackageName(), null));
+                        QsHelper.getApplication().startActivity(intent);
                         dialog.cancel();
                     }
-                }).setNegativeButton(QsHelper.getInstance().getString(android.R.string.cancel), new DialogInterface.OnClickListener() {
+                }).setNegativeButton(QsHelper.getString(android.R.string.cancel), new DialogInterface.OnClickListener() {
             @Override public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
             }
@@ -170,41 +176,40 @@ public class PermissionUtils {
 
     }
 
-    private String getPermissionDialogMessage(ArrayList<String> permission) {
-        if (permission == null || permission.size() < 1) return null;
-        StringBuilder stringbuilder = new StringBuilder();
-        stringbuilder.append("（");
-        for (int i = 0, size = permission.size(); i < size; i++) {
-            switch (permission.get(i)) {
-                case Manifest.permission.ACCESS_COARSE_LOCATION:
-                    stringbuilder.append(QsHelper.getInstance().getString(R.string.request_location_permission)).append((i == size - 1) ? "" : "，");
-                    break;
-                case Manifest.permission.READ_EXTERNAL_STORAGE:
-                    stringbuilder.append(QsHelper.getInstance().getString(R.string.request_read_external_storage_permission)).append((i == size - 1) ? "" : "，");
-                    break;
-                case Manifest.permission.WRITE_EXTERNAL_STORAGE:
-                    stringbuilder.append(QsHelper.getInstance().getString(R.string.request_write_external_storage_permission)).append((i == size - 1) ? "" : "，");
-                    break;
-                case Manifest.permission.READ_CONTACTS:
-                    stringbuilder.append(QsHelper.getInstance().getString(R.string.request_constants_permission)).append((i == size - 1) ? "" : "，");
-                    break;
-                case Manifest.permission.CALL_PHONE:
-                    stringbuilder.append(QsHelper.getInstance().getString(R.string.request_call_permission)).append((i == size - 1) ? "" : "，");
-                    break;
-                case Manifest.permission.CAMERA:
-                    stringbuilder.append(QsHelper.getInstance().getString(R.string.request_camera_permission)).append((i == size - 1) ? "" : "，");
-                    break;
-                case Manifest.permission.RECORD_AUDIO:
-                    stringbuilder.append(QsHelper.getInstance().getString(R.string.request_record_audio_permission)).append((i == size - 1) ? "" : "，");
-                    break;
-                case Manifest.permission.READ_PHONE_STATE:
-                    stringbuilder.append(QsHelper.getInstance().getString(R.string.request_read_phone_state_permission)).append((i == size - 1) ? "" : "，");
-                    break;
-                default:
-                    stringbuilder.append(QsHelper.getInstance().getString(R.string.request_other_permission)).append((i == size - 1) ? "" : "，");
-                    break;
+    private static String getPermissionDialogMessage(ArrayList<String> list) {
+        if (list == null || list.size() < 1) return null;
+        StringBuilder sb = new StringBuilder();
+        sb.append("（");
+        for (int i = 0, size = list.size(); i < size; i++) {
+            sb.append(getPermissionName(list.get(i)));
+            if (i != size - 1) {
+                sb.append("，");
             }
         }
-        return stringbuilder.append("）").append(QsHelper.getInstance().getString(R.string.request_permission_end)).toString();
+        return sb.append("）").append(QsHelper.getString(R.string.request_permission_end)).toString();
+    }
+
+
+    private static String getPermissionName(String permission) {
+        switch (permission) {
+            case Manifest.permission.ACCESS_COARSE_LOCATION:
+                return QsHelper.getString(R.string.request_location_permission);
+            case Manifest.permission.READ_EXTERNAL_STORAGE:
+                return QsHelper.getString(R.string.request_read_external_storage_permission);
+            case Manifest.permission.WRITE_EXTERNAL_STORAGE:
+                return QsHelper.getString(R.string.request_write_external_storage_permission);
+            case Manifest.permission.READ_CONTACTS:
+                return QsHelper.getString(R.string.request_constants_permission);
+            case Manifest.permission.CALL_PHONE:
+                return QsHelper.getString(R.string.request_call_permission);
+            case Manifest.permission.CAMERA:
+                return QsHelper.getString(R.string.request_camera_permission);
+            case Manifest.permission.RECORD_AUDIO:
+                return QsHelper.getString(R.string.request_record_audio_permission);
+            case Manifest.permission.READ_PHONE_STATE:
+                return QsHelper.getString(R.string.request_read_phone_state_permission);
+            default:
+                return QsHelper.getString(R.string.request_other_permission);
+        }
     }
 }

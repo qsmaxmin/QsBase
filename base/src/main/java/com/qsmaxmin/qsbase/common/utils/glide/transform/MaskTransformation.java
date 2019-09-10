@@ -69,7 +69,7 @@ public class MaskTransformation extends BitmapTransformation {
     }
 
     private Drawable getMaskDrawable(int maskId) {
-        Drawable drawable = QsHelper.getInstance().getDrawable(maskId);
+        Drawable drawable = QsHelper.getDrawable(maskId);
         if (drawable == null) {
             throw new IllegalArgumentException("maskId is invalid");
         }

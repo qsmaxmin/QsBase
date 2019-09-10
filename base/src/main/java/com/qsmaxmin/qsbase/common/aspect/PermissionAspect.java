@@ -32,35 +32,37 @@ public class PermissionAspect {
      * 申请权限
      */
     private void startRequestPermission(final ProceedingJoinPoint joinPoint, final Permission permission) {
-        if (permission == null) return;
-        String[] values = permission.value();
-        if (values.length < 1) {
+        if (permission == null || PermissionUtils.isPermissionGranted(permission.value())) {
+            if (L.isEnable()) L.i("PermissionAspect", "permission is all granted.......");
+            proceed(joinPoint);
             return;
         }
 
-        FragmentActivity activity = QsHelper.getInstance().getScreenHelper().currentActivity();
+        String[] values = permission.value();
+        FragmentActivity activity = QsHelper.getScreenHelper().currentActivity();
         if (activity != null) {
-            PermissionBuilder builder = PermissionUtils.getInstance().createBuilder();
+            PermissionBuilder builder = new PermissionBuilder();
             for (String permissionStr : values) {
                 builder.addWantPermission(permissionStr);
             }
             builder.setActivity(activity)//
+                    .setForceGoOn(permission.forceGoOn())
                     .setShowCustomDialog(permission.showCustomDialog())//
                     .setListener(new PermissionCallbackListener() {
-                        @Override public void onPermissionCallback(int requestCode, boolean isGrantedAll) {
-                            if (permission.forceGoOn() || isGrantedAll) {
-                                try {
-                                    joinPoint.proceed();
-                                } catch (Throwable throwable) {
-                                    throwable.printStackTrace();
-                                }
-                            } else {
-                                L.e("PermissionAspect", "current permission is not allow, you can set @Permission(forceGoOn = true), it will run the method whether permission is granted!!");
-                            }
+                        @Override public void onPermissionCallback() {
+                            proceed(joinPoint);
                         }
                     });
+            PermissionUtils.startRequestPermission(builder);
+        }
+    }
 
-            builder.start();
+    private void proceed(ProceedingJoinPoint joinPoint) {
+        if (L.isEnable()) L.i("PermissionAspect", "proceed.......");
+        try {
+            joinPoint.proceed();
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
         }
     }
 }

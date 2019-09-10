@@ -61,7 +61,7 @@ public class FastBlurUtils {
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     @NonNull private static Bitmap blurHeightVersion(Bitmap bitmap, int radius) {
-        RenderScript renderScript = RenderScript.create(QsHelper.getInstance().getApplication());
+        RenderScript renderScript = RenderScript.create(QsHelper.getApplication());
 
         final Allocation input = Allocation.createFromBitmap(renderScript, bitmap);
         final Allocation output = Allocation.createTyped(renderScript, input.getType());

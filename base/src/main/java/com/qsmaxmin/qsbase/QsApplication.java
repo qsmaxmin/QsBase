@@ -19,7 +19,7 @@ public abstract class QsApplication extends Application implements QsIApplicatio
 
     @Override public void onCreate() {
         super.onCreate();
-        QsHelper.getInstance().init(this);
+        QsHelper.init(this);
     }
 
     @Override public Application getApplication() {

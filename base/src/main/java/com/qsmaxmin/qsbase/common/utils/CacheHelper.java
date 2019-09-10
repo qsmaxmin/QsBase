@@ -46,13 +46,13 @@ public class CacheHelper {
         String json = gson.toJson(model);
         FileOutputStream fos = null;
         try {
-            fos = QsHelper.getInstance().getApplication().openFileOutput(key, Context.MODE_PRIVATE);
+            fos = QsHelper.getApplication().openFileOutput(key, Context.MODE_PRIVATE);
             fos.write(json.getBytes());
             fos.flush();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            QsHelper.getInstance().closeStream(fos);
+            QsHelper.closeStream(fos);
         }
     }
 
@@ -86,7 +86,7 @@ public class CacheHelper {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            QsHelper.getInstance().closeStream(fos);
+            QsHelper.closeStream(fos);
         }
     }
 
@@ -96,7 +96,7 @@ public class CacheHelper {
         FileInputStream fileInputStream = null;
         InputStreamReader inputStreamReader = null;
         try {
-            fileInputStream = QsHelper.getInstance().getApplication().openFileInput(key);
+            fileInputStream = QsHelper.getApplication().openFileInput(key);
             inputStreamReader = new InputStreamReader(fileInputStream);
             Gson gson = new Gson();
             return gson.fromJson(inputStreamReader, clazz);
@@ -105,7 +105,7 @@ public class CacheHelper {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            QsHelper.getInstance().closeStream(fileInputStream, inputStreamReader);
+            QsHelper.closeStream(fileInputStream, inputStreamReader);
         }
         return null;
     }
@@ -128,7 +128,7 @@ public class CacheHelper {
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            QsHelper.getInstance().closeStream(fileInputStream, inputStreamReader, bufferedReader);
+            QsHelper.closeStream(fileInputStream, inputStreamReader, bufferedReader);
         }
         return null;
     }
@@ -138,7 +138,7 @@ public class CacheHelper {
     }
 
     private void executeAsync(Runnable runnable) {
-        QsHelper.getInstance().getThreadHelper().getWorkThreadPoll().execute(runnable);
+        QsHelper.getThreadHelper().getWorkThreadPoll().execute(runnable);
     }
 
 }

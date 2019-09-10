@@ -32,7 +32,7 @@ public class BeautyCircleDrawable extends Drawable {
 
     BeautyCircleDrawable(int radius) {
         mPaint = new Paint();
-        mPaint.setColor(QsHelper.getInstance().getApplication().getResources().getColor(R.color.colorAccent));
+        mPaint.setColor(QsHelper.getApplication().getResources().getColor(R.color.colorAccent));
         mPaint.setFlags(Paint.ANTI_ALIAS_FLAG);
         mPaint.setStyle(Paint.Style.FILL);
         list = new ArrayList<>();

@@ -12,15 +12,14 @@ import java.util.List;
  */
 
 public class PermissionBuilder {
-
-    private List<String> wantPermissionArr   = new ArrayList<>();
-    private boolean      mIsShowCustomDialog = true;
-
+    private List<String>               wantPermissionArr   = new ArrayList<>();
+    private boolean                    mIsShowCustomDialog = true;
+    private boolean                    mForceGoOn;
     private int                        mRequestCode;
     private PermissionCallbackListener mListener;
     private Activity                   mActivity;
 
-    public List<String> getWantPermissionArr() {
+    List<String> getWantPermissionArr() {
         return wantPermissionArr;
     }
 
@@ -29,7 +28,7 @@ public class PermissionBuilder {
         return this;
     }
 
-    public boolean isShowCustomDialog() {
+    boolean isShowCustomDialog() {
         return mIsShowCustomDialog;
     }
 
@@ -56,21 +55,25 @@ public class PermissionBuilder {
         return this;
     }
 
+    public PermissionBuilder setForceGoOn(boolean forceGoOn) {
+        this.mForceGoOn = forceGoOn;
+        return this;
+    }
+
+    boolean isForceGoOn() {
+        return mForceGoOn;
+    }
+
     /**
      * 自增量
      */
-    public int getRequestCode() {
+    int getRequestCode() {
         return mRequestCode;
     }
 
     void setRequestCode(int mRequestCode) {
         this.mRequestCode = mRequestCode;
     }
-
-    public void start() {
-        PermissionUtils.getInstance().startRequestPermission(this);
-    }
-
 
     @Override public String toString() {
         return "PermissionBuilder{" + "wantPermissionArr=" + wantPermissionArr + ", mIsShowCustomDialog=" + mIsShowCustomDialog + ", mRequestCode=" + mRequestCode + '}';

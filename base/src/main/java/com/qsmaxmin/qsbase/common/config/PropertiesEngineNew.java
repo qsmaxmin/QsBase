@@ -18,7 +18,7 @@ class PropertiesEngineNew<T> {
 
     @SuppressWarnings("unchecked") PropertiesEngineNew(T config, String key) {
         this.mConfig = config;
-        Application application = QsHelper.getInstance().getApplication();
+        Application application = QsHelper.getApplication();
         sp = application.getSharedPreferences(key, Context.MODE_PRIVATE);
 
         Class<?> configClass = mConfig.getClass();

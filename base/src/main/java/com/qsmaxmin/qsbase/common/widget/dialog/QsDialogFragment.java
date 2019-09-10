@@ -69,11 +69,11 @@ public abstract class QsDialogFragment extends DialogFragment {
     protected abstract void initData();
 
     public void show() {
-        show(QsHelper.getInstance().getScreenHelper().currentActivity(), null);
+        show(QsHelper.getScreenHelper().currentActivity(), null);
     }
 
     public void show(Bundle bundle) {
-        show(QsHelper.getInstance().getScreenHelper().currentActivity(), bundle);
+        show(QsHelper.getScreenHelper().currentActivity(), bundle);
     }
 
     public void show(FragmentActivity activity) {

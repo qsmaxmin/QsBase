@@ -105,23 +105,23 @@ public class InfinitePagerAdapter extends PagerAdapter {
                     imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
                     imageView.setImageDrawable(container.getContext().getResources().getDrawable(holderId));
                     ImageHelper.ImageRequestListener listener = createImageRequestCallback(imageView);
-                    QsHelper.getInstance().getImageHelper().createRequest().roundedCorners(corners).load(object).into(imageView, listener);
+                    QsHelper.getImageHelper().createRequest().roundedCorners(corners).load(object).into(imageView, listener);
                 } else if (object instanceof Bitmap) {
                     imageView.setImageBitmap((Bitmap) object);
                 } else {
                     imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
                     imageView.setImageDrawable(container.getContext().getResources().getDrawable(holderId));
                     ImageHelper.ImageRequestListener listener = createImageRequestCallback(imageView);
-                    QsHelper.getInstance().getImageHelper().createRequest().roundedCorners(corners).load(object).into(imageView, listener);
+                    QsHelper.getImageHelper().createRequest().roundedCorners(corners).load(object).into(imageView, listener);
                 }
             } else {
                 Object object = urls.get(virtualPosition);
                 if (object instanceof String) {
-                    QsHelper.getInstance().getImageHelper().createRequest().roundedCorners(corners).load((String) object).into(imageView);
+                    QsHelper.getImageHelper().createRequest().roundedCorners(corners).load((String) object).into(imageView);
                 } else if (object instanceof Bitmap) {
                     imageView.setImageBitmap((Bitmap) object);
                 } else {
-                    QsHelper.getInstance().getImageHelper().createRequest().roundedCorners(corners).load(urls.get(virtualPosition)).into(imageView);
+                    QsHelper.getImageHelper().createRequest().roundedCorners(corners).load(urls.get(virtualPosition)).into(imageView);
                 }
             }
         }

@@ -27,7 +27,6 @@ import com.qsmaxmin.qsbase.common.aspect.ThreadType;
 import com.qsmaxmin.qsbase.common.http.HttpAdapter;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.threadpoll.QsThreadPollHelper;
-import com.qsmaxmin.qsbase.common.utils.permission.PermissionUtils;
 import com.qsmaxmin.qsbase.common.viewbind.ViewBindHelper;
 
 import org.greenrobot.eventbus.EventBus;
@@ -39,93 +38,96 @@ import java.io.Closeable;
  * @Date 2017/6/20 16:46
  * @Description 帮助类中心
  */
-
 public class QsHelper {
-    private static QsHelper helper = new QsHelper();
-
-    private QsIApplication mApplication;
-    private HttpAdapter    httpAdapter;
+    private static QsHelper       helper = new QsHelper();
+    private        QsIApplication mApplication;
+    private        HttpAdapter    httpAdapter;
 
     private QsHelper() {
     }
 
-    public static QsHelper getInstance() {
+    private static QsHelper getInstance() {
         return helper;
     }
 
-    public void init(QsIApplication application) {
-        mApplication = application;
+    public static void init(QsIApplication application) {
+        helper.mApplication = application;
         if (application.isLogOpen()) {
             L.init(true);
         }
     }
 
-    public Application getApplication() {
-        return mApplication.getApplication();
+    public static Application getApplication() {
+        return getInstance().mApplication.getApplication();
     }
 
-    public QsIApplication getAppInterface() {
-        return mApplication;
+    public static QsIApplication getAppInterface() {
+        return getInstance().mApplication;
     }
 
-    public boolean isLogOpen() {
-        return mApplication.isLogOpen();
+    public static boolean isLogOpen() {
+        return getInstance().mApplication.isLogOpen();
     }
 
-    public ImageHelper getImageHelper() {
+    public static ImageHelper getImageHelper() {
         return ImageHelper.getInstance();
     }
 
-    public QsThreadPollHelper getThreadHelper() {
+    public static QsThreadPollHelper getThreadHelper() {
         return QsThreadPollHelper.getInstance();
     }
 
-    public ScreenHelper getScreenHelper() {
+    public static ScreenHelper getScreenHelper() {
         return ScreenHelper.getInstance();
     }
 
-    @ThreadPoint(ThreadType.MAIN) public void eventPost(Object object) {
+    @ThreadPoint(ThreadType.MAIN)
+    public static void eventPost(Object object) {
         EventBus.getDefault().post(object);
     }
 
-    public HttpAdapter getHttpHelper() {
-        if (httpAdapter == null) {
-            synchronized (this) {
-                if (httpAdapter == null) httpAdapter = new HttpAdapter();
+    public static HttpAdapter getHttpHelper() {
+        if (getInstance().httpAdapter == null) {
+            synchronized (QsHelper.class) {
+                if (getInstance().httpAdapter == null) getInstance().httpAdapter = new HttpAdapter();
             }
         }
-        return httpAdapter;
+        return getInstance().httpAdapter;
     }
 
-    public CacheHelper getCacheHelper() {
+    public static CacheHelper getCacheHelper() {
         return new CacheHelper();
     }
 
-    public void intent2Activity(Class clazz) {
-        intent2Activity(clazz, null, 0, null, 0, 0);
+    public static void intent2Activity(Class clazz) {
+        intent2ActivityInner(clazz, null, 0, null, 0, 0);
     }
 
-    public void intent2Activity(Class clazz, Bundle bundle) {
-        intent2Activity(clazz, bundle, 0, null, 0, 0);
+    public static void intent2Activity(Class clazz, Bundle bundle) {
+        intent2ActivityInner(clazz, bundle, 0, null, 0, 0);
     }
 
-    public void intent2Activity(Class clazz, int requestCode) {
-        intent2Activity(clazz, null, requestCode, null, 0, 0);
+    public static void intent2Activity(Class clazz, int requestCode) {
+        intent2ActivityInner(clazz, null, requestCode, null, 0, 0);
     }
 
-    public void intent2Activity(Class clazz, Bundle bundle, ActivityOptionsCompat optionsCompat) {
-        intent2Activity(clazz, bundle, 0, optionsCompat, 0, 0);
+    public static void intent2Activity(Class clazz, Bundle bundle, ActivityOptionsCompat optionsCompat) {
+        intent2ActivityInner(clazz, bundle, 0, optionsCompat, 0, 0);
     }
 
-    public void intent2Activity(Class clazz, int inAnimId, int outAnimId) {
-        intent2Activity(clazz, null, 0, null, inAnimId, outAnimId);
+    public static void intent2Activity(Class clazz, int inAnimId, int outAnimId) {
+        intent2ActivityInner(clazz, null, 0, null, inAnimId, outAnimId);
     }
 
-    public void intent2Activity(Class clazz, Bundle bundle, int inAnimId, int outAnimId) {
-        intent2Activity(clazz, bundle, 0, null, inAnimId, outAnimId);
+    public static void intent2Activity(Class clazz, Bundle bundle, int inAnimId, int outAnimId) {
+        intent2ActivityInner(clazz, bundle, 0, null, inAnimId, outAnimId);
     }
 
-    public void intent2Activity(Class clazz, Bundle bundle, int requestCode, ActivityOptionsCompat optionsCompat, int inAnimId, int outAnimId) {
+    public static void intent2Activity(Class clazz, Bundle bundle, int requestCode, ActivityOptionsCompat optionsCompat, int inAnimId, int outAnimId) {
+        intent2ActivityInner(clazz, bundle, requestCode, optionsCompat, inAnimId, outAnimId);
+    }
+
+    private static void intent2ActivityInner(Class clazz, Bundle bundle, int requestCode, ActivityOptionsCompat optionsCompat, int inAnimId, int outAnimId) {
         FragmentActivity activity = getScreenHelper().currentActivity();
         if (clazz != null && activity != null) {
             Intent intent = new Intent();
@@ -149,105 +151,125 @@ public class QsHelper {
         }
     }
 
-    public void commitFragment(Fragment fragment) {
-        commitFragment(fragment, fragment.getClass().getSimpleName());
+    public static void commitFragment(Fragment fragment) {
+        commitFragmentInner(null, null, android.R.id.custom, fragment, fragment.getClass().getSimpleName());
     }
 
-    public void commitFragment(Fragment fragment, String tag) {
-        commitFragment(android.R.id.custom, fragment, tag);
+    public static void commitFragment(Fragment fragment, String tag) {
+        commitFragmentInner(null, null, android.R.id.custom, fragment, tag);
     }
 
-    public void commitFragment(int layoutId, Fragment fragment) {
-        commitFragment(layoutId, fragment, fragment.getClass().getSimpleName());
+    public static void commitFragment(int layoutId, Fragment fragment) {
+        commitFragmentInner(null, null, layoutId, fragment, fragment.getClass().getSimpleName());
     }
 
-    public void commitFragment(int layoutId, Fragment fragment, String tag) {
-        FragmentActivity activity = getScreenHelper().currentActivity();
-        if (activity == null) return;
-        commitFragment(activity.getSupportFragmentManager(), layoutId, fragment, tag);
+    public static void commitFragment(int layoutId, Fragment fragment, String tag) {
+        commitFragmentInner(null, null, layoutId, fragment, tag);
     }
 
-    @ThreadPoint(ThreadType.MAIN) public void commitFragment(FragmentManager fragmentManager, int layoutId, Fragment fragment, String tag) {
-        if (fragment != null && !fragment.isAdded() && fragmentManager != null && layoutId != 0) {
-            fragmentManager.beginTransaction().replace(layoutId, fragment, tag).setTransition(FragmentTransaction.TRANSIT_NONE).commitAllowingStateLoss();
+    public static void commitFragment(FragmentManager fragmentManager, int layoutId, Fragment fragment, String tag) {
+        commitFragmentInner(fragmentManager, null, layoutId, fragment, tag);
+    }
+
+    public static void commitFragment(Fragment old, Fragment fragment) {
+        commitFragmentInner(null, old, android.R.id.custom, fragment, fragment.getClass().getSimpleName());
+    }
+
+    public static void commitFragment(Fragment old, Fragment fragment, String tag) {
+        commitFragmentInner(null, old, android.R.id.custom, fragment, tag);
+    }
+
+    public static void commitFragment(Fragment old, int layoutId, Fragment fragment) {
+        commitFragmentInner(null, old, layoutId, fragment, fragment.getClass().getSimpleName());
+    }
+
+    public static void commitFragment(Fragment old, int layoutId, Fragment fragment, String tag) {
+        commitFragmentInner(null, old, layoutId, fragment, tag);
+    }
+
+    public static void commitFragment(FragmentManager fragmentManager, Fragment old, int layoutId, Fragment fragment, String tag) {
+        commitFragmentInner(fragmentManager, old, layoutId, fragment, tag);
+    }
+
+    @ThreadPoint(ThreadType.MAIN)
+    private static void commitFragmentInner(FragmentManager manager, Fragment old, int layoutId, Fragment fragment, String tag) {
+        if (manager == null) {
+            FragmentActivity activity = getScreenHelper().currentActivity();
+            if (activity == null) return;
+            manager = activity.getSupportFragmentManager();
         }
-    }
-
-    public void commitFragment(Fragment old, Fragment fragment) {
-        commitFragment(old, fragment, fragment.getClass().getSimpleName());
-    }
-
-    public void commitFragment(Fragment old, Fragment fragment, String tag) {
-        commitFragment(old, android.R.id.custom, fragment, tag);
-    }
-
-    public void commitFragment(Fragment old, int layoutId, Fragment fragment) {
-        commitFragment(old, layoutId, fragment, fragment.getClass().getSimpleName());
-    }
-
-    public void commitFragment(Fragment old, int layoutId, Fragment fragment, String tag) {
-        FragmentActivity activity = getScreenHelper().currentActivity();
-        if (activity == null) return;
-        commitFragment(activity.getSupportFragmentManager(), old, layoutId, fragment, tag);
-    }
-
-    @ThreadPoint(ThreadType.MAIN) public void commitFragment(FragmentManager fragmentManager, Fragment old, int layoutId, Fragment fragment, String tag) {
-        if (layoutId != 0 && fragment != null && !fragment.isAdded() && fragmentManager != null) {
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        if (layoutId != 0 && fragment != null && !fragment.isAdded() && manager != null) {
+            FragmentTransaction fragmentTransaction = manager.beginTransaction();
             if (old != null) fragmentTransaction.detach(old);
             fragmentTransaction.replace(layoutId, fragment, tag).setTransition(FragmentTransaction.TRANSIT_NONE).commitAllowingStateLoss();
         }
     }
 
-    public void commitBackStackFragment(Fragment fragment) {
-        commitBackStackFragment(fragment, fragment.getClass().getSimpleName());
+
+    public static void commitBackStackFragment(Fragment fragment) {
+        commitBackStackFragmentInner(null, android.R.id.custom, fragment, fragment.getClass().getSimpleName(), 0, 0);
     }
 
-    public void commitBackStackFragment(Fragment fragment, String tag) {
-        commitBackStackFragment(android.R.id.custom, fragment, tag);
+    public static void commitBackStackFragment(Fragment fragment, String tag) {
+        commitBackStackFragmentInner(null, android.R.id.custom, fragment, tag, 0, 0);
     }
 
-    public void commitBackStackFragment(int layoutId, Fragment fragment) {
-        commitBackStackFragment(layoutId, fragment, fragment.getClass().getSimpleName());
+    public static void commitBackStackFragment(int layoutId, Fragment fragment) {
+        commitBackStackFragmentInner(null, layoutId, fragment, fragment.getClass().getSimpleName(), 0, 0);
     }
 
-    public void commitBackStackFragment(Fragment fragment, int enterAnim, int exitAnim) {
-        FragmentActivity activity = getScreenHelper().currentActivity();
-        if (activity == null) return;
-        commitBackStackFragment(activity.getSupportFragmentManager(), android.R.id.custom, fragment, fragment.getClass().getSimpleName(), enterAnim, exitAnim);
+    public static void commitBackStackFragment(Fragment fragment, int enterAnim, int exitAnim) {
+        commitBackStackFragmentInner(null, android.R.id.custom, fragment, fragment.getClass().getSimpleName(), enterAnim, exitAnim);
     }
 
-    public void commitBackStackFragment(int layoutId, Fragment fragment, String tag) {
-        FragmentActivity activity = getScreenHelper().currentActivity();
-        if (activity == null) return;
-        commitBackStackFragment(activity.getSupportFragmentManager(), layoutId, fragment, tag);
+    public static void commitBackStackFragment(int layoutId, Fragment fragment, String tag) {
+        commitBackStackFragmentInner(null, layoutId, fragment, tag, 0, 0);
     }
 
-    public void commitBackStackFragment(FragmentManager fragmentManager, int layoutId, Fragment fragment, String tag) {
-        commitBackStackFragment(fragmentManager, layoutId, fragment, tag, 0, 0);
+    public static void commitBackStackFragment(FragmentManager fragmentManager, int layoutId, Fragment fragment, String tag) {
+        commitBackStackFragmentInner(fragmentManager, layoutId, fragment, tag, 0, 0);
     }
 
-    @ThreadPoint(ThreadType.MAIN) public void commitBackStackFragment(FragmentManager fragmentManager, int layoutId, Fragment fragment, String tag, int enterAnim, int exitAnim) {
-        if (layoutId != 0 && fragment != null && !fragment.isAdded() && fragmentManager != null) {
-            FragmentTransaction transaction = fragmentManager.beginTransaction();
+    public static void commitBackStackFragment(FragmentManager fragmentManager, int layoutId, Fragment fragment, String tag, int enterAnim, int exitAnim) {
+        commitBackStackFragmentInner(fragmentManager, layoutId, fragment, tag, enterAnim, exitAnim);
+    }
+
+    @ThreadPoint(ThreadType.MAIN)
+    private static void commitBackStackFragmentInner(FragmentManager manager, int layoutId, Fragment fragment, String tag, int enterAnim, int exitAnim) {
+        if (manager == null) {
+            FragmentActivity activity = getScreenHelper().currentActivity();
+            if (activity == null) return;
+            manager = activity.getSupportFragmentManager();
+        }
+        if (layoutId != 0 && fragment != null && !fragment.isAdded() && manager != null) {
+            FragmentTransaction transaction = manager.beginTransaction();
             if (enterAnim != 0 || exitAnim != 0) transaction.setCustomAnimations(enterAnim, exitAnim, enterAnim, exitAnim);
             transaction.add(layoutId, fragment, tag).addToBackStack(null).setTransition(FragmentTransaction.TRANSIT_NONE).commitAllowingStateLoss();
         }
     }
 
-    public void commitDialogFragment(DialogFragment dialogFragment) {
-        FragmentActivity activity = getScreenHelper().currentActivity();
-        if (dialogFragment == null || activity == null) return;
-        commitDialogFragment(activity.getSupportFragmentManager(), dialogFragment);
+    public static void commitDialogFragment(DialogFragment dialogFragment) {
+        commitDialogFragmentInner(null, dialogFragment);
     }
 
-    @ThreadPoint(ThreadType.MAIN) public void commitDialogFragment(FragmentManager fragmentManager, DialogFragment dialogFragment) {
-        if (fragmentManager != null && dialogFragment != null && !dialogFragment.isAdded()) {
-            fragmentManager.beginTransaction().add(dialogFragment, dialogFragment.getClass().getSimpleName()).commitAllowingStateLoss();
+
+    public static void commitDialogFragment(FragmentManager fragmentManager, DialogFragment dialogFragment) {
+        commitDialogFragmentInner(fragmentManager, dialogFragment);
+    }
+
+    @ThreadPoint(ThreadType.MAIN)
+    private static void commitDialogFragmentInner(FragmentManager manager, DialogFragment dialogFragment) {
+        if (manager == null) {
+            FragmentActivity activity = getScreenHelper().currentActivity();
+            if (activity == null) return;
+            manager = activity.getSupportFragmentManager();
+        }
+        if (manager != null && dialogFragment != null && !dialogFragment.isAdded()) {
+            manager.beginTransaction().add(dialogFragment, dialogFragment.getClass().getSimpleName()).commitAllowingStateLoss();
         }
     }
 
-    @SuppressLint("MissingPermission") public boolean isNetworkAvailable() {
+    @SuppressLint("MissingPermission") public static boolean isNetworkAvailable() {
         ConnectivityManager connect = (ConnectivityManager) getApplication().getSystemService(Context.CONNECTIVITY_SERVICE);
         if (connect == null) {
             return false;
@@ -257,31 +279,31 @@ public class QsHelper {
         }
     }
 
-    public String getString(@StringRes int resId) {
+    public static String getString(@StringRes int resId) {
         return getApplication().getString(resId);
     }
 
-    public String getString(@StringRes int resId, Object... formatArgs) {
+    public static String getString(@StringRes int resId, Object... formatArgs) {
         return getApplication().getString(resId, formatArgs);
     }
 
-    public Drawable getDrawable(@DrawableRes int resId) {
+    public static Drawable getDrawable(@DrawableRes int resId) {
         return getApplication().getResources().getDrawable(resId);
     }
 
-    public int getColor(@ColorRes int resId) {
+    public static int getColor(@ColorRes int resId) {
         return getApplication().getResources().getColor(resId);
     }
 
-    public float getDimension(@DimenRes int resId) {
+    public static float getDimension(@DimenRes int resId) {
         return getApplication().getResources().getDimension(resId);
     }
 
-    public boolean isSdCardAvailable() {
+    public static boolean isSdCardAvailable() {
         return Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState());
     }
 
-    public void closeStream(Closeable... closeables) {
+    public static void closeStream(Closeable... closeables) {
         StreamCloseUtils.close(closeables);
     }
 
@@ -289,11 +311,15 @@ public class QsHelper {
      * 默认使用Annotation processor绑定View及OnClick事件
      * 如果使用时有bug可以在application onCreate时调用该方法以关闭
      */
-    public void disableFastBindView() {
+    public static void disableFastBindView() {
         ViewBindHelper.FAST_MODE = false;
     }
 
-    public PermissionUtils getPermissionHelper() {
-        return PermissionUtils.getInstance();
+    static void release() {
+        ImageHelper.release();
+        QsThreadPollHelper.release();
+        if (helper != null && helper.httpAdapter != null) {
+            helper.httpAdapter = null;
+        }
     }
 }

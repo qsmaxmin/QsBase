@@ -219,22 +219,22 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
     }
 
     @Override public int loadingLayoutId() {
-        return QsHelper.getInstance().getAppInterface().loadingLayoutId();
+        return QsHelper.getAppInterface().loadingLayoutId();
     }
 
     @Override public int emptyLayoutId() {
-        return QsHelper.getInstance().getAppInterface().emptyLayoutId();
+        return QsHelper.getAppInterface().emptyLayoutId();
     }
 
     @Override public int errorLayoutId() {
-        return QsHelper.getInstance().getAppInterface().errorLayoutId();
+        return QsHelper.getAppInterface().errorLayoutId();
     }
 
     /**
      * 重写该方法以便自定义进度条样式
      */
     @Override public QsProgressDialog getLoadingDialog() {
-        return QsHelper.getInstance().getAppInterface().getLoadingDialog();
+        return QsHelper.getAppInterface().getLoadingDialog();
     }
 
     @Override public void onBackPressed() {
@@ -259,7 +259,7 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
     }
 
     @Override public void loading(int resId, boolean cancelAble) {
-        loading(QsHelper.getInstance().getString(resId), cancelAble);
+        loading(QsHelper.getString(resId), cancelAble);
     }
 
     @ThreadPoint(ThreadType.MAIN) @Override public void loading(String message, boolean cancelAble) {
@@ -269,7 +269,7 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
             mProgressDialog.setCancelable(cancelAble);
             if (!mProgressDialog.isAdded() && !mProgressDialog.isShowing()) {
                 mProgressDialog.setIsShowing(true);
-                QsHelper.getInstance().commitDialogFragment(getFragmentManager(), mProgressDialog);
+                QsHelper.commitDialogFragment(getFragmentManager(), mProgressDialog);
             }
         } else {
             L.e(initTag(), "you should override the method 'Application.getLoadingDialog() or this.getLoadingDialog()' and return a dialog when called the method : loading(...) ");
@@ -364,7 +364,7 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
     }
 
     @ThreadPoint(ThreadType.MAIN) @Override public void commitFragment(int layoutId, Fragment fragment, String tag) {
-        QsHelper.getInstance().commitFragment(getFragmentManager(), layoutId, fragment, tag);
+        QsHelper.commitFragment(getFragmentManager(), layoutId, fragment, tag);
     }
 
     @Override public void commitFragment(Fragment old, Fragment fragment) {
@@ -380,7 +380,7 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
     }
 
     @ThreadPoint(ThreadType.MAIN) @Override public void commitFragment(Fragment old, int layoutId, Fragment fragment, String tag) {
-        QsHelper.getInstance().commitFragment(getFragmentManager(), old, layoutId, fragment, tag);
+        QsHelper.commitFragment(getFragmentManager(), old, layoutId, fragment, tag);
     }
 
     @Override public void commitBackStackFragment(Fragment fragment) {
@@ -396,15 +396,15 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
     }
 
     @Override public void commitBackStackFragment(Fragment fragment, int enterAnim, int exitAnim) {
-        QsHelper.getInstance().commitBackStackFragment(fragment, enterAnim, exitAnim);
+        QsHelper.commitBackStackFragment(fragment, enterAnim, exitAnim);
     }
 
     @Override public void commitBackStackFragment(int layoutId, Fragment fragment, String tag) {
-        QsHelper.getInstance().commitBackStackFragment(getFragmentManager(), layoutId, fragment, tag);
+        QsHelper.commitBackStackFragment(getFragmentManager(), layoutId, fragment, tag);
     }
 
     @Override public void commitDialogFragment(DialogFragment fragment) {
-        QsHelper.getInstance().commitDialogFragment(getFragmentManager(), fragment);
+        QsHelper.commitDialogFragment(getFragmentManager(), fragment);
     }
 
     @ThreadPoint(ThreadType.MAIN) protected void setViewState(int showState) {

@@ -14,7 +14,6 @@ import java.util.Stack;
  * @Description 屏幕管理帮助类
  */
 public final class ScreenHelper {
-
     private static final String TAG = "ScreenHelper";
 
     private ScreenHelper() {
@@ -91,9 +90,8 @@ public final class ScreenHelper {
         } else {
             L.e(TAG, "popActivity 传入的参数为空!");
         }
-        if (fragmentActivities.size() <= 0) {
-            QsHelper.getInstance().getImageHelper().clearMemoryCache();
-            QsHelper.getInstance().getThreadHelper().shutdown();
+        if (fragmentActivities.size() == 0) {
+            QsHelper.release();
             if (listeners != null) listeners.clear();
             L.i(TAG, "pop all Activity, app shutdown...");
         }
@@ -144,16 +142,18 @@ public final class ScreenHelper {
     }
 
     private void onActivityAdded(FragmentActivity activity) {
-        if (listeners != null) {
-            for (OnTaskChangeListener listener : listeners) {
+        if (listeners != null && listeners.size() != 0) {
+            OnTaskChangeListener[] listenerArr = listeners.toArray(new OnTaskChangeListener[0]);
+            for (OnTaskChangeListener listener : listenerArr) {
                 listener.onActivityAdd(activity);
             }
         }
     }
 
     private void onActivityRemoved(FragmentActivity activity) {
-        if (listeners != null) {
-            for (OnTaskChangeListener listener : listeners) {
+        if (listeners != null && listeners.size() != 0) {
+            OnTaskChangeListener[] listenerArr = listeners.toArray(new OnTaskChangeListener[0]);
+            for (OnTaskChangeListener listener : listenerArr) {
                 listener.onActivityRemove(activity);
             }
         }

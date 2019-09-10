@@ -9,7 +9,6 @@ package com.qsmaxmin.qsbase.common.utils.permission;
 public interface PermissionCallbackListener {
     /**
      * 申请权限的回调
-     * @param isGrantedAll 是否全部同意
      */
-    void onPermissionCallback(int requestCode, boolean isGrantedAll);
+    void onPermissionCallback();
 }

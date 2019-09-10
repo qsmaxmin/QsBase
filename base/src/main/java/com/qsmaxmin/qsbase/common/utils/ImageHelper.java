@@ -58,8 +58,15 @@ public class ImageHelper {
         return helper;
     }
 
+    static void release() {
+        if (QsHelper.getApplication() != null) {
+            Glide.get(QsHelper.getApplication()).clearMemory();
+        }
+        helper = null;
+    }
+
     public Builder createRequest() {
-        return new Builder(QsHelper.getInstance().getApplication());
+        return new Builder(QsHelper.getApplication());
     }
 
     public Builder createRequest(Context context) {
@@ -87,16 +94,16 @@ public class ImageHelper {
     }
 
     @ThreadPoint(ThreadType.MAIN) public void clearMemoryCache() {
-        Glide.get(QsHelper.getInstance().getApplication()).clearMemory();
+        Glide.get(QsHelper.getApplication()).clearMemory();
     }
 
     public void clearDiskCache() {
-        Glide.get(QsHelper.getInstance().getApplication()).clearDiskCache();
+        Glide.get(QsHelper.getApplication()).clearDiskCache();
     }
 
     public long getCacheSize() {
         try {
-            File photoCacheDir = Glide.getPhotoCacheDir(QsHelper.getInstance().getApplication());
+            File photoCacheDir = Glide.getPhotoCacheDir(QsHelper.getApplication());
             return getFolderSize(photoCacheDir);
         } catch (Exception e) {
             e.printStackTrace();
@@ -105,7 +112,7 @@ public class ImageHelper {
     }
 
     public String getCacheFormatSize() {
-        return Formatter.formatFileSize(QsHelper.getInstance().getApplication(), getCacheSize());
+        return Formatter.formatFileSize(QsHelper.getApplication(), getCacheSize());
     }
 
     public class Builder {
@@ -189,7 +196,7 @@ public class ImageHelper {
         }
 
         public Builder placeholder(int resourceId) {
-            this.placeholderDrawable = QsHelper.getInstance().getDrawable(resourceId);
+            this.placeholderDrawable = QsHelper.getDrawable(resourceId);
             return this;
         }
 
@@ -203,7 +210,7 @@ public class ImageHelper {
         }
 
         public Builder error(int resourceId) {
-            this.errorDrawable = QsHelper.getInstance().getDrawable(resourceId);
+            this.errorDrawable = QsHelper.getDrawable(resourceId);
             return this;
         }
 
@@ -336,7 +343,7 @@ public class ImageHelper {
                 requestBuilder.into(view);
             } else {
                 final RequestBuilder<Drawable> finalRequestBuilder = requestBuilder;
-                QsHelper.getInstance().getThreadHelper().getMainThread().execute(new Runnable() {
+                QsHelper.getThreadHelper().getMainThread().execute(new Runnable() {
                     @Override public void run() {
                         finalRequestBuilder.into(view);
                     }
@@ -532,7 +539,7 @@ public class ImageHelper {
     }
 
     private void onLoadImageBefore(Builder builder) {
-        QsHelper.getInstance().getAppInterface().onCommonLoadImage(builder);
+        QsHelper.getAppInterface().onCommonLoadImage(builder);
     }
 
     private long getFolderSize(File file) {

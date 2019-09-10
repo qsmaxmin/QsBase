@@ -83,7 +83,7 @@ public class HttpAdapter {
         if (converter == null) {
             converter = new HttpConverter();
         }
-        callback = QsHelper.getInstance().getAppInterface().registerGlobalHttpListener();
+        callback = QsHelper.getAppInterface().registerGlobalHttpListener();
     }
 
     private HttpBuilder getHttpBuilder(Object requestTag, String terminal, String path, Object[] args, String requestType, Object body, HashMap<String, String> formBody, HashMap<String, String> paramsMap) throws Exception {
@@ -286,7 +286,7 @@ public class HttpAdapter {
         if (requestTag != null) requestBuilder.tag(requestTag);
         L.i(TAG, "method:" + method.getName() + "  http request url:" + url.toString());
 
-        if (!QsHelper.getInstance().isNetworkAvailable()) {
+        if (!QsHelper.isNetworkAvailable()) {
             throw new QsException(QsExceptionType.NETWORK_ERROR, requestTag, "network error...  method:" + method.getName() + " message:network disable");
         }
 

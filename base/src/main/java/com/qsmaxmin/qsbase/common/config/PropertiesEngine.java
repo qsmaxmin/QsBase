@@ -38,7 +38,7 @@ class PropertiesEngine {
         this.TAG = tag;
         this.mTarget = target;
         this.mKey = key;
-        Application application = QsHelper.getInstance().getApplication();
+        Application application = QsHelper.getApplication();
         sp = application.getSharedPreferences(key, Context.MODE_PRIVATE);
 
         Map<String, ?> spAll = sp.getAll();
@@ -195,7 +195,7 @@ class PropertiesEngine {
     }
 
     private File getOldCacheFile() {
-        File parentFile = QsHelper.getInstance().getApplication().getFilesDir();
+        File parentFile = QsHelper.getApplication().getFilesDir();
         String fileName = mKey + ".properties";
         return new File(parentFile, fileName);
     }

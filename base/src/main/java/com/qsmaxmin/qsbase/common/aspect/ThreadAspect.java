@@ -30,7 +30,7 @@ public class ThreadAspect {
         if (Thread.currentThread() == Looper.getMainLooper().getThread()) {
             return joinPoint.proceed();
         } else {
-            QsHelper.getInstance().getThreadHelper().getMainThread().execute(new Runnable() {
+            QsHelper.getThreadHelper().getMainThread().execute(new Runnable() {
                 @Override public void run() {
                     L.i("ThreadAspect", joinPoint.toShortString() + " in main thread... ");
                     startOriginalMethod(joinPoint);
@@ -41,7 +41,7 @@ public class ThreadAspect {
     }
 
     @Around(POINTCUT_METHOD_HTTP) public Object onCheckNetHttpExecutor(final ProceedingJoinPoint joinPoint) throws Throwable {
-        QsHelper.getInstance().getThreadHelper().getHttpThreadPoll().execute(new Runnable() {
+        QsHelper.getThreadHelper().getHttpThreadPoll().execute(new Runnable() {
             @Override public void run() {
                 L.i("ThreadAspect", joinPoint.toShortString() + " in http thread... ");
                 startOriginalMethod(joinPoint);
@@ -51,7 +51,7 @@ public class ThreadAspect {
     }
 
     @Around(POINTCUT_METHOD_WORK) public Object onWorkExecutor(final ProceedingJoinPoint joinPoint) throws Throwable {
-        QsHelper.getInstance().getThreadHelper().getWorkThreadPoll().execute(new Runnable() {
+        QsHelper.getThreadHelper().getWorkThreadPoll().execute(new Runnable() {
             @Override public void run() {
                 L.i("ThreadAspect", joinPoint.toShortString() + " in work thread... ");
                 startOriginalMethod(joinPoint);
@@ -61,7 +61,7 @@ public class ThreadAspect {
     }
 
     @Around(POINTCUT_METHOD_SINGLE_WORK) public Object onSingleWorkExecutor(final ProceedingJoinPoint joinPoint) throws Throwable {
-        QsHelper.getInstance().getThreadHelper().getSingleThreadPoll().execute(new Runnable() {
+        QsHelper.getThreadHelper().getSingleThreadPoll().execute(new Runnable() {
             @Override public void run() {
                 L.i("ThreadAspect", joinPoint.toShortString() + " in single work thread... ");
                 startOriginalMethod(joinPoint);
@@ -80,7 +80,7 @@ public class ThreadAspect {
             try {
                 final Object target = joinPoint.getTarget();
                 final Method methodError = target.getClass().getMethod("methodError", QsException.class);
-                if (methodError != null) QsHelper.getInstance().getThreadHelper().getMainThread().execute(new Runnable() {
+                if (methodError != null) QsHelper.getThreadHelper().getMainThread().execute(new Runnable() {
                     @Override public void run() {
                         try {
                             methodError.invoke(target, e0);
@@ -91,7 +91,7 @@ public class ThreadAspect {
                 });
             } catch (NoSuchMethodException e2) {
                 L.e("ThreadAspect", "被@ThreadAspect注解的函数在执行出现错误时会将异常抛到该类的putlic void methodError(QsException e)函数里，所以该类必须要有这个函数。\n" +
-                        "也可以自己开启异步线程请求网络(QsHelper.getInstance().getHttpHelper().create(XXX.class, Object o))，并用try catch把网络请求代码包起来，自己处理异常。\n" +
+                        "也可以自己开启异步线程请求网络(QsHelper.getHttpHelper().create(XXX.class, Object o))，并用try catch把网络请求代码包起来，自己处理异常。\n" +
                         e2.getMessage());
             } catch (Throwable t) {
                 t.printStackTrace();

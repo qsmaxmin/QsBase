@@ -12,12 +12,10 @@ import com.qsmaxmin.qsbase.mvp.model.QsConstants;
  */
 
 public class QsThreadPollHelper {
-
-    private WorkThreadPoll   workThreadPoll;
-    private HttpThreadPoll   httpThreadPoll;
-    private SingleThreadPoll singleThreadPoll;
-
     private static QsThreadPollHelper instance;
+    private        WorkThreadPoll     workThreadPoll;
+    private        HttpThreadPoll     httpThreadPoll;
+    private        SingleThreadPoll   singleThreadPoll;
 
     private QsThreadPollHelper() {
     }
@@ -77,6 +75,23 @@ public class QsThreadPollHelper {
             }
         }
         return singleThreadPoll;
+    }
+
+    public static void release() {
+        if (instance != null) {
+            if (instance.workThreadPoll != null) {
+                instance.workThreadPoll.shutdown();
+                instance.workThreadPoll = null;
+            }
+            if (instance.httpThreadPoll != null) {
+                instance.httpThreadPoll.shutdown();
+                instance.httpThreadPoll = null;
+            }
+            if (instance.singleThreadPoll != null) {
+                instance.singleThreadPoll.shutdown();
+                instance.singleThreadPoll = null;
+            }
+        }
     }
 
     public synchronized void shutdown() {
