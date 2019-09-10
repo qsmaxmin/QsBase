@@ -39,7 +39,7 @@ import java.io.Closeable;
  * @Description 帮助类中心
  */
 public class QsHelper {
-    private static QsHelper       helper = new QsHelper();
+    private static QsHelper       qsHelper;
     private        QsIApplication mApplication;
     private        HttpAdapter    httpAdapter;
 
@@ -47,11 +47,16 @@ public class QsHelper {
     }
 
     private static QsHelper getInstance() {
-        return helper;
+        if (qsHelper == null) {
+            synchronized (QsHelper.class) {
+                if (qsHelper == null) qsHelper = new QsHelper();
+            }
+        }
+        return qsHelper;
     }
 
     public static void init(QsIApplication application) {
-        helper.mApplication = application;
+        getInstance().mApplication = application;
         if (application.isLogOpen()) {
             L.init(true);
         }
@@ -318,8 +323,8 @@ public class QsHelper {
     static void release() {
         ImageHelper.release();
         QsThreadPollHelper.release();
-        if (helper != null && helper.httpAdapter != null) {
-            helper.httpAdapter = null;
+        if (qsHelper != null && qsHelper.httpAdapter != null) {
+            qsHelper.httpAdapter = null;
         }
     }
 }
