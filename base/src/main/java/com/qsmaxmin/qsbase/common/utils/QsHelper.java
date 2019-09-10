@@ -337,6 +337,9 @@ public class QsHelper {
         ViewBindHelper.FAST_MODE = false;
     }
 
+    /**
+     * 释放内存
+     */
     static void release() {
         if (qsHelper != null) {
             if (qsHelper.threadPollHelper != null) {
@@ -355,7 +358,6 @@ public class QsHelper {
                 qsHelper.permissionHelper.release();
                 qsHelper.permissionHelper = null;
             }
-            qsHelper = null;
         }
     }
 }
