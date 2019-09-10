@@ -48,23 +48,6 @@ import java.util.concurrent.ExecutionException;
  */
 
 public class ImageHelper {
-    private static ImageHelper helper;
-
-    private ImageHelper() {
-    }
-
-    static ImageHelper getInstance() {
-        if (helper == null) helper = new ImageHelper();
-        return helper;
-    }
-
-    static void release() {
-        if (QsHelper.getApplication() != null) {
-            Glide.get(QsHelper.getApplication()).clearMemory();
-        }
-        helper = null;
-    }
-
     public Builder createRequest() {
         return new Builder(QsHelper.getApplication());
     }

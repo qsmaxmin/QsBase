@@ -39,9 +39,11 @@ import java.io.Closeable;
  * @Description 帮助类中心
  */
 public class QsHelper {
-    private static QsHelper       qsHelper;
-    private        QsIApplication mApplication;
-    private        HttpAdapter    httpAdapter;
+    private static QsHelper           qsHelper;
+    private        QsIApplication     mApplication;
+    private        HttpAdapter        httpAdapter;
+    private        ImageHelper        imageHelper;
+    private        QsThreadPollHelper threadPollHelper;
 
     private QsHelper() {
     }
@@ -75,11 +77,17 @@ public class QsHelper {
     }
 
     public static ImageHelper getImageHelper() {
-        return ImageHelper.getInstance();
+        if (getInstance().imageHelper == null) {
+            getInstance().imageHelper = new ImageHelper();
+        }
+        return getInstance().imageHelper;
     }
 
     public static QsThreadPollHelper getThreadHelper() {
-        return QsThreadPollHelper.getInstance();
+        if (getInstance().threadPollHelper == null) {
+            getInstance().threadPollHelper = new QsThreadPollHelper();
+        }
+        return getInstance().threadPollHelper;
     }
 
     public static ScreenHelper getScreenHelper() {
@@ -321,10 +329,21 @@ public class QsHelper {
     }
 
     static void release() {
-        ImageHelper.release();
-        QsThreadPollHelper.release();
-        if (qsHelper != null && qsHelper.httpAdapter != null) {
-            qsHelper.httpAdapter = null;
+        if (qsHelper != null) {
+            if (qsHelper.threadPollHelper != null) {
+                qsHelper.threadPollHelper.release();
+                qsHelper.threadPollHelper = null;
+            }
+
+            if (qsHelper.imageHelper != null) {
+                qsHelper.imageHelper.clearMemoryCache();
+                qsHelper.imageHelper = null;
+            }
+            if (qsHelper.httpAdapter != null) {
+                qsHelper.httpAdapter.setHttpClient(null);
+                qsHelper.httpAdapter = null;
+            }
+            qsHelper = null;
         }
     }
 }

@@ -122,7 +122,7 @@ public class HttpAdapter {
 
     public Object startRequest(Method method, Object[] args, Object requestTag) {
         Annotation[] annotations = method.getAnnotations();
-        if (annotations == null || annotations.length < 1) {
+        if (annotations.length < 1) {
             throw new QsException(QsExceptionType.UNEXPECTED, requestTag, "Annotation error... the method:" + method.getName() + " must have one annotation at least!! @GET @POST or @PUT");
         }
         Annotation pathAnnotation = null;

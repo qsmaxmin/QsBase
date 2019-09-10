@@ -12,22 +12,9 @@ import com.qsmaxmin.qsbase.mvp.model.QsConstants;
  */
 
 public class QsThreadPollHelper {
-    private static QsThreadPollHelper instance;
-    private        WorkThreadPoll     workThreadPoll;
-    private        HttpThreadPoll     httpThreadPoll;
-    private        SingleThreadPoll   singleThreadPoll;
-
-    private QsThreadPollHelper() {
-    }
-
-    public static QsThreadPollHelper getInstance() {
-        if (instance == null) {
-            synchronized (QsThreadPollHelper.class) {
-                if (instance == null) instance = new QsThreadPollHelper();
-            }
-        }
-        return instance;
-    }
+    private WorkThreadPoll   workThreadPoll;
+    private HttpThreadPoll   httpThreadPoll;
+    private SingleThreadPoll singleThreadPoll;
 
     public boolean isMainThread() {
         return Thread.currentThread() == Looper.getMainLooper().getThread();
@@ -77,25 +64,8 @@ public class QsThreadPollHelper {
         return singleThreadPoll;
     }
 
-    public static void release() {
-        if (instance != null) {
-            if (instance.workThreadPoll != null) {
-                instance.workThreadPoll.shutdown();
-                instance.workThreadPoll = null;
-            }
-            if (instance.httpThreadPoll != null) {
-                instance.httpThreadPoll.shutdown();
-                instance.httpThreadPoll = null;
-            }
-            if (instance.singleThreadPoll != null) {
-                instance.singleThreadPoll.shutdown();
-                instance.singleThreadPoll = null;
-            }
-        }
-    }
-
-    public synchronized void shutdown() {
-        L.i("QsThreadPollHelper", "shutdown()");
+    public void release() {
+        L.i("QsThreadPollHelper", "release........");
         if (workThreadPoll != null) {
             workThreadPoll.shutdown();
             workThreadPoll = null;
@@ -109,4 +79,5 @@ public class QsThreadPollHelper {
             singleThreadPoll = null;
         }
     }
+
 }
