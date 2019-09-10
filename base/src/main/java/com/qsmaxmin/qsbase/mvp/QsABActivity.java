@@ -28,7 +28,7 @@ import com.qsmaxmin.qsbase.common.aspect.ThreadType;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.utils.PresenterUtils;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
-import com.qsmaxmin.qsbase.common.utils.permission.PermissionUtils;
+import com.qsmaxmin.qsbase.common.utils.permission.PermissionHelper;
 import com.qsmaxmin.qsbase.common.viewbind.OnKeyDownListener;
 import com.qsmaxmin.qsbase.common.viewbind.ViewBindHelper;
 import com.qsmaxmin.qsbase.common.widget.dialog.QsProgressDialog;
@@ -423,7 +423,7 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
     }
 
     @Override public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        PermissionUtils.parsePermissionResultData(requestCode, permissions, grantResults, this);
+        QsHelper.getPermissionHelper().parsePermissionResultData(requestCode, permissions, grantResults, this);
     }
 
     @ThreadPoint(ThreadType.MAIN) protected void setViewState(int showState) {

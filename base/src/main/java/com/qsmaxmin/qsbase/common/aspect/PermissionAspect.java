@@ -6,7 +6,6 @@ import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.common.utils.permission.PermissionBuilder;
 import com.qsmaxmin.qsbase.common.utils.permission.PermissionCallbackListener;
-import com.qsmaxmin.qsbase.common.utils.permission.PermissionUtils;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -32,7 +31,7 @@ public class PermissionAspect {
      * 申请权限
      */
     private void startRequestPermission(final ProceedingJoinPoint joinPoint, final Permission permission) {
-        if (permission == null || PermissionUtils.isPermissionGranted(permission.value())) {
+        if (permission == null || QsHelper.getPermissionHelper().isPermissionGranted(permission.value())) {
             if (L.isEnable()) L.i("PermissionAspect", "permission is all granted.......");
             proceed(joinPoint);
             return;
@@ -53,7 +52,8 @@ public class PermissionAspect {
                             proceed(joinPoint);
                         }
                     });
-            PermissionUtils.startRequestPermission(builder);
+
+            QsHelper.getPermissionHelper().startRequestPermission(builder);
         }
     }
 

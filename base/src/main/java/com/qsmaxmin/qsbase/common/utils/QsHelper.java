@@ -27,6 +27,7 @@ import com.qsmaxmin.qsbase.common.aspect.ThreadType;
 import com.qsmaxmin.qsbase.common.http.HttpAdapter;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.threadpoll.QsThreadPollHelper;
+import com.qsmaxmin.qsbase.common.utils.permission.PermissionHelper;
 import com.qsmaxmin.qsbase.common.viewbind.ViewBindHelper;
 
 import org.greenrobot.eventbus.EventBus;
@@ -44,6 +45,7 @@ public class QsHelper {
     private        HttpAdapter        httpAdapter;
     private        ImageHelper        imageHelper;
     private        QsThreadPollHelper threadPollHelper;
+    private        PermissionHelper   permissionHelper;
 
     private QsHelper() {
     }
@@ -92,6 +94,13 @@ public class QsHelper {
 
     public static ScreenHelper getScreenHelper() {
         return ScreenHelper.getInstance();
+    }
+
+    public static PermissionHelper getPermissionHelper() {
+        if (getInstance().permissionHelper == null) {
+            getInstance().permissionHelper = new PermissionHelper();
+        }
+        return getInstance().permissionHelper;
     }
 
     @ThreadPoint(ThreadType.MAIN)
@@ -334,7 +343,6 @@ public class QsHelper {
                 qsHelper.threadPollHelper.release();
                 qsHelper.threadPollHelper = null;
             }
-
             if (qsHelper.imageHelper != null) {
                 qsHelper.imageHelper.clearMemoryCache();
                 qsHelper.imageHelper = null;
@@ -342,6 +350,10 @@ public class QsHelper {
             if (qsHelper.httpAdapter != null) {
                 qsHelper.httpAdapter.setHttpClient(null);
                 qsHelper.httpAdapter = null;
+            }
+            if (qsHelper.permissionHelper != null) {
+                qsHelper.permissionHelper.release();
+                qsHelper.permissionHelper = null;
             }
             qsHelper = null;
         }
