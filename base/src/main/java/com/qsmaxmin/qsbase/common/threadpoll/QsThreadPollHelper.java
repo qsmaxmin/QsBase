@@ -2,7 +2,6 @@ package com.qsmaxmin.qsbase.common.threadpoll;
 
 import android.os.Looper;
 
-import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.mvp.model.QsConstants;
 
 /**
@@ -65,7 +64,6 @@ public class QsThreadPollHelper {
     }
 
     public void release() {
-        L.i("QsThreadPollHelper", "release........");
         if (workThreadPoll != null) {
             workThreadPoll.shutdown();
             workThreadPoll = null;

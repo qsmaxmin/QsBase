@@ -91,9 +91,9 @@ public final class ScreenHelper {
             L.e(TAG, "popActivity 传入的参数为空!");
         }
         if (fragmentActivities.size() == 0) {
+            L.i(TAG, "pop all Activity, app shutdown...");
             QsHelper.release();
             if (listeners != null) listeners.clear();
-            L.i(TAG, "pop all Activity, app shutdown...");
         }
     }
 
