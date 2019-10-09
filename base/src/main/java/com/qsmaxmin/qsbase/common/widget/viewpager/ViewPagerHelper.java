@@ -95,14 +95,17 @@ public class ViewPagerHelper {
                 if (tabs != null) oldView = tabs.tabsContainer.getChildAt(0);
             }
             if (currentPageIndex < viewPagerData.length) viewPagerData[currentPageIndex].fragment.onPause();
-            if (position < viewPagerData.length && viewPagerData[position].fragment.isAdded()) {
+            if (position < viewPagerData.length) {
                 if (viewPagerData[position].fragment instanceof QsIFragment) {
-                    ((QsIFragment) viewPagerData[position].fragment).initDataWhenDelay(); // 调用延迟加载
+                    QsIFragment qsFragment = (QsIFragment) viewPagerData[position].fragment;
+                    qsFragment.initDataWhenDelay();
                     if (pager.getCurrentItem() == position) {
-                        ((QsIFragment) viewPagerData[position].fragment).onActionBar();
+                        qsFragment.onActionBar();
                     }
                 }
-                viewPagerData[position].fragment.onResume();
+                if (viewPagerData[position].fragment.isAdded()) {
+                    viewPagerData[position].fragment.onResume();
+                }
             }
             currentPageIndex = position;
             if (viewPagerFragment != null) viewPagerFragment.onPageSelected(tabs == null ? null : tabs.tabsContainer.getChildAt(position), oldView, position, oldPosition);
