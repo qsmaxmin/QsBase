@@ -2,6 +2,7 @@ package com.qsmaxmin.qsbase.mvp.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -70,7 +71,7 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         setHasOptionsMenu(true);
     }
 
-    @Nullable @Override public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    @Override @Nullable @CallSuper public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         ViewBindHelper.bindBundle(this, getArguments());
         View rootView = initView(inflater);
         ViewBindHelper.bindView(this, rootView);
@@ -92,7 +93,7 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         onActionBar();
     }
 
-    @Override public void onDestroyView() {
+    @Override @CallSuper public void onDestroyView() {
         super.onDestroyView();
         if (presenter != null) {
             presenter.setDetach();
@@ -103,6 +104,7 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
             mProgressDialog = null;
         }
         mViewAnimator = null;
+        ViewBindHelper.unbind(this);
         if (isOpenEventBus() && EventBus.getDefault().isRegistered(this)) EventBus.getDefault().unregister(this);
     }
 

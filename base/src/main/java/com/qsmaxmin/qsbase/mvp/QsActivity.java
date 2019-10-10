@@ -26,7 +26,6 @@ import com.qsmaxmin.qsbase.common.aspect.ThreadType;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.utils.PresenterUtils;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
-import com.qsmaxmin.qsbase.common.utils.permission.PermissionHelper;
 import com.qsmaxmin.qsbase.common.viewbind.OnKeyDownListener;
 import com.qsmaxmin.qsbase.common.viewbind.ViewBindHelper;
 import com.qsmaxmin.qsbase.common.widget.dialog.QsProgressDialog;
@@ -59,7 +58,7 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         return R.layout.qs_framelayout;
     }
 
-    @CallSuper @Override protected void onCreate(Bundle savedInstanceState) {
+    @Override @CallSuper protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         QsHelper.getScreenHelper().pushActivity(this);
         QsHelper.getAppInterface().onActivityCreate(this);
@@ -96,7 +95,7 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         QsHelper.getAppInterface().onActivityStop(this);
     }
 
-    @Override protected void onDestroy() {
+    @Override @CallSuper protected void onDestroy() {
         super.onDestroy();
         if (presenter != null) {
             presenter.setDetach();
@@ -108,6 +107,7 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         }
         mViewAnimator = null;
         onKeyDownListener = null;
+        ViewBindHelper.unbind(this);
         if (isOpenEventBus() && EventBus.getDefault().isRegistered(this)) EventBus.getDefault().unregister(this);
         QsHelper.getAppInterface().onActivityDestroy(this);
         QsHelper.getScreenHelper().popActivity(this);

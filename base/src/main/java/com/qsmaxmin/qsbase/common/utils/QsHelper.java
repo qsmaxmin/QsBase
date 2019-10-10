@@ -28,7 +28,6 @@ import com.qsmaxmin.qsbase.common.http.HttpAdapter;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.threadpoll.QsThreadPollHelper;
 import com.qsmaxmin.qsbase.common.utils.permission.PermissionHelper;
-import com.qsmaxmin.qsbase.common.viewbind.ViewBindHelper;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -327,14 +326,6 @@ public class QsHelper {
 
     public static void closeStream(Closeable... closeables) {
         StreamCloseUtils.close(closeables);
-    }
-
-    /**
-     * 默认使用Annotation processor绑定View及OnClick事件
-     * 如果使用时有bug可以在application onCreate时调用该方法以关闭
-     */
-    public static void disableFastBindView() {
-        ViewBindHelper.FAST_MODE = false;
     }
 
     /**

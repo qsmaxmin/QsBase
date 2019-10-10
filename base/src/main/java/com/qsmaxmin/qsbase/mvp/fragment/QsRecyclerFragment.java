@@ -118,12 +118,12 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
 
         mRecyclerView.addItemDecoration(new CustomItemDecoration());
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            @Override public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 //防止滚动列表时item位置互换及滑动到顶部时对齐顶部
                 if (newState == RecyclerView.SCROLL_STATE_IDLE && getRecyclerViewType() == TYPE_STAGGEREDGRID && getSpanCount() > 1) {
                     int[] spanArr = new int[getSpanCount()];
                     StaggeredGridLayoutManager layoutManager = (StaggeredGridLayoutManager) getRecyclerView().getLayoutManager();
-                    layoutManager.findFirstCompletelyVisibleItemPositions(spanArr);
+                    if (layoutManager != null) layoutManager.findFirstCompletelyVisibleItemPositions(spanArr);
                     for (int index : spanArr) {
                         if (index == 1 || index == 0) {
                             getAdapter().notifyDataSetChanged();
@@ -134,7 +134,7 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
                 QsRecyclerFragment.this.onScrollStateChanged(recyclerView, newState);
             }
 
-            @Override public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            @Override public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 QsRecyclerFragment.this.onScrolled(recyclerView, dx, dy);
             }
         });
@@ -376,7 +376,7 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
 
     private class CustomItemDecoration extends RecyclerView.ItemDecoration {
         @Override
-        public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+        public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
             super.getItemOffsets(outRect, view, parent, state);
             setItemOffset(outRect, view, parent, state);
         }

@@ -1,5 +1,6 @@
 package com.qsmaxmin.qsbase.common.widget.recyclerview;
 
+import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,7 +15,7 @@ public class EndlessRecyclerOnScrollListener extends RecyclerView.OnScrollListen
     /**
      * 当前RecyclerView类型
      */
-    protected LayoutManagerType layoutManagerType;
+    private LayoutManagerType layoutManagerType;
 
     /**
      * 最后一个的位置
@@ -26,18 +27,15 @@ public class EndlessRecyclerOnScrollListener extends RecyclerView.OnScrollListen
      */
     private int lastVisibleItemPosition;
 
-    /**
-     * 当前滑动的状态
-     */
-    private int currentScrollState = 0;
-
     private RecyclerView.LayoutManager layoutManager;
 
-    @Override public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+    @Override public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
         super.onScrolled(recyclerView, dx, dy);
         if (layoutManager == null) {
             layoutManager = recyclerView.getLayoutManager();
         }
+        if (layoutManager == null) return;
+
         if (layoutManagerType == null) {//
             if (layoutManager instanceof GridLayoutManager) {
                 layoutManagerType = LayoutManagerType.GridLayout;
@@ -49,7 +47,6 @@ public class EndlessRecyclerOnScrollListener extends RecyclerView.OnScrollListen
                 throw new RuntimeException("Unsupported LayoutManager used. Valid ones are LinearLayoutManager, GridLayoutManager and StaggeredGridLayoutManager");
             }
         }
-
         switch (layoutManagerType) {
             case LinearLayout:
                 lastVisibleItemPosition = ((LinearLayoutManager) layoutManager).findLastVisibleItemPosition();
@@ -68,14 +65,15 @@ public class EndlessRecyclerOnScrollListener extends RecyclerView.OnScrollListen
         }
     }
 
-    @Override public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+    @Override public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
         super.onScrollStateChanged(recyclerView, newState);
-        currentScrollState = newState;
         RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
-        int visibleItemCount = layoutManager.getChildCount();
-        int totalItemCount = layoutManager.getItemCount();
-        if ((visibleItemCount > 0 && currentScrollState == RecyclerView.SCROLL_STATE_IDLE && (lastVisibleItemPosition) >= totalItemCount - 1)) {
-            onLoadNextPage(recyclerView);
+        if (layoutManager != null) {
+            int visibleItemCount = layoutManager.getChildCount();
+            int totalItemCount = layoutManager.getItemCount();
+            if ((visibleItemCount > 0 && newState == RecyclerView.SCROLL_STATE_IDLE && (lastVisibleItemPosition) >= totalItemCount - 1)) {
+                onLoadNextPage(recyclerView);
+            }
         }
     }
 

@@ -1,6 +1,7 @@
 package com.qsmaxmin.qsbase.common.widget.dialog;
 
 import android.os.Bundle;
+import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -39,7 +40,7 @@ public abstract class QsDialogFragment extends DialogFragment {
         initData();
     }
 
-    @Override public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    @Override @CallSuper @NonNull public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         ViewBindHelper.bindBundle(this, getArguments());
         if (getDialog() != null) {
             getDialog().setCanceledOnTouchOutside(true);
@@ -48,6 +49,11 @@ public abstract class QsDialogFragment extends DialogFragment {
         View customView = inflater.inflate(layoutId(), null);
         ViewBindHelper.bindView(this, customView);
         return customView;
+    }
+
+    @Override @CallSuper public void onDestroyView() {
+        super.onDestroyView();
+        ViewBindHelper.unbind(this);
     }
 
     protected int getDialogTheme() {
