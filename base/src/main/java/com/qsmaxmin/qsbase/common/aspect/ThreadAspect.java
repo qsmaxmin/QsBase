@@ -30,7 +30,7 @@ public class ThreadAspect {
         if (Thread.currentThread() == Looper.getMainLooper().getThread()) {
             return joinPoint.proceed();
         } else {
-            QsHelper.getThreadHelper().getMainThread().execute(new Runnable() {
+            QsHelper.post(new Runnable() {
                 @Override public void run() {
                     L.i("ThreadAspect", joinPoint.toShortString() + " in main thread... ");
                     startOriginalMethod(joinPoint);
@@ -80,7 +80,7 @@ public class ThreadAspect {
             try {
                 final Object target = joinPoint.getTarget();
                 final Method methodError = target.getClass().getMethod("methodError", QsException.class);
-                QsHelper.getThreadHelper().getMainThread().execute(new Runnable() {
+                QsHelper.post(new Runnable() {
                     @Override public void run() {
                         try {
                             methodError.invoke(target, e0);

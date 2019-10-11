@@ -21,7 +21,7 @@ public class QsToast {
         }
         // 判断是否在主线程
         if (Looper.getMainLooper().getThread() != Thread.currentThread()) {
-            QsHelper.getThreadHelper().getMainThread().execute(new Runnable() {
+            QsHelper.post(new Runnable() {
                 @Override public void run() {
                     showToast(QsHelper.getApplication(), msg, Toast.LENGTH_SHORT);
                 }

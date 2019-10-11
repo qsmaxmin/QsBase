@@ -326,7 +326,7 @@ public class ImageHelper {
                 requestBuilder.into(view);
             } else {
                 final RequestBuilder<Drawable> finalRequestBuilder = requestBuilder;
-                QsHelper.getThreadHelper().getMainThread().execute(new Runnable() {
+                QsHelper.post(new Runnable() {
                     @Override public void run() {
                         finalRequestBuilder.into(view);
                     }
