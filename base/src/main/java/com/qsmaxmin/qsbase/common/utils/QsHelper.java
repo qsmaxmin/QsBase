@@ -91,6 +91,14 @@ public class QsHelper {
         return getInstance().threadPollHelper;
     }
 
+    public static void post(Runnable r) {
+        getThreadHelper().getMainThread().execute(r);
+    }
+
+    public static void postDelayed(Runnable r, long delayMillis) {
+        getThreadHelper().getMainThread().executeDelayed(r, delayMillis);
+    }
+
     public static ScreenHelper getScreenHelper() {
         return ScreenHelper.getInstance();
     }
