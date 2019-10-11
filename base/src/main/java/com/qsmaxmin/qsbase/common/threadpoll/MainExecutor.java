@@ -4,24 +4,29 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 
-import java.util.concurrent.Executor;
-
 /**
  * @CreateBy qsmaxmin
  * @Date 2017/6/20 17:43
  * @Description
  */
 
-public class MainExecutor implements Executor {
+public class MainExecutor {
     private static MainExecutor mainExecutor = new MainExecutor();
-
-    private final Handler handler = new Handler(Looper.getMainLooper());
+    private final  Handler      handler      = new Handler(Looper.getMainLooper());
 
     static MainExecutor getInstance() {
         return mainExecutor;
     }
 
-    @Override public void execute(@NonNull Runnable runnable) {
+    public void execute(@NonNull Runnable runnable) {
         handler.post(runnable);
+    }
+
+    public void executeDelayed(@NonNull Runnable runnable, long delayMillis) {
+        handler.postDelayed(runnable, delayMillis);
+    }
+
+    public Handler getHandler() {
+        return handler;
     }
 }

@@ -1,5 +1,6 @@
 package com.qsmaxmin.qsbase.common.threadpoll;
 
+import android.os.Handler;
 import android.os.Looper;
 
 import com.qsmaxmin.qsbase.mvp.model.QsConstants;
@@ -11,9 +12,9 @@ import com.qsmaxmin.qsbase.mvp.model.QsConstants;
  */
 
 public class QsThreadPollHelper {
-    private WorkThreadPoll   workThreadPoll;
-    private HttpThreadPoll   httpThreadPoll;
-    private SingleThreadPoll singleThreadPoll;
+    private       WorkThreadPoll   workThreadPoll;
+    private       HttpThreadPoll   httpThreadPoll;
+    private       SingleThreadPoll singleThreadPoll;
 
     public boolean isMainThread() {
         return Thread.currentThread() == Looper.getMainLooper().getThread();
