@@ -9,6 +9,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Looper;
 import android.support.annotation.ColorRes;
 import android.support.annotation.DimenRes;
 import android.support.annotation.DrawableRes;
@@ -91,12 +92,28 @@ public class QsHelper {
         return getInstance().threadPollHelper;
     }
 
+    public static boolean isMainThread() {
+        return Thread.currentThread() == Looper.getMainLooper().getThread();
+    }
+
     public static void post(Runnable r) {
         getThreadHelper().getMainThread().execute(r);
     }
 
     public static void postDelayed(Runnable r, long delayMillis) {
         getThreadHelper().getMainThread().executeDelayed(r, delayMillis);
+    }
+
+    public static void executeInHttpThread(Runnable r) {
+        getThreadHelper().getHttpThreadPoll().execute(r);
+    }
+
+    public static void executeInWorkThread(Runnable r) {
+        getThreadHelper().getWorkThreadPoll().execute(r);
+    }
+
+    public static void executeInSingleThread(Runnable r) {
+        getThreadHelper().getWorkThreadPoll().execute(r);
     }
 
     public static ScreenHelper getScreenHelper() {
