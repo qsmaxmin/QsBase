@@ -112,7 +112,7 @@ public class QsHelper {
     }
 
     public static void executeInSingleThread(Runnable r) {
-        getThreadHelper().getWorkThreadPoll().execute(r);
+        getThreadHelper().getSingleThreadPoll().execute(r);
     }
 
     public static ScreenHelper getScreenHelper() {

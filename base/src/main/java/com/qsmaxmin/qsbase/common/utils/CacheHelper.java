@@ -138,7 +138,7 @@ public class CacheHelper {
     }
 
     private void executeAsync(Runnable runnable) {
-        QsHelper.getThreadHelper().getWorkThreadPoll().execute(runnable);
+        QsHelper.executeInWorkThread(runnable);
     }
 
 }

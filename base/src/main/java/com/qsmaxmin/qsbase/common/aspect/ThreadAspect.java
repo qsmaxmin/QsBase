@@ -41,7 +41,7 @@ public class ThreadAspect {
     }
 
     @Around(POINTCUT_METHOD_HTTP) public Object onCheckNetHttpExecutor(final ProceedingJoinPoint joinPoint) throws Throwable {
-        QsHelper.getThreadHelper().getHttpThreadPoll().execute(new Runnable() {
+        QsHelper.executeInHttpThread(new Runnable() {
             @Override public void run() {
                 L.i("ThreadAspect", joinPoint.toShortString() + " in http thread... ");
                 startOriginalMethod(joinPoint);
@@ -51,7 +51,7 @@ public class ThreadAspect {
     }
 
     @Around(POINTCUT_METHOD_WORK) public Object onWorkExecutor(final ProceedingJoinPoint joinPoint) throws Throwable {
-        QsHelper.getThreadHelper().getWorkThreadPoll().execute(new Runnable() {
+        QsHelper.executeInWorkThread(new Runnable() {
             @Override public void run() {
                 L.i("ThreadAspect", joinPoint.toShortString() + " in work thread... ");
                 startOriginalMethod(joinPoint);
@@ -61,7 +61,7 @@ public class ThreadAspect {
     }
 
     @Around(POINTCUT_METHOD_SINGLE_WORK) public Object onSingleWorkExecutor(final ProceedingJoinPoint joinPoint) throws Throwable {
-        QsHelper.getThreadHelper().getSingleThreadPoll().execute(new Runnable() {
+        QsHelper.executeInSingleThread(new Runnable() {
             @Override public void run() {
                 L.i("ThreadAspect", joinPoint.toShortString() + " in single work thread... ");
                 startOriginalMethod(joinPoint);
@@ -80,7 +80,7 @@ public class ThreadAspect {
             try {
                 final Object target = joinPoint.getTarget();
                 final Method methodError = target.getClass().getMethod("methodError", QsException.class);
-                if (methodError != null) QsHelper.getThreadHelper().getMainThread().execute(new Runnable() {
+                QsHelper.getThreadHelper().getMainThread().execute(new Runnable() {
                     @Override public void run() {
                         try {
                             methodError.invoke(target, e0);
