@@ -12,6 +12,4 @@ public interface AnnotationExecutor<T> {
     void bindView(T target, View view, boolean forceBind);
 
     void bindBundle(T target, Bundle bundle);
-
-    void unbind(T target);
 }
