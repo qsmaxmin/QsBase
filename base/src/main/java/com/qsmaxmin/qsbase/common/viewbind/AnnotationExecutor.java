@@ -15,7 +15,11 @@ public class AnnotationExecutor<T> {
     public void bindBundle(T target, Bundle bundle) {
     }
 
-    public final <D extends View> D forceCast(View view) {
+    public final <D extends View> D forceCastView(View view) {
         return (D) view;
+    }
+
+    public final <D> D forceCastObject(Object o) {
+        return (D) o;
     }
 }
