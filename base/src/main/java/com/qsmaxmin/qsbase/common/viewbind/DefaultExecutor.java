@@ -16,8 +16,4 @@ public class DefaultExecutor implements AnnotationExecutor {
     @Override public void bindBundle(Object target, Bundle bundle) {
 
     }
-
-    @Override public void unbind(Object target) {
-
-    }
 }
