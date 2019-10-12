@@ -70,7 +70,7 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
         initStatusBar();
         View view = initView();
         setContentView(view);
-        ViewBindHelper.bindView(this, view);
+        ViewBindHelper.bindView(this, view, true);
         if (isOpenEventBus() && !EventBus.getDefault().isRegistered(this)) EventBus.getDefault().register(this);
         if (!isDelayData()) {
             hasInitData = true;
@@ -111,7 +111,6 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
         }
         mViewAnimator = null;
         onKeyDownListener = null;
-        ViewBindHelper.unbind(this);
         if (isOpenEventBus() && EventBus.getDefault().isRegistered(this)) EventBus.getDefault().unregister(this);
         QsHelper.getAppInterface().onActivityDestroy(this);
         QsHelper.getScreenHelper().popActivity(this);

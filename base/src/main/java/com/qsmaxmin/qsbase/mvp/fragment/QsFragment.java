@@ -74,7 +74,7 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
     @Override @Nullable @CallSuper public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         ViewBindHelper.bindBundle(this, getArguments());
         View rootView = initView(inflater);
-        ViewBindHelper.bindView(this, rootView);
+        ViewBindHelper.bindView(this, rootView, true);
         rootView.setOnTouchListener(this);
         if (isOpenEventBus() && !EventBus.getDefault().isRegistered(this)) EventBus.getDefault().register(this);
         return rootView;
@@ -104,7 +104,6 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
             mProgressDialog = null;
         }
         mViewAnimator = null;
-        ViewBindHelper.unbind(this);
         if (isOpenEventBus() && EventBus.getDefault().isRegistered(this)) EventBus.getDefault().unregister(this);
     }
 

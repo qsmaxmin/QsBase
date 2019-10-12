@@ -12,30 +12,18 @@ import com.qsmaxmin.qsbase.common.log.L;
  * @Description
  */
 public class ViewBindHelper {
-    private static boolean                                autoUnbindView = false;
-    private static LruCache<Class<?>, AnnotationExecutor> viewCache      = new LruCache<>(200);
+    private static LruCache<Class<?>, AnnotationExecutor> viewCache = new LruCache<>(200);
 
-    public static <T> void bindView(T target, View view) {
+    public static <T> void bindView(T target, View view, boolean forceBind) {
         if (target == null || view == null) return;
         AnnotationExecutor<T> executor = getExecutor(target.getClass());
-        executor.bindView(target, view);
+        executor.bindView(target, view, forceBind);
     }
 
     public static <T> void bindBundle(T target, Bundle bundle) {
         if (target == null || bundle == null) return;
         AnnotationExecutor<T> executor = getExecutor(target.getClass());
         executor.bindBundle(target, bundle);
-    }
-
-    public static <T> void unbind(T target) {
-        if (autoUnbindView && target != null) {
-            AnnotationExecutor<T> executor = getExecutor(target.getClass());
-            executor.unbind(target);
-        }
-    }
-
-    public static void autoUnbindView(boolean autoUnbind) {
-        autoUnbindView = autoUnbind;
     }
 
     private static <T> AnnotationExecutor<T> getExecutor(Class<?> clazz) {

@@ -28,7 +28,6 @@ import com.qsmaxmin.qsbase.common.http.HttpAdapter;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.threadpoll.QsThreadPollHelper;
 import com.qsmaxmin.qsbase.common.utils.permission.PermissionHelper;
-import com.qsmaxmin.qsbase.common.viewbind.ViewBindHelper;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -351,17 +350,6 @@ public class QsHelper {
 
     public static void closeStream(Closeable... closeables) {
         StreamCloseUtils.close(closeables);
-    }
-
-    /**
-     * 设置是否自动解绑View与Activity、Fragment和Dialog，该值默认是false
-     * 当设置true时通过{@link com.qsmaxmin.qsbase.common.viewbind.annotation.Bind}注解的View，在Activity或Fragment销毁时会置空，
-     * 此时需要注意不能在destroy后操作view，且在非生命周期函数里操作view时要做非空判断
-     *
-     * @param autoUnbind true：自动解绑，否则不解绑
-     */
-    public static void setAutoUnbindView(boolean autoUnbind) {
-        ViewBindHelper.autoUnbindView(autoUnbind);
     }
 
     /**

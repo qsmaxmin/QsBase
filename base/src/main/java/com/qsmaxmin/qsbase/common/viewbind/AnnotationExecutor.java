@@ -9,7 +9,7 @@ import android.view.View;
  * @Description
  */
 public interface AnnotationExecutor<T> {
-    void bindView(T target, View view);
+    void bindView(T target, View view, boolean forceBind);
 
     void bindBundle(T target, Bundle bundle);
 

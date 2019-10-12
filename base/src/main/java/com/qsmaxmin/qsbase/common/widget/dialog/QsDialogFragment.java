@@ -47,13 +47,12 @@ public abstract class QsDialogFragment extends DialogFragment {
             getDialog().setCancelable(true);
         }
         View customView = inflater.inflate(layoutId(), null);
-        ViewBindHelper.bindView(this, customView);
+        ViewBindHelper.bindView(this, customView, true);
         return customView;
     }
 
     @Override @CallSuper public void onDestroyView() {
         super.onDestroyView();
-        ViewBindHelper.unbind(this);
     }
 
     protected int getDialogTheme() {

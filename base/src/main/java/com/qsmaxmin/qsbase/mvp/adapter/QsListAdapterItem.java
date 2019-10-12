@@ -18,7 +18,7 @@ public abstract class QsListAdapterItem<T> {
     public abstract int getItemLayout();
 
     @CallSuper public void init(View contentView) {
-        ViewBindHelper.bindView(this, contentView);
+        ViewBindHelper.bindView(this, contentView, true);
     }
 
     public abstract void bindData(T t, int position, int count);

@@ -9,7 +9,7 @@ import android.view.View;
  * @Description
  */
 public class DefaultExecutor implements AnnotationExecutor {
-    @Override public void bindView(Object target, View view) {
+    @Override public void bindView(Object target, View view, boolean forceBind) {
 
     }
 
