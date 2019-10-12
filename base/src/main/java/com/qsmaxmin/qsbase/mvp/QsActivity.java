@@ -66,7 +66,7 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         initStatusBar();
         View view = initView();
         setContentView(view);
-        ViewBindHelper.bindView(this, view, true);
+        ViewBindHelper.bindView(this, view);
         if (isOpenEventBus() && !EventBus.getDefault().isRegistered(this)) EventBus.getDefault().register(this);
         if (!isDelayData()) {
             hasInitData = true;

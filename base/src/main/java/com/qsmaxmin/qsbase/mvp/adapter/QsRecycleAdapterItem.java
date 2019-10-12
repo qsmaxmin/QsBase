@@ -20,7 +20,7 @@ public abstract class QsRecycleAdapterItem<T> {
 
     public QsRecycleAdapterItem(LayoutInflater inflater, ViewGroup parent) {
         mItemView = inflater.inflate(itemViewLayoutId(), parent, false);
-        ViewBindHelper.bindView(this, mItemView, true);
+        ViewBindHelper.bindView(this, mItemView);
         mParentContext = parent.getContext();
     }
 

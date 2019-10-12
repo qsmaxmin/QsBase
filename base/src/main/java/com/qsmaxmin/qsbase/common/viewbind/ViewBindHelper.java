@@ -14,10 +14,10 @@ import com.qsmaxmin.qsbase.common.log.L;
 public class ViewBindHelper {
     private static LruCache<Class<?>, AnnotationExecutor> viewCache = new LruCache<>(200);
 
-    public static <T> void bindView(T target, View view, boolean forceBind) {
+    public static <T> void bindView(T target, View view) {
         if (target == null || view == null) return;
         AnnotationExecutor<T> executor = getExecutor(target.getClass());
-        executor.bindView(target, view, forceBind);
+        executor.bindView(target, view);
     }
 
     public static <T> void bindBundle(T target, Bundle bundle) {
@@ -43,7 +43,7 @@ public class ViewBindHelper {
                     L.i(clazz.getSimpleName(), "create new AnnotationExecutor by class(" + clazz.getName() + "), cache size:" + viewCache.size() + ", use time:" + (endTime - startTime) / 1000000f + "ms");
                 }
             } catch (Exception e) {
-                executor = new DefaultExecutor();
+                executor = new AnnotationExecutor();
                 viewCache.put(clazz, executor);
                 if (L.isEnable()) L.i(clazz.getSimpleName(), "(" + clazz.getName() + ")Annotation is empty, so create default AnnotationExecutor");
             }

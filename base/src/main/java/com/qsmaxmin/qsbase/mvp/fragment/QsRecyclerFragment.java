@@ -108,12 +108,12 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
         if (getHeaderLayout() != 0) {
             headerView = inflater.inflate(getHeaderLayout(), null);
             mRecyclerView.addHeaderView(headerView);
-            ViewBindHelper.bindView(this, headerView, false);
+            ViewBindHelper.bindView(this, headerView);
         }
         if (getFooterLayout() != 0) {
             footerView = inflater.inflate(getFooterLayout(), null);
             mRecyclerView.addFooterView(footerView);
-            ViewBindHelper.bindView(this, footerView, false);
+            ViewBindHelper.bindView(this, footerView);
         }
 
         mRecyclerView.addItemDecoration(new CustomItemDecoration());

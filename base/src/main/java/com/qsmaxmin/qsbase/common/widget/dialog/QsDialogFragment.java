@@ -47,7 +47,7 @@ public abstract class QsDialogFragment extends DialogFragment {
             getDialog().setCancelable(true);
         }
         View customView = inflater.inflate(layoutId(), null);
-        ViewBindHelper.bindView(this, customView, true);
+        ViewBindHelper.bindView(this, customView);
         return customView;
     }
 

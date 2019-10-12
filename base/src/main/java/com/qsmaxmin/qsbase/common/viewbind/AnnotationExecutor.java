@@ -8,8 +8,14 @@ import android.view.View;
  * @Date 2019/6/6 17:42
  * @Description
  */
-public interface AnnotationExecutor<T> {
-    void bindView(T target, View view, boolean forceBind);
+public class AnnotationExecutor<T> {
+    public void bindView(T target, View view) {
+    }
 
-    void bindBundle(T target, Bundle bundle);
+    public void bindBundle(T target, Bundle bundle) {
+    }
+
+    public final <D extends View> D forceCast(View view) {
+        return (D) view;
+    }
 }
