@@ -5,6 +5,7 @@ import android.os.Looper;
 import com.qsmaxmin.qsbase.common.exception.QsException;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
+import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -77,24 +78,40 @@ public class ThreadAspect {
         try {
             joinPoint.proceed();
         } catch (final QsException e0) {
-            try {
-                final Object target = joinPoint.getTarget();
-                final Method methodError = target.getClass().getMethod("methodError", QsException.class);
-                QsHelper.post(new Runnable() {
-                    @Override public void run() {
-                        try {
-                            methodError.invoke(target, e0);
-                        } catch (Exception e1) {
-                            e1.printStackTrace();
+            final Object target = joinPoint.getTarget();
+            if (target instanceof QsPresenter) {
+                final QsPresenter presenter = (QsPresenter) target;
+                if (!presenter.isViewDetach()) {
+                    if (L.isEnable()) L.e("ThreadAspect", "received error..." + joinPoint.toShortString() + ", handle to:" + target.getClass().getName());
+                    QsHelper.post(new Runnable() {
+                        @Override public void run() {
+                            presenter.methodError(e0);
                         }
-                    }
-                });
-            } catch (NoSuchMethodException e2) {
-                L.e("ThreadAspect", "被@ThreadAspect注解的函数在执行出现错误时会将异常抛到该类的putlic void methodError(QsException e)函数里，所以该类必须要有这个函数。\n" +
-                        "也可以自己开启异步线程请求网络(QsHelper.getHttpHelper().create(XXX.class, Object o))，并用try catch把网络请求代码包起来，自己处理异常。\n" +
-                        e2.getMessage());
-            } catch (Throwable t) {
-                t.printStackTrace();
+                    });
+                } else {
+                    if (L.isEnable()) L.e("ThreadAspect", "received error, but view is destroy..." + joinPoint.toShortString());
+                }
+            } else {
+                try {
+                    if (L.isEnable()) L.e("ThreadAspect", "method received error..." + joinPoint.toShortString() + ", try handle to:" + target.getClass().getName());
+                    final Method methodError = target.getClass().getMethod("methodError", QsException.class);
+                    QsHelper.post(new Runnable() {
+                        @Override public void run() {
+                            try {
+                                methodError.invoke(target, e0);
+                            } catch (Exception e1) {
+                                e1.printStackTrace();
+                            }
+                        }
+                    });
+                } catch (NoSuchMethodException e2) {
+                    L.e("ThreadAspect", "no method(pub void methodError(QsException e)) find in " + target.getClass().getName() + ", cannot handle exception!" +
+                            "\nmethod info:" + joinPoint.toShortString() +
+                            "\nYou can also start the asynchronous thread request network by yourself(QsHelper.getHttpHelper().create(XXX.class, Object o))," +
+                            "\nAnd use try catch to package the network request code and handle the exceptions by yourself.");
+                } catch (Throwable t) {
+                    t.printStackTrace();
+                }
             }
         } catch (Throwable th) {
             th.printStackTrace();

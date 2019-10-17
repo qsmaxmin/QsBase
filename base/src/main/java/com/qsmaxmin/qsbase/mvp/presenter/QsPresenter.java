@@ -162,7 +162,8 @@ public class QsPresenter<V extends QsIView> {
      * 自定义异常处理
      */
     public void methodError(QsException exception) {
-        L.e(initTag(), "methodError... errorType:" + exception.getExceptionType() + " requestTag:" + exception.getRequestTag() + " errorMessage:" + exception.getMessage());
+        L.e(initTag(), "methodError... errorType:" + exception.getExceptionType() + " requestTag:" + exception.getRequestTag());
+        exception.printStackTrace();
         switch (exception.getExceptionType()) {
             case HTTP_ERROR:
             case NETWORK_ERROR:
