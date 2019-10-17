@@ -33,7 +33,7 @@ public class ThreadAspect {
         } else {
             QsHelper.post(new Runnable() {
                 @Override public void run() {
-                    L.i("ThreadAspect", joinPoint.toShortString() + " in main thread... ");
+                    if (L.isEnable()) L.i("ThreadAspect", joinPoint.toShortString() + " in main thread... ");
                     startOriginalMethod(joinPoint);
                 }
             });
@@ -44,7 +44,7 @@ public class ThreadAspect {
     @Around(POINTCUT_METHOD_HTTP) public Object onCheckNetHttpExecutor(final ProceedingJoinPoint joinPoint) throws Throwable {
         QsHelper.executeInHttpThread(new Runnable() {
             @Override public void run() {
-                L.i("ThreadAspect", joinPoint.toShortString() + " in http thread... ");
+                if (L.isEnable()) L.i("ThreadAspect", joinPoint.toShortString() + " in http thread... ");
                 startOriginalMethod(joinPoint);
             }
         });
@@ -54,7 +54,7 @@ public class ThreadAspect {
     @Around(POINTCUT_METHOD_WORK) public Object onWorkExecutor(final ProceedingJoinPoint joinPoint) throws Throwable {
         QsHelper.executeInWorkThread(new Runnable() {
             @Override public void run() {
-                L.i("ThreadAspect", joinPoint.toShortString() + " in work thread... ");
+                if (L.isEnable()) L.i("ThreadAspect", joinPoint.toShortString() + " in work thread... ");
                 startOriginalMethod(joinPoint);
             }
         });
@@ -64,7 +64,7 @@ public class ThreadAspect {
     @Around(POINTCUT_METHOD_SINGLE_WORK) public Object onSingleWorkExecutor(final ProceedingJoinPoint joinPoint) throws Throwable {
         QsHelper.executeInSingleThread(new Runnable() {
             @Override public void run() {
-                L.i("ThreadAspect", joinPoint.toShortString() + " in single work thread... ");
+                if (L.isEnable()) L.i("ThreadAspect", joinPoint.toShortString() + " in single work thread... ");
                 startOriginalMethod(joinPoint);
             }
         });
@@ -82,18 +82,18 @@ public class ThreadAspect {
             if (target instanceof QsPresenter) {
                 final QsPresenter presenter = (QsPresenter) target;
                 if (!presenter.isViewDetach()) {
-                    if (L.isEnable()) L.e("ThreadAspect", "received error..." + joinPoint.toShortString() + ", handle to:" + target.getClass().getName());
+                    if (L.isEnable()) L.e("ThreadAspect", "received error when " + joinPoint.toShortString() + ", handle to:" + target.getClass().getName() + ".methodError(xxx)");
                     QsHelper.post(new Runnable() {
                         @Override public void run() {
                             presenter.methodError(e0);
                         }
                     });
                 } else {
-                    if (L.isEnable()) L.e("ThreadAspect", "received error, but view is destroy, not handle error..." + joinPoint.toShortString());
+                    if (L.isEnable()) L.e("ThreadAspect", "received error but view is destroy, so not handle error when " + joinPoint.toShortString());
                 }
             } else {
                 try {
-                    if (L.isEnable()) L.e("ThreadAspect", "method received error..." + joinPoint.toShortString() + ", try handle to:" + target.getClass().getName());
+                    if (L.isEnable()) L.e("ThreadAspect", "method received error when " + joinPoint.toShortString() + ", try handle to:" + target.getClass().getName() + ".methodError(xxx)");
                     final Method methodError = target.getClass().getMethod("methodError", QsException.class);
                     QsHelper.post(new Runnable() {
                         @Override public void run() {
@@ -105,8 +105,8 @@ public class ThreadAspect {
                         }
                     });
                 } catch (NoSuchMethodException e2) {
-                    L.e("ThreadAspect", "no method(pub void methodError(QsException e)) find in " + target.getClass().getName() + ", cannot handle error!" +
-                            "\nmethod info:" + joinPoint.toShortString() +
+                    if (L.isEnable()) L.e("ThreadAspect", "no method(pub void methodError(QsException e)) find in " + target.getClass().getName()
+                            + "\ncannot handle error when " + joinPoint.toShortString() +
                             "\nYou can also start the asynchronous thread request network by yourself(QsHelper.getHttpHelper().create(XXX.class, Object o))," +
                             "\nAnd use try catch to package the network request code and handle the exceptions by yourself.");
                 } catch (Throwable t) {
