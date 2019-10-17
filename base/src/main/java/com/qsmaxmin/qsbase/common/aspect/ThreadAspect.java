@@ -89,7 +89,7 @@ public class ThreadAspect {
                         }
                     });
                 } else {
-                    if (L.isEnable()) L.e("ThreadAspect", "received error, but view is destroy..." + joinPoint.toShortString());
+                    if (L.isEnable()) L.e("ThreadAspect", "received error, but view is destroy, not handle error..." + joinPoint.toShortString());
                 }
             } else {
                 try {
@@ -105,7 +105,7 @@ public class ThreadAspect {
                         }
                     });
                 } catch (NoSuchMethodException e2) {
-                    L.e("ThreadAspect", "no method(pub void methodError(QsException e)) find in " + target.getClass().getName() + ", cannot handle exception!" +
+                    L.e("ThreadAspect", "no method(pub void methodError(QsException e)) find in " + target.getClass().getName() + ", cannot handle error!" +
                             "\nmethod info:" + joinPoint.toShortString() +
                             "\nYou can also start the asynchronous thread request network by yourself(QsHelper.getHttpHelper().create(XXX.class, Object o))," +
                             "\nAnd use try catch to package the network request code and handle the exceptions by yourself.");
