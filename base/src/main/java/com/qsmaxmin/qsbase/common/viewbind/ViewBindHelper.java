@@ -13,6 +13,7 @@ import com.qsmaxmin.qsbase.common.log.L;
  */
 public class ViewBindHelper {
     private static LruCache<Class<?>, AnnotationExecutor> viewCache = new LruCache<>(200);
+    private static AnnotationExecutor                     defaultExecutor;
 
     public static <T> void bindView(T target, View view) {
         if (target == null || view == null) return;
@@ -26,13 +27,13 @@ public class ViewBindHelper {
         executor.bindBundle(target, bundle);
     }
 
+    //61.90854, 11947.418, 2297.3909
     private static <T> AnnotationExecutor<T> getExecutor(Class<?> clazz) {
         AnnotationExecutor executor = viewCache.get(clazz);
         if (executor == null) {
+            long startTime = 0;
+            if (L.isEnable()) startTime = System.nanoTime();
             try {
-                long startTime = 0;
-                if (L.isEnable()) startTime = System.nanoTime();
-
                 String className = getExecuteClassName(clazz);
                 Class<?> myClass = Class.forName(className);
 
@@ -43,9 +44,15 @@ public class ViewBindHelper {
                     L.i(clazz.getSimpleName(), "create new AnnotationExecutor by class(" + clazz.getName() + "), cache size:" + viewCache.size() + ", use time:" + (endTime - startTime) / 1000000f + "ms");
                 }
             } catch (Exception e) {
-                executor = new AnnotationExecutor();
+                if (defaultExecutor == null) {
+                    defaultExecutor = new AnnotationExecutor();
+                }
+                executor = defaultExecutor;
                 viewCache.put(clazz, executor);
-                if (L.isEnable()) L.i(clazz.getSimpleName(), "(" + clazz.getName() + ")Annotation is empty, so create default AnnotationExecutor");
+                if (L.isEnable()) {
+                    long endTime = System.nanoTime();
+                    L.i(clazz.getSimpleName(), "(" + clazz.getName() + ")Annotation is empty, so return default AnnotationExecutor" + ", use time:" + (endTime - startTime) / 1000000f + "ms");
+                }
             }
         }
         return executor;
