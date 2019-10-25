@@ -47,7 +47,7 @@ public class ViewBindHelper {
             } else {
                 if (L.isEnable()) {
                     long endTime = System.nanoTime();
-                    L.i("ViewBindHelper", "create new ViewAnnotationExecutor by " + clazz.getName()
+                    L.i("ViewBindHelper", "create new ViewAnnotationExecutor by:" + clazz.getName()
                             + ", cache size:" + executorCache.size() + ", use time:" + (endTime - startTime) / 1000000f + "ms");
                 }
                 executor = (ViewAnnotationExecutor) newExecutor;
