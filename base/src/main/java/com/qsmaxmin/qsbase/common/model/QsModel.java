@@ -7,9 +7,6 @@ package com.qsmaxmin.qsbase.common.model;
  */
 
 public class QsModel {
-    public QsModel() {
-    }
-
     /**
      * http请求是否成功，由子类实现
      */
