@@ -58,6 +58,10 @@ android {
     }
 }
 
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}
+
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.android.support:design:28.0.0'
@@ -69,6 +73,7 @@ dependencies {
     implementation 'org.aspectj:aspectjrt:1.9.1'
     api 'com.squareup.okhttp3:okhttp:3.10.0'
     api 'com.google.code.gson:gson:2.8.2'
+    api project(path: ':ann')
 }
 
 uploadArchives {

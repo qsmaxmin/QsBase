@@ -1,5 +1,6 @@
 package com.qsmaxmin.qsbase.common.widget.recyclerview;
 
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
@@ -34,7 +35,7 @@ public class HeaderFooterRecyclerAdapter extends RecyclerView.Adapter {
         int headerNum = headerView.size();
         if (position < headerNum) {
             return HEADER_VIEW_TYPE;
-        } else if (position >= headerNum) {
+        } else {
             int itemCount = tagAdapter.getItemCount();
             int realPosition = position - headerNum;
             if (realPosition < itemCount) {
@@ -44,7 +45,7 @@ public class HeaderFooterRecyclerAdapter extends RecyclerView.Adapter {
         return FOOTER_VIEW_TYPE;
     }
 
-    @Override public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    @NonNull @Override public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         switch (viewType) {
             case HEADER_VIEW_TYPE:
                 return new HeaderOrFooterView(headerView.get(0));
@@ -55,29 +56,27 @@ public class HeaderFooterRecyclerAdapter extends RecyclerView.Adapter {
         }
     }
 
-    @Override public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    @Override public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         int headerNum = headerView.size();
         if (position < headerNum) {
             onHeaderFooterBindViewHolder(holder);
-        } else if (position >= headerNum) {
+        } else {
             int itemCount = tagAdapter.getItemCount();
             int realPosition = position - headerNum;
             if (realPosition < itemCount) {
                 tagAdapter.onBindViewHolder(holder, realPosition);
             }
-            return;
         }
-        onHeaderFooterBindViewHolder(holder);
     }
 
     @Override public int getItemCount() {
         return tagAdapter.getItemCount() + headerView.size() + footerView.size();
     }
 
-    @Override public void onViewAttachedToWindow(RecyclerView.ViewHolder holder) {
+    @Override public void onViewAttachedToWindow(@NonNull RecyclerView.ViewHolder holder) {
         if (holder instanceof HeaderOrFooterView) {
             ViewGroup.LayoutParams layoutParams = holder.itemView.getLayoutParams();
-            if (layoutParams != null && layoutParams instanceof StaggeredGridLayoutManager.LayoutParams) {
+            if (layoutParams instanceof StaggeredGridLayoutManager.LayoutParams) {
                 StaggeredGridLayoutManager.LayoutParams params = (StaggeredGridLayoutManager.LayoutParams) layoutParams;
                 params.setFullSpan(true);
             }

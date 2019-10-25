@@ -44,7 +44,7 @@ public final class PresenterUtils {
         Type genericSuperclass = viewClass.getGenericSuperclass();
         if (genericSuperclass instanceof ParameterizedType) {
             Type[] typeArguments = ((ParameterizedType) genericSuperclass).getActualTypeArguments();
-            if (typeArguments != null && typeArguments.length > 0) {
+            if (typeArguments.length > 0) {
                 Class typeArgument = (Class) typeArguments[0];
                 try {
                     presenterImpl = (P) typeArgument.newInstance();

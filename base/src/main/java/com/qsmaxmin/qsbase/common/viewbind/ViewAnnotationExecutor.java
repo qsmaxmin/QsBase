@@ -8,7 +8,8 @@ import android.view.View;
  * @Date 2019/6/6 17:42
  * @Description
  */
-public class AnnotationExecutor<T> {
+@SuppressWarnings({"WeakerAccess", "unchecked"})
+public class ViewAnnotationExecutor<T> {
     public void bindView(T target, View view) {
     }
 
