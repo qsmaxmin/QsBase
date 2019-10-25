@@ -5,7 +5,7 @@ android {
     compileSdkVersion 28
 
     defaultConfig {
-        minSdkVersion 14
+        minSdkVersion 15
         targetSdkVersion 28
         versionCode 120
         versionName "1.2.0"
@@ -71,9 +71,9 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.8.0'
     implementation 'org.greenrobot:eventbus:3.0.0'
     implementation 'org.aspectj:aspectjrt:1.9.1'
-    api 'com.squareup.okhttp3:okhttp:3.10.0'
-    api 'com.google.code.gson:gson:2.8.2'
-    api project(path: ':ann')
+    implementation 'com.squareup.okhttp3:okhttp:3.11.0'
+    implementation 'com.google.code.gson:gson:2.8.2'
+    compileOnly project(path: ':ann')
 }
 
 uploadArchives {
