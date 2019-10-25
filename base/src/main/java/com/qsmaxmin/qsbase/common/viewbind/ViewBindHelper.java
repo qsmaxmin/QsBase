@@ -6,6 +6,7 @@ import android.util.LruCache;
 import android.view.View;
 
 import com.qsmaxmin.ann.viewbind.AnnotationExecutorFinder;
+import com.qsmaxmin.qsbase.common.log.L;
 
 /**
  * @CreateBy qsmaxmin
@@ -34,10 +35,17 @@ public class ViewBindHelper {
     private static <T> ViewAnnotationExecutor<T> getExecutor(Class<?> clazz) {
         ViewAnnotationExecutor executor = executorCache.get(clazz);
         if (executor == null) {
+            long startTime = 0;
+            if (L.isEnable()) startTime = System.nanoTime();
             Object newExecutor = finder.getViewAnnotationExecutor(clazz.getName());
             if (newExecutor == null) {
                 return null;
             } else {
+                if (L.isEnable()) {
+                    long endTime = System.nanoTime();
+                    L.i("ViewBindHelper", "create new ViewAnnotationExecutor by " + clazz.getName()
+                            + ", cache size:" + executorCache.size() + ", use time:" + (endTime - startTime) / 1000000f + "ms");
+                }
                 executor = (ViewAnnotationExecutor) newExecutor;
                 executorCache.put(clazz, executor);
             }
