@@ -1,6 +1,7 @@
 package com.qsmaxmin.qsbase.common.config;
 
 import com.qsmaxmin.qsbase.common.log.L;
+import com.qsmaxmin.qsbase.common.model.QsNotProguard;
 
 /**
  * @CreateBy sky
@@ -8,7 +9,7 @@ import com.qsmaxmin.qsbase.common.log.L;
  * @Description
  */
 
-public abstract class QsProperties {
+public abstract class QsProperties implements QsNotProguard {
     private PropertiesEngineNew<QsProperties> engine;
 
     public String initTag() {

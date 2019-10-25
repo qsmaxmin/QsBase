@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.qsmaxmin.qsbase.common.log.L;
+import com.qsmaxmin.qsbase.common.model.QsNotProguard;
 import com.qsmaxmin.qsbase.common.viewbind.ViewBindHelper;
 
 
@@ -14,7 +15,8 @@ import com.qsmaxmin.qsbase.common.viewbind.ViewBindHelper;
  * @Date 16/8/5
  * @Description RecyclerView的Item封装类
  */
-public abstract class QsRecycleAdapterItem<T> {
+@SuppressWarnings("WeakerAccess")
+public abstract class QsRecycleAdapterItem<T> implements QsNotProguard {
     private View    mItemView;
     private Context mParentContext;
 

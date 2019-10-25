@@ -13,6 +13,7 @@ import com.qsmaxmin.qsbase.common.exception.QsException;
 import com.qsmaxmin.qsbase.common.exception.QsExceptionType;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.model.QsModel;
+import com.qsmaxmin.qsbase.common.model.QsNotProguard;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.common.widget.listview.LoadingFooter;
 import com.qsmaxmin.qsbase.common.widget.toast.QsToast;
@@ -27,7 +28,8 @@ import java.util.ArrayList;
  * @Date 2017/6/21 16:27
  * @Description
  */
-public class QsPresenter<V extends QsIView> {
+@SuppressWarnings("WeakerAccess")
+public class QsPresenter<V extends QsIView> implements QsNotProguard {
     private final ArrayList<String> tagList = new ArrayList<>();
     private       boolean           isAttach;
     private       V                 mView;

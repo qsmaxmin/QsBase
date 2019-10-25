@@ -14,6 +14,7 @@ import java.lang.reflect.Type;
  * @Date 2017/6/20 16:40
  * @Description
  */
+@SuppressWarnings("unchecked")
 public final class PresenterUtils {
     /**
      * 创建业务类

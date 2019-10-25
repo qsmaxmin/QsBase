@@ -22,6 +22,7 @@ import com.qsmaxmin.qsbase.mvp.model.QsModelPager;
  * @Description
  */
 
+@SuppressWarnings("WeakerAccess")
 public class QsViewPagerAdapter extends PagerAdapter implements OuterPagerAdapter {
     private static final String TAG             = "QsViewPagerAdapter";
     private              int    replacePosition = -1;        // 替换标识

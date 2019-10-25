@@ -6,7 +6,7 @@ package com.qsmaxmin.qsbase.common.model;
  * @Description 网络请求基类
  */
 
-public class QsModel {
+public class QsModel implements QsNotProguard {
     /**
      * http请求是否成功，由子类实现
      */
