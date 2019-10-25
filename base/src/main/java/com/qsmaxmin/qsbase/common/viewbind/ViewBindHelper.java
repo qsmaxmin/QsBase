@@ -11,7 +11,7 @@ import com.qsmaxmin.qsbase.common.log.L;
 /**
  * @CreateBy qsmaxmin
  * @Date 2019/6/6 17:35
- * @Description
+ * @Description 将view绑定到layer
  */
 public class ViewBindHelper {
     private final static LruCache<Class, ViewAnnotationExecutor> executorCache = new LruCache<>(400);
