@@ -39,6 +39,10 @@ public class ViewBindHelper {
             if (L.isEnable()) startTime = System.nanoTime();
             Object newExecutor = finder.getViewAnnotationExecutor(clazz.getName());
             if (newExecutor == null) {
+                if (L.isEnable()) {
+                    long endTime = System.nanoTime();
+                    L.i("ViewBindHelper", "current layer(" + clazz.getName() + ") does not need to bind view, logic use time:" + (endTime - startTime) / 1000000f + "ms");
+                }
                 return null;
             } else {
                 if (L.isEnable()) {
