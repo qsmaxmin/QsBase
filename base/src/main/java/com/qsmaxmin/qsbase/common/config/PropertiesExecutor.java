@@ -68,11 +68,18 @@ public abstract class PropertiesExecutor<T> {
 
     /**
      * base on String
+     * 历史遗留问题，因为double转float会丢失精度
+     * 所以在以后的版本里同String保存double数据，此处做了兼容处理
      */
     public final double forceCastToDouble(Object o) {
         if (o == null) return 0;
-        String stringValue = (String) o;
-        return Double.parseDouble(stringValue);
+        if (o instanceof String) {
+            String stringValue = (String) o;
+            return Double.parseDouble(stringValue);
+        } else {
+            float floatValue = (float) o;
+            return (double) floatValue;
+        }
     }
 
     /**
