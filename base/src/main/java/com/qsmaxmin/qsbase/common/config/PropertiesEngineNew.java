@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.qsmaxmin.ann.viewbind.AnnotationExecutorFinder;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
 
 /**
@@ -20,15 +21,17 @@ class PropertiesEngineNew<T> {
         this.mConfig = config;
         Application application = QsHelper.getApplication();
         sp = application.getSharedPreferences(key, Context.MODE_PRIVATE);
+        executor = (PropertiesExecutor<T>) AnnotationExecutorFinder.getPropertiesExecutor(config.getClass().getName());
+        if (executor != null) executor.bindConfig(config, sp);
 
-        Class<?> configClass = mConfig.getClass();
-        try {
-            Class<?> executeClazz = Class.forName(getExecuteClassName(configClass));
-            executor = (PropertiesExecutor<T>) executeClazz.newInstance();
-            executor.bindConfig(config, sp);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        Class<?> configClass = config.getClass();
+//        try {
+//            Class<?> executeClazz = Class.forName(getExecuteClassName(configClass));
+//            executor = (PropertiesExecutor<T>) executeClazz.newInstance();
+//            executor.bindConfig(config, sp);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
     }
 
     void commit() {
@@ -42,12 +45,10 @@ class PropertiesEngineNew<T> {
     }
 
     void clear() {
-        if (executor != null) {
-            try {
-                executor.clear(mConfig, sp);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        if (sp != null) {
+            SharedPreferences.Editor edit = sp.edit();
+            edit.clear();
+            edit.apply();
         }
     }
 

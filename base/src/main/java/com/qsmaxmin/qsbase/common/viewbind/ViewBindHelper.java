@@ -15,7 +15,6 @@ import com.qsmaxmin.qsbase.common.log.L;
  */
 public class ViewBindHelper {
     private final static LruCache<Class, ViewAnnotationExecutor> executorCache = new LruCache<>(400);
-    private final static AnnotationExecutorFinder                finder        = new AnnotationExecutorFinder();
 
     public static <T> void bindView(T target, View view) {
         if (target != null && view != null) {
@@ -37,7 +36,7 @@ public class ViewBindHelper {
         if (executor == null) {
             long startTime = 0;
             if (L.isEnable()) startTime = System.nanoTime();
-            Object newExecutor = finder.getViewAnnotationExecutor(clazz.getName());
+            Object newExecutor = AnnotationExecutorFinder.getViewAnnotationExecutor(clazz.getName());
             if (newExecutor == null) {
                 if (L.isEnable()) {
                     long endTime = System.nanoTime();

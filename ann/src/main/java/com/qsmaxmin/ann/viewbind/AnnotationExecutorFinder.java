@@ -7,7 +7,11 @@ package com.qsmaxmin.ann.viewbind;
  */
 public final class AnnotationExecutorFinder {
 
-    public final Object getViewAnnotationExecutor(String clazzName) {
+    public static Object getViewAnnotationExecutor(String clazzName) {
+        return null;
+    }
+
+    public static Object getPropertiesExecutor(String clazzName) {
         return null;
     }
 }
