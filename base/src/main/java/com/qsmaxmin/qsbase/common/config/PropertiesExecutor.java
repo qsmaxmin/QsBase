@@ -67,12 +67,12 @@ public abstract class PropertiesExecutor<T> {
     }
 
     /**
-     * base on float
+     * base on String
      */
     public final double forceCastToDouble(Object o) {
         if (o == null) return 0;
-        float floatValue = (float) o;
-        return (double) floatValue;
+        String stringValue = (String) o;
+        return Double.parseDouble(stringValue);
     }
 
     /**
@@ -105,8 +105,8 @@ public abstract class PropertiesExecutor<T> {
         return null;
     }
 
-    public float doubleCastToFloat(Double d) {
-        double doubleValue = d;
-        return (float) doubleValue;
+    public String doubleCastToString(Double d) {
+        double doubleValue = d == null ? 0 : d;
+        return String.valueOf(doubleValue);
     }
 }
