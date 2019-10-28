@@ -7,17 +7,15 @@ import com.google.gson.Gson;
 /**
  * @CreateBy qsmaxmin
  * @Date 2019/7/22 15:28
- * @Description
+ * @Description executor 超类
  */
 @SuppressWarnings({"unchecked", "WeakerAccess"})
-public class PropertiesExecutor<T> {
+public abstract class PropertiesExecutor<T> {
     private Gson gson;
 
-    public void bindConfig(T config, SharedPreferences sp) {
-    }
+    public abstract void bindConfig(T config, SharedPreferences sp);
 
-    public void commit(T config, SharedPreferences sp) {
-    }
+    public abstract void commit(T config, SharedPreferences sp);
 
     /**
      * base on int

@@ -12,7 +12,7 @@ import com.qsmaxmin.qsbase.common.model.QsNotProguard;
  */
 
 public abstract class QsProperties implements QsNotProguard {
-    private PropertiesEngineNew<QsProperties> engine;
+    private PropertiesEngine<QsProperties> engine;
 
     public String initTag() {
         return L.isEnable() ? getClass().getSimpleName() : "QsProperties";
@@ -22,7 +22,7 @@ public abstract class QsProperties implements QsNotProguard {
     }
 
     public QsProperties(@NonNull String key) {
-        engine = new PropertiesEngineNew<>(this, key);
+        engine = new PropertiesEngine<>(this, key);
     }
 
     /**
