@@ -257,6 +257,7 @@ public abstract class QsListFragment<P extends QsPresenter, D> extends QsFragmen
         /**
          * getView
          **/
+        @SuppressWarnings({"unchecked"})
         @Override public View getView(int position, View convertView, ViewGroup parent) {
             onAdapterGetView(position, getCount());
             QsListAdapterItem item = null;
