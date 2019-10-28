@@ -48,8 +48,8 @@ MVP架构+AOP面向切面编程，摒弃反射、代理等操作，稳定性和�
 
         dependencies {
             ...
-            implementation 'com.github.qsmaxmin:QsBase:6.0.6'
-            annotationProcessor 'com.github.qsmaxmin:QsPlugin:6.0.6'
+            implementation 'com.github.qsmaxmin:QsBase:6.3.5'
+            annotationProcessor 'com.github.qsmaxmin:QsPlugin:6.3.5'
         }
 
 #### step 3：自定义Application
@@ -137,6 +137,7 @@ MVP架构+AOP面向切面编程，摒弃反射、代理等操作，稳定性和�
             QsABActivity: 有actionbar的activity
             QsViewpagerActivity: 没有actionbar的viewpager activity，集成Viewpager快速开发
             QsViewpagerABActivity: 有actionbar的viewpager activity，集成Viewpager快速开发
+            ...
 
         例如：
         /**
@@ -173,7 +174,7 @@ MVP架构+AOP面向切面编程，摒弃反射、代理等操作，稳定性和�
         /**
          * M层
          * 可以定义一个http响应体基类，将公参放到里面，实现未实现的方法
-         * 注：公参由服务端决定，这三个方法必须实现
+         * 注：公参由服务端决定，这三个方法须实现
          */
         public class BaseModel extends QsModel{
             public int     code;
@@ -183,7 +184,7 @@ MVP架构+AOP面向切面编程，摒弃反射、代理等操作，稳定性和�
              * http请求是否成功，由子类实现
              */
             public boolean isResponseOk() {
-                return code==0;
+                return code == 0;
             }
 
             /**
@@ -283,22 +284,10 @@ MVP架构+AOP面向切面编程，摒弃反射、代理等操作，稳定性和�
         -dontwarn javax.inject.*
         -keep class javax.inject.**{*;}
 
-        #model防止混淆
-        -keep class * extends com.qsmaxmin.qsbase.common.model.QsModel {*;}
-        -keep class $ extends com.qsmaxmin.qsbase.common.model.QsModel {*;}
-        -keep class * extends com.qsmaxmin.qsbase.mvp.adapter.QsListAdapterItem {*;}
-        -keep class $ extends com.qsmaxmin.qsbase.mvp.adapter.QsListAdapterItem {*;}
-        -keep class * extends com.qsmaxmin.qsbase.mvp.adapter.QsRecycleAdapterItem {*;}
-        -keep class $ extends com.qsmaxmin.qsbase.mvp.adapter.QsRecycleAdapterItem {*;}
-        -keep class * extends com.qsmaxmin.qsbase.common.viewbind.ViewAnnotationExecutor {*;}
-        -keep class * extends com.qsmaxmin.qsbase.common.config.PropertiesExecutor {*;}
+        #框架部分实现类防止混淆
+        -keep class * extends com.qsmaxmin.qsbase.common.model.QsNotProguard {*;}
+        -keep class $ extends com.qsmaxmin.qsbase.common.model.QsNotProguard {*;}
         
-        #Presenter防止混淆
-        -keep class * extends com.qsmaxmin.qsbase.mvp.presenter.QsPresenter {*;}
-
-        #Config防止混淆
-        -keep class * extends com.qsmaxmin.qsbase.common.config.QsProperties{*;}
-
         #Glide防止混淆
         -keep class * extends com.bumptech.glide.module.AppGlideModule{*;}
         -keep class * extends com.bumptech.glide.module.LibraryGlideModule{*;}
