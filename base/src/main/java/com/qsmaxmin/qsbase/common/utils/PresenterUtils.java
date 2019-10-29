@@ -39,7 +39,7 @@ public final class PresenterUtils {
             }
         } else {
             String viewName = L.isEnable() ? iView.getClass().getSimpleName() : "QsIView";
-            L.i(viewName, "该类未添加@Presenter注解，将尝试使用泛型第一个参数创建Presenter实体");
+            L.e(viewName, "该类未添加@Presenter注解，将尝试使用泛型第一个参数创建Presenter实体");
         }
 
         Type genericSuperclass = viewClass.getGenericSuperclass();

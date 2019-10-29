@@ -73,7 +73,15 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
 
     @Override @Nullable @CallSuper public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         ViewBindHelper.bindBundle(this, getArguments());
+        long startTime = 0;
+        if (L.isEnable()) {
+            startTime = System.nanoTime();
+        }
         View rootView = initView(inflater);
+        if (L.isEnable()) {
+            long endTime = System.nanoTime();
+            L.i(initTag(), "initView complete use time:" + (endTime - startTime) / 1000000f + "ms");
+        }
         ViewBindHelper.bindView(this, rootView);
         rootView.setOnTouchListener(this);
         if (isOpenEventBus() && !EventBus.getDefault().isRegistered(this)) EventBus.getDefault().register(this);
