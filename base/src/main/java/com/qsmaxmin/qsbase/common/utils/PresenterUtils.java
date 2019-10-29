@@ -62,7 +62,7 @@ public final class PresenterUtils {
         }
 
         String viewName = L.isEnable() ? iView.getClass().getSimpleName() : "QsIView";
-        L.i(viewName, "该类未自定义Presenter类，将创建QsPresenter实体");
+        L.e(viewName, "该类未自定义Presenter类，将创建QsPresenter实体");
         presenterImpl = (P) new QsPresenter<>();
         presenterImpl.initPresenter(iView);
         return presenterImpl;
