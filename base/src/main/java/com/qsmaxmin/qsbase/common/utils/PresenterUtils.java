@@ -22,7 +22,6 @@ public final class PresenterUtils {
     public static <P extends QsPresenter, V extends QsIView> P createPresenter(V iView) {
         Class<? extends QsIView> viewClass = iView.getClass();
         P presenterImpl;
-
         Presenter presenterAnn = viewClass.getAnnotation(Presenter.class);
         if (presenterAnn != null) {
             Class presenterClass = presenterAnn.value();

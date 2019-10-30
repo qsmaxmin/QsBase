@@ -15,6 +15,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -117,24 +118,39 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
     }
 
 
+    @SuppressLint("InflateParams")
     protected View initView() {
+        long s0 = 0;
+        if (L.isEnable()) s0 = System.nanoTime();
         View rootView;
         Toolbar mToolbar;
+        LayoutInflater inflater = getLayoutInflater();
         if (isOpenViewState() && loadingLayoutId() != 0 && emptyLayoutId() != 0 && errorLayoutId() != 0) {
-            rootView = View.inflate(this, rootViewLayoutId(), null);
+            rootView = inflater.inflate(rootViewLayoutId(), null);
             mViewAnimator = rootView.findViewById(android.R.id.home);
             initViewAnimator(mViewAnimator);
             mToolbar = rootView.findViewById(R.id.toolbar);
-            View.inflate(this, loadingLayoutId(), mViewAnimator);
-            View.inflate(this, layoutId(), mViewAnimator);
-            View.inflate(this, emptyLayoutId(), mViewAnimator);
-            View.inflate(this, errorLayoutId(), mViewAnimator);
-            initDefaultView();
+
+            View loadingView = onCreateLoadingView(inflater);
+            loadingView.setTag(R.id.view_state_key, QsConstants.VIEW_STATE_LOADING);
+            mViewAnimator.addView(loadingView, 0);
+
+            View contentView = onCreateContentView(inflater);
+            contentView.setTag(R.id.view_state_key, QsConstants.VIEW_STATE_CONTENT);
+            mViewAnimator.addView(contentView, 1);
+            if (L.isEnable()) {
+                long s1 = System.nanoTime();
+                L.i(initTag(), "initView...view inflate complete(viewState is open), use time:" + (s1 - s0) / 1000000f + "ms");
+            }
         } else {
-            rootView = View.inflate(this, R.layout.qs_activity_ab, null);
+            rootView = inflater.inflate(R.layout.qs_activity_ab, null);
+            if (L.isEnable()) {
+                long s1 = System.nanoTime();
+                L.i(initTag(), "initView...view inflate complete(viewState not open), use time:" + (s1 - s0) / 1000000f + "ms");
+            }
             mToolbar = rootView.findViewById(R.id.toolbar);
             ViewGroup mainView = rootView.findViewById(android.R.id.home);
-            View.inflate(this, layoutId(), mainView);
+            mainView.addView(onCreateContentView(inflater));
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) mToolbar.setElevation(0);
         if (actionbarLayoutId() != 0) {
@@ -250,6 +266,28 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
         return QsHelper.getAppInterface().errorLayoutId();
     }
 
+    @Override public View onCreateLoadingView(@NonNull LayoutInflater inflater) {
+        View view = inflater.inflate(loadingLayoutId(), null);
+        setDefaultViewClickListener(view);
+        return view;
+    }
+
+    @Override public View onCreateContentView(@NonNull LayoutInflater inflater) {
+        return inflater.inflate(layoutId(), null);
+    }
+
+    @Override public View onCreateEmptyView(@NonNull LayoutInflater inflater) {
+        View view = inflater.inflate(emptyLayoutId(), null);
+        setDefaultViewClickListener(view);
+        return view;
+    }
+
+    @Override public View onCreateErrorView(@NonNull LayoutInflater inflater) {
+        View view = inflater.inflate(errorLayoutId(), null);
+        setDefaultViewClickListener(view);
+        return view;
+    }
+
     /**
      * 重写该方法以便自定义进度条样式
      */
@@ -277,7 +315,8 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
         loading(message, true);
     }
 
-    @ThreadPoint(ThreadType.MAIN) @Override public void loading(String message, boolean cancelAble) {
+    @ThreadPoint(ThreadType.MAIN)
+    @Override public void loading(String message, boolean cancelAble) {
         if (mProgressDialog == null) mProgressDialog = getLoadingDialog();
         if (mProgressDialog != null) {
             mProgressDialog.setMessage(message);
@@ -291,29 +330,77 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
         }
     }
 
-    @ThreadPoint(ThreadType.MAIN) @Override public void loadingClose() {
+    @ThreadPoint(ThreadType.MAIN)
+    @Override public void loadingClose() {
         if (mProgressDialog != null && mProgressDialog.isAdded()) mProgressDialog.dismissAllowingStateLoss();
     }
 
     @Override public void showLoadingView() {
-        setViewState(QsConstants.VIEW_STATE_LOADING);
+        if (isOpenViewState() && mViewAnimator != null) {
+            if (L.isEnable()) L.i(initTag(), "showLoadingView.........");
+            setViewState(0);
+        }
     }
 
     @Override public void showContentView() {
-        setViewState(QsConstants.VIEW_STATE_CONTENT);
+        if (isOpenViewState() && mViewAnimator != null) {
+            if (L.isEnable()) L.i(initTag(), "showContentView.........");
+            setViewState(1);
+        }
     }
 
     @Override public void showEmptyView() {
-        setViewState(QsConstants.VIEW_STATE_EMPTY);
+        if (isOpenViewState() && mViewAnimator != null) {
+            if (L.isEnable()) L.i(initTag(), "showEmptyView.........");
+            int childCount = mViewAnimator.getChildCount();
+            for (int i = 0; i < childCount; i++) {
+                View childAt = mViewAnimator.getChildAt(i);
+                int index = (int) childAt.getTag(R.id.view_state_key);
+                if (index == QsConstants.VIEW_STATE_EMPTY) {
+                    setViewState(i);
+                    return;
+                }
+            }
+            View emptyView = onCreateEmptyView(getLayoutInflater());
+            if (emptyView != null) {
+                emptyView.setTag(R.id.view_state_key, QsConstants.VIEW_STATE_EMPTY);
+                mViewAnimator.addView(emptyView);
+                setViewState(childCount);
+            }
+        }
     }
 
     @Override public void showErrorView() {
-        setViewState(QsConstants.VIEW_STATE_ERROR);
+        if (isOpenViewState() && mViewAnimator != null) {
+            if (L.isEnable()) L.i(initTag(), "showErrorView.........");
+            int childCount = mViewAnimator.getChildCount();
+            for (int i = 0; i < childCount; i++) {
+                View childAt = mViewAnimator.getChildAt(i);
+                int value = (int) childAt.getTag(R.id.view_state_key);
+                if (value == QsConstants.VIEW_STATE_ERROR) {
+                    setViewState(i);
+                    return;
+                }
+            }
+            View errorView = onCreateErrorView(getLayoutInflater());
+            if (errorView != null) {
+                errorView.setTag(R.id.view_state_key, QsConstants.VIEW_STATE_ERROR);
+                mViewAnimator.addView(errorView);
+                setViewState(childCount);
+            }
+        }
     }
 
+    /**
+     * return current showing view
+     *
+     * @return see {@link QsConstants#VIEW_STATE_LOADING ...}
+     */
     @Override public int currentViewState() {
         if (isOpenViewState() && mViewAnimator != null) {
-            return mViewAnimator.getDisplayedChild();
+            int displayedIndex = mViewAnimator.getDisplayedChild();
+            View childView = mViewAnimator.getChildAt(displayedIndex);
+            return (int) childView.getTag(R.id.view_state_key);
         }
         return -1;
     }
@@ -425,23 +512,15 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
         QsHelper.getPermissionHelper().parsePermissionResultData(requestCode, permissions, grantResults, this);
     }
 
-    @ThreadPoint(ThreadType.MAIN) protected void setViewState(int showState) {
-        L.i(initTag(), "setViewState() showState=" + showState);
-        if (!isOpenViewState()) {
-            L.i(initTag(), "当前Activity没有打开状态模式! isOpenViewState() = false");
-            return;
+    @ThreadPoint(ThreadType.MAIN)
+    protected void setViewState(int index) {
+        if (mViewAnimator.getDisplayedChild() != index) {
+            mViewAnimator.setDisplayedChild(index);
         }
-        if (mViewAnimator == null) {
-            return;
-        }
-        int displayedChild = mViewAnimator.getDisplayedChild();
-        if (displayedChild == showState) {
-            return;
-        }
-        mViewAnimator.setDisplayedChild(showState);
     }
 
-    @ThreadPoint(ThreadType.MAIN) @Override public void onBackPressed() {
+    @ThreadPoint(ThreadType.MAIN)
+    @Override public void onBackPressed() {
         super.onBackPressed();
     }
 
@@ -474,14 +553,6 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
 
     @Override public boolean onKeyDown(KeyEvent event, int keyCode) {
         return super.onKeyDown(keyCode, event);
-    }
-
-    private void initDefaultView() {
-        if (mViewAnimator != null && mViewAnimator.getChildCount() >= 4) {
-            setDefaultViewClickListener(mViewAnimator.getChildAt(0));
-            setDefaultViewClickListener(mViewAnimator.getChildAt(2));
-            setDefaultViewClickListener(mViewAnimator.getChildAt(3));
-        }
     }
 
     private void setDefaultViewClickListener(View view) {

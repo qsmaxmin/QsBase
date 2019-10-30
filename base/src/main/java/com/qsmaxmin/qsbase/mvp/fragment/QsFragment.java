@@ -73,15 +73,7 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
 
     @Override @Nullable @CallSuper public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         ViewBindHelper.bindBundle(this, getArguments());
-        long startTime = 0;
-        if (L.isEnable()) {
-            startTime = System.nanoTime();
-        }
         View rootView = initView(inflater);
-        if (L.isEnable()) {
-            long endTime = System.nanoTime();
-            L.i(initTag(), "initView complete use time:" + (endTime - startTime) / 1000000f + "ms");
-        }
         ViewBindHelper.bindView(this, rootView);
         rootView.setOnTouchListener(this);
         if (isOpenEventBus() && !EventBus.getDefault().isRegistered(this)) EventBus.getDefault().register(this);
@@ -116,18 +108,32 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
     }
 
     protected View initView(LayoutInflater inflater) {
+        long s0 = 0;
+        if (L.isEnable()) s0 = System.nanoTime();
         View view;
         if (isOpenViewState() && loadingLayoutId() != 0 && emptyLayoutId() != 0 && errorLayoutId() != 0) {
             view = inflater.inflate(rootViewLayoutId(), null);
             mViewAnimator = view.findViewById(android.R.id.home);
             initViewAnimator(mViewAnimator);
-            inflater.inflate(loadingLayoutId(), mViewAnimator);
-            inflater.inflate(layoutId(), mViewAnimator);
-            inflater.inflate(emptyLayoutId(), mViewAnimator);
-            inflater.inflate(errorLayoutId(), mViewAnimator);
-            initDefaultView();
+
+            View loadingView = onCreateLoadingView(inflater);
+            loadingView.setTag(R.id.view_state_key, QsConstants.VIEW_STATE_LOADING);
+            mViewAnimator.addView(loadingView, 0);
+
+            View contentView = onCreateContentView(inflater);
+            contentView.setTag(R.id.view_state_key, QsConstants.VIEW_STATE_CONTENT);
+            mViewAnimator.addView(contentView, 1);
+
+            if (L.isEnable()) {
+                long s1 = System.nanoTime();
+                L.i(initTag(), "initView...view inflate complete(viewState is open), use time:" + (s1 - s0) / 1000000f + "ms");
+            }
         } else {
-            view = inflater.inflate(layoutId(), null);
+            view = onCreateContentView(inflater);
+            if (L.isEnable()) {
+                long s1 = System.nanoTime();
+                L.i(initTag(), "initView...view inflate complete(viewState not open), use time:" + (s1 - s0) / 1000000f + "ms");
+            }
         }
         return view;
     }
@@ -239,6 +245,28 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         return QsHelper.getAppInterface().errorLayoutId();
     }
 
+    @Override public View onCreateLoadingView(@NonNull LayoutInflater inflater) {
+        View view = inflater.inflate(loadingLayoutId(), null);
+        setDefaultViewClickListener(view);
+        return view;
+    }
+
+    @Override public View onCreateContentView(@NonNull LayoutInflater inflater) {
+        return inflater.inflate(layoutId(), null);
+    }
+
+    @Override public View onCreateEmptyView(@NonNull LayoutInflater inflater) {
+        View view = inflater.inflate(emptyLayoutId(), null);
+        setDefaultViewClickListener(view);
+        return view;
+    }
+
+    @Override public View onCreateErrorView(@NonNull LayoutInflater inflater) {
+        View view = inflater.inflate(errorLayoutId(), null);
+        setDefaultViewClickListener(view);
+        return view;
+    }
+
     /**
      * 重写该方法以便自定义进度条样式
      */
@@ -271,7 +299,8 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         loading(QsHelper.getString(resId), cancelAble);
     }
 
-    @ThreadPoint(ThreadType.MAIN) @Override public void loading(String message, boolean cancelAble) {
+    @ThreadPoint(ThreadType.MAIN)
+    @Override public void loading(String message, boolean cancelAble) {
         if (mProgressDialog == null) mProgressDialog = getLoadingDialog();
         if (mProgressDialog != null) {
             mProgressDialog.setMessage(message);
@@ -285,29 +314,77 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         }
     }
 
-    @ThreadPoint(ThreadType.MAIN) @Override public void loadingClose() {
+    @ThreadPoint(ThreadType.MAIN)
+    @Override public void loadingClose() {
         if (mProgressDialog != null && mProgressDialog.isAdded()) mProgressDialog.dismissAllowingStateLoss();
     }
 
     @Override public void showLoadingView() {
-        setViewState(QsConstants.VIEW_STATE_LOADING);
+        if (isOpenViewState() && mViewAnimator != null && !isDetached()) {
+            if (L.isEnable()) L.i(initTag(), "showLoadingView.........");
+            setViewState(0);
+        }
     }
 
     @Override public void showContentView() {
-        setViewState(QsConstants.VIEW_STATE_CONTENT);
+        if (isOpenViewState() && mViewAnimator != null && !isDetached()) {
+            if (L.isEnable()) L.i(initTag(), "showContentView.........");
+            setViewState(1);
+        }
     }
 
     @Override public void showEmptyView() {
-        setViewState(QsConstants.VIEW_STATE_EMPTY);
+        if (isOpenViewState() && mViewAnimator != null && !isDetached()) {
+            if (L.isEnable()) L.i(initTag(), "showEmptyView.........");
+            int childCount = mViewAnimator.getChildCount();
+            for (int i = 0; i < childCount; i++) {
+                View childAt = mViewAnimator.getChildAt(i);
+                int index = (int) childAt.getTag(R.id.view_state_key);
+                if (index == QsConstants.VIEW_STATE_EMPTY) {
+                    setViewState(i);
+                    return;
+                }
+            }
+            View emptyView = onCreateEmptyView(getLayoutInflater());
+            if (emptyView != null) {
+                emptyView.setTag(R.id.view_state_key, QsConstants.VIEW_STATE_EMPTY);
+                mViewAnimator.addView(emptyView);
+                setViewState(childCount);
+            }
+        }
     }
 
     @Override public void showErrorView() {
-        setViewState(QsConstants.VIEW_STATE_ERROR);
+        if (isOpenViewState() && mViewAnimator != null && !isDetached()) {
+            if (L.isEnable()) L.i(initTag(), "showErrorView.........");
+            int childCount = mViewAnimator.getChildCount();
+            for (int i = 0; i < childCount; i++) {
+                View childAt = mViewAnimator.getChildAt(i);
+                int value = (int) childAt.getTag(R.id.view_state_key);
+                if (value == QsConstants.VIEW_STATE_ERROR) {
+                    setViewState(i);
+                    return;
+                }
+            }
+            View errorView = onCreateErrorView(getLayoutInflater());
+            if (errorView != null) {
+                errorView.setTag(R.id.view_state_key, QsConstants.VIEW_STATE_ERROR);
+                mViewAnimator.addView(errorView);
+                setViewState(childCount);
+            }
+        }
     }
 
+    /**
+     * return current showing view
+     *
+     * @return see {@link QsConstants#VIEW_STATE_LOADING ...}
+     */
     @Override public int currentViewState() {
         if (isOpenViewState() && mViewAnimator != null) {
-            return mViewAnimator.getDisplayedChild();
+            int displayedIndex = mViewAnimator.getDisplayedChild();
+            View childView = mViewAnimator.getChildAt(displayedIndex);
+            return (int) childView.getTag(R.id.view_state_key);
         }
         return -1;
     }
@@ -388,7 +465,8 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         commitFragment(old, layoutId, fragment, fragment.getClass().getSimpleName());
     }
 
-    @ThreadPoint(ThreadType.MAIN) @Override public void commitFragment(Fragment old, int layoutId, Fragment fragment, String tag) {
+    @ThreadPoint(ThreadType.MAIN)
+    @Override public void commitFragment(Fragment old, int layoutId, Fragment fragment, String tag) {
         QsHelper.commitFragment(getFragmentManager(), old, layoutId, fragment, tag);
     }
 
@@ -416,27 +494,10 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         QsHelper.commitDialogFragment(getFragmentManager(), fragment);
     }
 
-    @ThreadPoint(ThreadType.MAIN) protected void setViewState(int showState) {
-        L.i(initTag(), "setViewState() showState=" + showState);
-        if (!isOpenViewState()) {
-            L.i(initTag(), "当前Fragment没有打开状态模式! isOpenViewState() = false");
-            return;
-        }
-        if (mViewAnimator == null) {
-            return;
-        }
-        int displayedChild = mViewAnimator.getDisplayedChild();
-        if (displayedChild == showState) {
-            return;
-        }
-        mViewAnimator.setDisplayedChild(showState);
-    }
-
-    private void initDefaultView() {
-        if (mViewAnimator != null && mViewAnimator.getChildCount() >= 4) {
-            setDefaultViewClickListener(mViewAnimator.getChildAt(0));
-            setDefaultViewClickListener(mViewAnimator.getChildAt(2));
-            setDefaultViewClickListener(mViewAnimator.getChildAt(3));
+    @ThreadPoint(ThreadType.MAIN)
+    private void setViewState(int index) {
+        if (mViewAnimator.getDisplayedChild() != index) {
+            mViewAnimator.setDisplayedChild(index);
         }
     }
 

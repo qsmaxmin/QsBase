@@ -133,7 +133,6 @@ public class InnerSpecialViewHelper {
 
     public View generateContentAutoCompletionView() {
         mContentAutoCompletionView = new View(mContext);
-        mContentAutoCompletionView.setTag(R.id.id_for_auto_completion_content, "");
         if (mContentAutoCompletionColor != ORIGIN_AUTO_COMPLETION_COLOR) {
             mContentAutoCompletionView.setBackgroundColor(mContentAutoCompletionColor);
         }

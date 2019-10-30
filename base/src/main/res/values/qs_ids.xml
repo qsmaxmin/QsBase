@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <item name="id_for_empty_content" type="id"/>
-    <item name="id_for_auto_completion_content" type="id"/>
     <item name="qs_back_in_default_view" type="id"/>
     <item name="qs_reload_in_default_view" type="id"/>
     <item name="qs_banner_image" type="id"/>
+    <item name="view_state_key" type="id"/>
 </resources>

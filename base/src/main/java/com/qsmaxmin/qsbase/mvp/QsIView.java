@@ -2,10 +2,12 @@ package com.qsmaxmin.qsbase.mvp;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
 
@@ -28,6 +30,14 @@ public interface QsIView<P> {
     int loadingLayoutId();
 
     int errorLayoutId();
+
+    View onCreateLoadingView(@NonNull LayoutInflater inflater);
+
+    View onCreateContentView(@NonNull LayoutInflater inflater);
+
+    View onCreateEmptyView(@NonNull LayoutInflater inflater);
+
+    View onCreateErrorView(@NonNull LayoutInflater inflater);
 
     QsProgressDialog getLoadingDialog();
 

@@ -428,7 +428,6 @@ public class InnerListView extends QsListView implements InnerScroller, AbsListV
             // Empty Content
             if (isEmptyContent(position, innerTempCount)) {
                 View viewEmptyFirst = getInnerEmptyViewSafely();
-                viewEmptyFirst.setTag(R.id.id_for_empty_content, "");
                 LayoutParams lp = new LayoutParams(MagicHeaderUtils.getScreenWidth(getContext()), getCustomEmptyViewHeight());
                 viewEmptyFirst.setLayoutParams(lp);
                 if (empty_first_position < -126) {
