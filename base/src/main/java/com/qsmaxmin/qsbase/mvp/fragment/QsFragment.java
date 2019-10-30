@@ -333,6 +333,7 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         }
     }
 
+    @ThreadPoint(ThreadType.MAIN)
     @Override public void showEmptyView() {
         if (isOpenViewState() && mViewAnimator != null && !isDetached()) {
             if (L.isEnable()) L.i(initTag(), "showEmptyView.........");
@@ -354,6 +355,7 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         }
     }
 
+    @ThreadPoint(ThreadType.MAIN)
     @Override public void showErrorView() {
         if (isOpenViewState() && mViewAnimator != null && !isDetached()) {
             if (L.isEnable()) L.i(initTag(), "showErrorView.........");

@@ -4,8 +4,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 
 import com.qsmaxmin.qsbase.R;
-import com.qsmaxmin.qsbase.common.aspect.ThreadPoint;
-import com.qsmaxmin.qsbase.common.aspect.ThreadType;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.widget.listview.LoadingFooter;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrDefaultHandler;
@@ -25,11 +23,11 @@ import java.util.List;
  */
 
 public abstract class QsPullRecyclerFragment<P extends QsPresenter, D> extends QsRecyclerFragment<P, D> implements QsIPullToRefresh {
-    public static final byte    LOAD_WHEN_SCROLL_TO_BOTTOM = 0;
-    public static final byte    LOAD_WHEN_SECOND_TO_LAST   = 1;
-    private             boolean canLoadingMore             = true;
-    private   PtrFrameLayout mPtrFrameLayout;
-    protected LoadingFooter  mLoadingFooter;
+    public static final byte           LOAD_WHEN_SCROLL_TO_BOTTOM = 0;
+    public static final byte           LOAD_WHEN_SECOND_TO_LAST   = 1;
+    private             boolean        canLoadingMore             = true;
+    private             PtrFrameLayout mPtrFrameLayout;
+    protected           LoadingFooter  mLoadingFooter;
 
 
     @Override public int getFooterLayout() {
@@ -98,7 +96,7 @@ public abstract class QsPullRecyclerFragment<P extends QsPresenter, D> extends Q
         });
     }
 
-    @ThreadPoint(ThreadType.MAIN) @Override public void setLoadingState(final LoadingFooter.State state) {
+    @Override public void setLoadingState(final LoadingFooter.State state) {
         L.i(initTag(), "setLoadingState：" + state);
         if (mLoadingFooter != null) mLoadingFooter.setState(state);
     }

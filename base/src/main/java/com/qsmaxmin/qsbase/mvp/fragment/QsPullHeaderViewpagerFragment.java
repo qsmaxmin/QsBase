@@ -36,7 +36,7 @@ public abstract class QsPullHeaderViewpagerFragment<P extends QsPresenter> exten
         if (mPtrFrameLayout != null) mPtrFrameLayout.autoRefresh();
     }
 
-    @Override public void stopRefreshing() {
+    @Override @ThreadPoint(ThreadType.MAIN) public void stopRefreshing() {
         mPtrFrameLayout.refreshComplete();
     }
 

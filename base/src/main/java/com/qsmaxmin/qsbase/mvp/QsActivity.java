@@ -333,6 +333,7 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         }
     }
 
+    @ThreadPoint(ThreadType.MAIN)
     @Override public void showEmptyView() {
         if (isOpenViewState() && mViewAnimator != null) {
             if (L.isEnable()) L.i(initTag(), "showEmptyView.........");
@@ -354,6 +355,7 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         }
     }
 
+    @ThreadPoint(ThreadType.MAIN)
     @Override public void showErrorView() {
         if (isOpenViewState() && mViewAnimator != null) {
             if (L.isEnable()) L.i(initTag(), "showErrorView.........");

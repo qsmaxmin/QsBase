@@ -15,14 +15,12 @@ import com.qsmaxmin.qsbase.common.widget.recyclerview.HeaderFooterRecyclerAdapte
  * ListView/GridView/RecyclerView 分页加载时使用到的FooterView
  */
 public class LoadingFooter extends RelativeLayout implements HeaderFooterRecyclerAdapter.OnRecyclerViewAdapterBindViewHolder {
-
     private static final String TAG = "LoadingFooter";
-
-    private State mState;
-    private View  mNormalView;
-    private View  mLoadingView;
-    private View  mNetworkErrorView;
-    private View  mTheEndView;
+    private              State  mState;
+    private              View   mNormalView;
+    private              View   mLoadingView;
+    private              View   mNetworkErrorView;
+    private              View   mTheEndView;
 
 
     public LoadingFooter(Context context) {
@@ -53,11 +51,14 @@ public class LoadingFooter extends RelativeLayout implements HeaderFooterRecycle
 
     public void setState(State status) {
         L.i(TAG, "setState  state:" + status);
-        if (status == null) {
-            return;
+        if (status != null) {
+            this.mState = status;
+            post(new Runnable() {
+                @Override public void run() {
+                    setViewState(mState);
+                }
+            });
         }
-        this.mState = status;
-        setViewState(status);
     }
 
     /**
