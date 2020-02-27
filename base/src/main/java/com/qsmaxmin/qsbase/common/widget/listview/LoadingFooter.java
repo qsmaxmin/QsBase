@@ -45,6 +45,14 @@ public class LoadingFooter extends RelativeLayout implements HeaderFooterRecycle
         super.onLayout(changed, l, t, r, b);
     }
 
+    @Override protected void onFinishInflate() {
+        super.onFinishInflate();
+        L.i(TAG, "onFinishInflate  state:" + mState);
+        if (mState != null) {
+            setViewState(mState);
+        }
+    }
+
     public State getState() {
         return mState;
     }
@@ -73,6 +81,7 @@ public class LoadingFooter extends RelativeLayout implements HeaderFooterRecycle
      * 设置状态
      */
     private void setViewState(State status) {
+
         switch (status) {
             case Normal:
                 if (mTheEndView != null) mTheEndView.setVisibility(GONE);
