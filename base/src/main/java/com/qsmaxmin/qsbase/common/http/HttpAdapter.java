@@ -328,12 +328,25 @@ public class HttpAdapter {
                 }
                 response.close();
                 return null;
+
+            } else if (returnType == byte[].class) {
+                if (callback != null) callback.onHttpResponse(httpResponse);
+                ResponseBody body = response.body();
+                byte[] result = null;
+                if (body != null) {
+                    result = body.bytes();
+                }
+                response.close();
+                if (callback != null) callback.onResult(httpBuilder, result);
+                return result;
+
             } else if (returnType.equals(Response.class)) {
                 if (callback != null) {
                     callback.onHttpResponse(httpResponse);
                     callback.onResult(httpBuilder, response);
                 }
                 return response;
+
             } else {
                 ResponseBody body = response.body();
                 if (body == null) {
