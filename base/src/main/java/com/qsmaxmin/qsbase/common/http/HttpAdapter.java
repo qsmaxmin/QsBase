@@ -96,6 +96,7 @@ public class HttpAdapter {
     /**
      * 创建代理
      */
+    @SuppressWarnings("unchecked")
     public <T> T create(Class<T> clazz, Object requestTag) {
         validateIsInterface(clazz, requestTag);
         validateIsExtendInterface(clazz, requestTag);
@@ -270,7 +271,9 @@ public class HttpAdapter {
                 okhttp3.FormBody.Builder builder = new okhttp3.FormBody.Builder();
                 for (String key : formMap.keySet()) {
                     String valueStr = formMap.get(key);
-                    if (!TextUtils.isEmpty(key) && !TextUtils.isEmpty(valueStr)) builder.add(key, valueStr);
+                    if (!TextUtils.isEmpty(key) && valueStr != null && valueStr.length() > 0) {
+                        builder.add(key, valueStr);
+                    }
                 }
                 requestBody = builder.build();
             }
