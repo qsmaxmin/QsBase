@@ -248,7 +248,7 @@ public class HttpAdapter {
         try {
             httpBuilder = getHttpBuilder(requestTag, requestStyle, terminal, path, args, requestType, body, formMap, paramsMap);
         } catch (Exception e) {
-            throw new QsException(QsExceptionType.UNEXPECTED, "http 公共处理逻辑出错", "error:" + e.getMessage());
+            throw new QsException(QsExceptionType.UNEXPECTED, requestTag, "receive error when execute：QsHttpCallback.initHttpAdapter, msg:" + e.getMessage());
         }
         StringBuilder url = getUrl(httpBuilder.getTerminal(), path, method, args, requestTag);
         if (TextUtils.isEmpty(url)) throw new QsException(QsExceptionType.UNEXPECTED, requestTag, "url error... method:" + method.getName() + "  request url is null...");
