@@ -17,6 +17,7 @@ import okhttp3.Headers;
 
 public class HttpBuilder {
     private final Object                  requestTag;
+    private final String[]                requestStyle;
     private       String                  terminal;
     private final String                  path;
     private final Object[]                args;
@@ -25,12 +26,11 @@ public class HttpBuilder {
     private       HashMap<String, String> formBody;
     private       HashMap<String, String> paramsMap;
 
-
     private Headers.Builder headerBuilder = new Headers.Builder();
 
-
-    HttpBuilder(Object requestTag, String terminal, String path, Object[] args, String requestType, Object body, HashMap<String, String> formBody, HashMap<String, String> paramsMap) {
+    HttpBuilder(Object requestTag, String[] requestStyle, String terminal, String path, Object[] args, String requestType, Object body, HashMap<String, String> formBody, HashMap<String, String> paramsMap) {
         this.requestTag = requestTag;
+        this.requestStyle = requestStyle;
         this.terminal = terminal;
         this.path = path;
         this.args = args;
@@ -58,7 +58,7 @@ public class HttpBuilder {
             }
             this.terminal = terminal;
         } else {
-            throw new QsException(QsExceptionType.UNEXPECTED, requestTag, "terminal is empty...");
+            throw new QsException(QsExceptionType.UNEXPECTED, requestStyle, "terminal is empty...");
         }
         return this;
     }
@@ -86,6 +86,10 @@ public class HttpBuilder {
 
     public String getPath() {
         return path;
+    }
+
+    public String[] getRequestStyle() {
+        return requestStyle;
     }
 
     public Object getRequestTag() {

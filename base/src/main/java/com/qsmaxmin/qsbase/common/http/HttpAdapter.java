@@ -15,6 +15,7 @@ import com.qsmaxmin.qsbase.common.aspect.POST;
 import com.qsmaxmin.qsbase.common.aspect.PUT;
 import com.qsmaxmin.qsbase.common.aspect.Path;
 import com.qsmaxmin.qsbase.common.aspect.Query;
+import com.qsmaxmin.qsbase.common.aspect.RequestStyle;
 import com.qsmaxmin.qsbase.common.aspect.TERMINAL;
 import com.qsmaxmin.qsbase.common.exception.QsException;
 import com.qsmaxmin.qsbase.common.exception.QsExceptionType;
@@ -86,8 +87,8 @@ public class HttpAdapter {
         callback = QsHelper.getAppInterface().registerGlobalHttpListener();
     }
 
-    private HttpBuilder getHttpBuilder(Object requestTag, String terminal, String path, Object[] args, String requestType, Object body, HashMap<String, String> formBody, HashMap<String, String> paramsMap) throws Exception {
-        HttpBuilder httpBuilder = new HttpBuilder(requestTag, terminal, path, args, requestType, body, formBody, paramsMap);
+    private HttpBuilder getHttpBuilder(Object requestTag, String[] requestStyle, String terminal, String path, Object[] args, String requestType, Object body, HashMap<String, String> formBody, HashMap<String, String> paramsMap) throws Exception {
+        HttpBuilder httpBuilder = new HttpBuilder(requestTag, requestStyle, terminal, path, args, requestType, body, formBody, paramsMap);
         if (callback != null) callback.initHttpAdapter(httpBuilder);
         return httpBuilder;
     }
@@ -107,7 +108,7 @@ public class HttpAdapter {
      */
     private static <T> void validateIsInterface(Class<T> service, Object requestTag) {
         if (service == null || !service.isInterface()) {
-            throw new QsException(QsExceptionType.UNEXPECTED, requestTag, String.valueOf(service) + " is not interface！");
+            throw new QsException(QsExceptionType.UNEXPECTED, requestTag, service + " is not interface！");
         }
     }
 
@@ -116,7 +117,7 @@ public class HttpAdapter {
      */
     private static <T> void validateIsExtendInterface(Class<T> service, Object requestTag) {
         if (service.getInterfaces().length > 0) {
-            throw new QsException(QsExceptionType.UNEXPECTED, requestTag, String.valueOf(service) + " can not extend interface!!");
+            throw new QsException(QsExceptionType.UNEXPECTED, requestTag, service + " can not extend interface!!");
         }
     }
 
@@ -127,9 +128,12 @@ public class HttpAdapter {
         }
         Annotation pathAnnotation = null;
         String terminal = null;
+        String[] requestStyle = {};
         for (Annotation annotation : annotations) {
             if (annotation instanceof TERMINAL) {
                 terminal = ((TERMINAL) annotation).value();
+            } else if (annotation instanceof RequestStyle) {
+                requestStyle = ((RequestStyle) annotation).value();
             } else {
                 pathAnnotation = annotation;
             }
@@ -137,29 +141,31 @@ public class HttpAdapter {
         if (pathAnnotation == null) {
             throw new QsException(QsExceptionType.UNEXPECTED, requestTag, "Annotation error... the method:" + method.getName() + " create(Object.class) the method must has an annotation,such as:@PUT @POST or @GET...");
         }
+
+
         if (pathAnnotation instanceof POST) {
             String path = ((POST) pathAnnotation).value();
-            return executeWithOkHttp(terminal, method, args, path, requestTag, "POST");
+            return executeWithOkHttp(terminal, method, args, path, requestTag, requestStyle, "POST");
 
         } else if (pathAnnotation instanceof GET) {
             String path = ((GET) pathAnnotation).value();
-            return executeWithOkHttp(terminal, method, args, path, requestTag, "GET");
+            return executeWithOkHttp(terminal, method, args, path, requestTag, requestStyle, "GET");
 
         } else if (pathAnnotation instanceof PUT) {
             String path = ((PUT) pathAnnotation).value();
-            return executeWithOkHttp(terminal, method, args, path, requestTag, "PUT");
+            return executeWithOkHttp(terminal, method, args, path, requestTag, requestStyle, "PUT");
 
         } else if (pathAnnotation instanceof DELETE) {
             String path = ((DELETE) pathAnnotation).value();
-            return executeWithOkHttp(terminal, method, args, path, requestTag, "DELETE");
+            return executeWithOkHttp(terminal, method, args, path, requestTag, requestStyle, "DELETE");
 
         } else if (pathAnnotation instanceof HEAD) {
             String path = ((HEAD) pathAnnotation).value();
-            return executeWithOkHttp(terminal, method, args, path, requestTag, "HEAD");
+            return executeWithOkHttp(terminal, method, args, path, requestTag, requestStyle, "HEAD");
 
         } else if (pathAnnotation instanceof PATCH) {
             String path = ((PATCH) pathAnnotation).value();
-            return executeWithOkHttp(terminal, method, args, path, requestTag, "PATCH");
+            return executeWithOkHttp(terminal, method, args, path, requestTag, requestStyle, "PATCH");
 
         } else {
             throw new QsException(QsExceptionType.UNEXPECTED, requestTag, "Annotation error... the method:" + method.getName() + "create(Object.class) the method must has an annotation, such as:@PUT @POST or @GET...");
@@ -197,9 +203,8 @@ public class HttpAdapter {
         }
     }
 
-    private Object executeWithOkHttp(String terminal, Method method, Object[] args, String path, Object requestTag, String requestType) {
+    private Object executeWithOkHttp(String terminal, Method method, Object[] args, String path, Object requestTag, String[] requestStyle, String requestType) {
         Annotation[][] annotations = method.getParameterAnnotations();//参数可以有多个注解，但这里是不允许的
-
         checkParamsAnnotation(annotations, args, method.getName(), requestTag);
 
         RequestBody requestBody = null;
@@ -240,7 +245,7 @@ public class HttpAdapter {
 
         HttpBuilder httpBuilder;
         try {
-            httpBuilder = getHttpBuilder(requestTag, terminal, path, args, requestType, body, formMap, paramsMap);
+            httpBuilder = getHttpBuilder(requestTag, requestStyle, terminal, path, args, requestType, body, formMap, paramsMap);
         } catch (Exception e) {
             throw new QsException(QsExceptionType.UNEXPECTED, "http 公共处理逻辑出错", "error:" + e.getMessage());
         }

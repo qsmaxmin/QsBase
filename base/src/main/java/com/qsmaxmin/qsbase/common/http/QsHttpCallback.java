@@ -16,7 +16,8 @@ public interface QsHttpCallback {
      *                {@link HttpBuilder#getHeaderBuilder()} ()}获取header
      *                {@link HttpBuilder#getTerminal()} ()}获取主机地址
      *                {@link HttpBuilder#getUrlParameters()} ()}获取url参数
-     *                {@link HttpBuilder#getRequestTag()} ()} ()}获取请求tag
+     *                {@link HttpBuilder#getRequestTag()}获取请求tag
+     *                {@link HttpBuilder#getRequestStyle()} 获取请求style
      *                {@link HttpBuilder#getBody()} ()} ()}获取请求体对象
      *                {@link HttpBuilder#getFormBody()} ()} ()}获取请求表单对象
      *                ......

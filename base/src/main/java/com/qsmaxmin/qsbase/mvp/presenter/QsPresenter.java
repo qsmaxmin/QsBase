@@ -144,7 +144,7 @@ public class QsPresenter<V extends QsIView> implements QsNotProguard {
      *
      * @param model 分页数据持有
      */
-   public void paging(QsModel model) {
+    public void paging(QsModel model) {
         if (model != null && !isViewDetach()) {
             QsIView qsIView = getView();
             if (qsIView == null) return;
