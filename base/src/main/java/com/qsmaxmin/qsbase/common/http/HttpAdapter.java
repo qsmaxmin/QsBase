@@ -87,7 +87,7 @@ public class HttpAdapter {
         callback = QsHelper.getAppInterface().registerGlobalHttpListener();
     }
 
-    private HttpBuilder getHttpBuilder(Object requestTag, String[] requestStyle, String terminal, String path, Object[] args, String requestType, Object body, HashMap<String, String> formBody, HashMap<String, String> paramsMap) throws Exception {
+    private HttpBuilder getHttpBuilder(Object requestTag, int requestStyle, String terminal, String path, Object[] args, String requestType, Object body, HashMap<String, String> formBody, HashMap<String, String> paramsMap) throws Exception {
         HttpBuilder httpBuilder = new HttpBuilder(requestTag, requestStyle, terminal, path, args, requestType, body, formBody, paramsMap);
         if (callback != null) callback.initHttpAdapter(httpBuilder);
         return httpBuilder;
@@ -129,7 +129,7 @@ public class HttpAdapter {
         }
         Annotation pathAnnotation = null;
         String terminal = null;
-        String[] requestStyle = {};
+        int requestStyle = 0;
         for (Annotation annotation : annotations) {
             if (annotation instanceof TERMINAL) {
                 terminal = ((TERMINAL) annotation).value();
@@ -204,7 +204,7 @@ public class HttpAdapter {
         }
     }
 
-    private Object executeWithOkHttp(String terminal, Method method, Object[] args, String path, Object requestTag, String[] requestStyle, String requestType) {
+    private Object executeWithOkHttp(String terminal, Method method, Object[] args, String path, Object requestTag, int requestStyle, String requestType) {
         Annotation[][] annotations = method.getParameterAnnotations();//参数可以有多个注解，但这里是不允许的
         checkParamsAnnotation(annotations, args, method.getName(), requestTag);
 

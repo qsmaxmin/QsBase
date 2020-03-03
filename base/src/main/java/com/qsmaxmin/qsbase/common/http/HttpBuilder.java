@@ -17,18 +17,18 @@ import okhttp3.Headers;
 
 public class HttpBuilder {
     private final Object                  requestTag;
-    private final String[]                requestStyle;
-    private       String                  terminal;
+    private final int                     requestStyle;
     private final String                  path;
     private final Object[]                args;
     private final String                  requestType;
+    private       String                  terminal;
     private       Object                  body;
     private       HashMap<String, String> formBody;
     private       HashMap<String, String> paramsMap;
 
     private Headers.Builder headerBuilder = new Headers.Builder();
 
-    HttpBuilder(Object requestTag, String[] requestStyle, String terminal, String path, Object[] args, String requestType, Object body, HashMap<String, String> formBody, HashMap<String, String> paramsMap) {
+    HttpBuilder(Object requestTag, int requestStyle, String terminal, String path, Object[] args, String requestType, Object body, HashMap<String, String> formBody, HashMap<String, String> paramsMap) {
         this.requestTag = requestTag;
         this.requestStyle = requestStyle;
         this.terminal = terminal;
@@ -88,7 +88,7 @@ public class HttpBuilder {
         return path;
     }
 
-    public String[] getRequestStyle() {
+    public int getRequestStyle() {
         return requestStyle;
     }
 
