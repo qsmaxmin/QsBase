@@ -1,8 +1,6 @@
 package com.qsmaxmin.qsbase.common.proxy;
 
 import com.qsmaxmin.qsbase.common.http.HttpAdapter;
-import com.qsmaxmin.qsbase.common.log.L;
-import com.qsmaxmin.qsbase.common.utils.QsHelper;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -21,9 +19,6 @@ public class HttpHandler implements InvocationHandler {
     }
 
     @Override public Object invoke(Object proxy, Method method, final Object[] args) throws Throwable {
-        if (L.isEnable()) {
-            L.i("HttpHandler", "网络请求代理方法：" + method.getName() + "  requestTag:" + tag);
-        }
         return adapter.startRequest(method, args, tag);
     }
 }

@@ -94,7 +94,17 @@ public class HttpAdapter {
     }
 
     /**
-     * 创建代理
+     * 创建http接口代理
+     */
+    public <T> T create(Class<T> clazz) {
+        return create(clazz, System.nanoTime());
+    }
+
+    /**
+     * 创建http接口代理
+     *
+     * @param requestTag 标签，用来取消http请求
+     * @see #cancelRequest(Object)
      */
     @SuppressWarnings("unchecked")
     public <T> T create(Class<T> clazz, Object requestTag) {
@@ -181,7 +191,9 @@ public class HttpAdapter {
                 for (Call call : queuedCalls) {
                     Request request = call.request();
                     if (requestTag.equals(request.tag())) {
-                        L.i(TAG, "cancel queued request success... requestTag=" + requestTag + "  url=" + request.url());
+                        if (L.isEnable()) {
+                            L.i(TAG, "cancel queued request success... requestTag=" + requestTag + "  url=" + request.url());
+                        }
                         call.cancel();
                     }
                 }
@@ -190,7 +202,9 @@ public class HttpAdapter {
                 for (Call call : runningCalls) {
                     Request request = call.request();
                     if (requestTag.equals(request.tag())) {
-                        L.i(TAG, "cancel running request ... requestTag=" + requestTag + "  url=" + call.request().url());
+                        if (L.isEnable()) {
+                            L.i(TAG, "cancel running request ... requestTag=" + requestTag + "  url=" + call.request().url());
+                        }
                         call.cancel();
                     }
                 }
@@ -247,7 +261,7 @@ public class HttpAdapter {
         HttpBuilder httpBuilder;
         try {
             String methodName;
-            if (QsHelper.isLogOpen()) {
+            if (L.isEnable()) {
                 methodName = method.getName();
             } else {
                 methodName = "";
@@ -298,7 +312,9 @@ public class HttpAdapter {
         Request.Builder requestBuilder = new Request.Builder();
         requestBuilder.headers(httpBuilder.getHeaderBuilder().build());
         if (requestTag != null) requestBuilder.tag(requestTag);
-        L.i(TAG, "method:" + method.getName() + "  http request url:" + url.toString());
+        if (L.isEnable()) {
+            L.i(TAG, "method:" + method.getName() + ", http request url:" + url.toString());
+        }
 
         if (!QsHelper.isNetworkAvailable()) {
             throw new QsException(QsExceptionType.NETWORK_ERROR, requestTag, "network error...  method:" + method.getName() + " message:network disable");
