@@ -16,6 +16,7 @@ import okhttp3.Headers;
  */
 
 public class HttpBuilder {
+    private final String                  methodName;
     private final Object                  requestTag;
     private final int                     requestStyle;
     private final String                  path;
@@ -28,7 +29,8 @@ public class HttpBuilder {
 
     private Headers.Builder headerBuilder = new Headers.Builder();
 
-    HttpBuilder(Object requestTag, int requestStyle, String terminal, String path, Object[] args, String requestType, Object body, HashMap<String, String> formBody, HashMap<String, String> paramsMap) {
+    HttpBuilder(String methodName, Object requestTag, int requestStyle, String terminal, String path, Object[] args, String requestType, Object body, HashMap<String, String> formBody, HashMap<String, String> paramsMap) {
+        this.methodName = methodName;
         this.requestTag = requestTag;
         this.requestStyle = requestStyle;
         this.terminal = terminal;
@@ -38,6 +40,14 @@ public class HttpBuilder {
         this.body = body;
         this.formBody = formBody;
         this.paramsMap = paramsMap;
+    }
+
+    /**
+     * 获取http接口定义的名称
+     * isLogOpen=true时返回http接口名，否则返回空字符串
+     */
+    public String getMethodName() {
+        return methodName;
     }
 
     public HttpBuilder addHeader(String key, String value) {

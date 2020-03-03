@@ -87,8 +87,8 @@ public class HttpAdapter {
         callback = QsHelper.getAppInterface().registerGlobalHttpListener();
     }
 
-    private HttpBuilder getHttpBuilder(Object requestTag, int requestStyle, String terminal, String path, Object[] args, String requestType, Object body, HashMap<String, String> formBody, HashMap<String, String> paramsMap) throws Exception {
-        HttpBuilder httpBuilder = new HttpBuilder(requestTag, requestStyle, terminal, path, args, requestType, body, formBody, paramsMap);
+    private HttpBuilder getHttpBuilder(String methodName, Object requestTag, int requestStyle, String terminal, String path, Object[] args, String requestType, Object body, HashMap<String, String> formBody, HashMap<String, String> paramsMap) throws Exception {
+        HttpBuilder httpBuilder = new HttpBuilder(methodName, requestTag, requestStyle, terminal, path, args, requestType, body, formBody, paramsMap);
         if (callback != null) callback.initHttpAdapter(httpBuilder);
         return httpBuilder;
     }
@@ -246,7 +246,13 @@ public class HttpAdapter {
 
         HttpBuilder httpBuilder;
         try {
-            httpBuilder = getHttpBuilder(requestTag, requestStyle, terminal, path, args, requestType, body, formMap, paramsMap);
+            String methodName;
+            if (QsHelper.isLogOpen()) {
+                methodName = method.getName();
+            } else {
+                methodName = "";
+            }
+            httpBuilder = getHttpBuilder(methodName, requestTag, requestStyle, terminal, path, args, requestType, body, formMap, paramsMap);
         } catch (Exception e) {
             throw new QsException(QsExceptionType.UNEXPECTED, requestTag, "receive error when execute：QsHttpCallback.initHttpAdapter, msg:" + e.getMessage());
         }
