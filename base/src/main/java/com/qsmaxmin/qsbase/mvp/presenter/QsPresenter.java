@@ -1,10 +1,12 @@
 package com.qsmaxmin.qsbase.mvp.presenter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.ColorRes;
 import android.support.annotation.DimenRes;
 import android.support.annotation.DrawableRes;
+import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 
 import com.qsmaxmin.qsbase.common.aspect.ThreadPoint;
@@ -38,7 +40,7 @@ public class QsPresenter<V extends QsIView> implements QsNotProguard {
         return L.isEnable() ? getClass().getSimpleName() : "QsPresenter";
     }
 
-    public Context getContext() {
+    @Nullable public Context getContext() {
         if (!isViewDetach()) return mView.getContext();
         return null;
     }
@@ -192,6 +194,11 @@ public class QsPresenter<V extends QsIView> implements QsNotProguard {
             }
             qsIview.loadingClose();
         }
+    }
+
+    @Nullable public Activity getActivity() {
+        if (!isViewDetach()) return mView.getActivity();
+        return null;
     }
 
     public String getString(@StringRes int stringId) {

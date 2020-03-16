@@ -571,6 +571,20 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         return targetView;
     }
 
+    @Override public void post(Runnable action) {
+        if (getActivity() != null) {
+            getActivity().runOnUiThread(action);
+        }
+    }
+
+    @Override public void runOnWorkThread(Runnable action) {
+        QsHelper.getThreadHelper().getWorkThreadPoll().execute(action);
+    }
+
+    @Override public void runOnHttpThread(Runnable action) {
+        QsHelper.getThreadHelper().getHttpThreadPoll().execute(action);
+    }
+
     @Override public void onFragmentSelectedInViewPager(boolean isSelected, int currentPosition, int totalCount) {
         L.i(initTag(), "onFragmentSelectedInViewPager..... isSelected:" + isSelected + "  currentPosition:" + currentPosition + "  totalCount:" + totalCount);
     }

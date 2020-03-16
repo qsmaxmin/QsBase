@@ -1,6 +1,7 @@
 package com.qsmaxmin.qsbase.mvp;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -617,6 +618,22 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
                 window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
             }
         }
+    }
+
+    @Override public void post(Runnable action) {
+        runOnUiThread(action);
+    }
+
+    @Override public void runOnWorkThread(Runnable action) {
+        QsHelper.getThreadHelper().getWorkThreadPoll().execute(action);
+    }
+
+    @Override public void runOnHttpThread(Runnable action) {
+        QsHelper.getThreadHelper().getHttpThreadPoll().execute(action);
+    }
+
+    @Override public Activity getActivity() {
+        return this;
     }
 
     @Override public void setOnKeyDownListener(OnKeyDownListener listener) {

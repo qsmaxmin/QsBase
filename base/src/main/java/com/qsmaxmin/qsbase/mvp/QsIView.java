@@ -1,5 +1,6 @@
 package com.qsmaxmin.qsbase.mvp;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -140,4 +141,12 @@ public interface QsIView<P> {
     void commitBackStackFragment(int layoutId, Fragment fragment, String tag);
 
     void commitDialogFragment(DialogFragment fragment);
+
+    void post(Runnable action);
+
+    void runOnHttpThread(Runnable action);
+
+    void runOnWorkThread(Runnable action);
+
+    Activity getActivity();
 }
