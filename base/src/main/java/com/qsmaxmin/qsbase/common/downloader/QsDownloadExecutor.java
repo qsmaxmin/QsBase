@@ -20,12 +20,14 @@ import okhttp3.ResponseBody;
  * @Date 2020/3/16 9:30
  * @Description
  */
-class QsDownloadExecutor {
+class QsDownloadExecutor<M extends QsDownloadModel> {
     private final String          TAG = "QsDownloadExecutor";
-    private final QsDownloadModel model;
+    private final QsDownloader<M> downloader;
+    private final M               model;
     private       long            initTime;
 
-    QsDownloadExecutor(QsDownloadModel model) {
+    QsDownloadExecutor(QsDownloader<M> downloader, M model) {
+        this.downloader = downloader;
         this.model = model;
     }
 
@@ -42,7 +44,7 @@ class QsDownloadExecutor {
 
     private void startInner(Request request) {
         if (L.isEnable()) L.i(TAG, "download started......id:" + model.getId() + ", time gone:" + getTimeGone());
-        QsDownloadHelper.getInstance().getClient().newCall(request).enqueue(new Callback() {
+        downloader.getClient().newCall(request).enqueue(new Callback() {
             @Override public void onFailure(Call call, IOException e) {
                 postDownloadFailed(e.getMessage());
                 e.printStackTrace();
@@ -110,21 +112,21 @@ class QsDownloadExecutor {
     }
 
     private void postDownloadStart() {
-        QsDownloadHelper.getInstance().postDownloadStart(model);
+        downloader.postDownloadStart(model);
     }
 
     private void postDownloading(long size, long totalSize) {
-        QsDownloadHelper.getInstance().postDownloading(model, size, totalSize);
+        downloader.postDownloading(model, size, totalSize);
     }
 
     private void postDownloadFailed(String msg) {
-        QsDownloadHelper.getInstance().removeExecutorFromTask(model);
-        QsDownloadHelper.getInstance().postDownloadFailed(model, msg);
+        downloader.removeExecutorFromTask(model);
+        downloader.postDownloadFailed(model, msg);
     }
 
     private void postDownloadComplete() {
-        QsDownloadHelper.getInstance().removeExecutorFromTask(model);
-        QsDownloadHelper.getInstance().postDownloadComplete(model);
+        downloader.removeExecutorFromTask(model);
+        downloader.postDownloadComplete(model);
     }
 
     private void close(Closeable closeable) {
