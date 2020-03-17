@@ -23,7 +23,7 @@ import okhttp3.ResponseBody;
 class QsDownloadExecutor<M extends QsDownloadModel> {
     private final String          TAG = "QsDownloadExecutor";
     private final QsDownloader<M> downloader;
-    private final M               model;
+    final         M               model;
     private       long            initTime;
 
     QsDownloadExecutor(QsDownloader<M> downloader, M model) {
@@ -34,7 +34,6 @@ class QsDownloadExecutor<M extends QsDownloadModel> {
     void start(final Request request) {
         initTime = System.currentTimeMillis();
         postDownloadStart();
-
         QsHelper.getThreadHelper().getWorkThreadPoll().execute(new Runnable() {
             @Override public void run() {
                 startInner(request);

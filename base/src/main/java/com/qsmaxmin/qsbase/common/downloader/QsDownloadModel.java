@@ -10,7 +10,7 @@ import okhttp3.Request;
 public interface QsDownloadModel {
     String getId();
 
-    Request getRequest();
+    Request.Builder getRequest();
 
     String getFilePath();
 }

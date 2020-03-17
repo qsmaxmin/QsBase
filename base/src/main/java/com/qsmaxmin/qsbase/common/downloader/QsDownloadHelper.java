@@ -3,6 +3,9 @@ package com.qsmaxmin.qsbase.common.downloader;
 import com.qsmaxmin.qsbase.common.log.L;
 
 import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.OkHttpClient;
 
 /**
  * @CreateBy qsmaxmin
@@ -12,16 +15,24 @@ import java.util.HashMap;
 public class QsDownloadHelper {
     private final  HashMap<Class, QsDownloader> downloaderHolder = new HashMap<>();
     private static QsDownloadHelper             helper;
+    private        OkHttpClient                 httpClient;
 
     private QsDownloadHelper() {
+        OkHttpClient.Builder builder = new OkHttpClient.Builder();
+        builder.connectTimeout(45, TimeUnit.SECONDS);
+        builder.readTimeout(45, TimeUnit.SECONDS);
+        builder.writeTimeout(45, TimeUnit.SECONDS);
+        httpClient = builder.build();
     }
 
     @SuppressWarnings({"unchecked", "CastCanBeRemovedNarrowingVariableType"})
     public static <M extends QsDownloadModel> QsDownloader<M> getDownloader(Class<M> clazz) {
         Object object = getInstance().downloaderHolder.get(clazz);
         if (object == null) {
-            QsDownloader<M> downloader = new QsDownloader<>();
-            getInstance().downloaderHolder.put(clazz, downloader);
+            QsDownloader<M> downloader = new QsDownloader<>(getInstance().httpClient);
+            synchronized (getInstance().downloaderHolder) {
+                getInstance().downloaderHolder.put(clazz, downloader);
+            }
             if (L.isEnable()) {
                 String downloaderName = downloader.getClass().getSimpleName();
                 L.i("QsDownloadHelper", "getDownloader(no cached)....clazz:" + clazz.getSimpleName() + ", downloader:" + downloaderName);
@@ -45,19 +56,31 @@ public class QsDownloadHelper {
         return helper;
     }
 
+    /**
+     * 停止所有下载，并释放内存
+     */
     public static <M extends QsDownloadModel> void releaseAll() {
         if (helper != null) {
             if (L.isEnable()) L.i("QsDownloadHelper", "release........");
-            if (helper.downloaderHolder.isEmpty()) {
+            if (!helper.downloaderHolder.isEmpty()) {
                 synchronized (helper.downloaderHolder) {
                     for (Class clazz : helper.downloaderHolder.keySet()) {
                         QsDownloader downloader = helper.downloaderHolder.get(clazz);
                         if (downloader != null) downloader.release();
                     }
+                    helper.downloaderHolder.clear();
                 }
             }
-            helper.downloaderHolder.clear();
+            helper.httpClient.dispatcher().cancelAll();
             helper = null;
+        }
+    }
+
+    public static <M extends QsDownloadModel> void release(Class<M> clazz) {
+        Object object = getInstance().downloaderHolder.get(clazz);
+        if (object != null) {
+            QsDownloader downloader = (QsDownloader) object;
+            downloader.release();
         }
     }
 

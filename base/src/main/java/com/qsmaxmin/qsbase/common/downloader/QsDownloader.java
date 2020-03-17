@@ -12,8 +12,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
+import okhttp3.Call;
+import okhttp3.Dispatcher;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 
@@ -27,16 +28,11 @@ public class QsDownloader<M extends QsDownloadModel> {
     private final HashMap<String, QsDownloadExecutor> executorMap    = new HashMap<>();
     private final List<DownloadListener<M>>           globeListeners = new ArrayList<>();
     private       OkHttpClient                        httpClient;
+    private       Class                               httpTag;
 
-
-    QsDownloader() {
-        OkHttpClient.Builder builder = new OkHttpClient.Builder();
-        builder.connectTimeout(45, TimeUnit.SECONDS);
-        builder.readTimeout(45, TimeUnit.SECONDS);
-        builder.writeTimeout(45, TimeUnit.SECONDS);
-        httpClient = builder.build();
+    QsDownloader(OkHttpClient httpClient) {
+        this.httpClient = httpClient;
     }
-
 
     /**
      * 执行下载动作
@@ -58,8 +54,8 @@ public class QsDownloader<M extends QsDownloadModel> {
             return;
         }
 
-        Request request = model.getRequest();
-        if (request == null) {
+        Request.Builder builder = model.getRequest();
+        if (builder == null) {
             if (L.isEnable()) L.e(TAG, "startDownload..." + model.getClass().getSimpleName() + ".getRequest() return null");
             return;
         }
@@ -82,9 +78,14 @@ public class QsDownloader<M extends QsDownloadModel> {
                 return;
             }
         }
-        QsDownloadExecutor executor = new QsDownloadExecutor(this, model);
+        QsDownloadExecutor<M> executor = new QsDownloadExecutor<>(this, model);
         executorMap.put(model.getId(), executor);
-        executor.start(request);
+
+        if (httpTag == null) {
+            httpTag = model.getClass();
+        }
+        builder.tag(httpTag);
+        executor.start(builder.build());
     }
 
 
@@ -95,18 +96,34 @@ public class QsDownloader<M extends QsDownloadModel> {
         return executorMap.get(m.getId()) != null;
     }
 
-    void cancelAll() {
-        if (L.isEnable()) L.i(TAG, "cancelAll........");
-        httpClient.dispatcher().cancelAll();
-    }
-
-    void release() {
+    public void release() {
         if (L.isEnable()) L.i(TAG, "release........");
-        executorMap.clear();
-        globeListeners.clear();
-        httpClient.dispatcher().cancelAll();
+        try {
+            executorMap.clear();
+            globeListeners.clear();
+            Dispatcher dispatcher = getClient().dispatcher();
+            List<Call> runningCalls = dispatcher.runningCalls();
+            for (Call call : runningCalls) {
+                if (call.request().tag() == httpTag) {
+                    call.cancel();
+                    if (L.isEnable()) {
+                        L.i(TAG, "cancel runningCalls.....tag:" + httpTag);
+                    }
+                }
+            }
+            List<Call> queuedCalls = dispatcher.queuedCalls();
+            for (Call call : queuedCalls) {
+                if (httpTag == call.request().tag()) {
+                    if (L.isEnable()) {
+                        L.i(TAG, "cancel queuedCalls.....tag:" + httpTag);
+                    }
+                    call.cancel();
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
-
 
     OkHttpClient getClient() {
         return httpClient;
