@@ -23,10 +23,15 @@ public class QsDownloadHelper {
             QsDownloader<M> downloader = new QsDownloader<>();
             getInstance().downloaderHolder.put(clazz, downloader);
             if (L.isEnable()) {
-                L.i("QsDownloadHelper", "getDownloader....clazz:" + clazz.getSimpleName() + ", downloader:" + downloader);
+                String downloaderName = downloader.getClass().getSimpleName();
+                L.i("QsDownloadHelper", "getDownloader(no cached)....clazz:" + clazz.getSimpleName() + ", downloader:" + downloaderName);
             }
             return downloader;
         } else {
+            if (L.isEnable()) {
+                String downloader = object.getClass().getSimpleName();
+                L.i("QsDownloadHelper", "getDownloader(cached)....clazz:" + clazz.getSimpleName() + ", downloader:" + downloader);
+            }
             return (QsDownloader<M>) object;
         }
     }
