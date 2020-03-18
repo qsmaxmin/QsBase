@@ -3,81 +3,60 @@
 
     <!-- viewpager -->
     <declare-styleable name="PagerSlidingTabStrip">
-        <attr name="psts_TextSize" format="dimension"/>
-        <attr name="psts_IndicatorColor" format="color"/>
-        <attr name="psts_IndicatorWidth" format="dimension"/>
-        <attr name="psts_IndicatorHeight" format="dimension"/>
-        <attr name="psts_IndicatorCorner" format="dimension"/>
-        <attr name="psts_UnderlineColor" format="color"/>
-        <attr name="psts_DividerColor" format="color"/>
-        <attr name="psts_SelectedTextColor" format="color"/>
-        <attr name="psts_UnSelectedTextColor" format="color"/>
-        <attr name="psts_UnderlineHeight" format="dimension"/>
-        <attr name="psts_DividerPadding" format="dimension"/>
-        <attr name="psts_TabPaddingLeftRight" format="dimension"/>
-        <attr name="psts_ScrollOffset" format="dimension"/>
-        <attr name="psts_ShouldExpand" format="boolean"/>
-        <attr name="psts_TextAllCaps" format="boolean"/>
+        <attr name="psts_TextSize" format="dimension" />
+        <attr name="psts_IndicatorColor" format="color" />
+        <attr name="psts_IndicatorWidth" format="dimension" />
+        <attr name="psts_IndicatorHeight" format="dimension" />
+        <attr name="psts_IndicatorCorner" format="dimension" />
+        <attr name="psts_UnderlineColor" format="color" />
+        <attr name="psts_DividerColor" format="color" />
+        <attr name="psts_SelectedTextColor" format="color" />
+        <attr name="psts_UnSelectedTextColor" format="color" />
+        <attr name="psts_UnderlineHeight" format="dimension" />
+        <attr name="psts_DividerPadding" format="dimension" />
+        <attr name="psts_TabPaddingLeftRight" format="dimension" />
+        <attr name="psts_ScrollOffset" format="dimension" />
+        <attr name="psts_ShouldExpand" format="boolean" />
+        <attr name="psts_TextAllCaps" format="boolean" />
     </declare-styleable>
 
     <!--PtrFrameLayout-->
     <declare-styleable name="PtrFrameLayout">
-        <attr name="ptr_header" format="reference"/>
-        <attr name="ptr_content" format="reference"/>
-        <attr name="ptr_resistance" format="float"/>
-        <attr name="ptr_ratio_of_header_height_to_refresh" format="float"/>
-        <attr name="ptr_duration_to_close" format="integer"/>
-        <attr name="ptr_duration_to_close_header" format="integer"/>
-        <attr name="ptr_pull_to_fresh" format="boolean"/>
-        <attr name="ptr_keep_header_when_refresh" format="boolean"/>
+        <attr name="ptr_header" format="reference" />
+        <attr name="ptr_content" format="reference" />
+        <attr name="ptr_resistance" format="float" />
+        <attr name="ptr_ratio_of_header_height_to_refresh" format="float" />
+        <attr name="ptr_duration_to_close" format="integer" />
+        <attr name="ptr_duration_to_close_header" format="integer" />
+        <attr name="ptr_pull_to_fresh" format="boolean" />
+        <attr name="ptr_keep_header_when_refresh" format="boolean" />
     </declare-styleable>
 
     <!--CirclePageIndicator-->
     <declare-styleable name="CirclePageIndicator">
-        <attr name="cpi_Centered" format="boolean"/>
-        <attr name="cpi_SelectedColor" format="color"/>
-        <attr name="cpi_UnSelectedColor" format="color"/>
-        <attr name="cpi_SelectedDrawable" format="reference"/>
-        <attr name="cpi_StrokeWidth" format="dimension"/>
-        <attr name="cpi_Radius" format="dimension"/>
-        <attr name="cpi_ItemMarginRatio" format="float"/>
-        <attr name="cpi_SelectedWidthRatio" format="float"/>
+        <attr name="cpi_Centered" format="boolean" />
+        <attr name="cpi_SelectedColor" format="color" />
+        <attr name="cpi_UnSelectedColor" format="color" />
+        <attr name="cpi_SelectedDrawable" format="reference" />
+        <attr name="cpi_StrokeWidth" format="dimension" />
+        <attr name="cpi_Radius" format="dimension" />
+        <attr name="cpi_ItemMarginRatio" format="float" />
+        <attr name="cpi_SelectedWidthRatio" format="float" />
         <attr name="cpi_Transform_mode">
-            <enum name="normal" value="1"/>
-            <enum name="translate" value="2"/>
-            <enum name="scale" value="3"/>
+            <enum name="normal" value="1" />
+            <enum name="translate" value="2" />
+            <enum name="scale" value="3" />
         </attr>
-        <attr name="cpi_IsSnap" format="boolean"/>
-        <attr name="cpi_OutsideColor" format="color"/>
-        <attr name="cpi_OutsideSize" format="dimension"/>
-        <attr name="android:orientation"/>
-        <attr name="android:background"/>
+        <attr name="cpi_IsSnap" format="boolean" />
+        <attr name="cpi_OutsideColor" format="color" />
+        <attr name="cpi_OutsideSize" format="dimension" />
+        <attr name="android:orientation" />
+        <attr name="android:background" />
     </declare-styleable>
 
     <!--百分比布局自定义属性-->
     <declare-styleable name="PercentLayout_Layout">
-        <attr name="layout_widthPercent" format="string"/>
-        <attr name="layout_heightPercent" format="string"/>
-
-        <attr name="layout_marginPercent" format="string"/>
-        <attr name="layout_marginLeftPercent" format="string"/>
-        <attr name="layout_marginTopPercent" format="string"/>
-        <attr name="layout_marginRightPercent" format="string"/>
-        <attr name="layout_marginBottomPercent" format="string"/>
-        <attr name="layout_marginStartPercent" format="string"/>
-        <attr name="layout_marginEndPercent" format="string"/>
-
-        <attr name="layout_textSizePercent" format="string"/>
-
-        <attr name="layout_maxWidthPercent" format="string"/>
-        <attr name="layout_maxHeightPercent" format="string"/>
-        <attr name="layout_minWidthPercent" format="string"/>
-        <attr name="layout_minHeightPercent" format="string"/>
-
-        <attr name="layout_paddingPercent" format="string"/>
-        <attr name="layout_paddingTopPercent" format="string"/>
-        <attr name="layout_paddingBottomPercent" format="string"/>
-        <attr name="layout_paddingLeftPercent" format="string"/>
-        <attr name="layout_paddingRightPercent" format="string"/>
+        <attr name="layout_widthPercent" format="string" />
+        <attr name="layout_heightPercent" format="string" />
     </declare-styleable>
 </resources>
