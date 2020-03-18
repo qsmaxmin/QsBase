@@ -1,19 +1,6 @@
 /*
- * Copyright (C) 2015 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright (c) Huawei Technologies Co., Ltd. 2019-2019. All rights reserved.
  */
-
 package com.qsmaxmin.qsbase.common.widget.percentlayout;
 
 import android.content.Context;
@@ -24,38 +11,8 @@ import android.widget.FrameLayout;
 
 /**
  * Subclass of {@link FrameLayout} that supports percentage based dimensions and
- * margins.
- * <p>
- * You can specify dimension or a margin of child by using attributes with "Percent" suffix. Follow
- * this example:
- *
- * <pre class="prettyprint">
- * &lt;android.support.percent.PercentFrameLayout
- *         xmlns:android="http://schemas.android.com/apk/res/android"
- *         xmlns:app="http://schemas.android.com/apk/res-auto"
- *         android:layout_width="match_parent"
- *         android:layout_height="match_parent"/&gt
- *     &lt;ImageView
- *         app:layout_widthPercent="50%"
- *         app:layout_heightPercent="50%"
- *         app:layout_marginTopPercent="25%"
- *         app:layout_marginLeftPercent="25%"/&gt
- * &lt;/android.support.percent.PercentFrameLayout/&gt
- * </pre>
- * <p>
- * The attributes that you can use are:
- * <ul>
- * <li>{@code layout_widthPercent}
- * <li>{@code layout_heightPercent}
- * <li>{@code layout_marginPercent}
- * <li>{@code layout_marginLeftPercent}
- * <li>{@code layout_marginTopPercent}
- * <li>{@code layout_marginRightPercent}
- * <li>{@code layout_marginBottomPercent}
- * <li>{@code layout_marginStartPercent}
- * <li>{@code layout_marginEndPercent}
- * </ul>
- * <p>
+ * {@code layout_widthPercent}
+ * {@code layout_heightPercent}
  * It is not necessary to specify {@code layout_width/height} if you specify {@code
  * layout_widthPercent.} However, if you want the view to be able to take up more space than what
  * percentage value permits, you can add {@code layout_width/height="wrap_content"}. In that case
@@ -63,7 +20,7 @@ import android.widget.FrameLayout;
  * {@code wrap_content} rule.
  */
 public class PercentFrameLayout extends FrameLayout {
-    private final PercentLayoutHelper mHelper = new PercentLayoutHelper(this);
+    private final PercentLayout mPercentLayout = new PercentLayout(this);
 
     public PercentFrameLayout(Context context) {
         super(context);
@@ -84,9 +41,9 @@ public class PercentFrameLayout extends FrameLayout {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        mHelper.adjustChildren(widthMeasureSpec, heightMeasureSpec);
+        mPercentLayout.adjustChildren(widthMeasureSpec, heightMeasureSpec);
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        if (mHelper.handleMeasuredStateTooSmall()) {
+        if (mPercentLayout.handleMeasuredStateTooSmall()) {
             super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         }
     }
@@ -94,16 +51,15 @@ public class PercentFrameLayout extends FrameLayout {
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
-        mHelper.restoreOriginalParams();
+        mPercentLayout.restoreOriginalParams();
     }
 
-    public static class LayoutParams extends FrameLayout.LayoutParams
-            implements PercentLayoutHelper.PercentLayoutParams {
-        private PercentLayoutHelper.PercentLayoutInfo mPercentLayoutInfo;
+    public static class LayoutParams extends FrameLayout.LayoutParams implements PercentLayout.PercentLayoutParams {
+        private PercentLayout.PercentLayoutInfo mPercentLayoutInfo;
 
         public LayoutParams(Context c, AttributeSet attrs) {
             super(c, attrs);
-            mPercentLayoutInfo = PercentLayoutHelper.getPercentLayoutInfo(c, attrs);
+            mPercentLayoutInfo = PercentLayout.getPercentLayoutInfo(c, attrs);
         }
 
         public LayoutParams(int width, int height) {
@@ -133,13 +89,13 @@ public class PercentFrameLayout extends FrameLayout {
         }
 
         @Override
-        public PercentLayoutHelper.PercentLayoutInfo getPercentLayoutInfo() {
+        public PercentLayout.PercentLayoutInfo getPercentLayoutInfo() {
             return mPercentLayoutInfo;
         }
 
         @Override
         protected void setBaseAttributes(TypedArray a, int widthAttr, int heightAttr) {
-            PercentLayoutHelper.fetchWidthAndHeight(this, a, widthAttr, heightAttr);
+            PercentLayout.fetchWidthAndHeight(this, a, widthAttr, heightAttr);
         }
     }
 }

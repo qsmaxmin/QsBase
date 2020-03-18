@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) Huawei Technologies Co., Ltd. 2019-2019. All rights reserved.
+ */
 package com.qsmaxmin.qsbase.common.widget.percentlayout;
 
 import android.app.Activity;
@@ -16,16 +19,19 @@ import android.widget.ScrollView;
  * @Description
  */
 public class PercentLinearLayout extends LinearLayout {
-
-    private static final String              TAG = "PercentLinearLayout";
-    private              PercentLayoutHelper mPercentLayoutHelper;
+    private final PercentLayout mPercentLayout = new PercentLayout(this);
 
     public PercentLinearLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
-
-        mPercentLayoutHelper = new PercentLayoutHelper(this);
     }
 
+    public PercentLinearLayout(Context context) {
+        super(context);
+    }
+
+    public PercentLinearLayout(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+    }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -44,8 +50,7 @@ public class PercentLinearLayout extends LinearLayout {
             Context context = getContext();
             if (context instanceof Activity) {
                 Activity act = (Activity) context;
-                int measuredHeight = act.findViewById(android.R.id.content).getMeasuredHeight();
-                baseHeight = measuredHeight;
+                baseHeight = act.findViewById(android.R.id.content).getMeasuredHeight();
             } else {
                 baseHeight = getScreenHeight();
             }
@@ -53,9 +58,9 @@ public class PercentLinearLayout extends LinearLayout {
         }
 
 
-        mPercentLayoutHelper.adjustChildren(tmpWidthMeasureSpec, tmpHeightMeasureSpec);
+        mPercentLayout.adjustChildren(tmpWidthMeasureSpec, tmpHeightMeasureSpec);
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        if (mPercentLayoutHelper.handleMeasuredStateTooSmall()) {
+        if (mPercentLayout.handleMeasuredStateTooSmall()) {
             super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         }
     }
@@ -70,7 +75,7 @@ public class PercentLinearLayout extends LinearLayout {
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         super.onLayout(changed, l, t, r, b);
-        mPercentLayoutHelper.restoreOriginalParams();
+        mPercentLayout.restoreOriginalParams();
     }
 
     @Override
@@ -79,23 +84,22 @@ public class PercentLinearLayout extends LinearLayout {
     }
 
 
-    public static class LayoutParams extends LinearLayout.LayoutParams
-            implements PercentLayoutHelper.PercentLayoutParams {
-        private PercentLayoutHelper.PercentLayoutInfo mPercentLayoutInfo;
+    public static class LayoutParams extends LinearLayout.LayoutParams implements PercentLayout.PercentLayoutParams {
+        private PercentLayout.PercentLayoutInfo mPercentLayoutInfo;
 
         public LayoutParams(Context c, AttributeSet attrs) {
             super(c, attrs);
-            mPercentLayoutInfo = PercentLayoutHelper.getPercentLayoutInfo(c, attrs);
+            mPercentLayoutInfo = PercentLayout.getPercentLayoutInfo(c, attrs);
         }
 
         @Override
-        public PercentLayoutHelper.PercentLayoutInfo getPercentLayoutInfo() {
+        public PercentLayout.PercentLayoutInfo getPercentLayoutInfo() {
             return mPercentLayoutInfo;
         }
 
         @Override
         protected void setBaseAttributes(TypedArray a, int widthAttr, int heightAttr) {
-            PercentLayoutHelper.fetchWidthAndHeight(this, a, widthAttr, heightAttr);
+            PercentLayout.fetchWidthAndHeight(this, a, widthAttr, heightAttr);
         }
 
         public LayoutParams(int width, int height) {
