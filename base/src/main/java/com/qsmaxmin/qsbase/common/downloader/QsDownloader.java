@@ -24,7 +24,7 @@ import okhttp3.Request;
  * @Description
  */
 public class QsDownloader<M extends QsDownloadModel> {
-    private final String                              TAG            = "QsDownloader";
+    private final String                              TAG;
     private final HashMap<String, QsDownloadExecutor> executorMap    = new HashMap<>();
     private final List<DownloadListener<M>>           globeListeners = new ArrayList<>();
     private       OkHttpClient                        httpClient;
@@ -33,6 +33,7 @@ public class QsDownloader<M extends QsDownloadModel> {
     QsDownloader(OkHttpClient client, Class<M> tag) {
         this.httpClient = client;
         this.httpTag = tag;
+        this.TAG = "QsDownloader-" + httpTag.getSimpleName();
     }
 
     /**
