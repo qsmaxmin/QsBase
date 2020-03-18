@@ -30,8 +30,9 @@ public class QsDownloader<M extends QsDownloadModel> {
     private       OkHttpClient                        httpClient;
     private       Class                               httpTag;
 
-    QsDownloader(OkHttpClient httpClient) {
-        this.httpClient = httpClient;
+    QsDownloader(OkHttpClient client, Class<M> tag) {
+        this.httpClient = client;
+        this.httpTag = tag;
     }
 
     /**
@@ -65,7 +66,7 @@ public class QsDownloader<M extends QsDownloadModel> {
             return;
         }
 
-        L.i(TAG, "startDownload...started, id:" + model.toString());
+        L.i(TAG, "startDownload...started, id:" + model.getId());
         File zipFile = new File(model.getFilePath());
         if (zipFile.exists()) {
             boolean delete = zipFile.delete();
@@ -81,9 +82,6 @@ public class QsDownloader<M extends QsDownloadModel> {
         QsDownloadExecutor<M> executor = new QsDownloadExecutor<>(this, model);
         executorMap.put(model.getId(), executor);
 
-        if (httpTag == null) {
-            httpTag = model.getClass();
-        }
         builder.tag(httpTag);
         executor.start(builder.build());
     }

@@ -27,9 +27,10 @@ public class QsDownloadHelper {
 
     @SuppressWarnings({"unchecked", "CastCanBeRemovedNarrowingVariableType"})
     public static <M extends QsDownloadModel> QsDownloader<M> getDownloader(Class<M> clazz) {
+        if (clazz == null) return null;
         Object object = getInstance().downloaderHolder.get(clazz);
         if (object == null) {
-            QsDownloader<M> downloader = new QsDownloader<>(getInstance().httpClient);
+            QsDownloader<M> downloader = new QsDownloader<>(getInstance().httpClient, clazz);
             synchronized (getInstance().downloaderHolder) {
                 getInstance().downloaderHolder.put(clazz, downloader);
             }
