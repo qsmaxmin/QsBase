@@ -34,14 +34,18 @@ public class QsDownloadHelper {
                 getInstance().downloaderHolder.put(clazz, downloader);
             }
             if (L.isEnable()) {
-                String downloaderName = downloader.getClass().getSimpleName();
-                L.i("QsDownloadHelper", "getDownloader(no cached)....clazz:" + clazz.getSimpleName() + ", downloader:" + downloaderName);
+                String name = downloader.getClass().getSimpleName();
+                String className = clazz.getSimpleName();
+                int size = getInstance().downloaderHolder.size();
+                L.i("QsDownloadHelper", "getDownloader(no cached)....clazz:" + className + ", downloader:" + name + ", cache size:" + size);
             }
             return downloader;
         } else {
             if (L.isEnable()) {
-                String downloader = object.getClass().getSimpleName();
-                L.i("QsDownloadHelper", "getDownloader(cached)....clazz:" + clazz.getSimpleName() + ", downloader:" + downloader);
+                String name = object.getClass().getSimpleName();
+                String className = clazz.getSimpleName();
+                int size = getInstance().downloaderHolder.size();
+                L.i("QsDownloadHelper", "getDownloader(cached)....clazz:" + className + ", downloader:" + name + ", cache size:" + size);
             }
             return (QsDownloader<M>) object;
         }
