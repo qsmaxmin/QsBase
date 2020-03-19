@@ -1,6 +1,3 @@
-/*
- * Copyright (c) Huawei Technologies Co., Ltd. 2019-2019. All rights reserved.
- */
 package com.qsmaxmin.qsbase.common.widget.percentlayout;
 
 import android.content.Context;
