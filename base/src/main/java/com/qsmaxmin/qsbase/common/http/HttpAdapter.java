@@ -226,7 +226,7 @@ public class HttpAdapter {
         Object body = null;
         HashMap<String, String> formMap = new HashMap<>();
         HashMap<String, String> paramsMap = new HashMap<>();
-        String mimeType = null;
+        String mimeType = "application/json; charset=UTF-8";
 
         for (int i = 0; i < annotations.length; i++) {
             Annotation[] annotationArr = annotations[i];
