@@ -33,7 +33,6 @@ class DownloadExecutor<M extends QsDownloadModel> {
 
     void start(final Request.Builder builder) {
         initTime = System.currentTimeMillis();
-        postDownloadStart();
         QsHelper.getThreadHelper().getWorkThreadPoll().execute(new Runnable() {
             @Override public void run() {
                 startInner(builder);
@@ -47,7 +46,7 @@ class DownloadExecutor<M extends QsDownloadModel> {
         long downloadedSize = 0;
         if (targetFile.exists()) {
             downloadedSize = targetFile.length();
-            builder.addHeader("Range", "bytes=" + downloadedSize + "-");
+            builder.header("Range", "bytes=" + downloadedSize + "-");
             L.i(TAG, "old file exists....size:" + downloadedSize + ", path:" + targetFile.getPath());
         } else {
             File parentFile = targetFile.getParentFile();
@@ -59,9 +58,9 @@ class DownloadExecutor<M extends QsDownloadModel> {
         }
         request = builder.build();
         final long finalDownloadedSize = downloadedSize;
-
-
+        postDownloadStart();
         if (L.isEnable()) L.i(TAG, "download started......id:" + model.getId() + ", time gone:" + getTimeGone());
+
         downloader.getClient().newCall(request).enqueue(new Callback() {
             @Override public void onFailure(Call call, IOException e) {
                 postDownloadFailed(e.getMessage());
@@ -99,9 +98,9 @@ class DownloadExecutor<M extends QsDownloadModel> {
                                 long tempLength = existsLength;
                                 long lastProgress = 0;
 
-                                long callbackSize = 512 * 1024;
+                                long callbackSize = 100 * 1024;
                                 long callbackCount = contentLength / callbackSize;
-                                callbackCount = callbackCount < 20 ? 20 : (callbackCount > 100 ? 100 : callbackCount);
+                                callbackCount = callbackCount < 30 ? 30 : (callbackCount > 100 ? 100 : callbackCount);
 
                                 while ((len = is.read(buff)) != -1) {
                                     accessFile.write(buff, 0, len);
