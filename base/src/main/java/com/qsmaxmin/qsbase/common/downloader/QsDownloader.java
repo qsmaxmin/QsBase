@@ -24,11 +24,11 @@ import okhttp3.Request;
  * @Description
  */
 public class QsDownloader<M extends QsDownloadModel> {
-    private final String                              TAG;
-    private final HashMap<String, QsDownloadExecutor> executorMap    = new HashMap<>();
-    private final List<DownloadListener<M>>           globeListeners = new ArrayList<>();
-    private       OkHttpClient                        httpClient;
-    private       Class                               httpTag;
+    private final String                            TAG;
+    private final HashMap<String, DownloadExecutor> executorMap    = new HashMap<>();
+    private final List<DownloadListener<M>>         globeListeners = new ArrayList<>();
+    private       OkHttpClient                      httpClient;
+    private       Class                             httpTag;
 
     QsDownloader(OkHttpClient client, Class<M> tag) {
         this.httpClient = client;
@@ -66,32 +66,19 @@ public class QsDownloader<M extends QsDownloadModel> {
             if (L.isEnable()) L.e(TAG, "startDownload...do not download again，id:" + model.getId());
             return;
         }
-
-        L.i(TAG, "startDownload...started, id:" + model.getId());
-        File zipFile = new File(model.getFilePath());
-        if (zipFile.exists()) {
-            boolean delete = zipFile.delete();
-            L.i(TAG, "delete old file..........delete:" + delete);
-        } else {
-            File parentFile = zipFile.getParentFile();
-            if (!parentFile.exists() && !parentFile.mkdirs()) {
-                L.e(TAG, "create dir failed...dir:" + parentFile.getPath());
-                postDownloadFailed(model, "create dir failed, dir:" + parentFile.getPath());
-                return;
-            }
-        }
-        QsDownloadExecutor<M> executor = new QsDownloadExecutor<>(this, model);
+        DownloadExecutor<M> executor = new DownloadExecutor<>(this, model);
         executorMap.put(model.getId(), executor);
 
         builder.tag(httpTag);
-        executor.start(builder.build());
+        executor.start(builder);
     }
 
 
     /**
      * 是否正在下载
      */
-    private boolean isDownloading(M m) {
+    @SuppressWarnings("WeakerAccess")
+    public boolean isDownloading(M m) {
         return executorMap.get(m.getId()) != null;
     }
 
