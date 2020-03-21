@@ -46,7 +46,7 @@ class DownloadExecutor<M extends QsDownloadModel> {
         long downloadedSize = 0;
         if (targetFile.exists()) {
             downloadedSize = targetFile.length();
-            builder.header("Range", "bytes=" + downloadedSize + "-");
+            builder.header("RANGE", "bytes=" + downloadedSize + "-");
             L.i(TAG, "old file exists....size:" + downloadedSize + ", path:" + targetFile.getPath());
         } else {
             File parentFile = targetFile.getParentFile();
