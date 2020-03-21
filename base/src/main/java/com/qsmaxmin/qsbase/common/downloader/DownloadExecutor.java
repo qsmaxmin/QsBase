@@ -47,7 +47,7 @@ class DownloadExecutor<M extends QsDownloadModel> {
         long downloadedSize = 0;
         if (targetFile.exists()) {
             downloadedSize = targetFile.length();
-            builder.addHeader("Range", downloadedSize + "-");
+            builder.addHeader("Range", "bytes=" + downloadedSize + "-");
             L.i(TAG, "old file exists....size:" + downloadedSize + ", path:" + targetFile.getPath());
         } else {
             File parentFile = targetFile.getParentFile();
@@ -77,25 +77,31 @@ class DownloadExecutor<M extends QsDownloadModel> {
                         if (body != null) {
                             long contentLength = body.contentLength();
                             if (contentLength > 0) {
+                                long existsLength = finalDownloadedSize;
+                                if (existsLength == contentLength) {
+                                    if (L.isEnable()) L.i(TAG, "exists file size matched contentLength, post complete event");
+                                    postDownloadComplete();
+                                    return;
+                                } else if (existsLength > contentLength) {
+                                    boolean delete = targetFile.delete();
+                                    existsLength = 0;
+                                    if (L.isEnable()) L.i(TAG, "exists file is larger than contentLength(" + finalDownloadedSize + ">" + contentLength + "), so delete it, id:" + model.getId() + ", delete:" + delete);
+                                }
                                 accessFile = new RandomAccessFile(targetFile, "rwd");
-                                accessFile.seek(finalDownloadedSize);
-                                if (finalDownloadedSize > 0) {
-                                    postDownloading(finalDownloadedSize, contentLength);
+                                accessFile.seek(existsLength);
+                                if (existsLength > 0) {
+                                    postDownloading(existsLength, contentLength);
                                 }
                                 InputStream is = body.byteStream();
                                 byte[] buff = new byte[1024 * 10];
                                 int len;
                                 long progress;
-                                long tempLength = finalDownloadedSize;
+                                long tempLength = existsLength;
                                 long lastProgress = 0;
-                                long callbackCount;
-                                if (contentLength < 10 * 1024 * 1024) {
-                                    callbackCount = 10;
-                                } else if (contentLength > 100 * 1024 * 1024) {
-                                    callbackCount = 100;
-                                } else {
-                                    callbackCount = (contentLength / (1024 * 1024));
-                                }
+
+                                long callbackSize = 512 * 1024;
+                                long callbackCount = contentLength / callbackSize;
+                                callbackCount = callbackCount < 20 ? 20 : (callbackCount > 100 ? 100 : callbackCount);
 
                                 while ((len = is.read(buff)) != -1) {
                                     accessFile.write(buff, 0, len);
