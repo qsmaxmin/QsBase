@@ -110,8 +110,8 @@ class DownloadExecutor<M extends QsDownloadModel> {
                                     if (L.isEnable()) L.i(TAG, "download complete........id:" + model.getId() + ", time gone:" + getTimeGone());
                                     postDownloadComplete();
                                 } else {
-                                    if (L.isEnable()) L.e(TAG, "download failed......content length not matched");
-                                    postDownloadFailed("content length not matched");
+                                    if (L.isEnable()) L.e(TAG, "download failed......content length not matched, wanted:" + contentLength + ", but:" + tempLength);
+                                    postDownloadFailed("content length not matched, wanted:" + contentLength + ", but:" + tempLength);
                                 }
                             } else {
                                 postDownloadFailed("content length is 0");
