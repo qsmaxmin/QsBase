@@ -57,7 +57,7 @@ class DownloadExecutor<M extends QsDownloadModel> {
             }
         }
         request = builder.build();
-        final long finalDownloadedSize = downloadedSize;
+        final long fileExistsLength = downloadedSize;
         postDownloadStart();
         if (L.isEnable()) L.i(TAG, "download started......id:" + model.getId() + ", time gone:" + getTimeGone());
 
@@ -75,48 +75,45 @@ class DownloadExecutor<M extends QsDownloadModel> {
                         ResponseBody body = response.body();
                         if (body != null) {
                             long contentLength = body.contentLength();
+                            if (fileExistsLength > 0 && contentLength == 0) {
+                                if (L.isEnable()) L.i(TAG, "exists file size matched contentLength, post complete event");
+                                postDownloadComplete();
+                                return;
+                            }
+
                             if (contentLength > 0) {
-                                long existsLength = finalDownloadedSize;
-                                if (existsLength == contentLength) {
-                                    if (L.isEnable()) L.i(TAG, "exists file size matched contentLength, post complete event");
-                                    postDownloadComplete();
-                                    return;
-                                } else if (existsLength > contentLength) {
-                                    boolean delete = targetFile.delete();
-                                    existsLength = 0;
-                                    if (L.isEnable()) L.i(TAG, "exists file is larger than contentLength(" + finalDownloadedSize + ">" + contentLength + "), so delete it, id:" + model.getId() + ", delete:" + delete);
-                                }
+                                long totalLength = fileExistsLength + contentLength;
                                 accessFile = new RandomAccessFile(targetFile, "rwd");
-                                accessFile.seek(existsLength);
-                                if (existsLength > 0) {
-                                    postDownloading(existsLength, contentLength);
+                                accessFile.seek(fileExistsLength);
+                                if (fileExistsLength > 0) {
+                                    postDownloading(fileExistsLength, totalLength);
                                 }
                                 InputStream is = body.byteStream();
                                 byte[] buff = new byte[1024 * 10];
                                 int len;
                                 long progress;
-                                long tempLength = existsLength;
+                                long tempLength = fileExistsLength;
                                 long lastProgress = 0;
 
                                 long callbackSize = 100 * 1024;
-                                long callbackCount = contentLength / callbackSize;
+                                long callbackCount = totalLength / callbackSize;
                                 callbackCount = callbackCount < 30 ? 30 : (callbackCount > 100 ? 100 : callbackCount);
 
                                 while ((len = is.read(buff)) != -1) {
                                     accessFile.write(buff, 0, len);
                                     tempLength += len;
-                                    progress = tempLength * callbackCount / contentLength;
+                                    progress = tempLength * callbackCount / totalLength;
                                     if (progress != lastProgress) {
                                         lastProgress = progress;
-                                        postDownloading(tempLength, contentLength);
+                                        postDownloading(tempLength, totalLength);
                                     }
                                 }
-                                if (tempLength == contentLength) {
+                                if (tempLength == totalLength) {
                                     if (L.isEnable()) L.i(TAG, "download complete........id:" + model.getId() + ", time gone:" + getTimeGone());
                                     postDownloadComplete();
                                 } else {
-                                    if (L.isEnable()) L.e(TAG, "download failed......content length not matched, wanted:" + contentLength + ", but:" + tempLength);
-                                    postDownloadFailed("content length not matched, wanted:" + contentLength + ", but:" + tempLength);
+                                    if (L.isEnable()) L.e(TAG, "download failed......content length not matched, wanted:" + totalLength + ", but:" + tempLength);
+                                    postDownloadFailed("content length not matched, wanted:" + totalLength + ", but:" + tempLength);
                                 }
                             } else {
                                 postDownloadFailed("content length is 0");
