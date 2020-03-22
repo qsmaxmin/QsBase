@@ -8,9 +8,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
+import java.util.Set;
 
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.Headers;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
@@ -21,14 +23,15 @@ import okhttp3.ResponseBody;
  * @Description
  */
 class DownloadExecutor<M extends QsDownloadModel> {
-    private final String          TAG = "DownloadExecutor";
+    private final String          TAG;
     private final QsDownloader<M> downloader;
     private final M               model;
     private       long            initTime;
 
-    DownloadExecutor(QsDownloader<M> downloader, M model) {
+    DownloadExecutor(QsDownloader<M> downloader, M model, String tag) {
         this.downloader = downloader;
         this.model = model;
+        this.TAG = tag;
     }
 
     void start(final Request.Builder builder) {
@@ -40,14 +43,13 @@ class DownloadExecutor<M extends QsDownloadModel> {
         });
     }
 
-    private void startInner(Request.Builder builder) {
-        final Request request;
+    private void startInner(final Request.Builder builder) {
+        postDownloadStart();
+        if (L.isEnable()) L.i(TAG, "download started......id:" + model.getId() + ", time gone:" + getTimeGone());
+
         final File targetFile = new File(model.getFilePath());
-        long downloadedSize = 0;
         if (targetFile.exists()) {
-            downloadedSize = targetFile.length();
-            builder.header("RANGE", "bytes=" + downloadedSize + "-");
-            L.i(TAG, "old file exists....size:" + downloadedSize + ", path:" + targetFile.getPath());
+            checkFileBeforeDownload(builder, targetFile);
         } else {
             File parentFile = targetFile.getParentFile();
             if (!parentFile.exists() && !parentFile.mkdirs()) {
@@ -55,12 +57,54 @@ class DownloadExecutor<M extends QsDownloadModel> {
                 postDownloadFailed("create dir failed, dir:" + parentFile.getPath());
                 return;
             }
+            startDownload(builder.build(), targetFile, 0);
         }
-        request = builder.build();
-        final long fileExistsLength = downloadedSize;
-        postDownloadStart();
-        if (L.isEnable()) L.i(TAG, "download started......id:" + model.getId() + ", time gone:" + getTimeGone());
+    }
 
+    /**
+     * 断点续传前，检查文件真实大小
+     */
+    private void checkFileBeforeDownload(final Request.Builder builder, final File targetFile) {
+        L.i(TAG, "old file exists....size:" + targetFile.length() + ", path:" + targetFile.getPath());
+        downloader.getClient().newCall(builder.build()).enqueue(new Callback() {
+            @Override public void onFailure(Call call, IOException e) {
+                postDownloadFailed(e.getMessage());
+                e.printStackTrace();
+            }
+
+            @Override public void onResponse(Call call, Response response) throws IOException {
+                try {
+                    if (response.isSuccessful()) {
+                        ResponseBody body = response.body();
+                        if (body == null || body.contentLength() == 0) {
+                            L.e(TAG, "download failed, body is empty!");
+                            postDownloadFailed("download failed, body is empty!");
+                            return;
+                        }
+                        long existsLength = targetFile.length();
+                        if (existsLength < body.contentLength()) {
+                            Request request = builder.header("RANGE", "bytes=" + existsLength + "-").build();
+                            startDownload(request, targetFile, existsLength);
+                        } else if (existsLength == body.contentLength()) {
+                            if (L.isEnable()) L.i(TAG, "need not download file, exists file length matched contentLength, id:" + model.getId());
+                            postDownloading(existsLength, existsLength);
+                            postDownloadComplete();
+                        }
+                    } else {
+                        L.e(TAG, "onResponse failed, response code=" + response.code());
+                        postDownloadFailed("onResponse failed, response code=" + response.code());
+                    }
+                } catch (Exception e) {
+                    postDownloadFailed(e.getMessage());
+                    e.printStackTrace();
+                } finally {
+                    close(response);
+                }
+            }
+        });
+    }
+
+    private void startDownload(Request request, final File targetFile, final long rangStartPoint) {
         downloader.getClient().newCall(request).enqueue(new Callback() {
             @Override public void onFailure(Call call, IOException e) {
                 postDownloadFailed(e.getMessage());
@@ -68,31 +112,34 @@ class DownloadExecutor<M extends QsDownloadModel> {
             }
 
             @Override public void onResponse(Call call, Response response) throws IOException {
+                if (L.isEnable()) printResponseHeader(response);
+
                 RandomAccessFile accessFile = null;
                 try {
                     if (response.isSuccessful()) {
-                        if (L.isEnable()) L.i(TAG, "downloading.......id:" + model.getId() + ", time gone:" + getTimeGone());
+                        if (L.isEnable()) L.i(TAG, "response OK.......id:" + model.getId() + ", time gone:" + getTimeGone());
                         ResponseBody body = response.body();
+
                         if (body != null) {
                             long contentLength = body.contentLength();
-                            if (fileExistsLength > 0 && contentLength == 0) {
-                                if (L.isEnable()) L.i(TAG, "exists file size matched contentLength, post complete event");
-                                postDownloadComplete();
-                                return;
+                            long startPoint = rangStartPoint;
+                            if (startPoint > 0 && response.code() != 206) {//不支持断点续传
+                                startPoint = 0;
+                                if (L.isEnable()) L.e(TAG, "server not support resume from break point");
                             }
 
                             if (contentLength > 0) {
-                                long totalLength = fileExistsLength + contentLength;
+                                long totalLength = startPoint + contentLength;
                                 accessFile = new RandomAccessFile(targetFile, "rwd");
-                                accessFile.seek(fileExistsLength);
-                                if (fileExistsLength > 0) {
-                                    postDownloading(fileExistsLength, totalLength);
+                                accessFile.seek(startPoint);
+                                if (startPoint > 0) {
+                                    postDownloading(startPoint, totalLength);
                                 }
                                 InputStream is = body.byteStream();
                                 byte[] buff = new byte[1024 * 10];
                                 int len;
                                 long progress;
-                                long tempLength = fileExistsLength;
+                                long tempLength = startPoint;
                                 long lastProgress = 0;
 
                                 long callbackSize = 100 * 1024;
@@ -109,29 +156,47 @@ class DownloadExecutor<M extends QsDownloadModel> {
                                     }
                                 }
                                 if (tempLength == totalLength) {
-                                    if (L.isEnable()) L.i(TAG, "download complete........id:" + model.getId() + ", time gone:" + getTimeGone());
+                                    if (L.isEnable()) L.i(TAG, "download success, id:" + model.getId() + ", time gone:" + getTimeGone());
                                     postDownloadComplete();
                                 } else {
-                                    if (L.isEnable()) L.e(TAG, "download failed......content length not matched, wanted:" + totalLength + ", but:" + tempLength);
+                                    if (L.isEnable()) L.e(TAG, "download failed, content length not matched, wanted:" + totalLength + ", but:" + tempLength);
                                     postDownloadFailed("content length not matched, wanted:" + totalLength + ", but:" + tempLength);
                                 }
                             } else {
-                                postDownloadFailed("content length is 0");
+                                L.e(TAG, "download failed, content length is 0");
+                                postDownloadFailed("download failed, content length is 0");
                             }
                         } else {
-                            postDownloadFailed("response body is null");
+                            L.e(TAG, "download failed, response body is null");
+                            postDownloadFailed("download failed, response body is null");
                         }
                     } else {
-                        postDownloadFailed("response code:" + response.code());
+                        L.e(TAG, "download failed, response code=" + response.code());
+                        postDownloadFailed("download failed, response code:" + response.code());
                     }
                 } catch (Exception e) {
                     postDownloadFailed(e.getMessage());
+                    e.printStackTrace();
                 } finally {
                     close(response);
                     close(accessFile);
                 }
             }
         });
+    }
+
+    private void printResponseHeader(Response response) {
+        if (response == null) return;
+        int code = response.code();
+        Headers headers = response.headers();
+        if (headers == null) return;
+        Set<String> names = headers.names();
+        StringBuilder sb = new StringBuilder("onResponse......code:" + code);
+        for (String name : names) {
+            String value = headers.get(name);
+            sb.append("\n\t").append(name).append("=").append(value);
+        }
+        L.i(TAG, sb.toString());
     }
 
     /**

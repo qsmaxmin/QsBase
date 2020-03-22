@@ -8,7 +8,6 @@ import com.qsmaxmin.qsbase.common.aspect.Permission;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -66,7 +65,7 @@ public class QsDownloader<M extends QsDownloadModel> {
             if (L.isEnable()) L.e(TAG, "startDownload...do not download again，id:" + model.getId());
             return;
         }
-        DownloadExecutor<M> executor = new DownloadExecutor<>(this, model);
+        DownloadExecutor<M> executor = new DownloadExecutor<>(this, model, TAG);
         executorMap.put(model.getId(), executor);
 
         builder.tag(httpTag);
