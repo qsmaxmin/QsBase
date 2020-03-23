@@ -133,6 +133,14 @@ public class CacheHelper {
         return null;
     }
 
+    public static void deleteCacheFile(String key) {
+        try {
+            QsHelper.getApplication().deleteFile(key);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     private boolean isMainThread() {
         return Thread.currentThread() == Looper.getMainLooper().getThread();
     }
