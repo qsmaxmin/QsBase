@@ -348,8 +348,8 @@ public class QsHelper {
         return Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState());
     }
 
-    public static void closeStream(Closeable... closeables) {
-        StreamCloseUtils.close(closeables);
+    public static void closeStream(Closeable closeable) {
+        StreamCloseUtils.close(closeable);
     }
 
     /**

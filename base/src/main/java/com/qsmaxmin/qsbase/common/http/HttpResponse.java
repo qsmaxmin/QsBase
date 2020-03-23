@@ -74,7 +74,9 @@ public class HttpResponse {
             } catch (Exception e) {
                 throw new QsException(QsExceptionType.UNEXPECTED, requestTag, e.getMessage());
             } finally {
-                StreamCloseUtils.close(isr, is, br);
+                StreamCloseUtils.close(isr);
+                StreamCloseUtils.close(is);
+                StreamCloseUtils.close(br);
             }
         }
         return null;
