@@ -119,6 +119,10 @@ public class ImageHelper {
             return mObject;
         }
 
+        public void setLoadObject(Object obj) {
+            this.mObject = obj;
+        }
+
         Builder(Context context) {
             manager = Glide.with(context);
         }
