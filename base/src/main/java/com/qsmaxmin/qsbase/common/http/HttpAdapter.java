@@ -306,7 +306,7 @@ public class HttpAdapter {
                     }
                     requestBody = builder.build();
                 } else {
-                    MultipartBody.Builder builder = new MultipartBody.Builder();
+                    MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
                     for (String key : formMap.keySet()) {
                         Object obj = formMap.get(key);
                         if (obj instanceof File) {
