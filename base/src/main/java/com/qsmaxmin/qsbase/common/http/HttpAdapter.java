@@ -34,6 +34,7 @@ import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import okhttp3.Dispatcher;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -87,7 +88,7 @@ public class HttpAdapter {
         callback = QsHelper.getAppInterface().registerGlobalHttpListener();
     }
 
-    private HttpBuilder getHttpBuilder(String methodName, Object requestTag, int requestStyle, String terminal, String path, Object[] args, String requestType, Object body, HashMap<String, String> formBody, HashMap<String, String> paramsMap) throws Exception {
+    private HttpBuilder getHttpBuilder(String methodName, Object requestTag, int requestStyle, String terminal, String path, Object[] args, String requestType, Object body, HashMap<String, Object> formBody, HashMap<String, String> paramsMap) throws Exception {
         HttpBuilder httpBuilder = new HttpBuilder(methodName, requestTag, requestStyle, terminal, path, args, requestType, body, formBody, paramsMap);
         if (callback != null) callback.initHttpAdapter(httpBuilder);
         return httpBuilder;
@@ -224,7 +225,7 @@ public class HttpAdapter {
 
         RequestBody requestBody = null;
         Object body = null;
-        HashMap<String, String> formMap = new HashMap<>();
+        HashMap<String, Object> formMap = new HashMap<>();
         HashMap<String, String> paramsMap = new HashMap<>();
         String mimeType = "application/json; charset=UTF-8";
 
@@ -251,14 +252,9 @@ public class HttpAdapter {
                 }
             } else if (annotation instanceof FormParam) {
                 Object arg = args[i];
-                if (arg != null && !TextUtils.isEmpty(String.valueOf(arg))) {
+                if (arg != null) {
                     String key = ((FormParam) annotation).value();
-                    formMap.put(key, String.valueOf(arg));
-                }
-            } else if (annotation instanceof com.qsmaxmin.qsbase.common.aspect.RequestBody) {
-                Object arg = args[i];
-                if (arg instanceof RequestBody) {
-                    requestBody = (RequestBody) arg;
+                    formMap.put(key, arg);
                 }
             }
         }
@@ -282,23 +278,47 @@ public class HttpAdapter {
         body = httpBuilder.getBody();
 
         if ((!"GET".equals(requestType)) && (!"HEAD".equals(requestType))) {
-            if (requestBody == null) {
-                if (body != null) {
-                    if (body instanceof String) {
-                        requestBody = converter.stringToBody(method.getName(), mimeType, (String) body);
-                    } else if (body instanceof File) {
-                        requestBody = converter.fileToBody(method.getName(), mimeType, (File) body);
-                    } else if (body instanceof byte[]) {
-                        requestBody = converter.byteToBody(method.getName(), mimeType, (byte[]) body);
-                    } else {
-                        requestBody = converter.jsonToBody(method.getName(), mimeType, body, body.getClass());
+            if (body != null) {
+                if (body instanceof String) {
+                    requestBody = converter.stringToBody(method.getName(), mimeType, (String) body);
+                } else if (body instanceof File) {
+                    requestBody = converter.fileToBody(method.getName(), mimeType, (File) body);
+                } else if (body instanceof byte[]) {
+                    requestBody = converter.byteToBody(method.getName(), mimeType, (byte[]) body);
+                } else {
+                    requestBody = converter.jsonToBody(method.getName(), mimeType, body, body.getClass());
+                }
+            } else if (formMap != null) {
+                boolean isArrString = true;
+                for (String key : formMap.keySet()) {
+                    Object obj = formMap.get(key);
+                    if (obj instanceof File || obj instanceof byte[]) {
+                        isArrString = false;
                     }
-                } else if (formMap != null) {
+                }
+                if (isArrString) {
                     okhttp3.FormBody.Builder builder = new okhttp3.FormBody.Builder();
                     for (String key : formMap.keySet()) {
-                        String valueStr = formMap.get(key);
-                        if (!TextUtils.isEmpty(key) && valueStr != null && valueStr.length() > 0) {
+                        String valueStr = String.valueOf(formMap.get(key));
+                        if (!TextUtils.isEmpty(key) && valueStr.length() > 0) {
                             builder.add(key, valueStr);
+                        }
+                    }
+                    requestBody = builder.build();
+                } else {
+                    MultipartBody.Builder builder = new MultipartBody.Builder();
+                    for (String key : formMap.keySet()) {
+                        Object obj = formMap.get(key);
+                        if (obj instanceof File) {
+                            RequestBody rb = converter.fileToBody(method.getName(), "file/*", (File) obj);
+                            builder.addFormDataPart(key, String.valueOf(System.nanoTime()), rb);
+                        } else if (obj instanceof byte[]) {
+                            RequestBody rb = converter.byteToBody(method.getName(), "file/*", (byte[]) obj);
+                            builder.addFormDataPart(key, String.valueOf(System.nanoTime()), rb);
+                        } else {
+                            if (!TextUtils.isEmpty(key)) {
+                                builder.addFormDataPart(key, String.valueOf(obj));
+                            }
                         }
                     }
                     requestBody = builder.build();

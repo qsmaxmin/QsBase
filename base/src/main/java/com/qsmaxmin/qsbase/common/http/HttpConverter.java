@@ -53,7 +53,7 @@ class HttpConverter {
         return RequestBody.create(MediaType.parse(mimeType), bytes);
     }
 
-    void parseFormBody(HashMap<String, String> formMap, String methodName, Object formBody) throws Exception {
+    void parseFormBody(HashMap<String, Object> formMap, String methodName, Object formBody) throws Exception {
         if (formBody instanceof Map) {
             L.i(TAG, "methodName:" + methodName + "  FormBody类型为Map，将key和value映射到表单");
             Map dataMap = (Map) formBody;
@@ -76,7 +76,7 @@ class HttpConverter {
         } else {
             L.i(TAG, "methodName:" + methodName + "  FormBody类型为Object，尝试通过反射获取表单数据");
             Field[] fieldArr = formBody.getClass().getFields();
-            if (fieldArr != null && fieldArr.length > 0) {
+            if (fieldArr.length > 0) {
                 for (Field field : fieldArr) {
                     Object value = field.get(formBody);
                     if (value != null) {
