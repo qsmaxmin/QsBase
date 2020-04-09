@@ -144,9 +144,13 @@ public interface QsIView<P> {
 
     void post(Runnable action);
 
+    void postDelayed(Runnable action, long delayed);
+
     void runOnHttpThread(Runnable action);
 
     void runOnWorkThread(Runnable action);
 
     Activity getActivity();
+
+    void smoothScrollToTop(boolean autoRefresh);
 }

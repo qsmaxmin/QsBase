@@ -23,7 +23,6 @@ import java.util.List;
  * @Date 17/7/4  下午3:13
  * @Description
  */
-
 public abstract class QsPullListFragment<T extends QsPresenter, D> extends QsListFragment<T, D> implements QsIPullToRefresh {
     public static final byte           LOAD_WHEN_SCROLL_TO_BOTTOM = 0;
     public static final byte           LOAD_WHEN_SECOND_TO_LAST   = 1;
@@ -32,7 +31,7 @@ public abstract class QsPullListFragment<T extends QsPresenter, D> extends QsLis
     protected           LoadingFooter  mLoadingFooter;
 
     @Override public int layoutId() {
-        return (!isOpenViewState() && (getTopLayout() != 0 || getBottomLayout() != 0)) ? R.layout.qs_fragment_pull_listview_with_top_bottom : R.layout.qs_fragment_pull_listview;
+        return R.layout.qs_fragment_pull_listview;
     }
 
     @Override public int getFooterLayout() {
@@ -160,10 +159,10 @@ public abstract class QsPullListFragment<T extends QsPresenter, D> extends QsLis
             if (!canLoadingMore) {
                 return;
             } else if (state == LoadingFooter.State.Loading) {
-                L.i(initTag(), "Under loading..........");
+                if (L.isEnable()) L.i(initTag(), "Under loading..........");
                 return;
             } else if (state == LoadingFooter.State.TheEnd) {
-                L.i(initTag(), "no more data...........");
+                if (L.isEnable()) L.i(initTag(), "no more data...........");
                 return;
             }
             setLoadingState(LoadingFooter.State.Loading);

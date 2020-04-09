@@ -22,6 +22,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
+import android.widget.ScrollView;
 import android.widget.ViewAnimator;
 
 import com.qsmaxmin.qsbase.R;
@@ -33,6 +34,7 @@ import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.common.viewbind.OnKeyDownListener;
 import com.qsmaxmin.qsbase.common.viewbind.ViewBindHelper;
 import com.qsmaxmin.qsbase.common.widget.dialog.QsProgressDialog;
+import com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout;
 import com.qsmaxmin.qsbase.mvp.fragment.QsIFragment;
 import com.qsmaxmin.qsbase.mvp.model.QsConstants;
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
@@ -47,6 +49,7 @@ import java.util.List;
  * @Description
  */
 public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActivity implements QsIABActivity {
+    private   View              contentView;
     private   P                 presenter;
     protected QsProgressDialog  mProgressDialog;
     protected ViewAnimator      mViewAnimator;
@@ -70,9 +73,9 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
         QsHelper.getAppInterface().onActivityCreate(this);
         ViewBindHelper.bindBundle(this, getIntent().getExtras());
         initStatusBar();
-        View view = initView();
-        setContentView(view);
-        ViewBindHelper.bindView(this, view);
+        contentView = initView();
+        setContentView(contentView);
+        ViewBindHelper.bindView(this, contentView);
         if (isOpenEventBus() && !EventBus.getDefault().isRegistered(this)) EventBus.getDefault().register(this);
         if (!isDelayData()) {
             hasInitData = true;
@@ -87,7 +90,6 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
 
     @CallSuper @Override protected void onResume() {
         super.onResume();
-        QsHelper.getScreenHelper().bringActivityToTop(this);
         QsHelper.getAppInterface().onActivityResume(this);
     }
 
@@ -113,6 +115,7 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
         }
         mViewAnimator = null;
         onKeyDownListener = null;
+        contentView = null;
         if (isOpenEventBus() && EventBus.getDefault().isRegistered(this)) EventBus.getDefault().unregister(this);
         QsHelper.getAppInterface().onActivityDestroy(this);
         QsHelper.getScreenHelper().popActivity(this);
@@ -624,6 +627,12 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
         runOnUiThread(action);
     }
 
+    @Override public void postDelayed(Runnable action, long delayed) {
+        if (!isFinishing()) {
+            QsHelper.postDelayed(action, delayed);
+        }
+    }
+
     @Override public void runOnWorkThread(Runnable action) {
         QsHelper.getThreadHelper().getWorkThreadPoll().execute(action);
     }
@@ -634,6 +643,46 @@ public abstract class QsABActivity<P extends QsPresenter> extends AppCompatActiv
 
     @Override public Activity getActivity() {
         return this;
+    }
+
+    @Override public void smoothScrollToTop(boolean autoRefresh) {
+        if (contentView == null) return;
+        final ScrollView scrollView = (ScrollView) tryGetTargetView(ScrollView.class, contentView);
+        if (scrollView != null) {
+            scrollView.post(new Runnable() {
+                @Override public void run() {
+                    scrollView.smoothScrollTo(0, 0);
+                }
+            });
+        }
+
+        if (autoRefresh) {
+            final PtrFrameLayout frameLayout = (PtrFrameLayout) tryGetTargetView(PtrFrameLayout.class, contentView);
+            if (frameLayout != null) {
+                frameLayout.post(new Runnable() {
+                    @Override public void run() {
+                        frameLayout.autoRefresh();
+                    }
+                });
+            }
+        }
+    }
+
+    private View tryGetTargetView(Class clazz, View parentView) {
+        View targetView = null;
+        if (parentView.getClass() == clazz) {
+            targetView = parentView;
+        } else {
+            if (parentView instanceof ViewGroup) {
+                int childCount = ((ViewGroup) parentView).getChildCount();
+                for (int i = 0; i < childCount; i++) {
+                    View childAt = ((ViewGroup) parentView).getChildAt(i);
+                    targetView = tryGetTargetView(clazz, childAt);
+                    if (targetView != null) break;
+                }
+            }
+        }
+        return targetView;
     }
 
     @Override public void setOnKeyDownListener(OnKeyDownListener listener) {

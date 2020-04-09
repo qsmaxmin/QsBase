@@ -1,4 +1,4 @@
-package com.qsmaxmin.qsbase.mvp.fragment;
+package com.qsmaxmin.qsbase.mvp;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,16 +12,17 @@ import com.qsmaxmin.qsbase.common.widget.ptr.PtrHandler;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrUIHandler;
 import com.qsmaxmin.qsbase.common.widget.ptr.header.BeautyCircleRefreshHeader;
 import com.qsmaxmin.qsbase.common.widget.recyclerview.EndlessRecyclerOnScrollListener;
+import com.qsmaxmin.qsbase.mvp.fragment.QsIPullToRefresh;
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
 
 import java.util.List;
 
 /**
- * @CreateBy qsmaxmin
- * @Date 17/7/2  下午4:23
- * @Description
+ * @CreateBy administrator
+ * @Date 2020/4/9 16:21
+ * @Description pull list activity with actionbar
  */
-public abstract class QsPullRecyclerFragment<P extends QsPresenter, D> extends QsRecyclerFragment<P, D> implements QsIPullToRefresh {
+public abstract class QsPullRecyclerABActivity<P extends QsPresenter, D> extends QsRecyclerABActivity<P, D> implements QsIPullToRefresh {
     public static final byte           LOAD_WHEN_SCROLL_TO_BOTTOM = 0;
     public static final byte           LOAD_WHEN_SECOND_TO_LAST   = 1;
     private             boolean        canLoadingMore             = true;
@@ -33,15 +34,15 @@ public abstract class QsPullRecyclerFragment<P extends QsPresenter, D> extends Q
     }
 
     @Override public int layoutId() {
-        return R.layout.qs_fragment_pull_recyclerview;
+        return R.layout.qs_activity_pull_recyclerview;
     }
 
     @Override public PtrUIHandler getPtrUIHandlerView() {
         return new BeautyCircleRefreshHeader(getContext());
     }
 
-    @Override protected View initView(LayoutInflater inflater) {
-        View view = super.initView(inflater);
+    @Override protected View initView() {
+        View view = super.initView();
         initPtrFrameLayout(view);
         getRecyclerView().addOnScrollListener(mOnScrollListener);
         return view;

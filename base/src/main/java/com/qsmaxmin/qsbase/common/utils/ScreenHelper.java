@@ -61,22 +61,6 @@ public final class ScreenHelper {
     }
 
     /**
-     * 将元素置顶
-     */
-    public void bringActivityToTop(FragmentActivity activity) {
-        if (activity == null) return;
-        if (currentActivity() == activity) return;
-        int index = fragmentActivities.indexOf(activity);
-        if (index >= 0) {
-            FragmentActivity remove = fragmentActivities.remove(index);
-            if (remove != null) fragmentActivities.add(remove);
-            if (L.isEnable()) {
-                L.i(TAG, "activity(" + activity.getClass().getSimpleName() + ")获取到焦点移到栈顶，当前栈大小：" + fragmentActivities.size());
-            }
-        }
-    }
-
-    /**
      * 出栈
      */
     public void popActivity(FragmentActivity activity) {

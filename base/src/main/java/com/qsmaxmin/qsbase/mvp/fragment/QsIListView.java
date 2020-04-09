@@ -1,5 +1,7 @@
 package com.qsmaxmin.qsbase.mvp.fragment;
 
+import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 
@@ -10,20 +12,16 @@ import java.util.List;
 /**
  * @CreateBy qsmaxmin
  * @Date 17/7/2  上午10:58
- * @Description
+ * @Description list视图超类
  */
 
-public interface QsIListFragment<D> extends QsIFragment {
+public interface QsIListView<D> extends AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener, AbsListView.OnScrollListener {
 
     QsListAdapterItem<D> getListAdapterItem(int type);
 
     int getHeaderLayout();
 
     int getFooterLayout();
-
-    int getTopLayout();
-
-    int getBottomLayout();
 
     ListView getListView();
 

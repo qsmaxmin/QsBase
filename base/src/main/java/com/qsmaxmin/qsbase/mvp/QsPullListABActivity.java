@@ -1,7 +1,8 @@
-package com.qsmaxmin.qsbase.mvp.fragment;
+package com.qsmaxmin.qsbase.mvp;
 
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AbsListView;
 
 import com.qsmaxmin.qsbase.R;
 import com.qsmaxmin.qsbase.common.log.L;
@@ -11,44 +12,43 @@ import com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrHandler;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrUIHandler;
 import com.qsmaxmin.qsbase.common.widget.ptr.header.BeautyCircleRefreshHeader;
-import com.qsmaxmin.qsbase.common.widget.recyclerview.EndlessRecyclerOnScrollListener;
+import com.qsmaxmin.qsbase.mvp.fragment.QsIPullToRefresh;
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
 
 import java.util.List;
 
 /**
- * @CreateBy qsmaxmin
- * @Date 17/7/2  下午4:23
- * @Description
+ * @CreateBy administrator
+ * @Date 2020/4/9 16:21
+ * @Description pull list activity with actionbar
  */
-public abstract class QsPullRecyclerFragment<P extends QsPresenter, D> extends QsRecyclerFragment<P, D> implements QsIPullToRefresh {
+public abstract class QsPullListABActivity<P extends QsPresenter, D> extends QsListABActivity<P, D> implements QsIPullToRefresh {
     public static final byte           LOAD_WHEN_SCROLL_TO_BOTTOM = 0;
     public static final byte           LOAD_WHEN_SECOND_TO_LAST   = 1;
     private             boolean        canLoadingMore             = true;
     private             PtrFrameLayout mPtrFrameLayout;
     protected           LoadingFooter  mLoadingFooter;
 
-    @Override public int getFooterLayout() {
-        return R.layout.qs_loading_footer;
+    @Override public int layoutId() {
+        return R.layout.qs_activity_pull_listview;
     }
 
-    @Override public int layoutId() {
-        return R.layout.qs_fragment_pull_recyclerview;
+    @Override public int getFooterLayout() {
+        return R.layout.qs_loading_footer;
     }
 
     @Override public PtrUIHandler getPtrUIHandlerView() {
         return new BeautyCircleRefreshHeader(getContext());
     }
 
-    @Override protected View initView(LayoutInflater inflater) {
-        View view = super.initView(inflater);
+    @Override protected View initView() {
+        View view = super.initView();
         initPtrFrameLayout(view);
-        getRecyclerView().addOnScrollListener(mOnScrollListener);
         return view;
     }
 
-    @Override protected void initRecycleView(LayoutInflater inflater, View view) {
-        super.initRecycleView(inflater, view);
+    @Override protected void initListView(LayoutInflater inflater, View view) {
+        super.initListView(inflater, view);
         View footerView = getFooterView();
         if (footerView instanceof LoadingFooter) {
             mLoadingFooter = (LoadingFooter) footerView;
@@ -78,6 +78,13 @@ public abstract class QsPullRecyclerFragment<P extends QsPresenter, D> extends Q
         });
     }
 
+    /**
+     * 获取下拉刷新控件
+     */
+    @Override public PtrFrameLayout getPtrFrameLayout() {
+        return mPtrFrameLayout;
+    }
+
     @Override public void startRefreshing() {
         if (mPtrFrameLayout != null) mPtrFrameLayout.post(new Runnable() {
             @Override public void run() {
@@ -86,7 +93,7 @@ public abstract class QsPullRecyclerFragment<P extends QsPresenter, D> extends Q
         });
     }
 
-    @Override public void stopRefreshing() {
+    public void stopRefreshing() {
         if (mPtrFrameLayout != null) mPtrFrameLayout.post(new Runnable() {
             @Override public void run() {
                 mPtrFrameLayout.refreshComplete();
@@ -104,7 +111,6 @@ public abstract class QsPullRecyclerFragment<P extends QsPresenter, D> extends Q
     }
 
     @Override public void openPullRefreshing() {
-        mPtrFrameLayout.setEnabled(true);
         if (mPtrFrameLayout != null) mPtrFrameLayout.post(new Runnable() {
             @Override public void run() {
                 mPtrFrameLayout.setEnabled(true);
@@ -128,12 +134,8 @@ public abstract class QsPullRecyclerFragment<P extends QsPresenter, D> extends Q
         canLoadingMore = false;
     }
 
-    @Override public PtrFrameLayout getPtrFrameLayout() {
-        return mPtrFrameLayout;
-    }
-
     @Override public void setData(List<D> list) {
-        if (mPtrFrameLayout != null) mPtrFrameLayout.post(new Runnable() {
+        mPtrFrameLayout.post(new Runnable() {
             @Override public void run() {
                 mPtrFrameLayout.refreshComplete();
             }
@@ -142,28 +144,12 @@ public abstract class QsPullRecyclerFragment<P extends QsPresenter, D> extends Q
     }
 
     @Override public void setData(List<D> list, boolean showEmptyView) {
-        if (mPtrFrameLayout != null) mPtrFrameLayout.post(new Runnable() {
+        mPtrFrameLayout.post(new Runnable() {
             @Override public void run() {
                 mPtrFrameLayout.refreshComplete();
             }
         });
         super.setData(list, showEmptyView);
-    }
-
-    private EndlessRecyclerOnScrollListener mOnScrollListener = new EndlessRecyclerOnScrollListener() {
-        @Override public void onLoadNextPage(View view) {
-            super.onLoadNextPage(view);
-            if (onLoadTriggerCondition() == LOAD_WHEN_SCROLL_TO_BOTTOM) {
-                loadingMoreData();
-            }
-        }
-    };
-
-    @Override public void onAdapterGetView(int position, int totalCount) {
-        super.onAdapterGetView(position, totalCount);
-        if (onLoadTriggerCondition() == LOAD_WHEN_SECOND_TO_LAST && (position == totalCount - 2 || totalCount <= 1)) {
-            loadingMoreData();
-        }
     }
 
     private void loadingMoreData() {
@@ -180,6 +166,20 @@ public abstract class QsPullRecyclerFragment<P extends QsPresenter, D> extends Q
             }
             setLoadingState(LoadingFooter.State.Loading);
             onLoad();
+        }
+    }
+
+    @Override public void onAdapterGetView(int position, int totalCount) {
+        super.onAdapterGetView(position, totalCount);
+        if (onLoadTriggerCondition() == LOAD_WHEN_SECOND_TO_LAST && (position == totalCount - 2 || totalCount == 1)) {
+            loadingMoreData();
+        }
+    }
+
+    @Override public void onScrollStateChanged(AbsListView view, int scrollState) {
+        super.onScrollStateChanged(view, scrollState);
+        if (onLoadTriggerCondition() == LOAD_WHEN_SCROLL_TO_BOTTOM && scrollState == SCROLL_STATE_IDLE && !canListScrollUp()) {
+            loadingMoreData();
         }
     }
 

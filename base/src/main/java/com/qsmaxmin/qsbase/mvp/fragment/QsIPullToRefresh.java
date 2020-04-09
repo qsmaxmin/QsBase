@@ -7,7 +7,7 @@ import com.qsmaxmin.qsbase.common.widget.ptr.PtrUIHandler;
 /**
  * @CreateBy qsmaxmin
  * @Date 17/7/2  下午12:54
- * @Description
+ * @Description 可下拉刷新和上拉加载布局
  */
 
 public interface QsIPullToRefresh {

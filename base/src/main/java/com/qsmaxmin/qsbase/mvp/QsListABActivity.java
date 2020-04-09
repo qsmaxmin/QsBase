@@ -1,4 +1,4 @@
-package com.qsmaxmin.qsbase.mvp.fragment;
+package com.qsmaxmin.qsbase.mvp;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,21 +11,19 @@ import com.qsmaxmin.qsbase.R;
 import com.qsmaxmin.qsbase.common.aspect.ThreadPoint;
 import com.qsmaxmin.qsbase.common.aspect.ThreadType;
 import com.qsmaxmin.qsbase.common.log.L;
-import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.base.InnerScroller;
-import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.base.InnerScrollerContainer;
-import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.base.OuterScroller;
 import com.qsmaxmin.qsbase.mvp.adapter.QsListAdapter;
+import com.qsmaxmin.qsbase.mvp.fragment.QsIListView;
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @CreateBy qsmaxmin
- * @Date 17/7/2  下午4:29
- * @Description
+ * @CreateBy administrator
+ * @Date 2020/4/9 15:06
+ * @Description list activity with actionbar
  */
-public abstract class QsListFragment<P extends QsPresenter, D> extends QsFragment<P> implements QsIListView<D>, AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener, AbsListView.OnScrollListener, InnerScrollerContainer {
+public abstract class QsListABActivity<P extends QsPresenter, D> extends QsABActivity<P> implements QsIListView<D> {
     protected final List<D>     mList = new ArrayList<>();
     private         ListView    mListView;
     private         BaseAdapter mListAdapter;
@@ -33,7 +31,7 @@ public abstract class QsListFragment<P extends QsPresenter, D> extends QsFragmen
     private         View        footerView;
 
     @Override public int layoutId() {
-        return R.layout.qs_fragment_listview;
+        return R.layout.qs_activity_listview;
     }
 
     @Override public int getHeaderLayout() {
@@ -56,8 +54,9 @@ public abstract class QsListFragment<P extends QsPresenter, D> extends QsFragmen
         return 0;
     }
 
-    @Override protected View initView(LayoutInflater inflater) {
-        View rootView = super.initView(inflater);
+    @Override protected View initView() {
+        View rootView = super.initView();
+        LayoutInflater inflater = getLayoutInflater();
         initListView(inflater, rootView);
         return rootView;
     }
@@ -232,13 +231,5 @@ public abstract class QsListFragment<P extends QsPresenter, D> extends QsFragmen
 
     @Override public void onAdapterGetView(int position, int totalCount) {
         //for custom logic
-    }
-
-    /*----------------------- 以下是HeaderViewPager支持 ----------------------------*/
-    @Override public void setMyOuterScroller(OuterScroller outerScroller, int myPosition) {
-        if (getListView() instanceof InnerScroller) {
-            L.i(initTag(), "注册调度控件：  position:" + myPosition);
-            ((InnerScroller) getListView()).register2Outer(outerScroller, myPosition);
-        }
     }
 }

@@ -1,4 +1,4 @@
-package com.qsmaxmin.qsbase.mvp.fragment;
+package com.qsmaxmin.qsbase.mvp;
 
 import android.graphics.Rect;
 import android.support.annotation.NonNull;
@@ -17,17 +17,18 @@ import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.viewbind.ViewBindHelper;
 import com.qsmaxmin.qsbase.common.widget.recyclerview.HeaderFooterRecyclerView;
 import com.qsmaxmin.qsbase.mvp.adapter.QsRecyclerAdapter;
+import com.qsmaxmin.qsbase.mvp.fragment.QsIRecyclerView;
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @CreateBy qsmaxmin
- * @Date 17/7/1
- * @Description RecyclerView视图
+ * @CreateBy administrator
+ * @Date 2020/4/9 15:06
+ * @Description list activity with actionbar
  */
-public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFragment<P> implements QsIRecyclerView<D> {
+public abstract class QsRecyclerABActivity<P extends QsPresenter, D> extends QsABActivity<P> implements QsIRecyclerView<D> {
     public static final byte TYPE_LIST          = 1;
     public static final byte TYPE_GRID          = 2;
     public static final byte TYPE_STAGGEREDGRID = 3;
@@ -39,7 +40,7 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
     private       View                     footerView;
 
     @Override public int layoutId() {
-        return R.layout.qs_fragment_recycleview;
+        return R.layout.qs_activity_recyclerview;
     }
 
     @Override public int getHeaderLayout() {
@@ -58,9 +59,9 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
         return mRecyclerView;
     }
 
-    @Override protected View initView(LayoutInflater inflater) {
-        View rootView = super.initView(inflater);
-        initRecycleView(inflater, rootView);
+    @Override protected View initView() {
+        View rootView = super.initView();
+        initRecycleView(getLayoutInflater(), rootView);
         return rootView;
     }
 
@@ -100,11 +101,11 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
                         }
                     }
                 }
-                QsRecyclerFragment.this.onScrollStateChanged(recyclerView, newState);
+                QsRecyclerABActivity.this.onScrollStateChanged(recyclerView, newState);
             }
 
             @Override public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                QsRecyclerFragment.this.onScrolled(recyclerView, dx, dy);
+                QsRecyclerABActivity.this.onScrolled(recyclerView, dx, dy);
             }
         });
         mRecyclerViewAdapter = onCreateAdapter();

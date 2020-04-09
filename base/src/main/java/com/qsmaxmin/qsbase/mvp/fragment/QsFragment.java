@@ -577,6 +577,12 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         }
     }
 
+    @Override public void postDelayed(Runnable action, long delayed) {
+        if (getActivity() != null) {
+            QsHelper.postDelayed(action, delayed);
+        }
+    }
+
     @Override public void runOnWorkThread(Runnable action) {
         QsHelper.getThreadHelper().getWorkThreadPoll().execute(action);
     }
