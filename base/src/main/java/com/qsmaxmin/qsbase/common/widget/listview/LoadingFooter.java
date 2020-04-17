@@ -24,30 +24,28 @@ public class LoadingFooter extends RelativeLayout implements HeaderFooterRecycle
 
 
     public LoadingFooter(Context context) {
-        this(context, null);
+        super(context);
+        init();
     }
 
     public LoadingFooter(Context context, AttributeSet attrs) {
-        this(context, attrs, 0);
+        super(context, attrs);
+        init();
     }
 
     public LoadingFooter(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init(context);
+        init();
     }
 
-    public void init(Context context) {
-        inflate(context, R.layout.qs_layout_footer_main, this);
+    public void init() {
+        inflate(getContext(), R.layout.qs_layout_footer_main, this);
         setState(State.Normal);
     }
 
-    @Override protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        super.onLayout(changed, l, t, r, b);
-    }
-
-    @Override protected void onFinishInflate() {
-        super.onFinishInflate();
-        L.i(TAG, "onFinishInflate  state:" + mState);
+    @Override protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        L.i(TAG, "onAttachedToWindow  state:" + mState);
         if (mState != null) {
             setViewState(mState);
         }
@@ -81,7 +79,6 @@ public class LoadingFooter extends RelativeLayout implements HeaderFooterRecycle
      * 设置状态
      */
     private void setViewState(State status) {
-
         switch (status) {
             case Normal:
                 if (mTheEndView != null) mTheEndView.setVisibility(GONE);
@@ -90,7 +87,7 @@ public class LoadingFooter extends RelativeLayout implements HeaderFooterRecycle
                 if (mNormalView != null) {
                     mNormalView.setVisibility(VISIBLE);
                 } else {
-                    ViewStub viewStub = (ViewStub) findViewById(R.id.normal_viewstub);
+                    ViewStub viewStub = findViewById(R.id.normal_viewstub);
                     mNormalView = viewStub.inflate();
                 }
                 break;
@@ -102,7 +99,7 @@ public class LoadingFooter extends RelativeLayout implements HeaderFooterRecycle
                 if (mLoadingView != null) {
                     mLoadingView.setVisibility(VISIBLE);
                 } else {
-                    ViewStub viewStub = (ViewStub) findViewById(R.id.loading_viewstub);
+                    ViewStub viewStub = findViewById(R.id.loading_viewstub);
                     mLoadingView = viewStub.inflate();
                 }
                 break;
@@ -114,7 +111,7 @@ public class LoadingFooter extends RelativeLayout implements HeaderFooterRecycle
                 if (mTheEndView != null) {
                     mTheEndView.setVisibility(VISIBLE);
                 } else {
-                    ViewStub viewStub = (ViewStub) findViewById(R.id.end_viewstub);
+                    ViewStub viewStub = findViewById(R.id.end_viewstub);
                     mTheEndView = viewStub.inflate();
                 }
                 break;
@@ -126,7 +123,7 @@ public class LoadingFooter extends RelativeLayout implements HeaderFooterRecycle
                 if (mNetworkErrorView != null) {
                     mNetworkErrorView.setVisibility(VISIBLE);
                 } else {
-                    ViewStub viewStub = (ViewStub) findViewById(R.id.network_error_viewstub);
+                    ViewStub viewStub = findViewById(R.id.network_error_viewstub);
                     mNetworkErrorView = viewStub.inflate();
                 }
                 break;
