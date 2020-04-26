@@ -90,7 +90,7 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 
     public PagerSlidingTabStrip(Context context, AttributeSet attrs) {
         super(context, attrs);
-        initView(context, null);
+        initView(context, attrs);
     }
 
     public PagerSlidingTabStrip(Context context, AttributeSet attrs, int defStyle) {
@@ -349,7 +349,7 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
         final int height = getHeight();
 
         // draw indicator
-        if (indicatorColor != Color.TRANSPARENT) {
+        if (indicatorColor != Color.TRANSPARENT && indicatorHeight > 0) {
             rectPaint.setColor(indicatorColor);
             View currentTab = tabsContainer.getChildAt(currentPosition);
             float lineLeft;
