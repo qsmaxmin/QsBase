@@ -63,7 +63,7 @@ public class ViewBindHelper {
     private static String getExecuteClassName(Class clazz) {
         String name = clazz.getName();
         int index_$ = name.indexOf('$');
-        if (index_$ > 0) {//内部类
+        if (index_$ != -1) {//内部类
             int pointIndex = name.lastIndexOf('.');
             String packageName = name.substring(0, pointIndex);
             String simpleName = name.substring(index_$ + 1);
