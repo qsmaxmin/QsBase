@@ -26,7 +26,6 @@ import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
  */
 
 public abstract class QsViewPagerFragment<P extends QsPresenter> extends QsFragment<P> implements QsIViewPagerFragment {
-
     protected QsViewPagerAdapter   adapter;
     protected QsViewPager          pager;
     protected PagerSlidingTabStrip tabs;
@@ -72,7 +71,7 @@ public abstract class QsViewPagerFragment<P extends QsPresenter> extends QsFragm
     }
 
     public final void initTabsValue(PagerSlidingTabStrip tab) {
-        if (tab != null) {
+        if (enableTabSetting() && tab != null) {
             DisplayMetrics dm = getResources().getDisplayMetrics();
             tab.setShouldExpand(getTabsShouldExpand());
             tab.setDividerColor(getTabsDividerColor());
@@ -156,6 +155,10 @@ public abstract class QsViewPagerFragment<P extends QsPresenter> extends QsFragm
         return adapter;
     }
 
+    protected boolean enableTabSetting() {
+        return true;
+    }
+
     protected boolean getTabsCurrentItemAnimation() {
         return false;
     }
@@ -221,7 +224,7 @@ public abstract class QsViewPagerFragment<P extends QsPresenter> extends QsFragm
     }
 
     protected int getOffscreenPageLimit() {
-        return 1;
+        return 2;
     }
 
     protected int getPageMargin() {

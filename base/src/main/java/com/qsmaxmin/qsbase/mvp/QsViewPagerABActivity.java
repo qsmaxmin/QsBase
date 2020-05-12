@@ -1,9 +1,7 @@
 package com.qsmaxmin.qsbase.mvp;
 
-import android.graphics.Color;
 import android.support.annotation.CallSuper;
 import android.support.v4.app.Fragment;
-import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.View;
 
@@ -44,7 +42,6 @@ public abstract class QsViewPagerABActivity<P extends QsPresenter> extends QsABA
     private void initTabAndPager(View view) {
         pager = view.findViewById(R.id.pager);
         tabs = view.findViewById(android.R.id.tabs);
-        initTabsValue(tabs);
         initViewPager(getModelPagers(), getOffscreenPageLimit());
     }
 
@@ -65,28 +62,6 @@ public abstract class QsViewPagerABActivity<P extends QsPresenter> extends QsABA
             return new QsTabViewPagerAdapter(getSupportFragmentManager(), pagerHelper);
         } else {
             return new QsViewPagerAdapter(getSupportFragmentManager(), pagerHelper);
-        }
-    }
-
-    public final void initTabsValue(PagerSlidingTabStrip tab) {
-        if (tab != null) {
-            DisplayMetrics dm = getResources().getDisplayMetrics();
-            tab.setShouldExpand(getTabsShouldExpand());
-            tab.setDividerColor(getTabsDividerColor());
-            tab.setUnderlineHeight((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, getTabsUnderlineHeight(), dm));
-            tab.setUnderlineColor(getTabsUnderlineColor());
-            if (getTabsIndicatorHeight() > 0) tab.setIndicatorHeight((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, getTabsIndicatorHeight(), dm));
-            if (getTabsIndicatorWidth() > 0) tab.setIndicatorWidth((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, getTabsIndicatorWidth(), dm));
-            tab.setIndicatorCorner((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, getTabsIndicatorCorner(), dm));
-            tab.setTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, getTabsTitleSize(), dm));
-            tab.setIndicatorColor(getTabsIndicatorColor());
-            tab.setSelectedTextColor(getTabsSelectedTitleColor());
-            tab.setTextColor(getTabsTitleColor());
-            tab.setTabWidth(getTabWidth());
-            tab.setTabMarginsLeftRight(getTabMargins());
-            tab.setTabPaddingLeftRight(getTabPaddingLeftRight());
-            tab.setIndicatorMargin(getTabsIndicatorMargin());
-            tab.setIsCurrentItemAnimation(getTabsCurrentItemAnimation());
         }
     }
 
@@ -145,72 +120,8 @@ public abstract class QsViewPagerABActivity<P extends QsPresenter> extends QsABA
         return adapter.getAllData()[pager.getCurrentItem()].fragment;
     }
 
-    protected boolean getTabsCurrentItemAnimation() {
-        return false;
-    }
-
-    protected int getTabsIndicatorMargin() {
-        return 0;
-    }
-
-    protected int getTabPaddingLeftRight() {
-        return 20;
-    }
-
-    protected int getTabMargins() {
-        return 0;
-    }
-
-    protected int getTabWidth() {
-        return 0;
-    }
-
-    protected int getTabsTitleColor() {
-        return Color.GRAY;
-    }
-
-    protected int getTabsSelectedTitleColor() {
-        return getResources().getColor(R.color.colorAccent);
-    }
-
-    protected int getTabsIndicatorColor() {
-        return Color.TRANSPARENT;
-    }
-
-    protected int getTabsTitleSize() {
-        return 12;
-    }
-
-    protected float getTabsIndicatorHeight() {
-        return 2;
-    }
-
-    protected float getTabsIndicatorWidth() {
-        return 0;
-    }
-
-    protected float getTabsIndicatorCorner() {
-        return 1;
-    }
-
-    protected float getTabsUnderlineHeight() {
-        return 1;
-    }
-
-    protected boolean getTabsShouldExpand() {
-        return true;
-    }
-
-    protected int getTabsDividerColor() {
-        return Color.TRANSPARENT;
-    }
-
-    protected int getTabsUnderlineColor() {
-        return Color.TRANSPARENT;
-    }
-
     protected int getOffscreenPageLimit() {
-        return 1;
+        return 2;
     }
 
     protected int getPageMargin() {
