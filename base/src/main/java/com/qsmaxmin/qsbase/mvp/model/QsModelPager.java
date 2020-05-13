@@ -1,6 +1,6 @@
 package com.qsmaxmin.qsbase.mvp.model;
 
-import android.support.v4.app.Fragment;
+import androidx.fragment.app.Fragment;
 
 /**
  * @CreateBy qsmaxmin

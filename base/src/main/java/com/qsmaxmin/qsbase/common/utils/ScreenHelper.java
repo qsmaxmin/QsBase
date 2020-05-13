@@ -1,11 +1,11 @@
 package com.qsmaxmin.qsbase.common.utils;
 
-import android.support.v4.app.FragmentActivity;
-
 import com.qsmaxmin.qsbase.common.log.L;
 
 import java.util.ArrayList;
 import java.util.Stack;
+
+import androidx.fragment.app.FragmentActivity;
 
 
 /**

@@ -1,6 +1,6 @@
 package com.qsmaxmin.qsbase.common.config;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.model.QsNotProguard;

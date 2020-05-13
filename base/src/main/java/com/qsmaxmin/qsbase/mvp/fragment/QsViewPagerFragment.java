@@ -2,8 +2,8 @@ package com.qsmaxmin.qsbase.mvp.fragment;
 
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.annotation.CallSuper;
-import android.support.v4.app.Fragment;
+import androidx.annotation.CallSuper;
+import androidx.fragment.app.Fragment;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.LayoutInflater;

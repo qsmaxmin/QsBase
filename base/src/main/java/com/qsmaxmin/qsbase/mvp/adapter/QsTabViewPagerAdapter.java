@@ -1,6 +1,6 @@
 package com.qsmaxmin.qsbase.mvp.adapter;
 
-import android.support.v4.app.FragmentManager;
+import androidx.fragment.app.FragmentManager;
 import android.view.View;
 
 import com.qsmaxmin.qsbase.common.log.L;

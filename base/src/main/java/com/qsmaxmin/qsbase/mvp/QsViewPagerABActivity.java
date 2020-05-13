@@ -1,7 +1,7 @@
 package com.qsmaxmin.qsbase.mvp;
 
-import android.support.annotation.CallSuper;
-import android.support.v4.app.Fragment;
+import androidx.annotation.CallSuper;
+import androidx.fragment.app.Fragment;
 import android.util.TypedValue;
 import android.view.View;
 

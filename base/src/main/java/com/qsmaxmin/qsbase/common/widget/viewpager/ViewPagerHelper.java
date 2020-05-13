@@ -1,6 +1,6 @@
 package com.qsmaxmin.qsbase.common.widget.viewpager;
 
-import android.support.v4.view.ViewPager;
+import androidx.viewpager.widget.ViewPager;
 import android.view.View;
 
 import com.qsmaxmin.qsbase.mvp.QsIViewPagerABActivity;

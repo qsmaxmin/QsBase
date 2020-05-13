@@ -1,7 +1,7 @@
 package com.qsmaxmin.qsbase.common.threadpoll;
 
 import android.os.Looper;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.qsmaxmin.qsbase.mvp.model.QsConstants;
 

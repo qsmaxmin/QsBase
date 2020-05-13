@@ -2,12 +2,13 @@ package com.qsmaxmin.qsbase;
 
 import android.app.Activity;
 import android.app.Application;
-import android.support.annotation.LayoutRes;
 
 import com.qsmaxmin.qsbase.common.http.QsHttpCallback;
 import com.qsmaxmin.qsbase.common.utils.ImageHelper;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.common.widget.dialog.QsProgressDialog;
+
+import androidx.annotation.LayoutRes;
 
 /**
  * @CreateBy qsmaxmin

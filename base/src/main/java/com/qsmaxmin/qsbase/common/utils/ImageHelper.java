@@ -7,9 +7,6 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Looper;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import android.text.format.Formatter;
 import android.view.View;
@@ -41,12 +38,17 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.FragmentActivity;
+
 /**
  * @CreateBy qsmaxmin
  * @Date 2017/6/20 17:35
  * @Description 图片加载帮助类
  */
 
+@SuppressWarnings("WeakerAccess")
 public class ImageHelper {
     public Builder createRequest() {
         return new Builder(QsHelper.getApplication());
@@ -64,7 +66,7 @@ public class ImageHelper {
         return new Builder(activity);
     }
 
-    public Builder createRequest(android.support.v4.app.Fragment fragment) {
+    public Builder createRequest(androidx.fragment.app.Fragment fragment) {
         return new Builder(fragment);
     }
 
@@ -76,7 +78,8 @@ public class ImageHelper {
         return new Builder(view);
     }
 
-    @ThreadPoint(ThreadType.MAIN) public void clearMemoryCache() {
+    @ThreadPoint(ThreadType.MAIN)
+    public void clearMemoryCache() {
         Glide.get(QsHelper.getApplication()).clearMemory();
     }
 
@@ -135,7 +138,7 @@ public class ImageHelper {
             manager = Glide.with(context);
         }
 
-        Builder(android.support.v4.app.Fragment context) {
+        Builder(androidx.fragment.app.Fragment context) {
             manager = Glide.with(context);
         }
 
@@ -471,12 +474,14 @@ public class ImageHelper {
 
             if (mTransformation != null) {
                 if (mIsCircleCrop) {
-                    requestOptions = requestOptions.transforms(new CircleCrop(), mTransformation);
+                    requestOptions = requestOptions.transform(new CircleCrop(), mTransformation);
                 } else if (mCorners != null) {
                     if (mCorners.length == 1) {
-                        if (mCorners[0] > 0) requestOptions = requestOptions.transforms(new RoundedCorners(mCorners[0]), mTransformation);
+                        if (mCorners[0] > 0) {
+                            requestOptions = requestOptions.transform(new RoundedCorners(mCorners[0]), mTransformation);
+                        }
                     } else {
-                        requestOptions = requestOptions.transforms(new RoundCornersTransformation(mCorners), mTransformation);
+                        requestOptions = requestOptions.transform(new RoundCornersTransformation(mCorners), mTransformation);
                     }
                 } else {
                     requestOptions = requestOptions.optionalTransform(mTransformation);
@@ -508,7 +513,8 @@ public class ImageHelper {
             if (this.headers != null && !headers.isEmpty()) {
                 LazyHeaders.Builder builder = new LazyHeaders.Builder();
                 for (String key : this.headers.keySet()) {
-                    builder.addHeader(key, headers.get(key));
+                    String value = headers.get(key);
+                    if (value != null) builder.addHeader(key, value);
                 }
                 LazyHeaders lazyHeaders = builder.build();
                 qsGlideUrl = new QsGlideUrl(url, lazyHeaders);

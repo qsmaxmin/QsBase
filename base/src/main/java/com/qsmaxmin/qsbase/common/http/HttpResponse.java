@@ -1,6 +1,6 @@
 package com.qsmaxmin.qsbase.common.http;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.qsmaxmin.qsbase.common.exception.QsException;
 import com.qsmaxmin.qsbase.common.exception.QsExceptionType;

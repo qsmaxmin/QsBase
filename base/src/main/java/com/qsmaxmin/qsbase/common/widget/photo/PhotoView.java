@@ -20,12 +20,13 @@ import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.View;
 import android.view.animation.Interpolator;
 import android.widget.ImageView;
+
+import androidx.appcompat.widget.AppCompatImageView;
 
 /**
  * A zoomable ImageView. See {@link PhotoViewAttacher} for most of the details on how the zooming
@@ -135,9 +136,11 @@ public class PhotoView extends AppCompatImageView {
         }
         return changed;
     }
-    public void setZoomInterpolator(Interpolator interpolator){
+
+    public void setZoomInterpolator(Interpolator interpolator) {
         attacher.setZoomInterpolator(interpolator);
     }
+
     public void setRotationTo(float rotationDegree) {
         attacher.setRotationTo(rotationDegree);
     }

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.support.annotation.StringRes;
 import android.text.TextUtils;
 import android.widget.Toast;
 
@@ -13,6 +12,8 @@ import com.qsmaxmin.qsbase.common.utils.QsHelper;
 
 import java.lang.ref.SoftReference;
 import java.lang.reflect.Field;
+
+import androidx.annotation.StringRes;
 
 public class QsToast {
     private static SoftReference<Toast> lastToast = null;

@@ -1,13 +1,14 @@
 package com.qsmaxmin.qsbase.common.widget.recyclerview;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.View;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * @CreateBy qsmaxmin
@@ -16,8 +17,8 @@ import java.util.List;
  */
 public class HeaderFooterRecyclerView extends RecyclerView {
 
-    private List<View> mHeaderViews = new ArrayList<>();
-    private List<View> mFooterViews = new ArrayList<>();
+    private List<View>                  mHeaderViews = new ArrayList<>();
+    private List<View>                  mFooterViews = new ArrayList<>();
     private HeaderFooterRecyclerAdapter mAdapter;
 
     public HeaderFooterRecyclerView(Context context) {

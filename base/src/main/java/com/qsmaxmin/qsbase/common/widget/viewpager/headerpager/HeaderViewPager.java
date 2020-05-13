@@ -5,11 +5,7 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.v4.util.SparseArrayCompat;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -26,6 +22,9 @@ import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.base.OuterScrolle
 import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.base.SizeSensitiveLinearLayout;
 import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.base.TranslatableLinearLayout;
 import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.help.MagicHeaderUtils;
+
+import androidx.collection.SparseArrayCompat;
+import androidx.viewpager.widget.PagerAdapter;
 
 
 /**

@@ -1,6 +1,6 @@
 package com.qsmaxmin.qsbase.mvp.adapter;
 
-import android.support.annotation.CallSuper;
+import androidx.annotation.CallSuper;
 import android.view.View;
 
 import com.qsmaxmin.qsbase.common.log.L;

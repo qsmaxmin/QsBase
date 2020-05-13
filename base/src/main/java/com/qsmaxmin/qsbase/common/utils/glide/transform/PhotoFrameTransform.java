@@ -4,8 +4,6 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.DrawableRes;
-import android.support.annotation.NonNull;
 
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
 import com.bumptech.glide.load.resource.bitmap.BitmapTransformation;
@@ -13,6 +11,9 @@ import com.qsmaxmin.qsbase.common.utils.QsHelper;
 
 import java.nio.ByteBuffer;
 import java.security.MessageDigest;
+
+import androidx.annotation.DrawableRes;
+import androidx.annotation.NonNull;
 
 /**
  * @CreateBy qsmaxmin

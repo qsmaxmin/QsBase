@@ -11,8 +11,6 @@ import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.v4.view.ViewPager;
-import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
@@ -26,6 +24,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.qsmaxmin.qsbase.R;
+
+import androidx.viewpager.widget.ViewPager;
 
 /**
  * Created by sky on 14-11-20.ViewPager Tab
@@ -409,7 +409,7 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
         this.indicatorMargin = marginPx;
     }
 
-    private class PageListener implements OnPageChangeListener {
+    private class PageListener implements ViewPager.OnPageChangeListener {
 
         @Override public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
             currentPosition = position;

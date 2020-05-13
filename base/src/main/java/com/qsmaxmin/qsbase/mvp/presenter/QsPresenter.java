@@ -3,11 +3,6 @@ package com.qsmaxmin.qsbase.mvp.presenter;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.ColorRes;
-import android.support.annotation.DimenRes;
-import android.support.annotation.DrawableRes;
-import android.support.annotation.Nullable;
-import android.support.annotation.StringRes;
 
 import com.qsmaxmin.qsbase.common.aspect.ThreadPoint;
 import com.qsmaxmin.qsbase.common.aspect.ThreadType;
@@ -24,6 +19,12 @@ import com.qsmaxmin.qsbase.mvp.fragment.QsIPullToRefresh;
 import com.qsmaxmin.qsbase.mvp.model.QsConstants;
 
 import java.util.ArrayList;
+
+import androidx.annotation.ColorRes;
+import androidx.annotation.DimenRes;
+import androidx.annotation.DrawableRes;
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
 
 /**
  * @CreateBy qsmaxmin

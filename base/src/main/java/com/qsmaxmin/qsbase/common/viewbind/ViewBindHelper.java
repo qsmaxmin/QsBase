@@ -1,10 +1,12 @@
 package com.qsmaxmin.qsbase.common.viewbind;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.util.LruCache;
 import android.view.View;
 
+import com.qsmaxmin.ann.AnnotationExecutorFinder;
+import com.qsmaxmin.ann.viewbind.ViewAnnotationExecutor;
 import com.qsmaxmin.qsbase.common.log.L;
 
 /**
@@ -35,17 +37,14 @@ public class ViewBindHelper {
         if (executor == null) {
             long startTime = 0;
             if (L.isEnable()) startTime = System.nanoTime();
-            try {
-                String className = getExecuteClassName(clazz);
-                Class<?> myClass = Class.forName(className);
-
-                executor = (ViewAnnotationExecutor) myClass.newInstance();
+            executor = AnnotationExecutorFinder.getViewAnnotationExecutor(clazz);
+            if (executor != null) {
                 viewCache.put(clazz, executor);
                 if (L.isEnable()) {
                     long endTime = System.nanoTime();
                     L.i(clazz.getSimpleName(), "create new ViewAnnotationExecutor by class(" + clazz.getName() + "), cache size:" + viewCache.size() + ", use time:" + (endTime - startTime) / 1000000f + "ms");
                 }
-            } catch (Exception e) {
+            } else {
                 if (emptyExecutor == null) {
                     emptyExecutor = new ViewAnnotationExecutor();
                 }
@@ -60,16 +59,4 @@ public class ViewBindHelper {
         return executor;
     }
 
-    private static String getExecuteClassName(Class clazz) {
-        String name = clazz.getName();
-        int index_$ = name.indexOf('$');
-        if (index_$ != -1) {//内部类
-            int pointIndex = name.lastIndexOf('.');
-            String packageName = name.substring(0, pointIndex);
-            String simpleName = name.substring(index_$ + 1);
-            return packageName + "." + simpleName + "_QsAnn";
-        } else {
-            return name + "_QsAnn";
-        }
-    }
 }

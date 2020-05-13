@@ -4,7 +4,8 @@ import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.qsmaxmin.ann.viewbind.AnnotationExecutorFinder;
+import com.qsmaxmin.ann.AnnotationExecutorFinder;
+import com.qsmaxmin.ann.config.PropertiesExecutor;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
 
 /**
@@ -17,12 +18,14 @@ class PropertiesEngine<T> {
     private       SharedPreferences     sp;
     private       PropertiesExecutor<T> executor;
 
-    @SuppressWarnings("unchecked") PropertiesEngine(T config, String key) {
+    PropertiesEngine(T config, String key) {
         this.mConfig = config;
         Application application = QsHelper.getApplication();
         sp = application.getSharedPreferences(key, Context.MODE_PRIVATE);
-        executor = (PropertiesExecutor<T>) AnnotationExecutorFinder.getPropertiesExecutor(config.getClass().getName());
-        if (executor != null) executor.bindConfig(config, sp);
+        executor = AnnotationExecutorFinder.getPropertiesExecutor(config.getClass());
+        if (executor != null) {
+            executor.bindConfig(config, sp);
+        }
     }
 
     void commit() {
@@ -40,16 +43,6 @@ class PropertiesEngine<T> {
             SharedPreferences.Editor edit = sp.edit();
             edit.clear();
             edit.apply();
-        }
-    }
-
-    private String getExecuteClassName(Class clazz) {
-        String name = clazz.getName();
-        int index_$ = name.indexOf('$');
-        if (index_$ > 0) {//内部类
-            throw new IllegalStateException("InnerClass not support");
-        } else {
-            return name + "_QsAnn";
         }
     }
 }

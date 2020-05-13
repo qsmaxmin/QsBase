@@ -6,10 +6,11 @@ import android.renderscript.Allocation;
 import android.renderscript.Element;
 import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicBlur;
-import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
 
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 
 /**
  * Copyright (C) 2018 Wasabeef

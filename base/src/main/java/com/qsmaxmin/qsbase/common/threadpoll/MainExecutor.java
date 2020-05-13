@@ -2,7 +2,7 @@ package com.qsmaxmin.qsbase.common.threadpoll;
 
 import android.os.Handler;
 import android.os.Looper;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 /**
  * @CreateBy qsmaxmin
