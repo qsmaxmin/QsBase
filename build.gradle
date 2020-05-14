@@ -20,6 +20,10 @@ allprojects {
         mavenCentral()
         google()
         jcenter()
+        maven {
+            url 'https://jitpack.io'
+        }
+        maven { url "file:///E:/git/QsPlugin/app/Users/repository" }
     }
 }
 

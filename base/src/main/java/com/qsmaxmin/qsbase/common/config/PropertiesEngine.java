@@ -4,8 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.qsmaxmin.ann.AnnotationExecutorFinder;
-import com.qsmaxmin.ann.config.PropertiesExecutor;
+import com.qsmaxmin.qsbase.common.ann.AnnotationHelper;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
 
 /**
@@ -22,7 +21,7 @@ class PropertiesEngine<T> {
         this.mConfig = config;
         Application application = QsHelper.getApplication();
         sp = application.getSharedPreferences(key, Context.MODE_PRIVATE);
-        executor = AnnotationExecutorFinder.getPropertiesExecutor(config.getClass());
+        executor = AnnotationHelper.getPropertiesExecutor(config.getClass());
         if (executor != null) {
             executor.bindConfig(config, sp);
         }
