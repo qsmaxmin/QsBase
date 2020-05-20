@@ -22,12 +22,12 @@ import okhttp3.Request;
  * @Date 2020-03-17  15:25
  * @Description
  */
-public class QsDownloader<M extends QsDownloadModel> {
-    private final String                            TAG;
-    private final HashMap<String, DownloadExecutor> executorMap    = new HashMap<>();
-    private final List<DownloadListener<M>>         globeListeners = new ArrayList<>();
-    private       OkHttpClient                      httpClient;
-    private       Class                             httpTag;
+public class QsDownloader<M extends QsDownloadModel<K>, K> {
+    private final String                       TAG;
+    private final HashMap<K, DownloadExecutor> executorMap    = new HashMap<>();
+    private final List<DownloadListener<M>>    globeListeners = new ArrayList<>();
+    private       OkHttpClient                 httpClient;
+    private       Class                        httpTag;
 
     QsDownloader(OkHttpClient client, Class<M> tag) {
         this.httpClient = client;
@@ -45,8 +45,8 @@ public class QsDownloader<M extends QsDownloadModel> {
             return;
         }
 
-        if (TextUtils.isEmpty(model.getId())) {
-            if (L.isEnable()) L.e(TAG, "startDownload..." + model.getClass().getSimpleName() + ".getId() return empty");
+        if (model.getId() == null) {
+            if (L.isEnable()) L.e(TAG, "startDownload..." + model.getClass().getSimpleName() + ".getId() return null");
             return;
         }
 
@@ -65,7 +65,7 @@ public class QsDownloader<M extends QsDownloadModel> {
             if (L.isEnable()) L.e(TAG, "startDownload...do not download again，id:" + model.getId());
             return;
         }
-        DownloadExecutor<M> executor = new DownloadExecutor<>(this, model, TAG);
+        DownloadExecutor<M, K> executor = new DownloadExecutor<>(this, model, TAG);
         executorMap.put(model.getId(), executor);
 
         builder.tag(httpTag);

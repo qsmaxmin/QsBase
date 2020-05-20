@@ -26,11 +26,11 @@ public class QsDownloadHelper {
     }
 
     @SuppressWarnings({"unchecked", "CastCanBeRemovedNarrowingVariableType"})
-    public static <M extends QsDownloadModel> QsDownloader<M> getDownloader(Class<M> clazz) {
+    public static <M extends QsDownloadModel<K>, K> QsDownloader<M, K> getDownloader(Class<M> clazz) {
         if (clazz == null) return null;
         Object object = getInstance().downloaderHolder.get(clazz);
         if (object == null) {
-            QsDownloader<M> downloader = new QsDownloader<>(getInstance().httpClient, clazz);
+            QsDownloader<M, K> downloader = new QsDownloader<>(getInstance().httpClient, clazz);
             synchronized (getInstance().downloaderHolder) {
                 getInstance().downloaderHolder.put(clazz, downloader);
             }
@@ -48,7 +48,7 @@ public class QsDownloadHelper {
                 int size = getInstance().downloaderHolder.size();
                 L.i("QsDownloadHelper", "getDownloader(cached)....clazz:" + className + ", downloader:" + name + ", cache size:" + size);
             }
-            return (QsDownloader<M>) object;
+            return (QsDownloader<M, K>) object;
         }
     }
 

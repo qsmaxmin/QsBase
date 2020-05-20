@@ -7,8 +7,8 @@ import okhttp3.Request;
  * @Date 2020/3/16 9:16
  * @Description model层接口，必须全部实现
  */
-public interface QsDownloadModel {
-    String getId();
+public interface QsDownloadModel<K> {
+    K getId();
 
     Request.Builder getRequest();
 

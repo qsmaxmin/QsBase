@@ -22,13 +22,13 @@ import okhttp3.ResponseBody;
  * @Date 2020/3/16 9:30
  * @Description
  */
-class DownloadExecutor<M extends QsDownloadModel> {
-    private final String          TAG;
-    private final QsDownloader<M> downloader;
-    private final M               model;
-    private       long            initTime;
+class DownloadExecutor<M extends QsDownloadModel<K>, K> {
+    private final String             TAG;
+    private final QsDownloader<M, K> downloader;
+    private final M                  model;
+    private       long               initTime;
 
-    DownloadExecutor(QsDownloader<M> downloader, M model, String tag) {
+    DownloadExecutor(QsDownloader<M, K> downloader, M model, String tag) {
         this.downloader = downloader;
         this.model = model;
         this.TAG = tag;
