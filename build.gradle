@@ -23,7 +23,7 @@ allprojects {
         maven {
             url 'https://jitpack.io'
         }
-        maven { url "file:///E:/git/QsPlugin/app/Users/repository" }
+//        maven { url "file:///E:/git/QsPlugin/app/Users/repository" }
     }
 }
 
