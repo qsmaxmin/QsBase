@@ -6,6 +6,7 @@
     android:clickable="true"
     android:paddingBottom="10dp"
     android:gravity="center"
+    android:focusable="true"
     android:textSize="12sp"
     android:textColor="@android:color/black"
     android:paddingTop="10dp"
