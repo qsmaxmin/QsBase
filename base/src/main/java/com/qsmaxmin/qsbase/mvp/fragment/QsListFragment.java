@@ -102,7 +102,7 @@ public abstract class QsListFragment<P extends QsPresenter, D> extends QsFragmen
     }
 
 
-    @Override public void setData(List<D> list) {
+    @Override public final void setData(List<D> list) {
         setData(list, true);
     }
 

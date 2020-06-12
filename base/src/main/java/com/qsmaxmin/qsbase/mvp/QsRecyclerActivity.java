@@ -161,7 +161,7 @@ public abstract class QsRecyclerActivity<P extends QsPresenter, D> extends QsAct
         return footerView;
     }
 
-    @Override public void setData(List<D> list) {
+    @Override public final void setData(List<D> list) {
         setData(list, true);
     }
 

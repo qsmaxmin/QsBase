@@ -132,15 +132,6 @@ public abstract class QsPullRecyclerFragment<P extends QsPresenter, D> extends Q
         return mPtrFrameLayout;
     }
 
-    @Override public void setData(List<D> list) {
-        if (mPtrFrameLayout != null) mPtrFrameLayout.post(new Runnable() {
-            @Override public void run() {
-                mPtrFrameLayout.refreshComplete();
-            }
-        });
-        super.setData(list);
-    }
-
     @Override public void setData(List<D> list, boolean showEmptyView) {
         if (mPtrFrameLayout != null) mPtrFrameLayout.post(new Runnable() {
             @Override public void run() {

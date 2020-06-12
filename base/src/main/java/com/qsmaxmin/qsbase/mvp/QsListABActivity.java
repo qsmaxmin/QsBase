@@ -101,7 +101,7 @@ public abstract class QsListABActivity<P extends QsPresenter, D> extends QsABAct
     }
 
 
-    @Override public void setData(List<D> list) {
+    @Override public final void setData(List<D> list) {
         setData(list, true);
     }
 

@@ -135,15 +135,6 @@ public abstract class QsPullListFragment<T extends QsPresenter, D> extends QsLis
         canLoadingMore = false;
     }
 
-    @Override public void setData(List<D> list) {
-        mPtrFrameLayout.post(new Runnable() {
-            @Override public void run() {
-                mPtrFrameLayout.refreshComplete();
-            }
-        });
-        super.setData(list);
-    }
-
     @Override public void setData(List<D> list, boolean showEmptyView) {
         mPtrFrameLayout.post(new Runnable() {
             @Override public void run() {
