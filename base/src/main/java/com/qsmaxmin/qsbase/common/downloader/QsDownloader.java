@@ -1,10 +1,8 @@
 package com.qsmaxmin.qsbase.common.downloader;
 
-import android.Manifest;
 import android.os.Looper;
 import android.text.TextUtils;
 
-import com.qsmaxmin.qsbase.common.aspect.Permission;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
 
@@ -38,7 +36,6 @@ public class QsDownloader<M extends QsDownloadModel<K>, K> {
     /**
      * 执行下载动作
      */
-    @Permission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
     public void startDownload(final M model) {
         if (model == null) {
             if (L.isEnable()) L.e(TAG, "startDownload...param error");
