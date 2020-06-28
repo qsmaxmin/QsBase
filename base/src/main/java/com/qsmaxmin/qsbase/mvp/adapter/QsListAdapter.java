@@ -44,7 +44,7 @@ public class QsListAdapter<D> extends BaseAdapter {
         return listLayer.getViewTypeCount();
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     @Override public View getView(int position, View convertView, ViewGroup parent) {
         listLayer.onAdapterGetView(position, getCount());
         QsListAdapterItem<D> item = null;
@@ -56,7 +56,7 @@ public class QsListAdapter<D> extends BaseAdapter {
             } else {
                 item = listLayer.getListAdapterItem(0);
             }
-            convertView = LayoutInflater.from(parent.getContext()).inflate(item.getItemLayout(), null, false);
+            convertView = LayoutInflater.from(parent.getContext()).inflate(item.getItemLayout(), parent, false);
             item.init(convertView);
             convertView.setTag(item);
         }

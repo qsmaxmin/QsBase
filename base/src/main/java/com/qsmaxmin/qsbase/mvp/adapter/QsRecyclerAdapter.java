@@ -1,9 +1,5 @@
 package com.qsmaxmin.qsbase.mvp.adapter;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +8,9 @@ import android.widget.AdapterView;
 import com.qsmaxmin.qsbase.mvp.fragment.QsIRecyclerView;
 
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * @CreateBy administrator
