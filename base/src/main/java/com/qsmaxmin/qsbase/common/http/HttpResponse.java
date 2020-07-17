@@ -1,11 +1,8 @@
 package com.qsmaxmin.qsbase.common.http;
 
-import com.qsmaxmin.qsbase.common.exception.QsException;
-import com.qsmaxmin.qsbase.common.exception.QsExceptionType;
 import com.qsmaxmin.qsbase.common.utils.StreamCloseUtils;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
@@ -21,13 +18,8 @@ import okhttp3.ResponseBody;
  * @Description
  */
 public class HttpResponse {
-    Response    response;
-    HttpRequest request;
+    Response response;
     private DecryptionProvider decryptionProvider;
-
-    public HttpRequest getRequest() {
-        return request;
-    }
 
     public Response getResponse() {
         return response;
@@ -67,10 +59,6 @@ public class HttpResponse {
                 result.append(line).append("\n");
             }
             return result.toString();
-        } catch (IOException e) {
-            throw new QsException(QsExceptionType.UNEXPECTED, request.getRequestTag(), e.getMessage());
-        } catch (Exception e) {
-            throw new QsException(QsExceptionType.UNEXPECTED, request.getRequestTag(), e.getMessage());
         } finally {
             StreamCloseUtils.close(isr);
             StreamCloseUtils.close(is);

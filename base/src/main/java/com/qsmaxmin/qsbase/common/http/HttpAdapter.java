@@ -140,20 +140,19 @@ public class HttpAdapter {
         int responseCode = response.code();
         HttpResponse httpResponse = new HttpResponse();
         httpResponse.response = response;
-        httpResponse.request = request;
 
         if (response.isSuccessful()) {
             Class<?> returnType = request.getReturnType();
             if (returnType == void.class) {
                 if (callback != null) {
-                    callback.onHttpResponse(httpResponse);
+                    callback.onHttpResponse(request, httpResponse);
                     callback.onHttpComplete(request, null);
                 }
                 response.close();
                 return null;
 
             } else if (returnType == byte[].class) {
-                if (callback != null) callback.onHttpResponse(httpResponse);
+                if (callback != null) callback.onHttpResponse(request, httpResponse);
                 ResponseBody body = response.body();
                 byte[] result = null;
                 if (body != null) {
@@ -165,7 +164,7 @@ public class HttpAdapter {
 
             } else if (returnType.equals(Response.class)) {
                 if (callback != null) {
-                    callback.onHttpResponse(httpResponse);
+                    callback.onHttpResponse(request, httpResponse);
                     callback.onHttpComplete(request, response);
                 }
                 return response;
@@ -175,7 +174,7 @@ public class HttpAdapter {
                 if (body == null) {
                     throw new QsException(QsExceptionType.HTTP_ERROR, request.getRequestTag(), "http response error... method:" + request.getMethodName() + ", response body is null!!");
                 }
-                if (callback != null) callback.onHttpResponse(httpResponse);
+                if (callback != null) callback.onHttpResponse(request, httpResponse);
                 String jsonStr = httpResponse.getJsonString();
                 response.close();
                 if (L.isEnable()) {
@@ -191,7 +190,7 @@ public class HttpAdapter {
                 }
             }
         } else {
-            if (callback != null) callback.onHttpResponse(httpResponse);
+            if (callback != null) callback.onHttpResponse(request, httpResponse);
             response.close();
             throw new QsException(QsExceptionType.HTTP_ERROR, request.getRequestTag(), "http error... method:" + request.getMethodName() + ", http response code = " + responseCode);
         }

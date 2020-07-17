@@ -20,7 +20,7 @@ public interface QsHttpCallback {
      * @param response http 响应体封装
      * @throws Exception 有异常别抓，直接throw掉
      */
-    void onHttpResponse(HttpResponse response) throws Exception;
+    void onHttpResponse(HttpRequest request, HttpResponse response) throws Exception;
 
     /**
      * 响应体映射成实体后的回调，根据响应体类型可以处理一些公共逻辑

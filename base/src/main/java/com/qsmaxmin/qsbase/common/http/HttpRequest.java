@@ -215,11 +215,11 @@ public class HttpRequest {
         return !"GET".equals(requestType) && !"HEAD".equals(requestType);
     }
 
-    public Method getMethod() {
+    @NonNull public Method getMethod() {
         return method;
     }
 
-    public Class<?> getReturnType() {
+    @NonNull public Class<?> getReturnType() {
         return returnType;
     }
 
@@ -243,19 +243,19 @@ public class HttpRequest {
         return requestStyle;
     }
 
-    public String getPath() {
+    @NonNull public String getPath() {
         return path;
     }
 
-    public String getMethodName() {
+    @NonNull public String getMethodName() {
         return methodName;
     }
 
-    public String getRequestType() {
+    @NonNull public String getRequestType() {
         return requestType;
     }
 
-    public HashMap<String, String> getQueryMap() {
+    @NonNull public HashMap<String, String> getQueryMap() {
         if (queryMap == null) queryMap = new HashMap<>();
         return queryMap;
     }
@@ -271,7 +271,7 @@ public class HttpRequest {
         }
     }
 
-    public HashMap<String, Object> getFormMap() {
+    @NonNull public HashMap<String, Object> getFormMap() {
         if (formMap == null) formMap = new HashMap<>();
         return formMap;
     }
@@ -302,7 +302,7 @@ public class HttpRequest {
         }
     }
 
-    public Headers.Builder getHeader() {
+    @NonNull public Headers.Builder getHeader() {
         if (headerBuilder == null) headerBuilder = new Headers.Builder();
         return headerBuilder;
     }
