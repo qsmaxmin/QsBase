@@ -3,6 +3,7 @@ package com.qsmaxmin.qsbase.mvp.fragment;
 import android.graphics.Rect;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 
 import com.qsmaxmin.qsbase.R;
@@ -11,6 +12,8 @@ import com.qsmaxmin.qsbase.common.aspect.ThreadType;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.viewbind.ViewBindHelper;
 import com.qsmaxmin.qsbase.common.widget.recyclerview.HeaderFooterRecyclerView;
+import com.qsmaxmin.qsbase.mvp.QsIRecyclerView;
+import com.qsmaxmin.qsbase.mvp.adapter.QsRecycleAdapterItem;
 import com.qsmaxmin.qsbase.mvp.adapter.QsRecyclerAdapter;
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
 
@@ -29,10 +32,6 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
  * @Description RecyclerView视图
  */
 public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFragment<P> implements QsIRecyclerView<D> {
-    public static final byte TYPE_LIST          = 1;
-    public static final byte TYPE_GRID          = 2;
-    public static final byte TYPE_STAGGEREDGRID = 3;
-
     private final List<D>                  mList = new ArrayList<>();
     private       HeaderFooterRecyclerView mRecyclerView;
     private       RecyclerView.Adapter     mRecyclerViewAdapter;
@@ -40,7 +39,7 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
     private       View                     footerView;
 
     @Override public int layoutId() {
-        return R.layout.qs_fragment_recycleview;
+        return R.layout.qs_recyclerview;
     }
 
     @Override public int getHeaderLayout() {
@@ -51,11 +50,15 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
         return 0;
     }
 
-    @Override public RecyclerView.Adapter onCreateAdapter() {
-        return null;
+    @Override public final View getHeaderView() {
+        return headerView;
     }
 
-    @Override public HeaderFooterRecyclerView getRecyclerView() {
+    @Override public final View getFooterView() {
+        return footerView;
+    }
+
+    @Override public final HeaderFooterRecyclerView getRecyclerView() {
         return mRecyclerView;
     }
 
@@ -68,7 +71,7 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
     /**
      * 初始化RecycleView
      */
-    protected void initRecycleView(LayoutInflater inflater, View view) {
+    private void initRecycleView(LayoutInflater inflater, View view) {
         if (view instanceof HeaderFooterRecyclerView) {
             mRecyclerView = (HeaderFooterRecyclerView) view;
         } else {
@@ -90,7 +93,7 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 //防止滚动列表时item位置互换及滑动到顶部时对齐顶部
-                if (newState == RecyclerView.SCROLL_STATE_IDLE && getRecyclerViewType() == TYPE_STAGGEREDGRID && getSpanCount() > 1) {
+                if (newState == RecyclerView.SCROLL_STATE_IDLE && getRecyclerViewType() == TYPE_STAGGERED_GRID && getSpanCount() > 1) {
                     int[] spanArr = new int[getSpanCount()];
                     StaggeredGridLayoutManager layoutManager = (StaggeredGridLayoutManager) getRecyclerView().getLayoutManager();
                     if (layoutManager != null) layoutManager.findFirstCompletelyVisibleItemPositions(spanArr);
@@ -108,10 +111,7 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
                 QsRecyclerFragment.this.onScrolled(recyclerView, dx, dy);
             }
         });
-        mRecyclerViewAdapter = onCreateAdapter();
-        if (mRecyclerViewAdapter == null) {
-            mRecyclerViewAdapter = new QsRecyclerAdapter<>(this, mList, inflater);
-        }
+        mRecyclerViewAdapter = new QsRecyclerAdapter<>(this, mList, inflater);
         mRecyclerView.setAdapter(mRecyclerViewAdapter);
 
         switch (getRecyclerViewType()) {
@@ -139,7 +139,7 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
                 mRecyclerView.setLayoutManager(manager);
                 break;
             }
-            case TYPE_STAGGEREDGRID: {
+            case TYPE_STAGGERED_GRID: {
                 StaggeredGridLayoutManager manager = new StaggeredGridLayoutManager(getSpanCount(), StaggeredGridLayoutManager.VERTICAL);
                 manager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_NONE);
                 mRecyclerView.setLayoutManager(manager);
@@ -148,16 +148,8 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
         }
     }
 
-    @Override public RecyclerView.Adapter getAdapter() {
+    @Override public final RecyclerView.Adapter getAdapter() {
         return mRecyclerViewAdapter;
-    }
-
-    public View getHeaderView() {
-        return headerView;
-    }
-
-    public View getFooterView() {
-        return footerView;
     }
 
     @Override public final void setData(List<D> list) {
@@ -186,7 +178,7 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
 
     @ThreadPoint(ThreadType.MAIN) @Override public void addData(List<D> list, int position) {
         if (list != null && !list.isEmpty() && position >= 0) {
-            position = (position < mList.size()) ? position : mList.size();
+            position = Math.min(position, mList.size());
             if (mRecyclerViewAdapter != null) mRecyclerViewAdapter.notifyItemRangeInserted(position, list.size());
             mList.addAll(position, list);
             updateAdapter(true);
@@ -237,15 +229,23 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
             mRecyclerViewAdapter.notifyDataSetChanged();
             if (mList.isEmpty() && showEmptyView) {
                 showEmptyView();
-            } else if (showContentViewWhenDataLoadingComplete()) {
+            } else {
                 showContentView();
             }
         }
     }
 
+    @Override public QsRecycleAdapterItem<D> getRecycleAdapterItemInner(LayoutInflater mInflater, ViewGroup parent, int type) {
+        QsRecycleAdapterItem<D> adapterItem = getRecycleAdapterItem(mInflater, parent, type);
+        adapterItem.setViewLayer(this);
+        return adapterItem;
+    }
+
+    @Override public void onReceiveAdapterItemEvent(int eventType, D data, int position) {
+        L.i(initTag(), "onReceiveAdapterItemEvent......eventType:" + eventType + ", position:" + position);
+    }
 
     @Override public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
     }
 
     @Override public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
@@ -257,10 +257,6 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
      */
     @Override public boolean canListScrollDown() {
         return getRecyclerView().canScrollVertically(-1);
-    }
-
-    @Override public boolean showContentViewWhenDataLoadingComplete() {
-        return true;
     }
 
     /**

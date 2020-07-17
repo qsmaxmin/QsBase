@@ -1,25 +1,22 @@
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@null"
     android:orientation="vertical">
 
     <com.qsmaxmin.qsbase.common.widget.viewpager.PagerSlidingTabStrip
         android:id="@android:id/tabs"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="@android:color/white"/>
+        android:background="@android:color/white" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1px"
-        android:background="@android:color/darker_gray"/>
+        android:background="@android:color/darker_gray" />
 
     <com.qsmaxmin.qsbase.common.widget.viewpager.QsViewPager
         android:id="@+id/pager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@null"/>
+        android:layout_height="match_parent" />
 
 </LinearLayout>

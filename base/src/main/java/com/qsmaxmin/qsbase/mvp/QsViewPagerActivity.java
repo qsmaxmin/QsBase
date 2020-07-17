@@ -1,8 +1,7 @@
 package com.qsmaxmin.qsbase.mvp;
 
-import androidx.annotation.CallSuper;
-import androidx.fragment.app.Fragment;
 import android.util.TypedValue;
+import android.view.LayoutInflater;
 import android.view.View;
 
 import com.qsmaxmin.qsbase.R;
@@ -16,31 +15,35 @@ import com.qsmaxmin.qsbase.mvp.fragment.QsIFragment;
 import com.qsmaxmin.qsbase.mvp.model.QsModelPager;
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
 
+import androidx.annotation.CallSuper;
+import androidx.fragment.app.Fragment;
+
 /**
  * @CreateBy qsmaxmin
  * @Date 2017/7/3 15:15
  * @Description
  */
 
-public abstract class QsViewPagerActivity<P extends QsPresenter> extends QsActivity<P> implements QsIViewPagerActivity {
+public abstract class QsViewPagerActivity<P extends QsPresenter> extends QsActivity<P> implements QsIViewPager {
     private QsViewPagerAdapter   adapter;
     private QsViewPager          pager;
     private PagerSlidingTabStrip tabs;
 
     @Override public int layoutId() {
-        return R.layout.qs_activity_viewpager;
+        return R.layout.qs_viewpager_bottom_tab;
     }
 
-    @Override protected View initView() {
-        View view = super.initView();
-        initTabAndPager(view);
+    @Override protected View initView(LayoutInflater inflater) {
+        View view = super.initView(inflater);
+        pager = view.findViewById(R.id.pager);
+        tabs = view.findViewById(android.R.id.tabs);
+        initTab(tabs);
+        initViewPager(getModelPagers());
         return view;
     }
 
-    private void initTabAndPager(View view) {
-        pager = view.findViewById(R.id.pager);
-        tabs = view.findViewById(android.R.id.tabs);
-        initViewPager(getModelPagers(), getOffscreenPageLimit());
+    @Override public void initViewPager(QsModelPager[] modelPagers) {
+        initViewPager(modelPagers, getOffscreenPageLimit());
     }
 
     @Override public void initViewPager(QsModelPager[] modelPagers, int offScreenPageLimit) {
@@ -52,6 +55,10 @@ public abstract class QsViewPagerActivity<P extends QsPresenter> extends QsActiv
             pager.setOffscreenPageLimit(offScreenPageLimit);
             if (tabs != null) tabs.setViewPager(pager);
         }
+    }
+
+    @Override public void initTab(PagerSlidingTabStrip tabStrip) {
+
     }
 
     protected QsViewPagerAdapter createPagerAdapter(ViewPagerHelper pagerHelper) {
@@ -83,7 +90,7 @@ public abstract class QsViewPagerActivity<P extends QsPresenter> extends QsActiv
 
     @Override public void replaceViewPageItem(QsModelPager... modelPagers) {
         if (adapter != null) {
-            adapter.replaceViewPagerDatas(modelPagers);
+            adapter.replaceViewPagerData(modelPagers);
             adapter.notifyDataSetChanged();
         } else {
             L.e(initTag(), "adapter is null.... override getModelPagers() return not null or call initViewPager() before !");
@@ -101,7 +108,7 @@ public abstract class QsViewPagerActivity<P extends QsPresenter> extends QsActiv
         }
     }
 
-    @Override public PagerSlidingTabStrip getTabs() {
+    @Override public PagerSlidingTabStrip getTab() {
         return tabs;
     }
 
@@ -117,9 +124,8 @@ public abstract class QsViewPagerActivity<P extends QsPresenter> extends QsActiv
         return adapter.getAllData()[pager.getCurrentItem()].fragment;
     }
 
-
     protected int getOffscreenPageLimit() {
-        return 2;
+        return 3;
     }
 
     protected int getPageMargin() {

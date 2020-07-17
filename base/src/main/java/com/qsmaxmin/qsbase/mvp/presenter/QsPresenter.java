@@ -1,6 +1,5 @@
 package com.qsmaxmin.qsbase.mvp.presenter;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 
@@ -14,8 +13,8 @@ import com.qsmaxmin.qsbase.common.model.QsNotProguard;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.common.widget.listview.LoadingFooter;
 import com.qsmaxmin.qsbase.common.widget.toast.QsToast;
+import com.qsmaxmin.qsbase.mvp.QsIPullToRefreshView;
 import com.qsmaxmin.qsbase.mvp.QsIView;
-import com.qsmaxmin.qsbase.mvp.fragment.QsIPullToRefresh;
 import com.qsmaxmin.qsbase.mvp.model.QsConstants;
 
 import java.util.ArrayList;
@@ -25,13 +24,13 @@ import androidx.annotation.DimenRes;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
+import androidx.fragment.app.FragmentActivity;
 
 /**
  * @CreateBy qsmaxmin
  * @Date 2017/6/21 16:27
  * @Description
  */
-@SuppressWarnings("WeakerAccess")
 public class QsPresenter<V extends QsIView> implements QsNotProguard {
     private final ArrayList<String> tagList = new ArrayList<>();
     private       boolean           isAttach;
@@ -151,11 +150,11 @@ public class QsPresenter<V extends QsIView> implements QsNotProguard {
         if (model != null && !isViewDetach()) {
             QsIView qsIView = getView();
             if (qsIView == null) return;
-            if (qsIView instanceof QsIPullToRefresh) {
+            if (qsIView instanceof QsIPullToRefreshView) {
                 if (model.isLastPage()) {
-                    ((QsIPullToRefresh) qsIView).setLoadingState(LoadingFooter.State.TheEnd);
+                    ((QsIPullToRefreshView) qsIView).setLoadingState(LoadingFooter.State.TheEnd);
                 } else {
-                    ((QsIPullToRefresh) qsIView).setLoadingState(LoadingFooter.State.Normal);
+                    ((QsIPullToRefreshView) qsIView).setLoadingState(LoadingFooter.State.Normal);
                 }
             } else {
                 L.e(initTag(), "not QsPullListFragment or QsPullRecyclerFragment view, so invalid paging(...)");
@@ -185,19 +184,19 @@ public class QsPresenter<V extends QsIView> implements QsNotProguard {
     @ThreadPoint(ThreadType.MAIN) private void resetViewState() {
         if (!isViewDetach()) {
             QsIView qsIview = getView();
-            if (qsIview instanceof QsIPullToRefresh) {
-                QsIPullToRefresh view = (QsIPullToRefresh) qsIview;
+            if (qsIview instanceof QsIPullToRefreshView) {
+                QsIPullToRefreshView view = (QsIPullToRefreshView) qsIview;
                 view.stopRefreshing();
                 view.setLoadingState(LoadingFooter.State.NetWorkError);
             }
-            if (qsIview.currentViewState() != QsConstants.VIEW_STATE_CONTENT) {
+            if (qsIview.currentViewState() != QsIView.VIEW_STATE_CONTENT) {
                 qsIview.showErrorView();
             }
             qsIview.loadingClose();
         }
     }
 
-    @Nullable public Activity getActivity() {
+    @Nullable public FragmentActivity getActivity() {
         if (!isViewDetach()) return mView.getActivity();
         return null;
     }

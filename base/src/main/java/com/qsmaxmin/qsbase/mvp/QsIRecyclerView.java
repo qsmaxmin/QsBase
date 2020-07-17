@@ -1,6 +1,9 @@
-package com.qsmaxmin.qsbase.mvp.fragment;
+package com.qsmaxmin.qsbase.mvp;
 
+import android.app.Activity;
+import android.content.Context;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 
@@ -9,6 +12,7 @@ import com.qsmaxmin.qsbase.mvp.adapter.QsRecycleAdapterItem;
 
 import java.util.List;
 
+import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 /**
@@ -18,12 +22,21 @@ import androidx.recyclerview.widget.RecyclerView;
  */
 
 public interface QsIRecyclerView<D> extends AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
+    byte TYPE_LIST           = 1;
+    byte TYPE_GRID           = 2;
+    byte TYPE_STAGGERED_GRID = 3;
+
+    QsRecycleAdapterItem<D> getRecycleAdapterItemInner(LayoutInflater mInflater, ViewGroup parent, int type);
 
     QsRecycleAdapterItem<D> getRecycleAdapterItem(LayoutInflater mInflater, ViewGroup parent, int type);
 
     int getHeaderLayout();
 
     int getFooterLayout();
+
+    View getHeaderView();
+
+    View getFooterView();
 
     HeaderFooterRecyclerView getRecyclerView();
 
@@ -47,11 +60,11 @@ public interface QsIRecyclerView<D> extends AdapterView.OnItemClickListener, Ada
 
     List<D> getData();
 
+    List<D> copyData();
+
     D getData(int position);
 
     void updateAdapter(boolean showEmptyView);
-
-    RecyclerView.Adapter onCreateAdapter();
 
     RecyclerView.Adapter getAdapter();
 
@@ -59,11 +72,15 @@ public interface QsIRecyclerView<D> extends AdapterView.OnItemClickListener, Ada
 
     boolean canListScrollDown();
 
-    boolean showContentViewWhenDataLoadingComplete();
-
     void onAdapterGetView(int position, int totalCount);
 
     void onScrollStateChanged(RecyclerView recyclerView, int newState);
 
     void onScrolled(RecyclerView recyclerView, int dx, int dy);
+
+    void onReceiveAdapterItemEvent(int eventType, D data, int position);
+
+    Context getContext();
+
+    FragmentActivity getActivity();
 }

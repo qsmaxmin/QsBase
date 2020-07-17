@@ -12,25 +12,22 @@ import com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrHandler;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrUIHandler;
 import com.qsmaxmin.qsbase.common.widget.ptr.header.BeautyCircleRefreshHeader;
-import com.qsmaxmin.qsbase.mvp.fragment.QsIPullToRefresh;
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
 
 import java.util.List;
 
 /**
- * @CreateBy administrator
+ * @CreateBy qsmaxmin
  * @Date 2020/4/9 16:21
- * @Description pull list activity with actionbar
+ * @Description pull list activity
  */
-public abstract class QsPullListActivity<P extends QsPresenter, D> extends QsListActivity<P, D> implements QsIPullToRefresh {
-    public static final byte           LOAD_WHEN_SCROLL_TO_BOTTOM = 0;
-    public static final byte           LOAD_WHEN_SECOND_TO_LAST   = 1;
-    private             boolean        canLoadingMore             = true;
-    private             PtrFrameLayout mPtrFrameLayout;
-    protected           LoadingFooter  mLoadingFooter;
+public abstract class QsPullListActivity<P extends QsPresenter, D> extends QsListActivity<P, D> implements QsIPullToRefreshView {
+    private   boolean        canLoadingMore = true;
+    private   PtrFrameLayout ptrLayout;
+    protected LoadingFooter  loadingFooter;
 
     @Override public int layoutId() {
-        return R.layout.qs_activity_pull_listview;
+        return R.layout.qs_pull_listview;
     }
 
     @Override public int getFooterLayout() {
@@ -41,33 +38,15 @@ public abstract class QsPullListActivity<P extends QsPresenter, D> extends QsLis
         return new BeautyCircleRefreshHeader(getContext());
     }
 
-    @Override protected View initView() {
-        View view = super.initView();
-        initPtrFrameLayout(view);
-        return view;
-    }
+    @Override protected View initView(LayoutInflater inflater) {
+        View view = super.initView(inflater);
 
-    @Override protected void initListView(LayoutInflater inflater, View view) {
-        super.initListView(inflater, view);
-        View footerView = getFooterView();
-        if (footerView instanceof LoadingFooter) {
-            mLoadingFooter = (LoadingFooter) footerView;
-        } else if (footerView != null) {
-            mLoadingFooter = footerView.findViewById(R.id.loading_footer);
-        }
-    }
-
-    private void initPtrFrameLayout(View view) {
-        if (view instanceof PtrFrameLayout) {
-            mPtrFrameLayout = (PtrFrameLayout) view;
-        } else {
-            mPtrFrameLayout = view.findViewById(R.id.swipe_container);
-        }
-        if (mPtrFrameLayout == null) throw new RuntimeException("PtrFrameLayout is not exist or its id not 'R.id.swipe_container' in current layout!!");
+        ptrLayout = view.findViewById(R.id.swipe_container);
+        if (ptrLayout == null) throw new RuntimeException("PtrFrameLayout is not exist or its id not 'R.id.swipe_container' in current layout!!");
         PtrUIHandler handlerView = getPtrUIHandlerView();
-        mPtrFrameLayout.setHeaderView((View) handlerView);
-        mPtrFrameLayout.addPtrUIHandler(handlerView);
-        mPtrFrameLayout.setPtrHandler(new PtrHandler() {
+        ptrLayout.setHeaderView((View) handlerView);
+        ptrLayout.addPtrUIHandler(handlerView);
+        ptrLayout.setPtrHandler(new PtrHandler() {
             @Override public boolean checkCanDoRefresh(PtrFrameLayout frame, View content, View header) {
                 return PtrDefaultHandler.checkContentCanBePulledDown(frame, content, header);
             }
@@ -76,52 +55,60 @@ public abstract class QsPullListActivity<P extends QsPresenter, D> extends QsLis
                 onRefresh();
             }
         });
+
+        View footerView = getFooterView();
+        if (footerView instanceof LoadingFooter) {
+            loadingFooter = (LoadingFooter) footerView;
+        } else if (footerView != null) {
+            loadingFooter = footerView.findViewById(R.id.loading_footer);
+        }
+        return view;
     }
 
     /**
      * 获取下拉刷新控件
      */
     @Override public PtrFrameLayout getPtrFrameLayout() {
-        return mPtrFrameLayout;
+        return ptrLayout;
     }
 
     @Override public void startRefreshing() {
-        if (mPtrFrameLayout != null) mPtrFrameLayout.post(new Runnable() {
+        if (ptrLayout != null) ptrLayout.post(new Runnable() {
             @Override public void run() {
-                mPtrFrameLayout.autoRefresh();
+                ptrLayout.autoRefresh();
             }
         });
     }
 
     public void stopRefreshing() {
-        if (mPtrFrameLayout != null) mPtrFrameLayout.post(new Runnable() {
+        if (ptrLayout != null) ptrLayout.post(new Runnable() {
             @Override public void run() {
-                mPtrFrameLayout.refreshComplete();
+                ptrLayout.refreshComplete();
             }
         });
     }
 
     @Override public void setLoadingState(final LoadingFooter.State state) {
         L.i(initTag(), "setLoadingState：" + state);
-        if (mLoadingFooter != null) mLoadingFooter.setState(state);
+        if (loadingFooter != null) loadingFooter.setState(state);
     }
 
     @Override public LoadingFooter.State getLoadingState() {
-        return mLoadingFooter == null ? null : mLoadingFooter.getState();
+        return loadingFooter == null ? null : loadingFooter.getState();
     }
 
     @Override public void openPullRefreshing() {
-        if (mPtrFrameLayout != null) mPtrFrameLayout.post(new Runnable() {
+        if (ptrLayout != null) ptrLayout.post(new Runnable() {
             @Override public void run() {
-                mPtrFrameLayout.setEnabled(true);
+                ptrLayout.setEnabled(true);
             }
         });
     }
 
     @Override public void closePullRefreshing() {
-        if (mPtrFrameLayout != null) mPtrFrameLayout.post(new Runnable() {
+        if (ptrLayout != null) ptrLayout.post(new Runnable() {
             @Override public void run() {
-                mPtrFrameLayout.setEnabled(false);
+                ptrLayout.setEnabled(false);
             }
         });
     }
@@ -135,17 +122,17 @@ public abstract class QsPullListActivity<P extends QsPresenter, D> extends QsLis
     }
 
     @Override public void setData(List<D> list, boolean showEmptyView) {
-        mPtrFrameLayout.post(new Runnable() {
+        ptrLayout.post(new Runnable() {
             @Override public void run() {
-                mPtrFrameLayout.refreshComplete();
+                ptrLayout.refreshComplete();
             }
         });
         super.setData(list, showEmptyView);
     }
 
     private void loadingMoreData() {
-        if (mLoadingFooter != null) {
-            LoadingFooter.State state = mLoadingFooter.getState();
+        if (loadingFooter != null) {
+            LoadingFooter.State state = loadingFooter.getState();
             if (!canLoadingMore) {
                 return;
             } else if (state == LoadingFooter.State.Loading) {
@@ -161,14 +148,12 @@ public abstract class QsPullListActivity<P extends QsPresenter, D> extends QsLis
     }
 
     @Override public void onAdapterGetView(int position, int totalCount) {
-        super.onAdapterGetView(position, totalCount);
         if (onLoadTriggerCondition() == LOAD_WHEN_SECOND_TO_LAST && (position == totalCount - 2 || totalCount == 1)) {
             loadingMoreData();
         }
     }
 
     @Override public void onScrollStateChanged(AbsListView view, int scrollState) {
-        super.onScrollStateChanged(view, scrollState);
         if (onLoadTriggerCondition() == LOAD_WHEN_SCROLL_TO_BOTTOM && scrollState == SCROLL_STATE_IDLE && !canListScrollUp()) {
             loadingMoreData();
         }
@@ -179,7 +164,7 @@ public abstract class QsPullListActivity<P extends QsPresenter, D> extends QsLis
     }
 
     @Override public boolean canPullRefreshing() {
-        return mPtrFrameLayout.isEnabled();
+        return ptrLayout.isEnabled();
     }
 
     @Override public void smoothScrollToTop(boolean autoRefresh) {

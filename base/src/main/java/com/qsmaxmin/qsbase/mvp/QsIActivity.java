@@ -4,6 +4,8 @@ import android.view.KeyEvent;
 
 import com.qsmaxmin.qsbase.common.viewbind.OnKeyDownListener;
 
+import androidx.annotation.LayoutRes;
+
 /**
  * @CreateBy qsmaxmin
  * @Date 2017/6/21 15:00
@@ -12,9 +14,11 @@ import com.qsmaxmin.qsbase.common.viewbind.OnKeyDownListener;
 
 public interface QsIActivity extends QsIView {
 
-    boolean isTransparentStatusBar();
+    @LayoutRes int actionbarLayoutId();
 
     boolean isBlackIconStatusBar();
+
+    boolean isTransparentStatusBar();
 
     boolean isTransparentNavigationBar();
 

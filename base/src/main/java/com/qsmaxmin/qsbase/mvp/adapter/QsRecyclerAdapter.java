@@ -5,7 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 
-import com.qsmaxmin.qsbase.mvp.fragment.QsIRecyclerView;
+import com.qsmaxmin.qsbase.mvp.QsIRecyclerView;
 
 import java.util.List;
 
@@ -29,7 +29,7 @@ public class QsRecyclerAdapter<D> extends RecyclerView.Adapter<MyRecycleViewHold
     }
 
     @NonNull @Override public MyRecycleViewHolder<D> onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        QsRecycleAdapterItem<D> recycleAdapterItem = recyclerLayer.getRecycleAdapterItem(mInflater, parent, viewType);
+        QsRecycleAdapterItem<D> recycleAdapterItem = recyclerLayer.getRecycleAdapterItemInner(mInflater, parent, viewType);
         MyRecycleViewHolder<D> holder = new MyRecycleViewHolder<>(recycleAdapterItem);
 
         holder.setOnItemClickListener(new AdapterView.OnItemClickListener() {

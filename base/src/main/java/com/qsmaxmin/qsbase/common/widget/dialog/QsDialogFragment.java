@@ -17,6 +17,7 @@ import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 
@@ -52,10 +53,6 @@ public abstract class QsDialogFragment extends DialogFragment {
         return customView;
     }
 
-    @Override @CallSuper public void onDestroyView() {
-        super.onDestroyView();
-    }
-
     protected int getDialogTheme() {
         return R.style.QsDialogTheme_FullScreen_TranslucentStatus;
     }
@@ -86,23 +83,29 @@ public abstract class QsDialogFragment extends DialogFragment {
         show(activity, null);
     }
 
-    @ThreadPoint(ThreadType.MAIN)
     public void show(FragmentActivity activity, Bundle bundle) {
         if (activity == null || activity.isFinishing()) {
             L.e(initTag(), "activity is null or activity is finished!");
             return;
         }
-        L.i(initTag(), "show......activity:" + activity.getClass().getSimpleName());
-        FragmentManager fragmentManager = activity.getSupportFragmentManager();
-        if (fragmentManager != null) {
-            if (isAdded()) {
-                L.e(initTag(), "show......dialog is added");
-                return;
-            }
-            if (bundle != null) setArguments(bundle);
-            fragmentManager.beginTransaction().add(this, getClass().getSimpleName()).commitAllowingStateLoss();
-        } else {
-            L.e(initTag(), "show......fragmentManager is null");
+        show(activity.getSupportFragmentManager(), bundle);
+    }
+
+    public void show(Fragment fragment) {
+        show(fragment, null);
+    }
+
+    public void show(Fragment fragment, Bundle bundle) {
+        show(fragment.getFragmentManager(), bundle);
+    }
+
+    @ThreadPoint(ThreadType.MAIN)
+    public void show(FragmentManager manager, Bundle bundle) {
+        if (isAdded()) {
+            L.e(initTag(), "show......dialog is added");
+            return;
         }
+        if (bundle != null) setArguments(bundle);
+        show(manager, getClass().getSimpleName());
     }
 }

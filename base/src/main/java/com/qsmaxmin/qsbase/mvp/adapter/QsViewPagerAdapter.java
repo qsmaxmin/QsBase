@@ -12,6 +12,7 @@ import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.base.OuterScrolle
 import com.qsmaxmin.qsbase.mvp.fragment.QsIFragment;
 import com.qsmaxmin.qsbase.mvp.model.QsModelPager;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -23,15 +24,13 @@ import androidx.viewpager.widget.PagerAdapter;
  * @Description
  */
 
-@SuppressWarnings("WeakerAccess")
 public class QsViewPagerAdapter extends PagerAdapter implements OuterPagerAdapter {
-    private static final String TAG             = "QsViewPagerAdapter";
-    private              int    replacePosition = -1;        // 替换标识
-
-    private OuterScroller   mOuterScroller;
-    private FragmentManager fragmentManager;
-    private ViewGroup       container;
-    private ViewPagerHelper pagerHelper;
+    private static final String          TAG             = "QsViewPagerAdapter";
+    private              int             replacePosition = -1;        // 替换标识
+    private              OuterScroller   mOuterScroller;
+    private              FragmentManager fragmentManager;
+    private              ViewGroup       container;
+    private              ViewPagerHelper pagerHelper;
 
     protected String initTag() {
         return L.isEnable() ? getClass().getSimpleName() : "QsViewPagerAdapter";
@@ -64,19 +63,19 @@ public class QsViewPagerAdapter extends PagerAdapter implements OuterPagerAdapte
     /**
      * 替换
      */
-    public void replaceViewPagerDatas(QsModelPager... modelPagers) {
+    public void replaceViewPagerData(QsModelPager... modelPagers) {
         replacePosition = getViewPager().getCurrentItem();
         for (QsModelPager modelPager : modelPagers) {
             int position = modelPager.position;
             Fragment oldFragment = getViewPagerData()[position].fragment;
-            if (oldFragment.getView() != null) container.removeView(oldFragment.getView());
+            if (container != null && oldFragment.getView() != null) container.removeView(oldFragment.getView());
             FragmentTransaction transaction = this.fragmentManager.beginTransaction();
             transaction.detach(oldFragment).commitAllowingStateLoss();
             getViewPagerData()[position] = modelPager;
         }
     }
 
-    @Override public int getItemPosition(Object object) {
+    @Override public int getItemPosition(@NonNull Object object) {
         return POSITION_NONE;
     }
 
@@ -96,19 +95,19 @@ public class QsViewPagerAdapter extends PagerAdapter implements OuterPagerAdapte
         return getViewPagerData().length;
     }
 
-    @Override public void destroyItem(ViewGroup container, int position, Object object) {
+    @Override public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
         this.container = container;
         if (position < getViewPagerData().length && getViewPagerData()[position].fragment != null) container.removeView(getViewPagerData()[position].fragment.getView());
     }
 
-    @Override public boolean isViewFromObject(View view, Object object) {
+    @Override public boolean isViewFromObject(@NonNull View view, @NonNull Object object) {
         return view == object;
     }
 
     /**
      * 生成
      */
-    @Override public Object instantiateItem(ViewGroup container, int position) {
+    @Override @NonNull public Object instantiateItem(@NonNull ViewGroup container, int position) {
         this.container = container;
         Fragment fragment = getViewPagerData()[position].fragment;
         if (!fragment.isAdded()) {
@@ -121,7 +120,6 @@ public class QsViewPagerAdapter extends PagerAdapter implements OuterPagerAdapte
             if (replacePosition != -1) {
                 if (getViewPagerData()[replacePosition].fragment instanceof QsIFragment) {
                     ((QsIFragment) getViewPagerData()[replacePosition].fragment).initDataWhenDelay();
-                    ((QsIFragment) getViewPagerData()[replacePosition].fragment).onActionBar();
                 }
                 getViewPagerData()[replacePosition].fragment.onResume();
                 replacePosition = -1;

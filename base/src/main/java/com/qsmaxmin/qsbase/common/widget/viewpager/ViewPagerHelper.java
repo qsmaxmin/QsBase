@@ -1,13 +1,12 @@
 package com.qsmaxmin.qsbase.common.widget.viewpager;
 
-import androidx.viewpager.widget.ViewPager;
 import android.view.View;
 
-import com.qsmaxmin.qsbase.mvp.QsIViewPagerABActivity;
-import com.qsmaxmin.qsbase.mvp.QsIViewPagerActivity;
+import com.qsmaxmin.qsbase.mvp.QsIViewPager;
 import com.qsmaxmin.qsbase.mvp.fragment.QsIFragment;
-import com.qsmaxmin.qsbase.mvp.fragment.QsIViewPagerFragment;
 import com.qsmaxmin.qsbase.mvp.model.QsModelPager;
+
+import androidx.viewpager.widget.ViewPager;
 
 /**
  * @CreateBy qsmaxmin
@@ -16,37 +15,17 @@ import com.qsmaxmin.qsbase.mvp.model.QsModelPager;
  */
 
 public class ViewPagerHelper {
-    private View oldView          = null;
-    private int  oldPosition      = 0;
-    private int  currentPageIndex = -1;        // 当前page索引（切换之前）
-
-    private QsIViewPagerFragment   viewPagerFragment;
-    private QsIViewPagerABActivity viewPagerABActivity;
-    private QsIViewPagerActivity   viewPagerActivity;
-    private QsViewPager            pager;
-    private PagerSlidingTabStrip   tabs;
-    private QsModelPager[]         viewPagerData;
-
-    public ViewPagerHelper(QsIViewPagerFragment fragment, QsViewPager viewPager, PagerSlidingTabStrip slidingTabStrip, final QsModelPager[] modelPagers) {
-        this.viewPagerFragment = fragment;
-        this.viewPagerData = modelPagers;
-        this.tabs = slidingTabStrip;
-        this.pager = viewPager;
-        final MyPageChangeListener listener = new MyPageChangeListener();
-        pager.addOnPageChangeListener(listener);
-    }
-
-    public ViewPagerHelper(QsIViewPagerABActivity activity, QsViewPager pager, PagerSlidingTabStrip tabs, QsModelPager[] modelPagers) {
-        this.viewPagerABActivity = activity;
-        this.viewPagerData = modelPagers;
-        this.tabs = tabs;
-        this.pager = pager;
-        pager.addOnPageChangeListener(new MyPageChangeListener());
-    }
+    private View                 oldView          = null;
+    private int                  oldPosition      = 0;
+    private int                  currentPageIndex = -1;        // 当前page索引（切换之前）
+    private QsIViewPager         viewPagerLayer;
+    private QsViewPager          pager;
+    private PagerSlidingTabStrip tabs;
+    private QsModelPager[]       viewPagerData;
 
 
-    public ViewPagerHelper(QsIViewPagerActivity activity, QsViewPager pager, PagerSlidingTabStrip tabs, QsModelPager[] modelPagers) {
-        this.viewPagerActivity = activity;
+    public ViewPagerHelper(QsIViewPager viewPagerLayer, QsViewPager pager, PagerSlidingTabStrip tabs, QsModelPager[] modelPagers) {
+        this.viewPagerLayer = viewPagerLayer;
         this.viewPagerData = modelPagers;
         this.tabs = tabs;
         this.pager = pager;
@@ -69,24 +48,14 @@ public class ViewPagerHelper {
         return pager;
     }
 
-    public QsIViewPagerFragment getViewPagerFragment() {
-        return viewPagerFragment;
-    }
-
-    public QsIViewPagerActivity getViewPagerActivity() {
-        return viewPagerActivity;
-    }
-
-    public QsIViewPagerABActivity getViewPagerABActivity() {
-        return viewPagerABActivity;
+    public QsIViewPager getViewPagerLayer() {
+        return viewPagerLayer;
     }
 
     private class MyPageChangeListener implements ViewPager.OnPageChangeListener {
 
         @Override public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-            if (viewPagerFragment != null) viewPagerFragment.onPageScrolled(position, positionOffset, positionOffsetPixels);
-            if (viewPagerABActivity != null) viewPagerABActivity.onPageScrolled(position, positionOffset, positionOffsetPixels);
-            if (viewPagerActivity != null) viewPagerActivity.onPageScrolled(position, positionOffset, positionOffsetPixels);
+            if (viewPagerLayer != null) viewPagerLayer.onPageScrolled(position, positionOffset, positionOffsetPixels);
         }
 
         @Override public void onPageSelected(int position) {
@@ -98,24 +67,17 @@ public class ViewPagerHelper {
             if (position < viewPagerData.length && viewPagerData[position].fragment.isAdded()) {
                 if (viewPagerData[position].fragment instanceof QsIFragment) {
                     ((QsIFragment) viewPagerData[position].fragment).initDataWhenDelay(); // 调用延迟加载
-                    if (pager.getCurrentItem() == position) {
-                        ((QsIFragment) viewPagerData[position].fragment).onActionBar();
-                    }
                 }
                 viewPagerData[position].fragment.onResume();
             }
             currentPageIndex = position;
-            if (viewPagerFragment != null) viewPagerFragment.onPageSelected(tabs == null ? null : tabs.tabsContainer.getChildAt(position), oldView, position, oldPosition);
-            if (viewPagerABActivity != null) viewPagerABActivity.onPageSelected(tabs == null ? null : tabs.tabsContainer.getChildAt(position), oldView, position, oldPosition);
-            if (viewPagerActivity != null) viewPagerActivity.onPageSelected(tabs == null ? null : tabs.tabsContainer.getChildAt(position), oldView, position, oldPosition);
+            if (viewPagerLayer != null) viewPagerLayer.onPageSelected(tabs == null ? null : tabs.tabsContainer.getChildAt(position), oldView, position, oldPosition);
             if (tabs != null) oldView = tabs.tabsContainer.getChildAt(position);
             oldPosition = position;
         }
 
         @Override public void onPageScrollStateChanged(int state) {
-            if (viewPagerFragment != null) viewPagerFragment.onPageScrollStateChanged(state);
-            if (viewPagerABActivity != null) viewPagerABActivity.onPageScrollStateChanged(state);
-            if (viewPagerActivity != null) viewPagerActivity.onPageScrollStateChanged(state);
+            if (viewPagerLayer != null) viewPagerLayer.onPageScrollStateChanged(state);
         }
     }
 }

@@ -18,7 +18,7 @@ import java.util.List;
  * @Date 2019/3/21 13:55
  * @Description listView滑动到顶部和底部都能加载更多数据
  */
-public abstract class QsTopBottomLoadListFragment<P extends QsPresenter, D> extends QsListFragment<P, D> implements QsITopBottomLoadListFragment<D> {
+public abstract class QsTopBottomLoadListFragment<P extends QsPresenter, D> extends QsListFragment<P, D> implements QsITopBottomLoadView<D> {
     public static final byte          LOAD_WHEN_SCROLL_TO_BOTTOM = 0;
     public static final byte          LOAD_WHEN_SECOND_TO_LAST   = 1;
     private             boolean       canTopLoading              = true;
@@ -26,8 +26,10 @@ public abstract class QsTopBottomLoadListFragment<P extends QsPresenter, D> exte
     private             LoadingFooter topLoadingView;
     private             LoadingFooter bottomLoadingView;
 
-    @Override protected void initListView(LayoutInflater inflater, View view) {
-        super.initListView(inflater, view);
+
+    @Override protected View initView(LayoutInflater inflater) {
+        View view = super.initView(inflater);
+
         View headerView = getHeaderView();
         if (headerView instanceof LoadingFooter) {
             this.topLoadingView = (LoadingFooter) headerView;
@@ -36,6 +38,7 @@ public abstract class QsTopBottomLoadListFragment<P extends QsPresenter, D> exte
         if (footerView instanceof LoadingFooter) {
             this.bottomLoadingView = (LoadingFooter) footerView;
         }
+        return view;
     }
 
     @Override public int getHeaderLayout() {

@@ -12,17 +12,16 @@ import com.qsmaxmin.qsbase.common.widget.ptr.PtrHandler;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrUIHandler;
 import com.qsmaxmin.qsbase.common.widget.ptr.header.BeautyCircleRefreshHeader;
 import com.qsmaxmin.qsbase.common.widget.recyclerview.EndlessRecyclerOnScrollListener;
-import com.qsmaxmin.qsbase.mvp.fragment.QsIPullToRefresh;
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
 
 import java.util.List;
 
 /**
- * @CreateBy administrator
+ * @CreateBy qsmaxmin
  * @Date 2020/4/9 16:21
- * @Description pull list activity with actionbar
+ * @Description pull recycler activity
  */
-public abstract class QsPullRecyclerActivity<P extends QsPresenter, D> extends QsRecyclerActivity<P, D> implements QsIPullToRefresh {
+public abstract class QsPullRecyclerActivity<P extends QsPresenter, D> extends QsRecyclerActivity<P, D> implements QsIPullToRefreshView {
     public static final byte           LOAD_WHEN_SCROLL_TO_BOTTOM = 0;
     public static final byte           LOAD_WHEN_SECOND_TO_LAST   = 1;
     private             boolean        canLoadingMore             = true;
@@ -34,28 +33,26 @@ public abstract class QsPullRecyclerActivity<P extends QsPresenter, D> extends Q
     }
 
     @Override public int layoutId() {
-        return R.layout.qs_activity_pull_recyclerview;
+        return R.layout.qs_pull_recyclerview;
     }
 
     @Override public PtrUIHandler getPtrUIHandlerView() {
         return new BeautyCircleRefreshHeader(getContext());
     }
 
-    @Override protected View initView() {
-        View view = super.initView();
+    @Override protected View initView(LayoutInflater inflater) {
+        View view = super.initView(inflater);
         initPtrFrameLayout(view);
-        getRecyclerView().addOnScrollListener(mOnScrollListener);
-        return view;
-    }
 
-    @Override protected void initRecycleView(LayoutInflater inflater, View view) {
-        super.initRecycleView(inflater, view);
         View footerView = getFooterView();
         if (footerView instanceof LoadingFooter) {
             mLoadingFooter = (LoadingFooter) footerView;
         } else if (footerView != null) {
             mLoadingFooter = footerView.findViewById(R.id.loading_footer);
         }
+        getRecyclerView().addOnScrollListener(mOnScrollListener);
+
+        return view;
     }
 
     private void initPtrFrameLayout(View view) {

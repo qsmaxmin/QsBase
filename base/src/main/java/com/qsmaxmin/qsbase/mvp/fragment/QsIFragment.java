@@ -1,7 +1,5 @@
 package com.qsmaxmin.qsbase.mvp.fragment;
 
-import android.view.KeyEvent;
-
 import com.qsmaxmin.qsbase.mvp.QsIView;
 
 /**
@@ -12,15 +10,7 @@ import com.qsmaxmin.qsbase.mvp.QsIView;
 
 public interface QsIFragment extends QsIView {
 
-    void onActionBar();
-
-    void setActivityTitle(Object value);
-
-    void setActivityTitle(Object value, int code);
-
     boolean shouldInterceptTouchEvent();
-
-    boolean onKeyDown(int keyCode, KeyEvent event);
 
     void onBackPressed();
 

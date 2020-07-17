@@ -1,5 +1,8 @@
-package com.qsmaxmin.qsbase.mvp.fragment;
+package com.qsmaxmin.qsbase.mvp;
 
+import android.app.Activity;
+import android.content.Context;
+import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
@@ -9,6 +12,8 @@ import com.qsmaxmin.qsbase.mvp.adapter.QsListAdapterItem;
 
 import java.util.List;
 
+import androidx.fragment.app.FragmentActivity;
+
 /**
  * @CreateBy qsmaxmin
  * @Date 17/7/2  上午10:58
@@ -17,11 +22,17 @@ import java.util.List;
 
 public interface QsIListView<D> extends AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener, AbsListView.OnScrollListener {
 
+    QsListAdapterItem<D> getListAdapterItemInner(int type);
+
     QsListAdapterItem<D> getListAdapterItem(int type);
 
     int getHeaderLayout();
 
     int getFooterLayout();
+
+    View getHeaderView();
+
+    View getFooterView();
 
     ListView getListView();
 
@@ -45,11 +56,11 @@ public interface QsIListView<D> extends AdapterView.OnItemClickListener, Adapter
 
     List<D> getData();
 
+    List<D> copyData();
+
     D getData(int position);
 
     void updateAdapter(boolean showEmptyView);
-
-    BaseAdapter onCreateAdapter();
 
     BaseAdapter getAdapter();
 
@@ -57,7 +68,11 @@ public interface QsIListView<D> extends AdapterView.OnItemClickListener, Adapter
 
     boolean canListScrollDown();
 
-    boolean showContentViewWhenDataLoadingComplete();
-
     void onAdapterGetView(int position, int totalCount);
+
+    Context getContext();
+
+    FragmentActivity getActivity();
+
+    void onReceiveAdapterItemEvent(int eventType, D data, int position);
 }

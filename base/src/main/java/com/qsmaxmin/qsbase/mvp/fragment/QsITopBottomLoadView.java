@@ -9,7 +9,7 @@ import java.util.List;
  * @Date 2019/3/21 13:57
  * @Description
  */
-public interface QsITopBottomLoadListFragment<D> {
+public interface QsITopBottomLoadView<D> {
 
     void onTopLoading();
 

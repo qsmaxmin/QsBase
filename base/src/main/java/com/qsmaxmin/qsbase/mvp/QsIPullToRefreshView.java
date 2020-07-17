@@ -1,4 +1,4 @@
-package com.qsmaxmin.qsbase.mvp.fragment;
+package com.qsmaxmin.qsbase.mvp;
 
 import com.qsmaxmin.qsbase.common.widget.listview.LoadingFooter;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout;
@@ -10,7 +10,9 @@ import com.qsmaxmin.qsbase.common.widget.ptr.PtrUIHandler;
  * @Description 可下拉刷新和上拉加载布局
  */
 
-public interface QsIPullToRefresh {
+public interface QsIPullToRefreshView {
+    byte LOAD_WHEN_SCROLL_TO_BOTTOM = 0;
+    byte LOAD_WHEN_SECOND_TO_LAST   = 1;
 
     PtrUIHandler getPtrUIHandlerView();
 

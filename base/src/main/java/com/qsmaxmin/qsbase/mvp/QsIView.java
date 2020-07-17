@@ -1,19 +1,19 @@
 package com.qsmaxmin.qsbase.mvp;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
 
 import com.qsmaxmin.qsbase.common.widget.dialog.QsProgressDialog;
 
+import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 
 /**
  * @CreateBy qsmaxmin
@@ -22,24 +22,30 @@ import androidx.fragment.app.Fragment;
  */
 
 public interface QsIView<P> {
+    int VIEW_STATE_LOADING = 0;
+    int VIEW_STATE_CONTENT = 1;
+    int VIEW_STATE_EMPTY   = 2;
+    int VIEW_STATE_ERROR   = 3;
 
     String initTag();
 
-    int layoutId();
+    @LayoutRes int rootViewLayoutId();
 
-    int emptyLayoutId();
+    @LayoutRes int layoutId();
 
-    int loadingLayoutId();
+    @LayoutRes int emptyLayoutId();
 
-    int errorLayoutId();
+    @LayoutRes int loadingLayoutId();
 
-    View onCreateLoadingView(@NonNull LayoutInflater inflater);
+    @LayoutRes int errorLayoutId();
 
-    View onCreateContentView(@NonNull LayoutInflater inflater);
+    void onCreateLoadingView(@NonNull View loadingView);
 
-    View onCreateEmptyView(@NonNull LayoutInflater inflater);
+    void onCreateContentView(@NonNull View contentView);
 
-    View onCreateErrorView(@NonNull LayoutInflater inflater);
+    void onCreateEmptyView(@NonNull View emptyView);
+
+    void onCreateErrorView(@NonNull View errorView);
 
     QsProgressDialog getLoadingDialog();
 
@@ -151,7 +157,7 @@ public interface QsIView<P> {
 
     void runOnWorkThread(Runnable action);
 
-    Activity getActivity();
+    FragmentActivity getActivity();
 
     void smoothScrollToTop(boolean autoRefresh);
 }

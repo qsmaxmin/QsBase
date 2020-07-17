@@ -12,16 +12,16 @@ import com.qsmaxmin.qsbase.common.aspect.ThreadPoint;
 import com.qsmaxmin.qsbase.common.aspect.ThreadType;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.mvp.adapter.QsListAdapter;
-import com.qsmaxmin.qsbase.mvp.fragment.QsIListView;
+import com.qsmaxmin.qsbase.mvp.adapter.QsListAdapterItem;
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @CreateBy administrator
+ * @CreateBy qsmaxmin
  * @Date 2020/4/9 15:06
- * @Description list activity with actionbar
+ * @Description list activity
  */
 public abstract class QsListActivity<P extends QsPresenter, D> extends QsActivity<P> implements QsIListView<D> {
     protected final List<D>     mList = new ArrayList<>();
@@ -31,7 +31,7 @@ public abstract class QsListActivity<P extends QsPresenter, D> extends QsActivit
     private         View        footerView;
 
     @Override public int layoutId() {
-        return R.layout.qs_activity_listview;
+        return R.layout.qs_listview;
     }
 
     @Override public int getHeaderLayout() {
@@ -42,7 +42,15 @@ public abstract class QsListActivity<P extends QsPresenter, D> extends QsActivit
         return 0;
     }
 
-    @Override public ListView getListView() {
+    @Override public final View getHeaderView() {
+        return headerView;
+    }
+
+    @Override public final View getFooterView() {
+        return footerView;
+    }
+
+    @Override public final ListView getListView() {
         return mListView;
     }
 
@@ -54,22 +62,9 @@ public abstract class QsListActivity<P extends QsPresenter, D> extends QsActivit
         return 0;
     }
 
-    @Override protected View initView() {
-        View rootView = super.initView();
-        LayoutInflater inflater = getLayoutInflater();
-        initListView(inflater, rootView);
-        return rootView;
-    }
-
-    /**
-     * 初始化ListView
-     */
-    protected void initListView(LayoutInflater inflater, View view) {
-        if (view instanceof ListView) {
-            mListView = (ListView) view;
-        } else {
-            mListView = view.findViewById(android.R.id.list);
-        }
+    @Override protected View initView(LayoutInflater inflater) {
+        View rootView = super.initView(inflater);
+        mListView = rootView.findViewById(android.R.id.list);
         if (mListView == null) throw new RuntimeException("ListView is not exit or its id not 'android.R.id.list' in current layout!!");
         if (getHeaderLayout() != 0) {
             headerView = inflater.inflate(getHeaderLayout(), null);
@@ -81,19 +76,24 @@ public abstract class QsListActivity<P extends QsPresenter, D> extends QsActivit
         }
         mListView.setOnItemClickListener(this);
         mListView.setOnItemLongClickListener(this);
-        BaseAdapter adapter = onCreateAdapter();
-        if (adapter != null) {
-            mListAdapter = adapter;
-        } else {
-            mListAdapter = new QsListAdapter<>(this, mList);
-        }
+        mListAdapter = new QsListAdapter<>(this, mList);
         mListView.setAdapter(mListAdapter);
         mListView.setOnScrollListener(this);
+        return rootView;
     }
 
+    @Override public final QsListAdapterItem<D> getListAdapterItemInner(int type) {
+        QsListAdapterItem<D> adapterItem = getListAdapterItem(type);
+        adapterItem.setViewLayer(this);
+        return adapterItem;
+    }
+
+    @Override public void onReceiveAdapterItemEvent(int eventType, D data, int position) {
+        L.i(initTag(), "onReceiveAdapterItemEvent......eventType:" + eventType + ", position:" + position);
+    }
 
     @Override public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        L.i(initTag(), "onItemClick()... position : " + position);
+        L.i(initTag(), "onItemClick... position:" + position);
     }
 
     @Override public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
@@ -105,34 +105,39 @@ public abstract class QsListActivity<P extends QsPresenter, D> extends QsActivit
         setData(list, true);
     }
 
-    @ThreadPoint(ThreadType.MAIN) @Override public void setData(List<D> list, boolean showEmptyView) {
+    @ThreadPoint(ThreadType.MAIN)
+    @Override public void setData(List<D> list, boolean showEmptyView) {
         mList.clear();
         if (list != null && !list.isEmpty()) mList.addAll(list);
         updateAdapter(showEmptyView);
     }
 
-    @ThreadPoint(ThreadType.MAIN) @Override public void addData(D d) {
+    @ThreadPoint(ThreadType.MAIN)
+    @Override public void addData(D d) {
         if (d != null) {
             mList.add(d);
             updateAdapter(true);
         }
     }
 
-    @ThreadPoint(ThreadType.MAIN) @Override public void addData(List<D> list) {
+    @ThreadPoint(ThreadType.MAIN)
+    @Override public void addData(List<D> list) {
         if (list != null && !list.isEmpty()) {
             mList.addAll(list);
             updateAdapter(true);
         }
     }
 
-    @ThreadPoint(ThreadType.MAIN) @Override public void delete(int position) {
+    @ThreadPoint(ThreadType.MAIN)
+    @Override public void delete(int position) {
         if (position >= 0 && position < mList.size()) {
             mList.remove(position);
             updateAdapter(true);
         }
     }
 
-    @ThreadPoint(ThreadType.MAIN) @Override public void delete(D d) {
+    @ThreadPoint(ThreadType.MAIN)
+    @Override public void delete(D d) {
         if (d != null) {
             boolean success;
             success = mList.remove(d);
@@ -140,7 +145,8 @@ public abstract class QsListActivity<P extends QsPresenter, D> extends QsActivit
         }
     }
 
-    @ThreadPoint(ThreadType.MAIN) @Override public void deleteAll() {
+    @ThreadPoint(ThreadType.MAIN)
+    @Override public void deleteAll() {
         if (!mList.isEmpty()) {
             mList.clear();
             updateAdapter(true);
@@ -148,6 +154,10 @@ public abstract class QsListActivity<P extends QsPresenter, D> extends QsActivit
     }
 
     @Override public final List<D> getData() {
+        return mList;
+    }
+
+    @Override public final List<D> copyData() {
         ArrayList<D> list = new ArrayList<>();
         if (!mList.isEmpty()) list.addAll(mList);
         return list;
@@ -168,27 +178,16 @@ public abstract class QsListActivity<P extends QsPresenter, D> extends QsActivit
             mListAdapter.notifyDataSetChanged();
             if (mList.isEmpty() && showEmptyView) {
                 showEmptyView();
-            } else if (showContentViewWhenDataLoadingComplete()) {
+            } else {
                 showContentView();
             }
         }
     }
 
-    @Override public BaseAdapter onCreateAdapter() {
-        return null;
-    }
-
-    @Override public BaseAdapter getAdapter() {
+    @Override public final BaseAdapter getAdapter() {
         return mListAdapter;
     }
 
-    public View getHeaderView() {
-        return headerView;
-    }
-
-    public View getFooterView() {
-        return footerView;
-    }
 
     @Override public void onScrollStateChanged(AbsListView view, int scrollState) {
     }
@@ -201,10 +200,6 @@ public abstract class QsListActivity<P extends QsPresenter, D> extends QsActivit
      */
     @Override public boolean canListScrollDown() {
         return getListView().canScrollVertically(-1);
-    }
-
-    @Override public boolean showContentViewWhenDataLoadingComplete() {
-        return true;
     }
 
     /**

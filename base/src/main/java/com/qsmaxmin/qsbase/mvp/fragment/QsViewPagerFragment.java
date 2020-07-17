@@ -1,10 +1,6 @@
 package com.qsmaxmin.qsbase.mvp.fragment;
 
-import android.graphics.Color;
 import android.os.Bundle;
-import androidx.annotation.CallSuper;
-import androidx.fragment.app.Fragment;
-import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,10 +10,14 @@ import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.widget.viewpager.PagerSlidingTabStrip;
 import com.qsmaxmin.qsbase.common.widget.viewpager.QsViewPager;
 import com.qsmaxmin.qsbase.common.widget.viewpager.ViewPagerHelper;
+import com.qsmaxmin.qsbase.mvp.QsIViewPager;
 import com.qsmaxmin.qsbase.mvp.adapter.QsTabViewPagerAdapter;
 import com.qsmaxmin.qsbase.mvp.adapter.QsViewPagerAdapter;
 import com.qsmaxmin.qsbase.mvp.model.QsModelPager;
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
+
+import androidx.annotation.CallSuper;
+import androidx.fragment.app.Fragment;
 
 /**
  * @CreateBy qsmaxmin
@@ -25,29 +25,32 @@ import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
  * @Description
  */
 
-public abstract class QsViewPagerFragment<P extends QsPresenter> extends QsFragment<P> implements QsIViewPagerFragment {
+public abstract class QsViewPagerFragment<P extends QsPresenter> extends QsFragment<P> implements QsIViewPager {
     protected QsViewPagerAdapter   adapter;
     protected QsViewPager          pager;
     protected PagerSlidingTabStrip tabs;
 
     @Override public int layoutId() {
-        return R.layout.qs_fragment_viewpager;
+        return R.layout.qs_viewpager_top_tab;
     }
 
     @Override public void initData(Bundle savedInstanceState) {
-
     }
 
     @Override protected View initView(LayoutInflater inflater) {
         View view = super.initView(inflater);
-        initTabAndPager(view);
+        initCustomView(view);
         return view;
     }
 
-    protected void initTabAndPager(View view) {
+    protected void initCustomView(View view) {
         pager = view.findViewById(R.id.pager);
         tabs = view.findViewById(android.R.id.tabs);
-        initTabsValue(tabs);
+        initTab(tabs);
+        initViewPager(getModelPagers());
+    }
+
+    @Override public void initViewPager(QsModelPager[] modelPagers) {
         initViewPager(getModelPagers(), getOffscreenPageLimit());
     }
 
@@ -70,26 +73,8 @@ public abstract class QsViewPagerFragment<P extends QsPresenter> extends QsFragm
         }
     }
 
-    public final void initTabsValue(PagerSlidingTabStrip tab) {
-        if (enableTabSetting() && tab != null) {
-            DisplayMetrics dm = getResources().getDisplayMetrics();
-            tab.setShouldExpand(getTabsShouldExpand());
-            tab.setDividerColor(getTabsDividerColor());
-            tab.setUnderlineHeight((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, getTabsUnderlineHeight(), dm));
-            tab.setUnderlineColor(getTabsUnderlineColor());
-            if (getTabsIndicatorHeight() > 0) tab.setIndicatorHeight((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, getTabsIndicatorHeight(), dm));
-            if (getTabsIndicatorWidth() > 0) tab.setIndicatorWidth((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, getTabsIndicatorWidth(), dm));
-            tab.setIndicatorCorner((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, getTabsIndicatorCorner(), dm));
-            tab.setTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, getTabsTitleSize(), dm));
-            tab.setIndicatorColor(getTabsIndicatorColor());
-            tab.setSelectedTextColor(getTabsSelectedTitleColor());
-            tab.setTextColor(getTabsTitleColor());
-            tab.setTabWidth(getTabWidth());
-            tab.setTabMarginsLeftRight(getTabMargins());
-            tab.setTabPaddingLeftRight(getTabPaddingLeftRight());
-            tab.setIndicatorMargin(getTabsIndicatorMargin());
-            tab.setIsCurrentItemAnimation(getTabsCurrentItemAnimation());
-        }
+    @Override public void initTab(PagerSlidingTabStrip tab) {
+
     }
 
     @Override public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -111,13 +96,13 @@ public abstract class QsViewPagerFragment<P extends QsPresenter> extends QsFragm
         }
     }
 
-    @Override public void initTab(View tabItem, QsModelPager modelPager) {
+    @Override public void initTabItem(View tabItem, QsModelPager modelPager) {
 
     }
 
     @Override public void replaceViewPageItem(QsModelPager... modelPagers) {
         if (adapter != null) {
-            adapter.replaceViewPagerDatas(modelPagers);
+            adapter.replaceViewPagerData(modelPagers);
             adapter.notifyDataSetChanged();
         } else {
             L.e(initTag(), "adapter is null.... override getModelPagers() return not null or call initViewPager() before !");
@@ -143,7 +128,7 @@ public abstract class QsViewPagerFragment<P extends QsPresenter> extends QsFragm
         return 0;
     }
 
-    @Override public PagerSlidingTabStrip getTabs() {
+    @Override public PagerSlidingTabStrip getTab() {
         return tabs;
     }
 
@@ -155,76 +140,8 @@ public abstract class QsViewPagerFragment<P extends QsPresenter> extends QsFragm
         return adapter;
     }
 
-    protected boolean enableTabSetting() {
-        return true;
-    }
-
-    protected boolean getTabsCurrentItemAnimation() {
-        return false;
-    }
-
-    protected int getTabsIndicatorMargin() {
-        return 0;
-    }
-
-    protected int getTabPaddingLeftRight() {
-        return 20;
-    }
-
-    protected int getTabMargins() {
-        return 0;
-    }
-
-    protected int getTabWidth() {
-        return 0;
-    }
-
-    protected int getTabsTitleColor() {
-        return Color.GRAY;
-    }
-
-    protected int getTabsSelectedTitleColor() {
-        return getResources().getColor(R.color.colorAccent);
-    }
-
-    protected int getTabsIndicatorColor() {
-        return getResources().getColor(R.color.colorAccent);
-    }
-
-    protected int getTabsTitleSize() {
-        return 12;
-    }
-
-    protected float getTabsIndicatorHeight() {
-        return 2;
-    }
-
-    protected float getTabsIndicatorWidth() {
-        return 0;
-    }
-
-    protected float getTabsIndicatorCorner() {
-        return 1;
-    }
-
-    protected float getTabsUnderlineHeight() {
-        return 1;
-    }
-
-    protected boolean getTabsShouldExpand() {
-        return true;
-    }
-
-    protected int getTabsDividerColor() {
-        return Color.TRANSPARENT;
-    }
-
-    protected int getTabsUnderlineColor() {
-        return Color.TRANSPARENT;
-    }
-
     protected int getOffscreenPageLimit() {
-        return 2;
+        return 3;
     }
 
     protected int getPageMargin() {

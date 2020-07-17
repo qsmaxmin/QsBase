@@ -8,7 +8,7 @@ import android.view.ViewGroup;
  * @Description
  */
 
-public interface QsIHeaderViewPagerFragment extends QsIViewPagerFragment {
+public interface QsIHeaderViewPagerFragment {
     int getHeaderLayout();
 
     ViewGroup createTabView();

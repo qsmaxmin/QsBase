@@ -5,7 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
-import com.qsmaxmin.qsbase.mvp.fragment.QsIListView;
+import com.qsmaxmin.qsbase.mvp.QsIListView;
 
 import java.util.List;
 
@@ -52,9 +52,9 @@ public class QsListAdapter<D> extends BaseAdapter {
             int count = getViewTypeCount();
             if (count > 1) {
                 int type = getItemViewType(position);
-                item = listLayer.getListAdapterItem(type);
+                item = listLayer.getListAdapterItemInner(type);
             } else {
-                item = listLayer.getListAdapterItem(0);
+                item = listLayer.getListAdapterItemInner(0);
             }
             convertView = LayoutInflater.from(parent.getContext()).inflate(item.getItemLayout(), parent, false);
             item.init(convertView);

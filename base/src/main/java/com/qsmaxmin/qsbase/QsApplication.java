@@ -47,16 +47,25 @@ public abstract class QsApplication extends Application implements QsIApplicatio
     @Override public void onActivityDestroy(Activity activity) {
     }
 
+    /**
+     * 缺省页面加载中布局
+     */
     @Override public @LayoutRes int loadingLayoutId() {
-        return 0;
+        return R.layout.qs_default_loading;
     }
 
+    /**
+     * 缺省页面为空布局
+     */
     @Override public @LayoutRes int emptyLayoutId() {
-        return 0;
+        return R.layout.qs_default_empty;
     }
 
+    /**
+     * 缺省页面加载错误布局
+     */
     @Override public @LayoutRes int errorLayoutId() {
-        return 0;
+        return R.layout.qs_default_error;
     }
 
     /**

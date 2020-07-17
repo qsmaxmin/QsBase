@@ -3,6 +3,7 @@ package com.qsmaxmin.qsbase.mvp;
 import android.graphics.Rect;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 
 import com.qsmaxmin.qsbase.R;
@@ -11,8 +12,8 @@ import com.qsmaxmin.qsbase.common.aspect.ThreadType;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.viewbind.ViewBindHelper;
 import com.qsmaxmin.qsbase.common.widget.recyclerview.HeaderFooterRecyclerView;
+import com.qsmaxmin.qsbase.mvp.adapter.QsRecycleAdapterItem;
 import com.qsmaxmin.qsbase.mvp.adapter.QsRecyclerAdapter;
-import com.qsmaxmin.qsbase.mvp.fragment.QsIRecyclerView;
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
 
 import java.util.ArrayList;
@@ -25,23 +26,19 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 /**
- * @CreateBy administrator
+ * @CreateBy qsmaxmin
  * @Date 2020/4/9 15:06
- * @Description list activity with actionbar
+ * @Description recycler activity
  */
 public abstract class QsRecyclerActivity<P extends QsPresenter, D> extends QsActivity<P> implements QsIRecyclerView<D> {
-    public static final byte TYPE_LIST          = 1;
-    public static final byte TYPE_GRID          = 2;
-    public static final byte TYPE_STAGGEREDGRID = 3;
-
     private final List<D>                  mList = new ArrayList<>();
-    private       HeaderFooterRecyclerView mRecyclerView;
-    private       RecyclerView.Adapter     mRecyclerViewAdapter;
+    private       HeaderFooterRecyclerView recyclerView;
+    private       RecyclerView.Adapter     recyclerViewAdapter;
     private       View                     headerView;
     private       View                     footerView;
 
     @Override public int layoutId() {
-        return R.layout.qs_activity_recyclerview;
+        return R.layout.qs_recyclerview;
     }
 
     @Override public int getHeaderLayout() {
@@ -52,16 +49,20 @@ public abstract class QsRecyclerActivity<P extends QsPresenter, D> extends QsAct
         return 0;
     }
 
-    @Override public RecyclerView.Adapter onCreateAdapter() {
-        return null;
+    @Override public final View getHeaderView() {
+        return headerView;
+    }
+
+    @Override public final View getFooterView() {
+        return footerView;
     }
 
     @Override public HeaderFooterRecyclerView getRecyclerView() {
-        return mRecyclerView;
+        return recyclerView;
     }
 
-    @Override protected View initView() {
-        View rootView = super.initView();
+    @Override protected View initView(LayoutInflater inflater) {
+        View rootView = super.initView(inflater);
         initRecycleView(getLayoutInflater(), rootView);
         return rootView;
     }
@@ -69,29 +70,24 @@ public abstract class QsRecyclerActivity<P extends QsPresenter, D> extends QsAct
     /**
      * 初始化RecycleView
      */
-    protected void initRecycleView(LayoutInflater inflater, View view) {
-        if (view instanceof HeaderFooterRecyclerView) {
-            mRecyclerView = (HeaderFooterRecyclerView) view;
-        } else {
-            mRecyclerView = view.findViewById(android.R.id.list);
-        }
-        if (mRecyclerView == null) throw new RuntimeException("HeaderFooterRecyclerView is not exit or its id not 'android.R.id.list' in current layout!!");
+    private void initRecycleView(LayoutInflater inflater, View rootView) {
+        recyclerView = rootView.findViewById(android.R.id.list);
+        if (recyclerView == null) throw new RuntimeException("HeaderFooterRecyclerView is not exit or its id not 'android.R.id.list' in current layout!!");
         if (getHeaderLayout() != 0) {
             headerView = inflater.inflate(getHeaderLayout(), null);
-            mRecyclerView.addHeaderView(headerView);
+            recyclerView.addHeaderView(headerView);
             ViewBindHelper.bindView(this, headerView);
         }
         if (getFooterLayout() != 0) {
             footerView = inflater.inflate(getFooterLayout(), null);
-            mRecyclerView.addFooterView(footerView);
+            recyclerView.addFooterView(footerView);
             ViewBindHelper.bindView(this, footerView);
         }
-
-        mRecyclerView.addItemDecoration(new CustomItemDecoration());
-        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        recyclerView.addItemDecoration(new CustomItemDecoration());
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 //防止滚动列表时item位置互换及滑动到顶部时对齐顶部
-                if (newState == RecyclerView.SCROLL_STATE_IDLE && getRecyclerViewType() == TYPE_STAGGEREDGRID && getSpanCount() > 1) {
+                if (newState == RecyclerView.SCROLL_STATE_IDLE && getRecyclerViewType() == TYPE_STAGGERED_GRID && getSpanCount() > 1) {
                     int[] spanArr = new int[getSpanCount()];
                     StaggeredGridLayoutManager layoutManager = (StaggeredGridLayoutManager) getRecyclerView().getLayoutManager();
                     if (layoutManager != null) layoutManager.findFirstCompletelyVisibleItemPositions(spanArr);
@@ -109,15 +105,12 @@ public abstract class QsRecyclerActivity<P extends QsPresenter, D> extends QsAct
                 QsRecyclerActivity.this.onScrolled(recyclerView, dx, dy);
             }
         });
-        mRecyclerViewAdapter = onCreateAdapter();
-        if (mRecyclerViewAdapter == null) {
-            mRecyclerViewAdapter = new QsRecyclerAdapter<>(this, mList, inflater);
-        }
-        mRecyclerView.setAdapter(mRecyclerViewAdapter);
+        recyclerViewAdapter = new QsRecyclerAdapter<>(this, mList, inflater);
+        recyclerView.setAdapter(recyclerViewAdapter);
 
         switch (getRecyclerViewType()) {
             case TYPE_LIST: {
-                mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                 break;
             }
             case TYPE_GRID: {
@@ -137,28 +130,20 @@ public abstract class QsRecyclerActivity<P extends QsPresenter, D> extends QsAct
                         }
                     }
                 });
-                mRecyclerView.setLayoutManager(manager);
+                recyclerView.setLayoutManager(manager);
                 break;
             }
-            case TYPE_STAGGEREDGRID: {
+            case TYPE_STAGGERED_GRID: {
                 StaggeredGridLayoutManager manager = new StaggeredGridLayoutManager(getSpanCount(), StaggeredGridLayoutManager.VERTICAL);
                 manager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_NONE);
-                mRecyclerView.setLayoutManager(manager);
+                recyclerView.setLayoutManager(manager);
                 break;
             }
         }
     }
 
     @Override public RecyclerView.Adapter getAdapter() {
-        return mRecyclerViewAdapter;
-    }
-
-    public View getHeaderView() {
-        return headerView;
-    }
-
-    public View getFooterView() {
-        return footerView;
+        return recyclerViewAdapter;
     }
 
     @Override public final void setData(List<D> list) {
@@ -187,8 +172,8 @@ public abstract class QsRecyclerActivity<P extends QsPresenter, D> extends QsAct
 
     @ThreadPoint(ThreadType.MAIN) @Override public void addData(List<D> list, int position) {
         if (list != null && !list.isEmpty() && position >= 0) {
-            position = (position < mList.size()) ? position : mList.size();
-            if (mRecyclerViewAdapter != null) mRecyclerViewAdapter.notifyItemRangeInserted(position, list.size());
+            position = Math.min(position, mList.size());
+            if (recyclerViewAdapter != null) recyclerViewAdapter.notifyItemRangeInserted(position, list.size());
             mList.addAll(position, list);
             updateAdapter(true);
         }
@@ -196,7 +181,7 @@ public abstract class QsRecyclerActivity<P extends QsPresenter, D> extends QsAct
 
     @ThreadPoint(ThreadType.MAIN) @Override public void delete(int position) {
         if (position >= 0 && position < mList.size()) {
-            if (mRecyclerViewAdapter != null) mRecyclerViewAdapter.notifyItemRemoved(position);
+            if (recyclerViewAdapter != null) recyclerViewAdapter.notifyItemRemoved(position);
             mList.remove(position);
             updateAdapter(true);
         }
@@ -218,6 +203,10 @@ public abstract class QsRecyclerActivity<P extends QsPresenter, D> extends QsAct
     }
 
     @Override public final List<D> getData() {
+        return mList;
+    }
+
+    @Override public List<D> copyData() {
         ArrayList<D> list = new ArrayList<>();
         if (!mList.isEmpty()) list.addAll(mList);
         return list;
@@ -234,11 +223,11 @@ public abstract class QsRecyclerActivity<P extends QsPresenter, D> extends QsAct
      * 该方法必须在主线程中执行
      */
     @Override public void updateAdapter(boolean showEmptyView) {
-        if (mRecyclerViewAdapter != null) {
-            mRecyclerViewAdapter.notifyDataSetChanged();
+        if (recyclerViewAdapter != null) {
+            recyclerViewAdapter.notifyDataSetChanged();
             if (mList.isEmpty() && showEmptyView) {
                 showEmptyView();
-            } else if (showContentViewWhenDataLoadingComplete()) {
+            } else {
                 showContentView();
             }
         }
@@ -258,10 +247,6 @@ public abstract class QsRecyclerActivity<P extends QsPresenter, D> extends QsAct
      */
     @Override public boolean canListScrollDown() {
         return getRecyclerView().canScrollVertically(-1);
-    }
-
-    @Override public boolean showContentViewWhenDataLoadingComplete() {
-        return true;
     }
 
     /**
@@ -285,6 +270,16 @@ public abstract class QsRecyclerActivity<P extends QsPresenter, D> extends QsAct
 
     @Override public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
         //for custom logic
+    }
+
+    @Override public QsRecycleAdapterItem<D> getRecycleAdapterItemInner(LayoutInflater mInflater, ViewGroup parent, int type) {
+        QsRecycleAdapterItem<D> adapterItem = getRecycleAdapterItem(mInflater, parent, type);
+        adapterItem.setViewLayer(this);
+        return adapterItem;
+    }
+
+    @Override public void onReceiveAdapterItemEvent(int eventType, D data, int position) {
+        L.i(initTag(), "onReceiveAdapterItemEvent......eventType:" + eventType + ", position:" + position);
     }
 
     protected int getSpanCount() {

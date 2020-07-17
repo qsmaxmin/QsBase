@@ -14,7 +14,9 @@ import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.base.InnerScroller;
 import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.base.InnerScrollerContainer;
 import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.base.OuterScroller;
+import com.qsmaxmin.qsbase.mvp.QsIListView;
 import com.qsmaxmin.qsbase.mvp.adapter.QsListAdapter;
+import com.qsmaxmin.qsbase.mvp.adapter.QsListAdapterItem;
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
 
 import java.util.ArrayList;
@@ -25,7 +27,7 @@ import java.util.List;
  * @Date 17/7/2  下午4:29
  * @Description
  */
-public abstract class QsListFragment<P extends QsPresenter, D> extends QsFragment<P> implements QsIListView<D>, AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener, AbsListView.OnScrollListener, InnerScrollerContainer {
+public abstract class QsListFragment<P extends QsPresenter, D> extends QsFragment<P> implements QsIListView<D>, InnerScrollerContainer {
     protected final List<D>     mList = new ArrayList<>();
     private         ListView    mListView;
     private         BaseAdapter mListAdapter;
@@ -33,7 +35,7 @@ public abstract class QsListFragment<P extends QsPresenter, D> extends QsFragmen
     private         View        footerView;
 
     @Override public int layoutId() {
-        return R.layout.qs_fragment_listview;
+        return R.layout.qs_listview;
     }
 
     @Override public int getHeaderLayout() {
@@ -44,7 +46,15 @@ public abstract class QsListFragment<P extends QsPresenter, D> extends QsFragmen
         return 0;
     }
 
-    @Override public ListView getListView() {
+    @Override public final View getHeaderView() {
+        return headerView;
+    }
+
+    @Override public final View getFooterView() {
+        return footerView;
+    }
+
+    @Override public final ListView getListView() {
         return mListView;
     }
 
@@ -58,19 +68,7 @@ public abstract class QsListFragment<P extends QsPresenter, D> extends QsFragmen
 
     @Override protected View initView(LayoutInflater inflater) {
         View rootView = super.initView(inflater);
-        initListView(inflater, rootView);
-        return rootView;
-    }
-
-    /**
-     * 初始化ListView
-     */
-    protected void initListView(LayoutInflater inflater, View view) {
-        if (view instanceof ListView) {
-            mListView = (ListView) view;
-        } else {
-            mListView = view.findViewById(android.R.id.list);
-        }
+        mListView = rootView.findViewById(android.R.id.list);
         if (mListView == null) throw new RuntimeException("ListView is not exit or its id not 'android.R.id.list' in current layout!!");
         if (getHeaderLayout() != 0) {
             headerView = inflater.inflate(getHeaderLayout(), null);
@@ -82,16 +80,21 @@ public abstract class QsListFragment<P extends QsPresenter, D> extends QsFragmen
         }
         mListView.setOnItemClickListener(this);
         mListView.setOnItemLongClickListener(this);
-        BaseAdapter adapter = onCreateAdapter();
-        if (adapter != null) {
-            mListAdapter = adapter;
-        } else {
-            mListAdapter = new QsListAdapter<>(this, mList);
-        }
+        mListAdapter = new QsListAdapter<>(this, mList);
         mListView.setAdapter(mListAdapter);
         mListView.setOnScrollListener(this);
+        return rootView;
     }
 
+    @Override public final QsListAdapterItem<D> getListAdapterItemInner(int type) {
+        QsListAdapterItem<D> adapterItem = getListAdapterItem(type);
+        adapterItem.setViewLayer(this);
+        return adapterItem;
+    }
+
+    @Override public void onReceiveAdapterItemEvent(int eventType, D data, int position) {
+        L.i(initTag(), "onReceiveAdapterItemEvent......eventType:" + eventType + ", position:" + position);
+    }
 
     @Override public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         L.i(initTag(), "onItemClick()... position : " + position);
@@ -149,6 +152,10 @@ public abstract class QsListFragment<P extends QsPresenter, D> extends QsFragmen
     }
 
     @Override public final List<D> getData() {
+        return mList;
+    }
+
+    @Override public final List<D> copyData() {
         ArrayList<D> list = new ArrayList<>();
         if (!mList.isEmpty()) list.addAll(mList);
         return list;
@@ -169,26 +176,14 @@ public abstract class QsListFragment<P extends QsPresenter, D> extends QsFragmen
             mListAdapter.notifyDataSetChanged();
             if (mList.isEmpty() && showEmptyView) {
                 showEmptyView();
-            } else if (showContentViewWhenDataLoadingComplete()) {
+            } else {
                 showContentView();
             }
         }
     }
 
-    @Override public BaseAdapter onCreateAdapter() {
-        return null;
-    }
-
-    @Override public BaseAdapter getAdapter() {
+    @Override public final BaseAdapter getAdapter() {
         return mListAdapter;
-    }
-
-    public View getHeaderView() {
-        return headerView;
-    }
-
-    public View getFooterView() {
-        return footerView;
     }
 
     @Override public void onScrollStateChanged(AbsListView view, int scrollState) {
@@ -202,10 +197,6 @@ public abstract class QsListFragment<P extends QsPresenter, D> extends QsFragmen
      */
     @Override public boolean canListScrollDown() {
         return getListView().canScrollVertically(-1);
-    }
-
-    @Override public boolean showContentViewWhenDataLoadingComplete() {
-        return true;
     }
 
     /**

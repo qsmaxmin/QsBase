@@ -12,6 +12,7 @@ import com.qsmaxmin.qsbase.common.widget.ptr.PtrHandler;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrUIHandler;
 import com.qsmaxmin.qsbase.common.widget.ptr.header.BeautyCircleRefreshHeader;
 import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.HeaderViewPager;
+import com.qsmaxmin.qsbase.mvp.QsIPullToRefreshView;
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
 
 /**
@@ -20,12 +21,12 @@ import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
  * @Description
  */
 
-public abstract class QsPullHeaderViewpagerFragment<P extends QsPresenter> extends QsHeaderViewpagerFragment<P> implements QsIPullToRefresh {
+public abstract class QsPullHeaderViewpagerFragment<P extends QsPresenter> extends QsHeaderViewpagerFragment<P> implements QsIPullToRefreshView {
 
     private PtrFrameLayout mPtrFrameLayout;
 
     @Override public int layoutId() {
-        return R.layout.qs_fragment_pull_header_viewpager;
+        return R.layout.qs_pull_header_viewpager;
     }
 
     @Override public PtrUIHandler getPtrUIHandlerView() {
