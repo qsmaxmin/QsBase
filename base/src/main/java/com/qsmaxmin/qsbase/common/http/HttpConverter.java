@@ -19,7 +19,6 @@ import okhttp3.RequestBody;
 
 
 class HttpConverter {
-
     private static final String TAG = "HttpConverter";
 
     private final Gson gson;
@@ -30,61 +29,6 @@ class HttpConverter {
 
     Object jsonToObject(String jsonStr, Type type) {
         return gson.fromJson(jsonStr, type);
-    }
-
-    RequestBody stringToBody(String methodName, String mimeType, String body) {
-        L.i(TAG, "methodName:" + methodName + "  请求体 mimeType:" + mimeType + ", String:" + body);
-        return RequestBody.create(MediaType.parse(mimeType), body);
-    }
-
-    RequestBody jsonToBody(String methodName, String mimeType, Object object, Type type) {
-        String json = gson.toJson(object, type);
-        L.i(TAG, "methodName:" + methodName + "  请求体 mimeType:" + mimeType + ", Json : " + json);
-        return RequestBody.create(MediaType.parse(mimeType), json);
-    }
-
-    RequestBody fileToBody(String methodName, String mimeType, File file) {
-        L.i(TAG, "methodName:" + methodName + "  请求体 mimeType:" + mimeType + ", File:" + file.getPath());
-        return RequestBody.create(MediaType.parse(mimeType), file);
-    }
-
-    RequestBody byteToBody(String methodName, String mimeType, byte[] bytes) {
-        L.i(TAG, "methodName:" + methodName + "  请求体 mimeType:" + mimeType + ", bytes length:" + bytes.length);
-        return RequestBody.create(MediaType.parse(mimeType), bytes);
-    }
-
-    void parseFormBody(HashMap<String, Object> formMap, String methodName, Object formBody) throws Exception {
-        if (formBody instanceof Map) {
-            L.i(TAG, "methodName:" + methodName + "  FormBody类型为Map，将key和value映射到表单");
-            Map dataMap = (Map) formBody;
-            for (Object key : dataMap.keySet()) {
-                String keyStr = String.valueOf(key);
-                String valueStr = String.valueOf(dataMap.get(key));
-                if (!TextUtils.isEmpty(keyStr) && !TextUtils.isEmpty(valueStr)) formMap.put(keyStr, valueStr);
-            }
-        } else if (formBody instanceof String) {
-            L.i(TAG, "methodName:" + methodName + "  FormBody类型为String，尝试解析成Json格式（非Json格式不支持）");
-            JSONObject jsonObject = new JSONObject((String) formBody);
-            while (jsonObject.keys().hasNext()) {
-                String key = jsonObject.keys().next();
-                Object value = jsonObject.get(key);
-                if (key != null && value != null) {
-                    formMap.put(key, String.valueOf(value));
-                }
-            }
-
-        } else {
-            L.i(TAG, "methodName:" + methodName + "  FormBody类型为Object，尝试通过反射获取表单数据");
-            Field[] fieldArr = formBody.getClass().getFields();
-            if (fieldArr.length > 0) {
-                for (Field field : fieldArr) {
-                    Object value = field.get(formBody);
-                    if (value != null) {
-                        formMap.put(field.getName(), String.valueOf(value));
-                    }
-                }
-            }
-        }
     }
 
     /**

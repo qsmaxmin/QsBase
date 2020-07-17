@@ -1,43 +1,23 @@
 package com.qsmaxmin.qsbase.common.http;
 
-import android.net.Uri;
-import androidx.annotation.NonNull;
 import android.text.TextUtils;
 
-import com.qsmaxmin.qsbase.common.aspect.Body;
-import com.qsmaxmin.qsbase.common.aspect.DELETE;
-import com.qsmaxmin.qsbase.common.aspect.FormBody;
-import com.qsmaxmin.qsbase.common.aspect.FormParam;
-import com.qsmaxmin.qsbase.common.aspect.GET;
-import com.qsmaxmin.qsbase.common.aspect.HEAD;
-import com.qsmaxmin.qsbase.common.aspect.PATCH;
-import com.qsmaxmin.qsbase.common.aspect.POST;
-import com.qsmaxmin.qsbase.common.aspect.PUT;
-import com.qsmaxmin.qsbase.common.aspect.Path;
-import com.qsmaxmin.qsbase.common.aspect.Query;
-import com.qsmaxmin.qsbase.common.aspect.RequestStyle;
-import com.qsmaxmin.qsbase.common.aspect.TERMINAL;
+import com.google.gson.Gson;
 import com.qsmaxmin.qsbase.common.exception.QsException;
 import com.qsmaxmin.qsbase.common.exception.QsExceptionType;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.proxy.HttpHandler;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
 
-import java.io.File;
-import java.io.IOException;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import okhttp3.Dispatcher;
-import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 
@@ -48,12 +28,12 @@ import okhttp3.ResponseBody;
  */
 
 public class HttpAdapter {
-    private static final String         TAG          = "HttpAdapter";
-    private static final String         PATH_REPLACE = "\\{\\w*\\}";
-    private final static int            timeOut      = 10;
+    private static final String         TAG     = "HttpAdapter";
+    private final static int            timeOut = 10;
     private              OkHttpClient   client;
-    private              HttpConverter  converter;
+    private              Gson           gson;
     private              QsHttpCallback callback;
+    private              HttpConverter  converter;
 
     public HttpAdapter() {
         initDefaults();
@@ -82,16 +62,10 @@ public class HttpAdapter {
             builder.retryOnConnectionFailure(true);
             client = builder.build();
         }
-        if (converter == null) {
-            converter = new HttpConverter();
+        if (gson == null) {
+            gson = new Gson();
         }
         callback = QsHelper.getAppInterface().registerGlobalHttpListener();
-    }
-
-    private HttpBuilder getHttpBuilder(String methodName, Object requestTag, int requestStyle, String terminal, String path, Object[] args, String requestType, Object body, HashMap<String, Object> formBody, HashMap<String, String> paramsMap) throws Exception {
-        HttpBuilder httpBuilder = new HttpBuilder(methodName, requestTag, requestStyle, terminal, path, args, requestType, body, formBody, paramsMap);
-        if (callback != null) callback.initHttpAdapter(httpBuilder);
-        return httpBuilder;
     }
 
     /**
@@ -109,79 +83,21 @@ public class HttpAdapter {
      */
     @SuppressWarnings("unchecked")
     public <T> T create(Class<T> clazz, Object requestTag) {
-        validateIsInterface(clazz, requestTag);
-        validateIsExtendInterface(clazz, requestTag);
-        HttpHandler handler = new HttpHandler(this, requestTag);
-        return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class<?>[]{clazz}, handler);
+        if (clazz != null && clazz.isInterface()) {
+            HttpHandler handler = new HttpHandler(this, requestTag);
+            return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class<?>[]{clazz}, handler);
+        }
+        return null;
     }
 
-    /**
-     * 判断是否是一个接口
-     */
-    private static <T> void validateIsInterface(Class<T> service, Object requestTag) {
-        if (service == null || !service.isInterface()) {
-            throw new QsException(QsExceptionType.UNEXPECTED, requestTag, service + " is not interface！");
+    public Object startRequest(Method method, Object[] args, Object requestTag) throws Exception {
+        if (!QsHelper.isNetworkAvailable()) {
+            throw new QsException(QsExceptionType.UNEXPECTED, requestTag, "network error...  method:" + method.getName() + " message:network disable");
         }
-    }
-
-    /**
-     * 判断是否继承其他接口
-     */
-    private static <T> void validateIsExtendInterface(Class<T> service, Object requestTag) {
-        if (service.getInterfaces().length > 0) {
-            throw new QsException(QsExceptionType.UNEXPECTED, requestTag, service + " can not extend interface!!");
-        }
-    }
-
-    public Object startRequest(Method method, Object[] args, Object requestTag) {
-        Annotation[] annotations = method.getAnnotations();
-        if (annotations.length < 1) {
-            throw new QsException(QsExceptionType.UNEXPECTED, requestTag, "Annotation error... the method:" + method.getName() + " must have one annotation at least!! @GET @POST or @PUT");
-        }
-        Annotation pathAnnotation = null;
-        String terminal = null;
-        int requestStyle = 0;
-        for (Annotation annotation : annotations) {
-            if (annotation instanceof TERMINAL) {
-                terminal = ((TERMINAL) annotation).value();
-            } else if (annotation instanceof RequestStyle) {
-                requestStyle = ((RequestStyle) annotation).value();
-            } else {
-                pathAnnotation = annotation;
-            }
-        }
-        if (pathAnnotation == null) {
-            throw new QsException(QsExceptionType.UNEXPECTED, requestTag, "Annotation error... the method:" + method.getName() + " create(Object.class) the method must has an annotation,such as:@PUT @POST or @GET...");
-        }
-
-
-        if (pathAnnotation instanceof POST) {
-            String path = ((POST) pathAnnotation).value();
-            return executeWithOkHttp(terminal, method, args, path, requestTag, requestStyle, "POST");
-
-        } else if (pathAnnotation instanceof GET) {
-            String path = ((GET) pathAnnotation).value();
-            return executeWithOkHttp(terminal, method, args, path, requestTag, requestStyle, "GET");
-
-        } else if (pathAnnotation instanceof PUT) {
-            String path = ((PUT) pathAnnotation).value();
-            return executeWithOkHttp(terminal, method, args, path, requestTag, requestStyle, "PUT");
-
-        } else if (pathAnnotation instanceof DELETE) {
-            String path = ((DELETE) pathAnnotation).value();
-            return executeWithOkHttp(terminal, method, args, path, requestTag, requestStyle, "DELETE");
-
-        } else if (pathAnnotation instanceof HEAD) {
-            String path = ((HEAD) pathAnnotation).value();
-            return executeWithOkHttp(terminal, method, args, path, requestTag, requestStyle, "HEAD");
-
-        } else if (pathAnnotation instanceof PATCH) {
-            String path = ((PATCH) pathAnnotation).value();
-            return executeWithOkHttp(terminal, method, args, path, requestTag, requestStyle, "PATCH");
-
-        } else {
-            throw new QsException(QsExceptionType.UNEXPECTED, requestTag, "Annotation error... the method:" + method.getName() + "create(Object.class) the method must has an annotation, such as:@PUT @POST or @GET...");
-        }
+        HttpRequest httpRequest = new HttpRequest(method, args, requestTag, gson, callback);
+        Request request = httpRequest.createRequest();
+        Call call = client.newCall(request);
+        return createResult(httpRequest, call.execute());
     }
 
     public void cancelRequest(Object requestTag) {
@@ -219,161 +135,19 @@ public class HttpAdapter {
         }
     }
 
-    private Object executeWithOkHttp(String terminal, Method method, Object[] args, String path, Object requestTag, int requestStyle, String requestType) {
-        Annotation[][] annotations = method.getParameterAnnotations();//参数可以有多个注解，但这里是不允许的
-        checkParamsAnnotation(annotations, args, method.getName(), requestTag);
-
-        RequestBody requestBody = null;
-        Object body = null;
-        HashMap<String, Object> formMap = new HashMap<>();
-        HashMap<String, String> paramsMap = new HashMap<>();
-        String mimeType = "application/json; charset=UTF-8";
-
-        for (int i = 0; i < annotations.length; i++) {
-            Annotation[] annotationArr = annotations[i];
-            Annotation annotation = annotationArr[0];
-            if (annotation instanceof Body) {
-                body = args[i];
-                mimeType = ((Body) annotation).mimeType();
-                if (TextUtils.isEmpty(mimeType)) throw new QsException(QsExceptionType.UNEXPECTED, requestTag, "request body exception...  method:" + method.getName() + "  the annotation @Body not have mimeType value");
-                break;
-            } else if (annotation instanceof Query) {
-                Object arg = args[i];
-                String key = ((Query) annotation).value();
-                paramsMap.put(key, arg == null ? "" : String.valueOf(arg));
-            } else if (annotation instanceof FormBody) {
-                Object formBody = args[i];
-                if (formBody != null) {
-                    try {
-                        converter.parseFormBody(formMap, method.getName(), formBody);
-                    } catch (Exception e) {
-                        throw new QsException(QsExceptionType.UNEXPECTED, requestTag, "method:" + method.getName() + " message:" + e.getMessage());
-                    }
-                }
-            } else if (annotation instanceof FormParam) {
-                Object arg = args[i];
-                if (arg != null) {
-                    String key = ((FormParam) annotation).value();
-                    formMap.put(key, arg);
-                }
-            }
-        }
-
-        HttpBuilder httpBuilder;
-        try {
-            String methodName;
-            if (L.isEnable()) {
-                methodName = method.getName();
-            } else {
-                methodName = "";
-            }
-            httpBuilder = getHttpBuilder(methodName, requestTag, requestStyle, terminal, path, args, requestType, body, formMap, paramsMap);
-        } catch (Exception e) {
-            throw new QsException(QsExceptionType.UNEXPECTED, requestTag, "receive error when execute：QsHttpCallback.initHttpAdapter, msg:" + e.getMessage());
-        }
-        StringBuilder url = getUrl(httpBuilder.getTerminal(), path, method, args, requestTag);
-        if (TextUtils.isEmpty(url)) throw new QsException(QsExceptionType.UNEXPECTED, requestTag, "url error... method:" + method.getName() + "  request url is null...");
-        paramsMap = httpBuilder.getUrlParameters();
-        formMap = httpBuilder.getFormBody();
-        body = httpBuilder.getBody();
-
-        if ((!"GET".equals(requestType)) && (!"HEAD".equals(requestType))) {
-            if (body != null) {
-                if (body instanceof String) {
-                    requestBody = converter.stringToBody(method.getName(), mimeType, (String) body);
-                } else if (body instanceof File) {
-                    requestBody = converter.fileToBody(method.getName(), mimeType, (File) body);
-                } else if (body instanceof byte[]) {
-                    requestBody = converter.byteToBody(method.getName(), mimeType, (byte[]) body);
-                } else {
-                    requestBody = converter.jsonToBody(method.getName(), mimeType, body, body.getClass());
-                }
-            } else if (formMap != null) {
-                boolean isArrString = true;
-                for (String key : formMap.keySet()) {
-                    Object obj = formMap.get(key);
-                    if (obj instanceof File || obj instanceof byte[]) {
-                        isArrString = false;
-                    }
-                }
-                if (isArrString) {
-                    okhttp3.FormBody.Builder builder = new okhttp3.FormBody.Builder();
-                    for (String key : formMap.keySet()) {
-                        String valueStr = String.valueOf(formMap.get(key));
-                        if (!TextUtils.isEmpty(key) && valueStr.length() > 0) {
-                            builder.add(key, valueStr);
-                        }
-                    }
-                    requestBody = builder.build();
-                } else {
-                    MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
-                    for (String key : formMap.keySet()) {
-                        Object obj = formMap.get(key);
-                        if (obj instanceof File) {
-                            RequestBody rb = converter.fileToBody(method.getName(), "file/*", (File) obj);
-                            builder.addFormDataPart(key, String.valueOf(System.nanoTime()), rb);
-                        } else if (obj instanceof byte[]) {
-                            RequestBody rb = converter.byteToBody(method.getName(), "file/*", (byte[]) obj);
-                            builder.addFormDataPart(key, String.valueOf(System.nanoTime()), rb);
-                        } else {
-                            if (!TextUtils.isEmpty(key)) {
-                                builder.addFormDataPart(key, String.valueOf(obj));
-                            }
-                        }
-                    }
-                    requestBody = builder.build();
-                }
-            }
-        }
-
-        if (paramsMap != null && !paramsMap.isEmpty()) {
-            int i = 0;
-            Uri uri = Uri.parse(url.toString());
-            String uriQuery = uri.getQuery();
-            for (String key : paramsMap.keySet()) {
-                String value = paramsMap.get(key);
-                url.append((i == 0 && TextUtils.isEmpty(uriQuery) && url.charAt(url.length() - 1) != '?') ? "?" : "&").append(key).append("=").append(value);
-                i++;
-            }
-        }
-        Request.Builder requestBuilder = new Request.Builder();
-        requestBuilder.headers(httpBuilder.getHeaderBuilder().build());
-        if (requestTag != null) requestBuilder.tag(requestTag);
-        if (L.isEnable()) {
-            L.i(TAG, "method:" + method.getName() + ", http request url:" + url.toString());
-        }
-
-        if (!QsHelper.isNetworkAvailable()) {
-            throw new QsException(QsExceptionType.NETWORK_ERROR, requestTag, "network error...  method:" + method.getName() + " message:network disable");
-        }
-
-        try {
-            Request request = requestBuilder.url(url.toString()).method(requestType, requestBody).build();
-            Call call = client.newCall(request);
-            Response response = call.execute();
-            return createResult(method, response, requestTag, httpBuilder);
-        } catch (QsException e) {
-            throw e;
-        } catch (IOException e) {
-            throw new QsException(QsExceptionType.HTTP_ERROR, requestTag, "IOException...  method:" + method.getName() + " message:" + e.getMessage());
-        } catch (Throwable e) {
-            throw new QsException(QsExceptionType.NETWORK_ERROR, requestTag, "method:" + method.getName() + ", error:" + e.getMessage());
-        }
-    }
-
-    private Object createResult(Method method, Response response, Object requestTag, HttpBuilder httpBuilder) throws Exception {
+    private Object createResult(HttpRequest request, Response response) throws Exception {
         if (response == null) return null;
         int responseCode = response.code();
         HttpResponse httpResponse = new HttpResponse();
         httpResponse.response = response;
-        httpResponse.httpBuilder = httpBuilder;
+        httpResponse.request = request;
 
-        if (responseCode >= 200 && responseCode < 300) {
-            Class<?> returnType = method.getReturnType();
+        if (response.isSuccessful()) {
+            Class<?> returnType = request.getReturnType();
             if (returnType == void.class) {
                 if (callback != null) {
                     callback.onHttpResponse(httpResponse);
-                    callback.onResult(httpBuilder, null);
+                    callback.onHttpComplete(request, null);
                 }
                 response.close();
                 return null;
@@ -386,93 +160,46 @@ public class HttpAdapter {
                     result = body.bytes();
                 }
                 response.close();
-                if (callback != null) callback.onResult(httpBuilder, result);
+                if (callback != null) callback.onHttpComplete(request, result);
                 return result;
 
             } else if (returnType.equals(Response.class)) {
                 if (callback != null) {
                     callback.onHttpResponse(httpResponse);
-                    callback.onResult(httpBuilder, response);
+                    callback.onHttpComplete(request, response);
                 }
                 return response;
 
             } else {
                 ResponseBody body = response.body();
                 if (body == null) {
-                    throw new QsException(QsExceptionType.HTTP_ERROR, requestTag, "http response error... method:" + method.getName() + "  response body is null!!");
+                    throw new QsException(QsExceptionType.HTTP_ERROR, request.getRequestTag(), "http response error... method:" + request.getMethodName() + ", response body is null!!");
                 }
                 if (callback != null) callback.onHttpResponse(httpResponse);
                 String jsonStr = httpResponse.getJsonString();
                 response.close();
                 if (L.isEnable()) {
-                    L.i(TAG, "method:" + method.getName() + "  响应体 Json:" + converter.formatJson(jsonStr));
+                    L.i(TAG, "on http response... method:" + request.getMethodName() + ", url:" + request.getUrl() + "\n响应体 Json:\n" + getConverter().formatJson(jsonStr));
                 }
                 if (!TextUtils.isEmpty(jsonStr)) {
-                    Object result = converter.jsonToObject(jsonStr, returnType);
-                    if (callback != null) callback.onResult(httpBuilder, result);
+                    Object result = gson.fromJson(jsonStr, returnType);
+                    if (callback != null) callback.onHttpComplete(request, result);
                     return result;
                 } else {
-                    if (callback != null) callback.onResult(httpBuilder, null);
+                    if (callback != null) callback.onHttpComplete(request, null);
                     return null;
                 }
             }
         } else {
             if (callback != null) callback.onHttpResponse(httpResponse);
             response.close();
-            throw new QsException(QsExceptionType.HTTP_ERROR, requestTag, "http error... method:" + method.getName() + "  http response code = " + responseCode);
+            throw new QsException(QsExceptionType.HTTP_ERROR, request.getRequestTag(), "http error... method:" + request.getMethodName() + ", http response code = " + responseCode);
         }
     }
 
-    @NonNull private StringBuilder getUrl(String terminal, String path, Method method, Object[] args, Object requestTag) {
-        if (TextUtils.isEmpty(terminal)) {
-            throw new QsException(QsExceptionType.UNEXPECTED, requestTag, "url terminal error... method:" + method.getName() + "  terminal is null...");
-        }
-        if (TextUtils.isEmpty(path)) {
-            throw new QsException(QsExceptionType.UNEXPECTED, requestTag, "url path error... method:" + method.getName() + "  path is null...");
-        }
-        if (!path.startsWith("/")) {
-            throw new QsException(QsExceptionType.UNEXPECTED, requestTag, "url path error... method:" + method.getName() + "  path=" + path + "  (path is not start with '/')");
-        }
-        Annotation[][] annotations = method.getParameterAnnotations();
-        for (int i = 0; i < annotations.length; i++) {
-            Annotation ann = annotations[i][0];
-            if (ann instanceof Path) {
-                StringBuilder stringBuilder = new StringBuilder();
-                String[] split = path.split(PATH_REPLACE);
-                Object arg = args[i];
-                if (!(arg instanceof String[])) {
-                    throw new QsException(QsExceptionType.UNEXPECTED, requestTag, "params error method:" + method.getName() + "  @Path annotation only fix String[] arg !");
-                }
-                String[] param = (String[]) arg;
-                if (split.length - param.length > 1) {
-                    throw new QsException(QsExceptionType.UNEXPECTED, requestTag, "params error method:" + method.getName() + "  the path with '{xx}' count  is more than @Path annotation arg length!");
-                }
-                for (int index = 0; index < split.length; index++) {
-                    if (index < param.length) {
-                        stringBuilder.append(split[index]).append(param[index]);
-                    } else {
-                        stringBuilder.append(split[index]);
-                    }
-                }
-                path = stringBuilder.toString();
-            }
-        }
-        StringBuilder url = new StringBuilder(terminal);
-        url.append(path);
-        return url;
+    private HttpConverter getConverter() {
+        if (converter == null) converter = new HttpConverter();
+        return converter;
     }
 
-
-    /**
-     * 检查参数的注解
-     * 每个参数有且仅有一个注解
-     */
-    private void checkParamsAnnotation(Annotation[][] annotations, Object[] args, String methodName, Object requestTag) {
-        if (annotations != null && args != null && annotations.length > 0 && args.length > 0) {
-            if (annotations.length != args.length) throw new QsException(QsExceptionType.UNEXPECTED, requestTag, "params error method:" + methodName + "  params have to have one annotation, such as @Query @Path");
-            for (Annotation[] annotationArr : annotations) {
-                if (annotationArr.length != 1) throw new QsException(QsExceptionType.UNEXPECTED, requestTag, "params error method:" + methodName + "  params have to have one annotation, but there is more than one !");
-            }
-        }
-    }
 }

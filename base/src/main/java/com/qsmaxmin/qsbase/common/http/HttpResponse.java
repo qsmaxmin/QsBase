@@ -1,7 +1,5 @@
 package com.qsmaxmin.qsbase.common.http;
 
-import androidx.annotation.NonNull;
-
 import com.qsmaxmin.qsbase.common.exception.QsException;
 import com.qsmaxmin.qsbase.common.exception.QsExceptionType;
 import com.qsmaxmin.qsbase.common.utils.StreamCloseUtils;
@@ -12,6 +10,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 
+import androidx.annotation.NonNull;
 import okhttp3.MediaType;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
@@ -23,11 +22,11 @@ import okhttp3.ResponseBody;
  */
 public class HttpResponse {
     Response    response;
-    HttpBuilder httpBuilder;
+    HttpRequest request;
     private DecryptionProvider decryptionProvider;
 
-    public HttpBuilder getHttpBuilder() {
-        return httpBuilder;
+    public HttpRequest getRequest() {
+        return request;
     }
 
     public Response getResponse() {
@@ -37,7 +36,7 @@ public class HttpResponse {
     /**
      * 向响应体提供解密对象
      */
-    public void registerDecriptionProvider(DecryptionProvider provider) {
+    public void registerDecryptionProvider(DecryptionProvider provider) {
         this.decryptionProvider = provider;
     }
 
@@ -51,39 +50,36 @@ public class HttpResponse {
                 return null;
             }
         } else {
-            return getJsonFromBody(response.body(), httpBuilder.getRequestTag());
+            return getJsonFromBody(response.body());
         }
     }
 
-    private String getJsonFromBody(ResponseBody body, Object requestTag) {
+    private String getJsonFromBody(ResponseBody body) throws Exception {
         Charset charset = getCharset(body);
         InputStream is = body.byteStream();
-        if (is != null) {
-            InputStreamReader isr = new InputStreamReader(is, charset);
-            BufferedReader br = null;
-            try {
-                br = new BufferedReader(isr);
-                StringBuilder result = new StringBuilder();
-                String line;
-                while ((line = br.readLine()) != null) {
-                    result.append(line).append("\n");
-                }
-                return result.toString();
-            } catch (IOException e) {
-                throw new QsException(QsExceptionType.UNEXPECTED, requestTag, e.getMessage());
-            } catch (Exception e) {
-                throw new QsException(QsExceptionType.UNEXPECTED, requestTag, e.getMessage());
-            } finally {
-                StreamCloseUtils.close(isr);
-                StreamCloseUtils.close(is);
-                StreamCloseUtils.close(br);
+        InputStreamReader isr = new InputStreamReader(is, charset);
+        BufferedReader br = null;
+        try {
+            br = new BufferedReader(isr);
+            StringBuilder result = new StringBuilder();
+            String line;
+            while ((line = br.readLine()) != null) {
+                result.append(line).append("\n");
             }
+            return result.toString();
+        } catch (IOException e) {
+            throw new QsException(QsExceptionType.UNEXPECTED, request.getRequestTag(), e.getMessage());
+        } catch (Exception e) {
+            throw new QsException(QsExceptionType.UNEXPECTED, request.getRequestTag(), e.getMessage());
+        } finally {
+            StreamCloseUtils.close(isr);
+            StreamCloseUtils.close(is);
+            StreamCloseUtils.close(br);
         }
-        return null;
     }
 
     @NonNull private Charset getCharset(ResponseBody body) {
-        Charset charset = Charset.forName("UTF-8");
+        Charset charset = Charset.defaultCharset();
         MediaType mediaType = body.contentType();
         if (mediaType != null) {
             Charset c = mediaType.charset(charset);
