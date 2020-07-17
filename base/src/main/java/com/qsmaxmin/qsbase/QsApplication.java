@@ -6,6 +6,7 @@ import android.app.Application;
 import com.qsmaxmin.qsbase.common.http.QsHttpCallback;
 import com.qsmaxmin.qsbase.common.utils.ImageHelper;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
+import com.qsmaxmin.qsbase.common.widget.dialog.DefaultProgressDialog;
 import com.qsmaxmin.qsbase.common.widget.dialog.QsProgressDialog;
 
 import androidx.annotation.LayoutRes;
@@ -72,7 +73,7 @@ public abstract class QsApplication extends Application implements QsIApplicatio
      * 公共progressDialog
      */
     @Override public QsProgressDialog getLoadingDialog() {
-        return null;
+        return new DefaultProgressDialog();
     }
 
     /**

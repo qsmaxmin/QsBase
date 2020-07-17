@@ -36,7 +36,8 @@ public abstract class QsDialogFragment extends DialogFragment {
     @Override public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (getDialog() != null && getDialog().getWindow() != null) {
-            getDialog().getWindow().getDecorView().setPadding(0, 0, 0, 0);
+            int[] padding = getPadding();
+            getDialog().getWindow().getDecorView().setPadding(padding[0], padding[1], padding[2], padding[3]);
             setAttribute(getDialog().getWindow().getAttributes());
         }
         initData();
@@ -55,6 +56,10 @@ public abstract class QsDialogFragment extends DialogFragment {
 
     protected int getDialogTheme() {
         return R.style.QsDialogTheme_FullScreen_TranslucentStatus;
+    }
+
+    protected int[] getPadding() {
+        return new int[]{0, 0, 0, 0};
     }
 
     protected void setAttribute(WindowManager.LayoutParams params) {
