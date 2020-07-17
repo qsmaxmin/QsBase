@@ -164,13 +164,15 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
             mViewAnimator = rootView.findViewById(R.id.qs_view_animator);
             initViewAnimator(mViewAnimator);
 
-            View loadingView = inflater.inflate(loadingLayoutId(), mViewAnimator);
+            View loadingView = inflater.inflate(loadingLayoutId(), mViewAnimator, false);
             loadingView.setTag(R.id.qs_view_state_key, VIEW_STATE_LOADING);
             setDefaultViewClickListener(loadingView);
+            mViewAnimator.addView(loadingView);
             onCreateLoadingView(loadingView);
 
-            View contentView = inflater.inflate(layoutId(), mViewAnimator);
+            View contentView = inflater.inflate(layoutId(), mViewAnimator, false);
             contentView.setTag(R.id.qs_view_state_key, VIEW_STATE_CONTENT);
+            mViewAnimator.addView(contentView);
             onCreateContentView(contentView);
 
             if (L.isEnable()) {
@@ -182,7 +184,9 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
                 ViewGroup actionbarContainer = rootView.findViewById(R.id.qs_actionbar_parent);
                 inflater.inflate(actionbarLayoutId(), actionbarContainer, true);
             }
-            View contentView = inflater.inflate(layoutId(), (ViewGroup) rootView.findViewById(android.R.id.custom));
+            ViewGroup customView = rootView.findViewById(android.R.id.custom);
+            View contentView = inflater.inflate(layoutId(), customView, false);
+            customView.addView(contentView);
             onCreateContentView(contentView);
 
             if (L.isEnable()) {
@@ -373,9 +377,11 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
                     return;
                 }
             }
-            View emptyView = getLayoutInflater().inflate(emptyLayoutId(), mViewAnimator);
+            if (L.isEnable()) L.i(initTag(), "showEmptyView.........inflate emptyLayoutId()");
+            View emptyView = getLayoutInflater().inflate(emptyLayoutId(), mViewAnimator, false);
             emptyView.setTag(R.id.qs_view_state_key, VIEW_STATE_EMPTY);
             setDefaultViewClickListener(emptyView);
+            mViewAnimator.addView(emptyView);
             onCreateEmptyView(emptyView);
             setViewState(mViewAnimator.getChildCount() - 1);
         }
@@ -394,9 +400,11 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
                     return;
                 }
             }
-            View errorView = getLayoutInflater().inflate(errorLayoutId(), mViewAnimator);
+            if (L.isEnable()) L.i(initTag(), "showErrorView.........inflate errorLayoutId()");
+            View errorView = getLayoutInflater().inflate(errorLayoutId(), mViewAnimator, false);
             errorView.setTag(R.id.qs_view_state_key, VIEW_STATE_ERROR);
             setDefaultViewClickListener(errorView);
+            mViewAnimator.addView(errorView);
             onCreateErrorView(errorView);
             setViewState(mViewAnimator.getChildCount() - 1);
         }

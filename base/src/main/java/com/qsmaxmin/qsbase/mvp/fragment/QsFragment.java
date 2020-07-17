@@ -95,13 +95,15 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
             mViewAnimator = rootView.findViewById(R.id.qs_view_animator);
             initViewAnimator(mViewAnimator);
 
-            View loadingView = inflater.inflate(loadingLayoutId(), mViewAnimator);
+            View loadingView = inflater.inflate(loadingLayoutId(), mViewAnimator, false);
             loadingView.setTag(R.id.qs_view_state_key, VIEW_STATE_LOADING);
             setDefaultViewClickListener(rootView);
+            mViewAnimator.addView(loadingView);
             onCreateLoadingView(loadingView);
 
-            View contentView = inflater.inflate(layoutId(), mViewAnimator);
+            View contentView = inflater.inflate(layoutId(), mViewAnimator, false);
             contentView.setTag(R.id.qs_view_state_key, VIEW_STATE_CONTENT);
+            mViewAnimator.addView(contentView);
             onCreateContentView(contentView);
 
             if (L.isEnable()) {
@@ -110,7 +112,9 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
             }
 
         } else {
-            View contentView = inflater.inflate(layoutId(), (ViewGroup) rootView.findViewById(android.R.id.custom));
+            ViewGroup customView = rootView.findViewById(android.R.id.custom);
+            View contentView = inflater.inflate(layoutId(), customView, false);
+            customView.addView(contentView);
             onCreateContentView(contentView);
 
             if (L.isEnable()) {
@@ -309,8 +313,8 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
     @ThreadPoint(ThreadType.MAIN)
     @Override public void showEmptyView() {
         if (mViewAnimator != null && !isDetached()) {
-            if (L.isEnable()) L.i(initTag(), "showEmptyView.........");
             int childCount = mViewAnimator.getChildCount();
+            if (L.isEnable()) L.i(initTag(), "showEmptyView.........childCount:" + childCount);
             for (int index = 0; index < childCount; index++) {
                 View childAt = mViewAnimator.getChildAt(index);
                 int stateValue = (int) childAt.getTag(R.id.qs_view_state_key);
@@ -319,10 +323,11 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
                     return;
                 }
             }
-
-            View emptyView = getLayoutInflater().inflate(emptyLayoutId(), mViewAnimator);
+            if (L.isEnable()) L.i(initTag(), "showEmptyView.........inflate emptyLayoutId()");
+            View emptyView = getLayoutInflater().inflate(emptyLayoutId(), mViewAnimator, false);
             emptyView.setTag(R.id.qs_view_state_key, VIEW_STATE_EMPTY);
             setDefaultViewClickListener(emptyView);
+            mViewAnimator.addView(emptyView);
             onCreateEmptyView(emptyView);
             setViewState(mViewAnimator.getChildCount() - 1);
         }
@@ -331,19 +336,22 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
     @ThreadPoint(ThreadType.MAIN)
     @Override public void showErrorView() {
         if (mViewAnimator != null && !isDetached()) {
-            if (L.isEnable()) L.i(initTag(), "showErrorView.........");
             int childCount = mViewAnimator.getChildCount();
-            for (int i = 0; i < childCount; i++) {
-                View childAt = mViewAnimator.getChildAt(i);
+            if (L.isEnable()) L.i(initTag(), "showErrorView.........childCount:" + childCount);
+            for (int index = 0; index < childCount; index++) {
+                View childAt = mViewAnimator.getChildAt(index);
+
                 int stateValue = (int) childAt.getTag(R.id.qs_view_state_key);
                 if (stateValue == VIEW_STATE_ERROR) {
-                    setViewState(i);
+                    setViewState(index);
                     return;
                 }
             }
-            View errorView = getLayoutInflater().inflate(errorLayoutId(), mViewAnimator);
+            if (L.isEnable()) L.i(initTag(), "showErrorView.........inflate errorLayoutId()");
+            View errorView = getLayoutInflater().inflate(errorLayoutId(), mViewAnimator, false);
             errorView.setTag(R.id.qs_view_state_key, VIEW_STATE_ERROR);
             setDefaultViewClickListener(errorView);
+            mViewAnimator.addView(errorView);
             onCreateErrorView(errorView);
             setViewState(mViewAnimator.getChildCount() - 1);
         }
