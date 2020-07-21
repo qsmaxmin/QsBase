@@ -60,17 +60,9 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
      */
     @Override public int rootViewLayoutId() {
         if (isOpenViewState()) {
-            if (actionbarLayoutId() == 0) {
-                return R.layout.qs_view_animator;
-            } else {
-                return R.layout.qs_view_animator_ab;
-            }
+            return actionbarLayoutId() == 0 ? R.layout.qs_view_animator : R.layout.qs_view_animator_ab;
         } else {
-            if (actionbarLayoutId() == 0) {
-                return R.layout.qs_frame_layout;
-            } else {
-                return R.layout.qs_frame_layout_ab;
-            }
+            return actionbarLayoutId() == 0 ? R.layout.qs_frame_layout : R.layout.qs_frame_layout_ab;
         }
     }
 

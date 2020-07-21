@@ -97,7 +97,7 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
 
             View loadingView = inflater.inflate(loadingLayoutId(), mViewAnimator, false);
             loadingView.setTag(R.id.qs_view_state_key, VIEW_STATE_LOADING);
-            setDefaultViewClickListener(rootView);
+            setDefaultViewClickListener(loadingView);
             mViewAnimator.addView(loadingView);
             onCreateLoadingView(loadingView);
 
