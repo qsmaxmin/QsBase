@@ -160,4 +160,6 @@ public interface QsIView<P> {
     FragmentActivity getActivity();
 
     void smoothScrollToTop(boolean autoRefresh);
+
+    void setOnActivityResultListener(OnActivityResultListener listener);
 }

@@ -19,6 +19,7 @@ import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.common.viewbind.ViewBindHelper;
 import com.qsmaxmin.qsbase.common.widget.dialog.QsProgressDialog;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout;
+import com.qsmaxmin.qsbase.mvp.OnActivityResultListener;
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
 
 import org.greenrobot.eventbus.EventBus;
@@ -38,10 +39,11 @@ import androidx.fragment.app.FragmentActivity;
  * @Description
  */
 public abstract class QsFragment<P extends QsPresenter> extends Fragment implements QsIFragment, View.OnTouchListener {
-    private   P                presenter;
-    private   boolean          hasInitData;
-    protected QsProgressDialog mProgressDialog;
-    protected ViewAnimator     mViewAnimator;
+    private   P                        presenter;
+    private   boolean                  hasInitData;
+    protected QsProgressDialog         mProgressDialog;
+    protected ViewAnimator             mViewAnimator;
+    private   OnActivityResultListener activityResultListener;
 
     @Override public String initTag() {
         return L.isEnable() ? getClass().getSimpleName() : "QsFragment";
@@ -574,6 +576,17 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
 
     @Override public boolean onTouch(View v, MotionEvent event) {
         return shouldInterceptTouchEvent();
+    }
+
+    @Override public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (activityResultListener != null) {
+            activityResultListener.onActivityResult(getActivity(), requestCode, resultCode, data);
+        }
+    }
+
+    @Override public void setOnActivityResultListener(OnActivityResultListener listener) {
+        this.activityResultListener = listener;
     }
 
     @Override public boolean shouldInterceptTouchEvent() {

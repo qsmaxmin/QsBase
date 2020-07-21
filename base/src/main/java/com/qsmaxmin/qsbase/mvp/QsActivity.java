@@ -31,6 +31,7 @@ import org.greenrobot.eventbus.EventBus;
 
 import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.fragment.app.DialogFragment;
@@ -43,12 +44,13 @@ import androidx.fragment.app.FragmentActivity;
  * @Description
  */
 public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity implements QsIActivity {
-    private   View              contentView;
-    private   P                 presenter;
-    protected QsProgressDialog  mProgressDialog;
-    protected ViewAnimator      mViewAnimator;
-    private   boolean           hasInitData;
-    private   OnKeyDownListener onKeyDownListener;
+    private   View                     contentView;
+    private   P                        presenter;
+    protected QsProgressDialog         mProgressDialog;
+    protected ViewAnimator             mViewAnimator;
+    private   boolean                  hasInitData;
+    private   OnKeyDownListener        onKeyDownListener;
+    private   OnActivityResultListener activityResultListener;
 
     @Override public String initTag() {
         return L.isEnable() ? getClass().getSimpleName() : "QsActivity";
@@ -667,6 +669,17 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
             }
         }
         return targetView;
+    }
+
+    @Override protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (activityResultListener != null) {
+            activityResultListener.onActivityResult(this, requestCode, resultCode, data);
+        }
+    }
+
+    @Override public void setOnActivityResultListener(OnActivityResultListener listener) {
+        this.activityResultListener = listener;
     }
 
     @Override public void setOnKeyDownListener(OnKeyDownListener listener) {
