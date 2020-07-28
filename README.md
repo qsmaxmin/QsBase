@@ -48,8 +48,8 @@ MVP架构+AOP面向切面编程，摒弃反射、代理等操作，稳定性和�
 
         dependencies {
             ...
-            implementation 'com.github.qsmaxmin:QsBase:6.3.5'
-            annotationProcessor 'com.github.qsmaxmin:QsPlugin:6.3.5'
+            implementation 'com.github.qsmaxmin:QsBase:9.0.3'
+            annotationProcessor 'com.github.qsmaxmin:QsPlugin:9.0.3'
         }
 
 #### step 3：自定义Application
@@ -130,13 +130,12 @@ MVP架构+AOP面向切面编程，摒弃反射、代理等操作，稳定性和�
             </style>
 
         2，Activity的使用：
-
         所有的Activity必须继承框架里的Activity
             为快速开发，框架有多个Activity供开发者继承如：
-            QsActivity: 没有actionbar的activity
-            QsABActivity: 有actionbar的activity
-            QsViewpagerActivity: 没有actionbar的viewpager activity，集成Viewpager快速开发
-            QsViewpagerABActivity: 有actionbar的viewpager activity，集成Viewpager快速开发
+            QsActivity: 基类activity，可重写actionbarLayoutId()返回actionbar布局
+            QsListActivity: 集成Viewpager的activity，快速开发
+            QsListActivity: 集成List的activity，实现抽象方法即可
+            QsViewpagerActivity: 集成Viewpager的activity，实现抽象方法即可
             ...
 
         例如：
@@ -144,16 +143,30 @@ MVP架构+AOP面向切面编程，摒弃反射、代理等操作，稳定性和�
          * V层
          */
         @Presenter(MainPresenter.class)
-        public class MainActivity extends QsViewPagerActivity<MainPresenter> {
-            @Bind(R.id.tv_name)TextView tv_Name;
+        public class MainActivity extends QsActivity<MainPresenter> {
+            //绑定bundle传递数值
+            @BindBundle("bundle_key_user_id")String useId;
+            //绑定view
+            @Bind(R.id.tv_name)TextView tv_name;
 
-            initData(){
-               HomePresenter presenter =  getPresenter();
-               presenter.requestData();
+            @Override public void initData(Bundle bundle){
+                getPresenter(userId).requestData();
             }
 
             @ThreadPoint(ThreadType.MAIN) public void updateUI(ModelUser modelUser) {
-                tv_Name.setText(modelUser.userName);
+                tv_name.setText(modelUser.userName);
+            }
+
+            /**
+             * 绑定点击事件
+             */
+            @OnClick({R.id.tv_close})
+            @Override public void onViewClick(View v){
+                switch(v.getId()){
+                    case R.id.tv_close:
+                        activityFinish();
+                        break;
+                }
             }
         }
 
@@ -162,13 +175,25 @@ MVP架构+AOP面向切面编程，摒弃反射、代理等操作，稳定性和�
          */
         @Presenter(MainActivity.class)
         public class MainPresenter extends QsPresenter<MainActivity> {
-             @ThreadPoint(ThreadType.HTTP) public void requestData() {
+
+             /**
+              * 开启异步线程请求网络
+              */
+             @ThreadPoint(ThreadType.HTTP)
+             public void requestData(String userId) {
                 UserHttp userHttp = createHttpRequest(UserHttp.class);
-                ModelUser modelUser = userHttp.requestUserData(new BaseModelReq());
+                ModelUser modelUser = userHttp.requestUserData(userId);
                 if(isSuccess(modelUser)){
                     getView().updateUI(modelUser);
                 }
              }
+        }
+
+        /**
+         * Http请求时的接口定义
+         */
+        public interface UserHttp {
+            @POST("/api/v1/users") ModelUser requestUserData(@FormParam("user_id") String userId);
         }
 
         /**
@@ -207,16 +232,8 @@ MVP架构+AOP面向切面编程，摒弃反射、代理等操作，稳定性和�
          * 继承自己写的http响应体基类
          */
         public class ModelUser extends BaseModel{
-            public String userId;
             public String userName;
             ...
-        }
-
-        /**
-         * Http请求时的接口
-         */
-        public interface UserHttp {
-            @POST("/api/v1/users") ModelUser requestUserData(@Body BaseModelReq req);
         }
 
         View层和Presenter层通过getView()和getPresenter()方法相互调用
@@ -230,18 +247,9 @@ MVP架构+AOP面向切面编程，摒弃反射、代理等操作，稳定性和�
         打开对话框：QsHelper.commitDialogFragment()
         资源获取：QsHelper.getString()，QsHelper.getDrawable()....
 
-        tips：框架使用了沉浸式actionbar，所有没有使用系统的actionbar，在设置系统主题时需要添加如下样式：
-
-            <!-- 系统主题样式 -->
-            <style name="YourTheme" parent="QsTheme">
-                <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-                <item name="colorPrimary">@color/colorPrimary</item>
-                <item name="colorAccent">@color/colorAccent</item>
-            </style>
-
 
         3，Fragment的使用
-        所有的Fragment必须继承框架的Fragment
+        所有的Fragment必须继承框架的QsXXXFragment
             为快速开发，框架有多个Fragment供开发者继承如：
             QsFragment: 普通fragment
             QsListFragment: 带listView的Fragment
