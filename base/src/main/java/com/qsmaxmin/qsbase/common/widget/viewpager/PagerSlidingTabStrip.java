@@ -37,9 +37,9 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
     private       int                       currentPosition        = 0;
     private       int                       selectedPosition       = 0;
     private       float                     currentPositionOffset  = 0f;
-    private       int                       indicatorColor         = 0xFF666666;
+    private       int                       indicatorColor         = 0xFF0000FF;
     private       int                       indicatorWidth         = 0;
-    private       int                       indicatorHeight        = 8;
+    private       int                       indicatorHeight        = 3;
     private       int                       indicatorCorner        = 0;
     private       int                       underlineColor         = 0x1A000000;
     private       int                       dividerColor           = 0x1A000000;
@@ -48,12 +48,12 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
     private       int                       scrollOffset           = 52;
     private       int                       underlineHeight        = 2;
     private       int                       dividerPadding         = 12;
-    private       int                       tabPadding             = 20;
+    private       int                       tabPadding             = 10;
     private       int                       tabMargins             = 0;
     private       int                       dividerWidth           = 1;
-    private       int                       tabTextSize            = 12;
-    private       int                       tabTextColor           = 0xFF666666;
-    private       int                       selectedTabTextColor   = 0xFF666666;
+    private       int                       tabTextSize            = 14;
+    private       int                       tabTextColor           = 0xFF999999;
+    private       int                       selectedTabTextColor   = 0xFF0000FF;
     private       Typeface                  tabTypeface            = null;
     private       int                       tabTypefaceStyle       = Typeface.NORMAL;
     private       int                       lastScrollX            = 0;
@@ -355,8 +355,8 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
             float lineLeft;
             float lineRight;
             if (indicatorWidth > 0) {
-                lineLeft = (currentTab.getRight() + currentTab.getLeft()) / 2 - indicatorWidth / 2;
-                lineRight = (currentTab.getRight() + currentTab.getLeft()) / 2 + indicatorWidth / 2;
+                lineLeft = (currentTab.getRight() + currentTab.getLeft()) / 2f - indicatorWidth / 2f;
+                lineRight = (currentTab.getRight() + currentTab.getLeft()) / 2f + indicatorWidth / 2f;
             } else {
                 lineLeft = currentTab.getLeft() + rectPaintWidth;
                 lineRight = tabWidth == 0 ? currentTab.getRight() - rectPaintWidth : tabWidth;
@@ -366,8 +366,8 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
                 float nextTabLeft;
                 float nextTabRight;
                 if (indicatorWidth > 0) {
-                    nextTabLeft = (nextTab.getRight() + nextTab.getLeft()) / 2 - indicatorWidth / 2;
-                    nextTabRight = (nextTab.getRight() + nextTab.getLeft()) / 2 + indicatorWidth / 2;
+                    nextTabLeft = (nextTab.getRight() + nextTab.getLeft()) / 2f - indicatorWidth / 2f;
+                    nextTabRight = (nextTab.getRight() + nextTab.getLeft()) / 2f + indicatorWidth / 2f;
                 } else {
                     nextTabLeft = nextTab.getLeft() + rectPaintWidth;
                     nextTabRight = tabWidth == 0 ? nextTab.getRight() - rectPaintWidth : tabWidth;
