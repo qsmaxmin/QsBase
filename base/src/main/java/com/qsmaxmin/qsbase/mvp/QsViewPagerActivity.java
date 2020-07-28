@@ -108,6 +108,10 @@ public abstract class QsViewPagerActivity<P extends QsPresenter> extends QsActiv
         }
     }
 
+    @Override public int getTabItemLayout() {
+        return 0;
+    }
+
     @Override public PagerSlidingTabStrip getTab() {
         return tabs;
     }

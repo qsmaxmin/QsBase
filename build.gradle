@@ -8,9 +8,9 @@ buildscript {
         maven { url 'https://jitpack.io' }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.5.3'
+        classpath 'com.android.tools.build:gradle:3.6.3'
         /*AspectJ*/
-        classpath 'com.github.qsmaxmin:gradle_plugin_android_aspectjx:2.0.4'
+        classpath 'com.github.qsmaxmin:gradle_plugin_android_aspectjx:2.0.10'
         classpath 'org.aspectj:aspectjtools:1.9.1'
     }
 }
