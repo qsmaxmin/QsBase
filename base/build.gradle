@@ -39,7 +39,7 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:3.12.1'
     implementation 'com.google.code.gson:gson:2.8.6'
 
-    annotationProcessor 'com.github.qsmaxmin:QsPlugin:8.2.0'
+    annotationProcessor 'com.github.qsmaxmin:QsPlugin:9.0.3'
 //    annotationProcessor("com.qsmaxmin.qsann:QsPlugin:9.9.9")//local test
 }
 
