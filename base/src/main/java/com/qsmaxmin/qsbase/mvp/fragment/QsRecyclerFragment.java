@@ -209,6 +209,10 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
     }
 
     @Override public final List<D> getData() {
+        return mList;
+    }
+
+    @Override public List<D> copyData() {
         ArrayList<D> list = new ArrayList<>();
         if (!mList.isEmpty()) list.addAll(mList);
         return list;
