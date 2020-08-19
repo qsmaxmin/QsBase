@@ -1,15 +1,14 @@
 package com.qsmaxmin.qsbase.mvp.adapter;
 
-import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.qsmaxmin.annotation.QsNotProguard;
 import com.qsmaxmin.qsbase.common.log.L;
-import com.qsmaxmin.qsbase.common.model.QsNotProguard;
-import com.qsmaxmin.qsbase.common.viewbind.ViewBindHelper;
 import com.qsmaxmin.qsbase.mvp.QsIRecyclerView;
+import com.qsmaxmin.qsbase.plugin.bind.QsIBindView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
@@ -18,16 +17,22 @@ import androidx.fragment.app.FragmentActivity;
 /**
  * @CreateBy qsmaxmin
  * @Date 16/8/5
- * @Description RecyclerView的Item封装类
+ * @Description RecyclerView holder
  */
 @SuppressWarnings("WeakerAccess")
-public abstract class QsRecycleAdapterItem<D> implements QsNotProguard {
+public abstract class QsRecycleAdapterItem<D> implements QsIBindView, QsNotProguard {
     private View               mItemView;
     private QsIRecyclerView<D> viewLayer;
 
     public QsRecycleAdapterItem(LayoutInflater inflater, ViewGroup parent) {
         mItemView = inflater.inflate(itemViewLayoutId(), parent, false);
-        ViewBindHelper.bindView(this, mItemView);
+        bindViewByQsPlugin(mItemView);
+    }
+
+    /**
+     * for QsTransform
+     */
+    @Override public void bindViewByQsPlugin(View view) {
     }
 
     protected String initTag() {

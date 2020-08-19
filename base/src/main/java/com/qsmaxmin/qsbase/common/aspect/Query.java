@@ -10,7 +10,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 /**
  * @CreateBy qsmaxmin
  * @Date 2017/6/29 15:12
- * @Description 被注解的参数将被当做查询参数添加到url上
+ * @Description append params to url
  */
 @Documented
 @Target(PARAMETER)

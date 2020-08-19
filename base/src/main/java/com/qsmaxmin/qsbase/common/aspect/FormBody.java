@@ -10,7 +10,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 /**
  * @CreateBy qsmaxmin
  * @Date 2017/6/29 15:12
- * @Description 表单参数注解，支持Map、String（必须是json格式）和Object类型，其中Object类型会反射获取字段名和值
+ * @Description form body
  */
 @Documented
 @Target(PARAMETER)

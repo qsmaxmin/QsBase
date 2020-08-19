@@ -61,9 +61,6 @@ class DownloadExecutor<M extends QsDownloadModel<K>, K> {
         }
     }
 
-    /**
-     * 断点续传前，检查文件真实大小
-     */
     private void checkFileBeforeDownload(final Request.Builder builder, final File targetFile) {
         L.i(TAG, "old file exists....size:" + targetFile.length() + ", path:" + targetFile.getPath());
         downloader.getClient().newCall(builder.build()).enqueue(new Callback() {
@@ -123,7 +120,7 @@ class DownloadExecutor<M extends QsDownloadModel<K>, K> {
                         if (body != null) {
                             long contentLength = body.contentLength();
                             long startPoint = rangStartPoint;
-                            if (startPoint > 0 && response.code() != 206) {//不支持断点续传
+                            if (startPoint > 0 && response.code() != 206) {
                                 startPoint = 0;
                                 if (L.isEnable()) L.e(TAG, "server not support resume from break point");
                             }
@@ -197,15 +194,6 @@ class DownloadExecutor<M extends QsDownloadModel<K>, K> {
             sb.append("\n\t").append(name).append("=").append(value);
         }
         L.i(TAG, sb.toString());
-    }
-
-    /**
-     * 分成1~5个片段
-     */
-    private int getPartCount(long contentLength) {
-        int mb_10 = 10 * 1024 * 1024;
-        int count = (int) (contentLength / mb_10);
-        return count < 1 ? 1 : count > 5 ? 5 : count;
     }
 
     private void postDownloadStart() {

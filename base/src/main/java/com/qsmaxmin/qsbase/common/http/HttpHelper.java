@@ -27,7 +27,8 @@ import okhttp3.ResponseBody;
  * @Description
  */
 
-public class HttpAdapter {
+public class HttpHelper {
+    private static       HttpHelper     helper;
     private static final String         TAG     = "HttpAdapter";
     private final static int            timeOut = 10;
     private              OkHttpClient   client;
@@ -35,8 +36,27 @@ public class HttpAdapter {
     private              QsHttpCallback callback;
     private              HttpConverter  converter;
 
-    public HttpAdapter() {
+    public static HttpHelper getInstance() {
+        if (helper == null) {
+            synchronized (HttpHelper.class) {
+                if (helper == null) helper = new HttpHelper();
+            }
+        }
+        return helper;
+    }
+
+    private HttpHelper() {
         initDefaults();
+    }
+
+    public static void release() {
+        if (helper != null) {
+            helper.client = null;
+            helper.callback = null;
+            helper.converter = null;
+            helper.gson = null;
+            helper = null;
+        }
     }
 
     public OkHttpClient getHttpClient() {
@@ -50,9 +70,6 @@ public class HttpAdapter {
         this.client = client;
     }
 
-    /**
-     * 获取默认值
-     */
     private void initDefaults() {
         if (client == null) {
             OkHttpClient.Builder builder = new OkHttpClient.Builder();
@@ -178,7 +195,7 @@ public class HttpAdapter {
                 String jsonStr = httpResponse.getJsonString();
                 response.close();
                 if (L.isEnable()) {
-                    L.i(TAG, "on http response... method:" + request.getMethodName() + ", url:" + request.getUrl() + "\n响应体 Json:\n" + getConverter().formatJson(jsonStr));
+                    L.i(TAG, "on http response... method:" + request.getMethodName() + ", url:" + request.getUrl() + "\nresponse body Json:\n" + getConverter().formatJson(jsonStr));
                 }
                 if (!TextUtils.isEmpty(jsonStr)) {
                     Object result = gson.fromJson(jsonStr, returnType);

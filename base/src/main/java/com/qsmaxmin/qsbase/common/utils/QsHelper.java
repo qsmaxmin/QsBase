@@ -9,16 +9,14 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Environment;
+import android.view.View;
 
 import com.qsmaxmin.qsbase.QsIApplication;
-import com.qsmaxmin.qsbase.common.aspect.ThreadPoint;
-import com.qsmaxmin.qsbase.common.aspect.ThreadType;
-import com.qsmaxmin.qsbase.common.http.HttpAdapter;
+import com.qsmaxmin.qsbase.common.http.HttpHelper;
 import com.qsmaxmin.qsbase.common.log.L;
-import com.qsmaxmin.qsbase.common.threadpoll.QsThreadPollHelper;
-import com.qsmaxmin.qsbase.common.utils.permission.PermissionHelper;
-
-import org.greenrobot.eventbus.EventBus;
+import com.qsmaxmin.qsbase.plugin.event.EventHelper;
+import com.qsmaxmin.qsbase.plugin.permission.PermissionHelper;
+import com.qsmaxmin.qsbase.plugin.threadpoll.QsThreadPollHelper;
 
 import java.io.Closeable;
 
@@ -28,6 +26,7 @@ import androidx.annotation.DrawableRes;
 import androidx.annotation.StringRes;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.ActivityOptionsCompat;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
@@ -40,12 +39,8 @@ import androidx.fragment.app.FragmentTransaction;
  * @Description 帮助类中心
  */
 public class QsHelper {
-    private static QsHelper           qsHelper;
-    private        QsIApplication     mApplication;
-    private        HttpAdapter        httpAdapter;
-    private        ImageHelper        imageHelper;
-    private        QsThreadPollHelper threadPollHelper;
-    private        PermissionHelper   permissionHelper;
+    private static QsHelper       qsHelper;
+    private        QsIApplication mApplication;
 
     private QsHelper() {
     }
@@ -57,6 +52,11 @@ public class QsHelper {
             }
         }
         return qsHelper;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T extends View> T forceCastToView(View view) {
+        return (T) view;
     }
 
     public static void init(QsIApplication application) {
@@ -78,42 +78,36 @@ public class QsHelper {
         return getInstance().mApplication.isLogOpen();
     }
 
-    public static ImageHelper getImageHelper() {
-        if (getInstance().imageHelper == null) {
-            getInstance().imageHelper = new ImageHelper();
-        }
-        return getInstance().imageHelper;
+    public static ImageHelper.Builder getImageHelper() {
+        return ImageHelper.createRequest();
     }
 
     public static QsThreadPollHelper getThreadHelper() {
-        if (getInstance().threadPollHelper == null) {
-            getInstance().threadPollHelper = new QsThreadPollHelper();
-        }
-        return getInstance().threadPollHelper;
+        return QsThreadPollHelper.getInstance();
     }
 
     public static boolean isMainThread() {
-        return getThreadHelper().isMainThread();
+        return QsThreadPollHelper.isMainThread();
     }
 
     public static void post(Runnable r) {
-        getThreadHelper().getMainThread().execute(r);
+        QsThreadPollHelper.post(r);
     }
 
     public static void postDelayed(Runnable r, long delayMillis) {
-        getThreadHelper().getMainThread().executeDelayed(r, delayMillis);
+        QsThreadPollHelper.postDelayed(r, delayMillis);
     }
 
     public static void executeInHttpThread(Runnable r) {
-        getThreadHelper().getHttpThreadPoll().execute(r);
+        QsThreadPollHelper.runOnHttpThread(r);
     }
 
     public static void executeInWorkThread(Runnable r) {
-        getThreadHelper().getWorkThreadPoll().execute(r);
+        QsThreadPollHelper.runOnWorkThread(r);
     }
 
     public static void executeInSingleThread(Runnable r) {
-        getThreadHelper().getSingleThreadPoll().execute(r);
+        QsThreadPollHelper.runOnSingleThread(r);
     }
 
     public static ScreenHelper getScreenHelper() {
@@ -121,24 +115,23 @@ public class QsHelper {
     }
 
     public static PermissionHelper getPermissionHelper() {
-        if (getInstance().permissionHelper == null) {
-            getInstance().permissionHelper = new PermissionHelper();
-        }
-        return getInstance().permissionHelper;
+        return PermissionHelper.getInstance();
     }
 
-    @ThreadPoint(ThreadType.MAIN)
-    public static void eventPost(Object object) {
-        EventBus.getDefault().post(object);
+    public static void eventPost(final Object object) {
+        if (isMainThread()) {
+            EventHelper.eventPost(object);
+        } else {
+            post(new Runnable() {
+                @Override public void run() {
+                    EventHelper.eventPost(object);
+                }
+            });
+        }
     }
 
-    public static HttpAdapter getHttpHelper() {
-        if (getInstance().httpAdapter == null) {
-            synchronized (QsHelper.class) {
-                if (getInstance().httpAdapter == null) getInstance().httpAdapter = new HttpAdapter();
-            }
-        }
-        return getInstance().httpAdapter;
+    public static HttpHelper getHttpHelper() {
+        return HttpHelper.getInstance();
     }
 
     public static CacheHelper getCacheHelper() {
@@ -237,17 +230,29 @@ public class QsHelper {
         commitFragmentInner(fragmentManager, old, layoutId, fragment, tag);
     }
 
-    @ThreadPoint(ThreadType.MAIN)
-    private static void commitFragmentInner(FragmentManager manager, Fragment old, int layoutId, Fragment fragment, String tag) {
+    private static void commitFragmentInner(FragmentManager manager, final Fragment old, final int layoutId, final Fragment fragment, final String tag) {
         if (manager == null) {
             FragmentActivity activity = getScreenHelper().currentActivity();
             if (activity == null) return;
             manager = activity.getSupportFragmentManager();
         }
-        if (layoutId != 0 && fragment != null && !fragment.isAdded() && manager != null) {
-            FragmentTransaction fragmentTransaction = manager.beginTransaction();
-            if (old != null) fragmentTransaction.detach(old);
-            fragmentTransaction.replace(layoutId, fragment, tag).setTransition(FragmentTransaction.TRANSIT_NONE).commitAllowingStateLoss();
+        if (isMainThread()) {
+            if (layoutId != 0 && fragment != null && !fragment.isAdded()) {
+                FragmentTransaction fragmentTransaction = manager.beginTransaction();
+                if (old != null) fragmentTransaction.detach(old);
+                fragmentTransaction.replace(layoutId, fragment, tag).setTransition(FragmentTransaction.TRANSIT_NONE).commitAllowingStateLoss();
+            }
+        } else {
+            final FragmentManager finalManager = manager;
+            post(new Runnable() {
+                @Override public void run() {
+                    if (layoutId != 0 && fragment != null && !fragment.isAdded()) {
+                        FragmentTransaction fragmentTransaction = finalManager.beginTransaction();
+                        if (old != null) fragmentTransaction.detach(old);
+                        fragmentTransaction.replace(layoutId, fragment, tag).setTransition(FragmentTransaction.TRANSIT_NONE).commitAllowingStateLoss();
+                    }
+                }
+            });
         }
     }
 
@@ -280,18 +285,31 @@ public class QsHelper {
         commitBackStackFragmentInner(fragmentManager, layoutId, fragment, tag, enterAnim, exitAnim);
     }
 
-    @ThreadPoint(ThreadType.MAIN)
-    private static void commitBackStackFragmentInner(FragmentManager manager, int layoutId, Fragment fragment, String tag, int enterAnim, int exitAnim) {
+    private static void commitBackStackFragmentInner(FragmentManager manager, final int layoutId, final Fragment fragment, final String tag, final int enterAnim, final int exitAnim) {
         if (manager == null) {
             FragmentActivity activity = getScreenHelper().currentActivity();
             if (activity == null) return;
             manager = activity.getSupportFragmentManager();
         }
-        if (layoutId != 0 && fragment != null && !fragment.isAdded() && manager != null) {
-            FragmentTransaction transaction = manager.beginTransaction();
-            if (enterAnim != 0 || exitAnim != 0) transaction.setCustomAnimations(enterAnim, exitAnim, enterAnim, exitAnim);
-            transaction.add(layoutId, fragment, tag).addToBackStack(null).setTransition(FragmentTransaction.TRANSIT_NONE).commitAllowingStateLoss();
+        if (isMainThread()) {
+            if (layoutId != 0 && fragment != null && !fragment.isAdded()) {
+                FragmentTransaction transaction = manager.beginTransaction();
+                if (enterAnim != 0 || exitAnim != 0) transaction.setCustomAnimations(enterAnim, exitAnim, enterAnim, exitAnim);
+                transaction.add(layoutId, fragment, tag).addToBackStack(null).setTransition(FragmentTransaction.TRANSIT_NONE).commitAllowingStateLoss();
+            }
+        } else {
+            final FragmentManager finalManager = manager;
+            post(new Runnable() {
+                @Override public void run() {
+                    if (layoutId != 0 && fragment != null && !fragment.isAdded()) {
+                        FragmentTransaction transaction = finalManager.beginTransaction();
+                        if (enterAnim != 0 || exitAnim != 0) transaction.setCustomAnimations(enterAnim, exitAnim, enterAnim, exitAnim);
+                        transaction.add(layoutId, fragment, tag).addToBackStack(null).setTransition(FragmentTransaction.TRANSIT_NONE).commitAllowingStateLoss();
+                    }
+                }
+            });
         }
+
     }
 
     public static void commitDialogFragment(DialogFragment dialogFragment) {
@@ -303,19 +321,30 @@ public class QsHelper {
         commitDialogFragmentInner(fragmentManager, dialogFragment);
     }
 
-    @ThreadPoint(ThreadType.MAIN)
-    private static void commitDialogFragmentInner(FragmentManager manager, DialogFragment dialogFragment) {
+    private static void commitDialogFragmentInner(FragmentManager manager, final DialogFragment dialogFragment) {
         if (manager == null) {
             FragmentActivity activity = getScreenHelper().currentActivity();
             if (activity == null) return;
             manager = activity.getSupportFragmentManager();
         }
-        if (manager != null && dialogFragment != null && !dialogFragment.isAdded()) {
-            manager.beginTransaction().add(dialogFragment, dialogFragment.getClass().getSimpleName()).commitAllowingStateLoss();
+        if (isMainThread()) {
+            if (dialogFragment != null && !dialogFragment.isAdded()) {
+                manager.beginTransaction().add(dialogFragment, dialogFragment.getClass().getSimpleName()).commitAllowingStateLoss();
+            }
+        } else {
+            final FragmentManager finalManager = manager;
+            post(new Runnable() {
+                @Override public void run() {
+                    if (dialogFragment != null && !dialogFragment.isAdded()) {
+                        finalManager.beginTransaction().add(dialogFragment, dialogFragment.getClass().getSimpleName()).commitAllowingStateLoss();
+                    }
+                }
+            });
         }
     }
 
-    @SuppressLint("MissingPermission") public static boolean isNetworkAvailable() {
+    @SuppressLint("MissingPermission")
+    public static boolean isNetworkAvailable() {
         ConnectivityManager connect = (ConnectivityManager) getApplication().getSystemService(Context.CONNECTIVITY_SERVICE);
         if (connect == null) {
             return false;
@@ -334,7 +363,7 @@ public class QsHelper {
     }
 
     public static Drawable getDrawable(@DrawableRes int resId) {
-        return getApplication().getResources().getDrawable(resId);
+        return ResourcesCompat.getDrawable(getApplication().getResources(), resId, null);
     }
 
     public static int getColor(@ColorRes int resId) {
@@ -357,23 +386,9 @@ public class QsHelper {
      * 释放内存
      */
     static void release() {
-        if (qsHelper != null) {
-            if (qsHelper.threadPollHelper != null) {
-                qsHelper.threadPollHelper.release();
-                qsHelper.threadPollHelper = null;
-            }
-            if (qsHelper.imageHelper != null) {
-                qsHelper.imageHelper.clearMemoryCache();
-                qsHelper.imageHelper = null;
-            }
-            if (qsHelper.httpAdapter != null) {
-                qsHelper.httpAdapter.setHttpClient(null);
-                qsHelper.httpAdapter = null;
-            }
-            if (qsHelper.permissionHelper != null) {
-                qsHelper.permissionHelper.release();
-                qsHelper.permissionHelper = null;
-            }
-        }
+        QsThreadPollHelper.release();
+        PermissionHelper.release();
+        HttpHelper.release();
+        qsHelper = null;
     }
 }

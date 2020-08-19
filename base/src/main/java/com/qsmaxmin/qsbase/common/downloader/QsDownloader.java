@@ -20,6 +20,7 @@ import okhttp3.Request;
  * @Date 2020-03-17  15:25
  * @Description
  */
+@SuppressWarnings("rawtypes")
 public class QsDownloader<M extends QsDownloadModel<K>, K> {
     private final String                       TAG;
     private final HashMap<K, DownloadExecutor> executorMap    = new HashMap<>();
@@ -33,9 +34,6 @@ public class QsDownloader<M extends QsDownloadModel<K>, K> {
         this.TAG = "QsDownloader-" + httpTag.getSimpleName();
     }
 
-    /**
-     * 执行下载动作
-     */
     public void startDownload(final M model) {
         if (model == null) {
             if (L.isEnable()) L.e(TAG, "startDownload...param error");
@@ -69,10 +67,6 @@ public class QsDownloader<M extends QsDownloadModel<K>, K> {
         executor.start(builder);
     }
 
-
-    /**
-     * 是否正在下载
-     */
     @SuppressWarnings("WeakerAccess")
     public boolean isDownloading(M m) {
         return executorMap.get(m.getId()) != null;
@@ -115,10 +109,6 @@ public class QsDownloader<M extends QsDownloadModel<K>, K> {
         executorMap.remove(model.getId());
     }
 
-    /**
-     * 添加全局监听
-     * 因为是全局监听，所以需要做好QsDownloadModel id的唯一性
-     */
     public void registerGlobalDownloadListener(DownloadListener<M> listener) {
         if (listener != null) {
             synchronized (globeListeners) {
@@ -129,10 +119,6 @@ public class QsDownloader<M extends QsDownloadModel<K>, K> {
         }
     }
 
-    /**
-     * 移除指定全局回调
-     * 因为是全局监听，所以需要做好QsDownloadModel id的唯一性
-     */
     public void removeGlobalDownloadListener(DownloadListener<M> listener) {
         synchronized (globeListeners) {
             globeListeners.remove(listener);
@@ -188,7 +174,7 @@ public class QsDownloader<M extends QsDownloadModel<K>, K> {
     }
 
     private void post(Runnable action) {
-        QsHelper.getThreadHelper().getMainThread().execute(action);
+        QsHelper.getThreadHelper().post(action);
     }
 
     @SuppressWarnings({"unchecked"})

@@ -3,29 +3,27 @@ package com.qsmaxmin.qsbase.common.http;
 /**
  * @CreateBy qsmaxmin
  * @Date 2019/3/5 17:13
- * @Description http 公共回调，用于http请求公共逻辑处理
+ * @Description http common callback
  */
 public interface QsHttpCallback {
     /**
-     * 可以在该回调里处理http请求公共参数
+     * step 1, processParams
      *
-     * @param request http请求参数封装
-     * @throws Exception 有异常别抓，直接throw掉
+     * @throws Exception do not catch
      */
     void processParams(HttpRequest request) throws Exception;
 
     /**
-     * http response 回调后立刻执行该函数，可以处理一些譬如加解密的逻辑
+     * step 2, onHttpResponse
      *
-     * @param response http 响应体封装
-     * @throws Exception 有异常别抓，直接throw掉
+     * @throws Exception do not catch
      */
     void onHttpResponse(HttpRequest request, HttpResponse response) throws Exception;
 
     /**
-     * 响应体映射成实体后的回调，根据响应体类型可以处理一些公共逻辑
+     * step 3, onHttpComplete
      *
-     * @param result 响应体映射成的实体
+     * @throws Exception do not catch
      */
     void onHttpComplete(HttpRequest builder, Object result) throws Exception;
 }

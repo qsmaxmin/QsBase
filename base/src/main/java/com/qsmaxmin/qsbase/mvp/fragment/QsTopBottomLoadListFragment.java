@@ -5,9 +5,8 @@ import android.view.View;
 import android.widget.AbsListView;
 
 import com.qsmaxmin.qsbase.R;
-import com.qsmaxmin.qsbase.common.aspect.ThreadPoint;
-import com.qsmaxmin.qsbase.common.aspect.ThreadType;
 import com.qsmaxmin.qsbase.common.log.L;
+import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.common.widget.listview.LoadingFooter;
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
 
@@ -75,7 +74,6 @@ public abstract class QsTopBottomLoadListFragment<P extends QsPresenter, D> exte
         }
     }
 
-    @ThreadPoint(ThreadType.MAIN)
     @Override public void setTopLoadingState(LoadingFooter.State state) {
         L.i(initTag(), "setTopLoadingState：" + state);
         if (topLoadingView != null) {
@@ -83,7 +81,6 @@ public abstract class QsTopBottomLoadListFragment<P extends QsPresenter, D> exte
         }
     }
 
-    @ThreadPoint(ThreadType.MAIN)
     @Override public void setBottomLoadingState(LoadingFooter.State state) {
         L.i(initTag(), "setBottomLoadingState：" + state);
         if (bottomLoadingView != null) {
@@ -115,17 +112,25 @@ public abstract class QsTopBottomLoadListFragment<P extends QsPresenter, D> exte
         canBottomLoading = false;
     }
 
-    @ThreadPoint(ThreadType.MAIN)
-    @Override public void addTopData(List<D> list) {
+    @Override public void addTopData(final List<D> list) {
         if (list != null && !list.isEmpty()) {
-            int index = getListView().getFirstVisiblePosition();
+            final int index = getListView().getFirstVisiblePosition();
             View childAt = getListView().getChildAt(0);
-            int topMargin = (childAt == null) ? 0 : childAt.getHeight() + childAt.getTop();
+            final int topMargin = (childAt == null) ? 0 : childAt.getHeight() + childAt.getTop();
 
-            mList.addAll(0, list);
-            updateAdapter(true);
-
-            getListView().setSelectionFromTop(list.size() + index + 1, topMargin);
+            if (QsHelper.isMainThread()) {
+                mList.addAll(0, list);
+                updateAdapter(true);
+                getListView().setSelectionFromTop(list.size() + index + 1, topMargin);
+            } else {
+                post(new Runnable() {
+                    @Override public void run() {
+                        mList.addAll(0, list);
+                        updateAdapter(true);
+                        getListView().setSelectionFromTop(list.size() + index + 1, topMargin);
+                    }
+                });
+            }
         }
     }
 

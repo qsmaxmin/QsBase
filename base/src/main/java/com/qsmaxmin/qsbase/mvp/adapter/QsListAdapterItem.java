@@ -1,22 +1,23 @@
 package com.qsmaxmin.qsbase.mvp.adapter;
 
-import android.app.Activity;
 import android.content.Context;
 import android.view.View;
 
+import com.qsmaxmin.annotation.QsNotProguard;
 import com.qsmaxmin.qsbase.common.log.L;
-import com.qsmaxmin.qsbase.common.model.QsNotProguard;
-import com.qsmaxmin.qsbase.common.viewbind.ViewBindHelper;
 import com.qsmaxmin.qsbase.mvp.QsIListView;
+import com.qsmaxmin.qsbase.plugin.bind.QsIBindView;
 
 import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 
 /**
- * Created by sky on 15/2/6. 适配器
+ * @CreateBy qsmaxmin
+ * @Date 16/8/4
+ * @Description ListView holder
  */
-public abstract class QsListAdapterItem<D> implements QsNotProguard {
+public abstract class QsListAdapterItem<D> implements QsIBindView, QsNotProguard {
     private QsIListView<D> viewLayer;
 
     protected String initTag() {
@@ -26,7 +27,13 @@ public abstract class QsListAdapterItem<D> implements QsNotProguard {
     public abstract int getItemLayout();
 
     @CallSuper public void init(View contentView) {
-        ViewBindHelper.bindView(this, contentView);
+        bindViewByQsPlugin(contentView);
+    }
+
+    /**
+     * for QsTransform
+     */
+    @Override public void bindViewByQsPlugin(View view) {
     }
 
     public abstract void bindData(D t, int position, int count);
@@ -43,11 +50,7 @@ public abstract class QsListAdapterItem<D> implements QsNotProguard {
     }
 
     /**
-     * 发送事件给view层（Fragment或者Activity）
-     *
-     * @param eventType 事件类型
-     * @param data      数据
-     * @param position  item索引
+     * send event to view layer（fragment or activity）
      */
     protected final void sendEvent(int eventType, D data, int position) {
         viewLayer.onReceiveAdapterItemEvent(eventType, data, position);

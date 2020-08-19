@@ -6,12 +6,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 
+import com.qsmaxmin.annotation.QsNotProguard;
 import com.qsmaxmin.qsbase.R;
-import com.qsmaxmin.qsbase.common.aspect.ThreadPoint;
-import com.qsmaxmin.qsbase.common.aspect.ThreadType;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
-import com.qsmaxmin.qsbase.common.viewbind.ViewBindHelper;
+import com.qsmaxmin.qsbase.plugin.bind.QsIBindBundle;
+import com.qsmaxmin.qsbase.plugin.bind.QsIBindView;
+import com.qsmaxmin.qsbase.plugin.event.QsIBindEvent;
+import com.qsmaxmin.qsbase.plugin.permission.PermissionCallbackListener;
+import com.qsmaxmin.qsbase.plugin.permission.PermissionHelper;
+import com.qsmaxmin.qsbase.plugin.permission.QsIPermission;
 
 import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
@@ -26,7 +30,7 @@ import androidx.fragment.app.FragmentManager;
  * @Date 17/8/3  上午12:35
  * @Description
  */
-public abstract class QsDialogFragment extends DialogFragment {
+public abstract class QsDialogFragment extends DialogFragment implements QsIBindView, QsIBindBundle, QsIBindEvent, QsIPermission, QsNotProguard {
 
     @Override public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,14 +48,40 @@ public abstract class QsDialogFragment extends DialogFragment {
     }
 
     @Override @CallSuper @NonNull public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        ViewBindHelper.bindBundle(this, getArguments());
+        bindBundleByQsPlugin(getArguments());
         if (getDialog() != null) {
             getDialog().setCanceledOnTouchOutside(true);
             getDialog().setCancelable(true);
         }
         View customView = inflater.inflate(layoutId(), null);
-        ViewBindHelper.bindView(this, customView);
+        bindViewByQsPlugin(customView);
+        if (isOpenEventBus()) {
+            bindEventByQsPlugin();
+        }
         return customView;
+    }
+
+    @Override public void onDestroyView() {
+        super.onDestroyView();
+        if (isOpenEventBus()) {
+            unbindEventByQsPlugin();
+        }
+    }
+
+    @Override public void bindBundleByQsPlugin(Bundle bundle) {
+    }
+
+    @Override public void bindViewByQsPlugin(View view) {
+    }
+
+    @Override public boolean isOpenEventBus() {
+        return true;
+    }
+
+    @Override public void bindEventByQsPlugin() {
+    }
+
+    @Override public void unbindEventByQsPlugin() {
     }
 
     protected int getDialogTheme() {
@@ -70,6 +100,10 @@ public abstract class QsDialogFragment extends DialogFragment {
     }
 
     public void onViewClick(View view) {
+    }
+
+    @Override public void requestPermission(PermissionCallbackListener listener, String... permissions) {
+        PermissionHelper.getInstance().startRequestPermission(getActivity(), listener, permissions);
     }
 
     protected abstract int layoutId();
@@ -104,13 +138,20 @@ public abstract class QsDialogFragment extends DialogFragment {
         show(fragment.getFragmentManager(), bundle);
     }
 
-    @ThreadPoint(ThreadType.MAIN)
-    public void show(FragmentManager manager, Bundle bundle) {
+    public void show(final FragmentManager manager, Bundle bundle) {
         if (isAdded()) {
             L.e(initTag(), "show......dialog is added");
             return;
         }
         if (bundle != null) setArguments(bundle);
-        show(manager, getClass().getSimpleName());
+        if (QsHelper.isMainThread()) {
+            show(manager, getClass().getSimpleName());
+        } else {
+            QsHelper.post(new Runnable() {
+                @Override public void run() {
+                    show(manager, getClass().getSimpleName());
+                }
+            });
+        }
     }
 }

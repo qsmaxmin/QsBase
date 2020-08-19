@@ -11,18 +11,15 @@ import android.widget.ScrollView;
 import android.widget.ViewAnimator;
 
 import com.qsmaxmin.qsbase.R;
-import com.qsmaxmin.qsbase.common.aspect.ThreadPoint;
-import com.qsmaxmin.qsbase.common.aspect.ThreadType;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.utils.PresenterUtils;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
-import com.qsmaxmin.qsbase.common.viewbind.ViewBindHelper;
+import com.qsmaxmin.qsbase.plugin.permission.PermissionCallbackListener;
+import com.qsmaxmin.qsbase.plugin.permission.PermissionHelper;
 import com.qsmaxmin.qsbase.common.widget.dialog.QsProgressDialog;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout;
 import com.qsmaxmin.qsbase.mvp.OnActivityResultListener;
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
-
-import org.greenrobot.eventbus.EventBus;
 
 import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
@@ -59,12 +56,30 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
 
     @Override @Nullable @CallSuper
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        ViewBindHelper.bindBundle(this, getArguments());
+        bindBundleByQsPlugin(getArguments());
         View rootView = initView(inflater);
-        ViewBindHelper.bindView(this, rootView);
+        bindViewByQsPlugin(rootView);
         rootView.setOnTouchListener(this);
-        if (isOpenEventBus() && !EventBus.getDefault().isRegistered(this)) EventBus.getDefault().register(this);
+        if (isOpenEventBus()) {
+            bindEventByQsPlugin();
+        }
         return rootView;
+    }
+
+    @Override public void bindBundleByQsPlugin(Bundle bundle) {
+    }
+
+    @Override public void bindViewByQsPlugin(View view) {
+    }
+
+    @Override public boolean isOpenEventBus() {
+        return true;
+    }
+
+    @Override public void bindEventByQsPlugin() {
+    }
+
+    @Override public void unbindEventByQsPlugin() {
     }
 
     @Override public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -86,7 +101,9 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
             mProgressDialog = null;
         }
         mViewAnimator = null;
-        if (isOpenEventBus() && EventBus.getDefault().isRegistered(this)) EventBus.getDefault().unregister(this);
+        if (isOpenEventBus()) {
+            unbindEventByQsPlugin();
+        }
     }
 
     protected View initView(LayoutInflater inflater) {
@@ -164,10 +181,6 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
 
     @Override public void onViewClick(View view) {
 
-    }
-
-    @Override public boolean isOpenEventBus() {
-        return false;
     }
 
     @Override public boolean isOpenViewState() {
@@ -278,7 +291,6 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         loading(QsHelper.getString(resId), cancelAble);
     }
 
-    @ThreadPoint(ThreadType.MAIN)
     @Override public void loading(String message, boolean cancelAble) {
         if (mProgressDialog == null) mProgressDialog = getLoadingDialog();
         if (mProgressDialog != null) {
@@ -293,9 +305,20 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         }
     }
 
-    @ThreadPoint(ThreadType.MAIN)
     @Override public void loadingClose() {
-        if (mProgressDialog != null && mProgressDialog.isAdded()) mProgressDialog.dismissAllowingStateLoss();
+        if (QsHelper.isMainThread()) {
+            if (mProgressDialog != null && mProgressDialog.isAdded()) {
+                mProgressDialog.dismissAllowingStateLoss();
+            }
+        } else {
+            post(new Runnable() {
+                @Override public void run() {
+                    if (mProgressDialog != null && mProgressDialog.isAdded()) {
+                        mProgressDialog.dismissAllowingStateLoss();
+                    }
+                }
+            });
+        }
     }
 
     @Override public void showLoadingView() {
@@ -312,7 +335,6 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         }
     }
 
-    @ThreadPoint(ThreadType.MAIN)
     @Override public void showEmptyView() {
         if (mViewAnimator != null && !isDetached()) {
             int childCount = mViewAnimator.getChildCount();
@@ -325,17 +347,20 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
                     return;
                 }
             }
-            if (L.isEnable()) L.i(initTag(), "showEmptyView.........inflate emptyLayoutId()");
-            View emptyView = getLayoutInflater().inflate(emptyLayoutId(), mViewAnimator, false);
-            emptyView.setTag(R.id.qs_view_state_key, VIEW_STATE_EMPTY);
-            setDefaultViewClickListener(emptyView);
-            mViewAnimator.addView(emptyView);
-            onCreateEmptyView(emptyView);
-            setViewState(mViewAnimator.getChildCount() - 1);
+            post(new Runnable() {
+                @Override public void run() {
+                    if (L.isEnable()) L.i(initTag(), "showEmptyView.........inflate emptyLayoutId()");
+                    View emptyView = getLayoutInflater().inflate(emptyLayoutId(), mViewAnimator, false);
+                    emptyView.setTag(R.id.qs_view_state_key, VIEW_STATE_EMPTY);
+                    setDefaultViewClickListener(emptyView);
+                    mViewAnimator.addView(emptyView);
+                    onCreateEmptyView(emptyView);
+                    setViewState(mViewAnimator.getChildCount() - 1);
+                }
+            });
         }
     }
 
-    @ThreadPoint(ThreadType.MAIN)
     @Override public void showErrorView() {
         if (mViewAnimator != null && !isDetached()) {
             int childCount = mViewAnimator.getChildCount();
@@ -349,13 +374,17 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
                     return;
                 }
             }
-            if (L.isEnable()) L.i(initTag(), "showErrorView.........inflate errorLayoutId()");
-            View errorView = getLayoutInflater().inflate(errorLayoutId(), mViewAnimator, false);
-            errorView.setTag(R.id.qs_view_state_key, VIEW_STATE_ERROR);
-            setDefaultViewClickListener(errorView);
-            mViewAnimator.addView(errorView);
-            onCreateErrorView(errorView);
-            setViewState(mViewAnimator.getChildCount() - 1);
+            post(new Runnable() {
+                @Override public void run() {
+                    if (L.isEnable()) L.i(initTag(), "showErrorView.........inflate errorLayoutId()");
+                    View errorView = getLayoutInflater().inflate(errorLayoutId(), mViewAnimator, false);
+                    errorView.setTag(R.id.qs_view_state_key, VIEW_STATE_ERROR);
+                    setDefaultViewClickListener(errorView);
+                    mViewAnimator.addView(errorView);
+                    onCreateErrorView(errorView);
+                    setViewState(mViewAnimator.getChildCount() - 1);
+                }
+            });
         }
     }
 
@@ -430,7 +459,7 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         commitFragment(layoutId, fragment, fragment.getClass().getSimpleName());
     }
 
-    @ThreadPoint(ThreadType.MAIN) @Override public void commitFragment(int layoutId, Fragment fragment, String tag) {
+    @Override public void commitFragment(int layoutId, Fragment fragment, String tag) {
         QsHelper.commitFragment(getFragmentManager(), layoutId, fragment, tag);
     }
 
@@ -446,7 +475,6 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         commitFragment(old, layoutId, fragment, fragment.getClass().getSimpleName());
     }
 
-    @ThreadPoint(ThreadType.MAIN)
     @Override public void commitFragment(Fragment old, int layoutId, Fragment fragment, String tag) {
         QsHelper.commitFragment(getFragmentManager(), old, layoutId, fragment, tag);
     }
@@ -475,10 +503,19 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         QsHelper.commitDialogFragment(getFragmentManager(), fragment);
     }
 
-    @ThreadPoint(ThreadType.MAIN)
-    private void setViewState(int index) {
-        if (mViewAnimator.getDisplayedChild() != index) {
-            mViewAnimator.setDisplayedChild(index);
+    private void setViewState(final int index) {
+        if (QsHelper.isMainThread()) {
+            if (mViewAnimator.getDisplayedChild() != index) {
+                mViewAnimator.setDisplayedChild(index);
+            }
+        } else {
+            post(new Runnable() {
+                @Override public void run() {
+                    if (mViewAnimator.getDisplayedChild() != index) {
+                        mViewAnimator.setDisplayedChild(index);
+                    }
+                }
+            });
         }
     }
 
@@ -587,6 +624,10 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
 
     @Override public void setOnActivityResultListener(OnActivityResultListener listener) {
         this.activityResultListener = listener;
+    }
+
+    @Override public void requestPermission(PermissionCallbackListener listener, String... permissions) {
+        PermissionHelper.getInstance().startRequestPermission(getActivity(), listener, permissions);
     }
 
     @Override public boolean shouldInterceptTouchEvent() {

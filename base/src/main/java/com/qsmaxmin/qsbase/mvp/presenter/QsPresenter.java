@@ -3,19 +3,20 @@ package com.qsmaxmin.qsbase.mvp.presenter;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 
-import com.qsmaxmin.qsbase.common.aspect.ThreadPoint;
-import com.qsmaxmin.qsbase.common.aspect.ThreadType;
+import com.qsmaxmin.annotation.QsNotProguard;
 import com.qsmaxmin.qsbase.common.exception.QsException;
 import com.qsmaxmin.qsbase.common.exception.QsExceptionType;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.model.QsModel;
-import com.qsmaxmin.qsbase.common.model.QsNotProguard;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.common.widget.listview.LoadingFooter;
 import com.qsmaxmin.qsbase.common.widget.toast.QsToast;
 import com.qsmaxmin.qsbase.mvp.QsIPullToRefreshView;
 import com.qsmaxmin.qsbase.mvp.QsIView;
 import com.qsmaxmin.qsbase.mvp.model.QsConstants;
+import com.qsmaxmin.qsbase.plugin.permission.PermissionCallbackListener;
+import com.qsmaxmin.qsbase.plugin.permission.PermissionHelper;
+import com.qsmaxmin.qsbase.plugin.permission.QsIPermission;
 
 import java.util.ArrayList;
 
@@ -31,7 +32,7 @@ import androidx.fragment.app.FragmentActivity;
  * @Date 2017/6/21 16:27
  * @Description
  */
-public class QsPresenter<V extends QsIView> implements QsNotProguard {
+public class QsPresenter<V extends QsIView> implements QsIPermission, QsNotProguard {
     private final ArrayList<String> tagList = new ArrayList<>();
     private       boolean           isAttach;
     private       V                 mView;
@@ -181,7 +182,7 @@ public class QsPresenter<V extends QsIView> implements QsNotProguard {
     /**
      * 还原View状态
      */
-    @ThreadPoint(ThreadType.MAIN) private void resetViewState() {
+    private void resetViewState() {
         if (!isViewDetach()) {
             QsIView qsIview = getView();
             if (qsIview instanceof QsIPullToRefreshView) {
@@ -227,5 +228,9 @@ public class QsPresenter<V extends QsIView> implements QsNotProguard {
 
     public boolean isNetworkAvailable() {
         return QsHelper.isNetworkAvailable();
+    }
+
+    @Override public void requestPermission(PermissionCallbackListener listener, String... permissions) {
+        PermissionHelper.getInstance().startRequestPermission(getActivity(), listener, permissions);
     }
 }

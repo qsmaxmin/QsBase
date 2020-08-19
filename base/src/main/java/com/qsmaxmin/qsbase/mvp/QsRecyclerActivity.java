@@ -7,10 +7,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 
 import com.qsmaxmin.qsbase.R;
-import com.qsmaxmin.qsbase.common.aspect.ThreadPoint;
-import com.qsmaxmin.qsbase.common.aspect.ThreadType;
 import com.qsmaxmin.qsbase.common.log.L;
-import com.qsmaxmin.qsbase.common.viewbind.ViewBindHelper;
+import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.common.widget.recyclerview.HeaderFooterRecyclerView;
 import com.qsmaxmin.qsbase.mvp.adapter.QsRecycleAdapterItem;
 import com.qsmaxmin.qsbase.mvp.adapter.QsRecyclerAdapter;
@@ -76,12 +74,12 @@ public abstract class QsRecyclerActivity<P extends QsPresenter, D> extends QsAct
         if (getHeaderLayout() != 0) {
             headerView = inflater.inflate(getHeaderLayout(), null);
             recyclerView.addHeaderView(headerView);
-            ViewBindHelper.bindView(this, headerView);
+            bindViewByQsPlugin(headerView);
         }
         if (getFooterLayout() != 0) {
             footerView = inflater.inflate(getFooterLayout(), null);
             recyclerView.addFooterView(footerView);
-            ViewBindHelper.bindView(this, footerView);
+            bindViewByQsPlugin(footerView);
         }
         recyclerView.addItemDecoration(new CustomItemDecoration());
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -150,55 +148,124 @@ public abstract class QsRecyclerActivity<P extends QsPresenter, D> extends QsAct
         setData(list, true);
     }
 
-    @ThreadPoint(ThreadType.MAIN) @Override public void setData(List<D> list, boolean showEmptyView) {
-        mList.clear();
-        if (list != null && !list.isEmpty()) mList.addAll(list);
-        updateAdapter(showEmptyView);
-    }
-
-    @ThreadPoint(ThreadType.MAIN) @Override public void addData(D d) {
-        if (d != null) {
-            mList.add(d);
-            updateAdapter(true);
-        }
-    }
-
-    @ThreadPoint(ThreadType.MAIN) @Override public void addData(List<D> list) {
-        if (list != null && !list.isEmpty()) {
-            mList.addAll(list);
-            updateAdapter(true);
-        }
-    }
-
-    @ThreadPoint(ThreadType.MAIN) @Override public void addData(List<D> list, int position) {
-        if (list != null && !list.isEmpty() && position >= 0) {
-            position = Math.min(position, mList.size());
-            if (recyclerViewAdapter != null) recyclerViewAdapter.notifyItemRangeInserted(position, list.size());
-            mList.addAll(position, list);
-            updateAdapter(true);
-        }
-    }
-
-    @ThreadPoint(ThreadType.MAIN) @Override public void delete(int position) {
-        if (position >= 0 && position < mList.size()) {
-            if (recyclerViewAdapter != null) recyclerViewAdapter.notifyItemRemoved(position);
-            mList.remove(position);
-            updateAdapter(true);
-        }
-    }
-
-    @ThreadPoint(ThreadType.MAIN) @Override public void delete(D d) {
-        if (d != null) {
-            boolean success;
-            success = mList.remove(d);
-            if (success) updateAdapter(true);
-        }
-    }
-
-    @ThreadPoint(ThreadType.MAIN) @Override public void deleteAll() {
-        if (!mList.isEmpty()) {
+    @Override public void setData(final List<D> list, final boolean showEmptyView) {
+        if (QsHelper.isMainThread()) {
             mList.clear();
-            updateAdapter(true);
+            if (list != null && !list.isEmpty()) mList.addAll(list);
+            updateAdapter(showEmptyView);
+        } else {
+            post(new Runnable() {
+                @Override public void run() {
+                    mList.clear();
+                    if (list != null && !list.isEmpty()) mList.addAll(list);
+                    updateAdapter(showEmptyView);
+                }
+            });
+        }
+
+    }
+
+    @Override public void addData(final D d) {
+        if (d != null) {
+            if (QsHelper.isMainThread()) {
+                mList.add(d);
+                updateAdapter(true);
+            } else {
+                post(new Runnable() {
+                    @Override public void run() {
+                        mList.add(d);
+                        updateAdapter(true);
+                    }
+                });
+            }
+        }
+    }
+
+    @Override public void addData(final List<D> list) {
+        if (list != null && !list.isEmpty()) {
+            if (QsHelper.isMainThread()) {
+                mList.addAll(list);
+                updateAdapter(true);
+            } else {
+                post(new Runnable() {
+                    @Override public void run() {
+                        mList.addAll(list);
+                        updateAdapter(true);
+                    }
+                });
+            }
+        }
+    }
+
+    @Override public void addData(final List<D> list, int position) {
+        if (list != null && !list.isEmpty() && position >= 0) {
+            if (QsHelper.isMainThread()) {
+                position = Math.min(position, mList.size());
+                if (recyclerViewAdapter != null) recyclerViewAdapter.notifyItemRangeInserted(position, list.size());
+                mList.addAll(position, list);
+                updateAdapter(true);
+            } else {
+                final int finalPosition = Math.min(position, mList.size());
+                post(new Runnable() {
+                    @Override public void run() {
+                        if (recyclerViewAdapter != null) recyclerViewAdapter.notifyItemRangeInserted(finalPosition, list.size());
+                        mList.addAll(finalPosition, list);
+                        updateAdapter(true);
+                    }
+                });
+            }
+        }
+    }
+
+    @Override public void delete(final int position) {
+        if (position >= 0 && position < mList.size()) {
+            if (QsHelper.isMainThread()) {
+                if (recyclerViewAdapter != null) recyclerViewAdapter.notifyItemRemoved(position);
+                mList.remove(position);
+                updateAdapter(true);
+            } else {
+                post(new Runnable() {
+                    @Override public void run() {
+                        if (recyclerViewAdapter != null) recyclerViewAdapter.notifyItemRemoved(position);
+                        mList.remove(position);
+                        updateAdapter(true);
+                    }
+                });
+            }
+        }
+    }
+
+    @Override public void delete(final D d) {
+        if (d != null) {
+            if (QsHelper.isMainThread()) {
+                boolean success;
+                success = mList.remove(d);
+                if (success) updateAdapter(true);
+            } else {
+                post(new Runnable() {
+                    @Override public void run() {
+                        boolean success;
+                        success = mList.remove(d);
+                        if (success) updateAdapter(true);
+                    }
+                });
+            }
+        }
+    }
+
+    @Override public void deleteAll() {
+        if (!mList.isEmpty()) {
+            if (QsHelper.isMainThread()) {
+                mList.clear();
+                updateAdapter(true);
+            } else {
+                post(new Runnable() {
+                    @Override public void run() {
+                        mList.clear();
+                        updateAdapter(true);
+                    }
+                });
+            }
         }
     }
 

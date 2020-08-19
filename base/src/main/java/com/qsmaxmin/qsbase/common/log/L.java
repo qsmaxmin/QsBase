@@ -14,9 +14,9 @@ public final class L {
     }
 
     /**
-     * 初始化操作
+     * init
      *
-     * @param isLogOpen 总开关，是否打开日志
+     * @param isLogOpen is show log
      */
     public static void init(boolean isLogOpen) {
         enable = isLogOpen;

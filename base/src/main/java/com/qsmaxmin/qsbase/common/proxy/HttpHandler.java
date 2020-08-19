@@ -1,19 +1,16 @@
 package com.qsmaxmin.qsbase.common.proxy;
 
-import com.qsmaxmin.qsbase.common.http.HttpAdapter;
+import com.qsmaxmin.qsbase.common.http.HttpHelper;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 
 
-/**
- * 动态代理 - 网络层
- */
 public class HttpHandler implements InvocationHandler {
-    private final HttpAdapter adapter;
-    private final Object      tag;
+    private final HttpHelper adapter;
+    private final Object     tag;
 
-    public HttpHandler(HttpAdapter adapter, Object tag) {
+    public HttpHandler(HttpHelper adapter, Object tag) {
         this.adapter = adapter;
         this.tag = tag;
     }

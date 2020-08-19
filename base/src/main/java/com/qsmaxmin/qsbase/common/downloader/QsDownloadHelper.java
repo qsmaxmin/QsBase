@@ -10,7 +10,7 @@ import okhttp3.OkHttpClient;
 /**
  * @CreateBy qsmaxmin
  * @Date 2020/3/16 9:40
- * @Description 下载帮助类
+ * @Description download helper
  */
 public class QsDownloadHelper {
     private final  HashMap<Class, QsDownloader> downloaderHolder = new HashMap<>();
@@ -61,9 +61,6 @@ public class QsDownloadHelper {
         return helper;
     }
 
-    /**
-     * 停止所有下载，并释放内存
-     */
     public static <M extends QsDownloadModel> void releaseAll() {
         if (helper != null) {
             if (L.isEnable()) L.i("QsDownloadHelper", "release........");

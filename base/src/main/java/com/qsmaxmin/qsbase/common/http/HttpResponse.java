@@ -77,7 +77,7 @@ public class HttpResponse {
     }
 
     /**
-     * 解密提供者
+     * decrypt provider
      */
     public interface DecryptionProvider {
         byte[] decryption(byte[] secretBytes);

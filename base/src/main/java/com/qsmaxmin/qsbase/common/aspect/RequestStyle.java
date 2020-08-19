@@ -10,8 +10,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 /**
  * @CreateBy qsmaxmin
  * @Date 2020-03-02  18:28
- * @Description http接口自定义style
- * 可设置多个style属性
+ * @Description http custom style
  */
 @Documented
 @Target(METHOD)

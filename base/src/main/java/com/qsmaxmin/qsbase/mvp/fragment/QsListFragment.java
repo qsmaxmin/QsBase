@@ -8,9 +8,8 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 
 import com.qsmaxmin.qsbase.R;
-import com.qsmaxmin.qsbase.common.aspect.ThreadPoint;
-import com.qsmaxmin.qsbase.common.aspect.ThreadType;
 import com.qsmaxmin.qsbase.common.log.L;
+import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.base.InnerScroller;
 import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.base.InnerScrollerContainer;
 import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.base.OuterScroller;
@@ -109,45 +108,101 @@ public abstract class QsListFragment<P extends QsPresenter, D> extends QsFragmen
         setData(list, true);
     }
 
-    @ThreadPoint(ThreadType.MAIN) @Override public void setData(List<D> list, boolean showEmptyView) {
-        mList.clear();
-        if (list != null && !list.isEmpty()) mList.addAll(list);
-        updateAdapter(showEmptyView);
-    }
-
-    @ThreadPoint(ThreadType.MAIN) @Override public void addData(D d) {
-        if (d != null) {
-            mList.add(d);
-            updateAdapter(true);
-        }
-    }
-
-    @ThreadPoint(ThreadType.MAIN) @Override public void addData(List<D> list) {
-        if (list != null && !list.isEmpty()) {
-            mList.addAll(list);
-            updateAdapter(true);
-        }
-    }
-
-    @ThreadPoint(ThreadType.MAIN) @Override public void delete(int position) {
-        if (position >= 0 && position < mList.size()) {
-            mList.remove(position);
-            updateAdapter(true);
-        }
-    }
-
-    @ThreadPoint(ThreadType.MAIN) @Override public void delete(D d) {
-        if (d != null) {
-            boolean success;
-            success = mList.remove(d);
-            if (success) updateAdapter(true);
-        }
-    }
-
-    @ThreadPoint(ThreadType.MAIN) @Override public void deleteAll() {
-        if (!mList.isEmpty()) {
+    @Override public void setData(final List<D> list, final boolean showEmptyView) {
+        if (QsHelper.isMainThread()) {
             mList.clear();
-            updateAdapter(true);
+            if (list != null && !list.isEmpty()) mList.addAll(list);
+            updateAdapter(showEmptyView);
+        } else {
+            post(new Runnable() {
+                @Override public void run() {
+                    mList.clear();
+                    if (list != null && !list.isEmpty()) mList.addAll(list);
+                    updateAdapter(showEmptyView);
+                }
+            });
+        }
+    }
+
+    @Override public void addData(final D d) {
+        if (d != null) {
+            if (QsHelper.isMainThread()) {
+                mList.add(d);
+                updateAdapter(true);
+            } else {
+                post(new Runnable() {
+                    @Override public void run() {
+                        mList.add(d);
+                        updateAdapter(true);
+                    }
+                });
+            }
+        }
+    }
+
+    @Override public void addData(final List<D> list) {
+        if (list != null && !list.isEmpty()) {
+            if (QsHelper.isMainThread()) {
+                mList.addAll(list);
+                updateAdapter(true);
+            } else {
+                post(new Runnable() {
+                    @Override public void run() {
+                        mList.addAll(list);
+                        updateAdapter(true);
+                    }
+                });
+            }
+        }
+    }
+
+    @Override public void delete(final int position) {
+        if (position >= 0 && position < mList.size()) {
+            if (QsHelper.isMainThread()) {
+                mList.remove(position);
+                updateAdapter(true);
+            } else {
+                post(new Runnable() {
+                    @Override public void run() {
+                        mList.remove(position);
+                        updateAdapter(true);
+                    }
+                });
+            }
+        }
+    }
+
+    @Override public void delete(final D d) {
+        if (d != null) {
+            if (QsHelper.isMainThread()) {
+                boolean success;
+                success = mList.remove(d);
+                if (success) updateAdapter(true);
+            } else {
+                post(new Runnable() {
+                    @Override public void run() {
+                        boolean success;
+                        success = mList.remove(d);
+                        if (success) updateAdapter(true);
+                    }
+                });
+            }
+        }
+    }
+
+    @Override public void deleteAll() {
+        if (!mList.isEmpty()) {
+            if (QsHelper.isMainThread()) {
+                mList.clear();
+                updateAdapter(true);
+            } else {
+                post(new Runnable() {
+                    @Override public void run() {
+                        mList.clear();
+                        updateAdapter(true);
+                    }
+                });
+            }
         }
     }
 

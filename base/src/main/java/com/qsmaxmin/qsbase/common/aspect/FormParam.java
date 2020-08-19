@@ -10,7 +10,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 /**
  * @CreateBy qsmaxmin
  * @Date 2017/6/29 15:12
- * @Description 表单参数注解，POST等请求时被注解的参数将被放入表单中
+ * @Description form param
  */
 @Documented
 @Target(PARAMETER)

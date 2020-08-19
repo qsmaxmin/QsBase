@@ -5,7 +5,12 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.animation.Animation;
 
+import com.qsmaxmin.annotation.QsNotProguard;
 import com.qsmaxmin.qsbase.common.widget.dialog.QsProgressDialog;
+import com.qsmaxmin.qsbase.plugin.bind.QsIBindBundle;
+import com.qsmaxmin.qsbase.plugin.bind.QsIBindView;
+import com.qsmaxmin.qsbase.plugin.event.QsIBindEvent;
+import com.qsmaxmin.qsbase.plugin.permission.QsIPermission;
 
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
@@ -21,7 +26,7 @@ import androidx.fragment.app.FragmentActivity;
  * @Description
  */
 
-public interface QsIView<P> {
+public interface QsIView<P> extends QsIBindView, QsIBindEvent, QsIBindBundle, QsIPermission, QsNotProguard {
     int VIEW_STATE_LOADING = 0;
     int VIEW_STATE_CONTENT = 1;
     int VIEW_STATE_EMPTY   = 2;
@@ -60,8 +65,6 @@ public interface QsIView<P> {
     P getPresenter();
 
     Context getContext();
-
-    boolean isOpenEventBus();
 
     boolean isOpenViewState();
 

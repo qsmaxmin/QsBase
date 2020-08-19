@@ -1,5 +1,5 @@
 # QsBase
-## 基于AOP面向切面编程的Android高效开发框架
+## 基于AOP面向切面编程的Android高效开发框架(Transform + APT)
 
 这不是一个框架，而是一套完整的Android APP开发生态圈~~（低调）
 
@@ -20,11 +20,6 @@ MVP架构+AOP面向切面编程，摒弃反射、代理等操作，稳定性和�
                         url 'https://jitpack.io'
                     }
                 }
-            dependencies {
-                ...
-                classpath 'org.aspectj:aspectjtools:1.9.1'
-                classpath 'com.github.qsmaxmin:gradle_plugin_android_aspectjx:2.0.4'
-            }
         }
         
         allprojects {
@@ -38,18 +33,13 @@ MVP架构+AOP面向切面编程，摒弃反射、代理等操作，稳定性和�
 
 #### step 2：Module build.gradle 添加依赖
 
-        apply plugin: 'android-aspectjx'
+        apply plugin: 'com.qsmaxmin.plugin'
         ...
-
-        //AOP编译白名单，第一个是框架包名，第二个替换成你当前项目的包名
-        aspectjx {
-            include 'com.qsmaxmin.qsbase', '当前项目包名'
-        }
 
         dependencies {
             ...
-            implementation 'com.github.qsmaxmin:QsBase:9.0.4'
-            annotationProcessor 'com.github.qsmaxmin:QsPlugin:9.0.4'
+            implementation 'com.github.qsmaxmin:QsBase:10.0.0'
+            annotationProcessor 'com.github.qsmaxmin:QsPlugin:10.0.0'
         }
 
 #### step 3：自定义Application
@@ -275,13 +265,6 @@ MVP架构+AOP面向切面编程，摒弃反射、代理等操作，稳定性和�
         -dontwarn org.conscrypt.**
         -keepnames class okhttp3.internal.publicsuffix.PublicSuffixDatabase
 
-        #EventBus
-        -keep class de.greenrobot.event.** {*;}
-        -keepclassmembers class ** {
-             public void onEvent*(**);
-                void onEvent*(**);
-        }
-
         #GSON
         -keep class sun.misc.Unsafe { *; }
         -keep class com.google.gson.examples.android.model. { *; }
@@ -293,8 +276,8 @@ MVP架构+AOP面向切面编程，摒弃反射、代理等操作，稳定性和�
         -keep class javax.inject.**{*;}
 
         #框架部分实现类防止混淆
-        -keep class * extends com.qsmaxmin.qsbase.common.model.QsNotProguard {*;}
-        -keep class $ extends com.qsmaxmin.qsbase.common.model.QsNotProguard {*;}
+        -keep class * extends com.qsmaxmin.annotation.QsNotProguard{*;}
+        -keep class $ extends com.qsmaxmin.annotation.QsNotProguard{*;}
         
         #Glide防止混淆
         -keep class * extends com.bumptech.glide.module.AppGlideModule{*;}

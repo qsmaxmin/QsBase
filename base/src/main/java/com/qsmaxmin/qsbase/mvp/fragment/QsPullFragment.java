@@ -6,8 +6,7 @@ import android.view.ViewGroup;
 import android.widget.ScrollView;
 
 import com.qsmaxmin.qsbase.R;
-import com.qsmaxmin.qsbase.common.aspect.ThreadPoint;
-import com.qsmaxmin.qsbase.common.aspect.ThreadType;
+import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.common.widget.listview.LoadingFooter;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrDefaultHandler;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout;
@@ -78,19 +77,43 @@ public abstract class QsPullFragment<T extends QsPresenter> extends QsFragment<T
         return mPtrFrameLayout;
     }
 
-    @ThreadPoint(ThreadType.MAIN) @Override public void startRefreshing() {
-        mPtrFrameLayout.autoRefresh();
+    @Override public void startRefreshing() {
+        if (QsHelper.isMainThread()) {
+            mPtrFrameLayout.autoRefresh();
+        } else {
+            mPtrFrameLayout.post(new Runnable() {
+                @Override public void run() {
+                    mPtrFrameLayout.autoRefresh();
+                }
+            });
+        }
     }
 
-    @Override @ThreadPoint(ThreadType.MAIN) public void stopRefreshing() {
-        mPtrFrameLayout.refreshComplete();
+    @Override public void stopRefreshing() {
+        if (QsHelper.isMainThread()) {
+            mPtrFrameLayout.refreshComplete();
+        } else {
+            mPtrFrameLayout.post(new Runnable() {
+                @Override public void run() {
+                    mPtrFrameLayout.refreshComplete();
+                }
+            });
+        }
     }
 
-    @Override @ThreadPoint(ThreadType.MAIN) public void openPullRefreshing() {
-        mPtrFrameLayout.setEnabled(true);
+    @Override public void openPullRefreshing() {
+        if (QsHelper.isMainThread()) {
+            mPtrFrameLayout.setEnabled(true);
+        } else {
+            mPtrFrameLayout.post(new Runnable() {
+                @Override public void run() {
+                    mPtrFrameLayout.setEnabled(true);
+                }
+            });
+        }
     }
 
-    @Override @ThreadPoint(ThreadType.MAIN) public void closePullRefreshing() {
+    @Override public void closePullRefreshing() {
         closePullRefreshing(false);
     }
 
@@ -98,14 +121,29 @@ public abstract class QsPullFragment<T extends QsPresenter> extends QsFragment<T
         return mPtrFrameLayout.isEnabled();
     }
 
-    public void closePullRefreshing(boolean enableOverDrag) {
-        if (enableOverDrag) {
-            mPtrFrameLayout.setEnabled(true);
-            View headerView = mPtrFrameLayout.getHeaderView();
-            if (headerView != null) headerView.setVisibility(View.GONE);
-            mPtrFrameLayout.setKeepHeaderWhenRefresh(false);
+    public void closePullRefreshing(final boolean enableOverDrag) {
+        if (QsHelper.isMainThread()) {
+            if (enableOverDrag) {
+                mPtrFrameLayout.setEnabled(true);
+                View headerView = mPtrFrameLayout.getHeaderView();
+                if (headerView != null) headerView.setVisibility(View.GONE);
+                mPtrFrameLayout.setKeepHeaderWhenRefresh(false);
+            } else {
+                mPtrFrameLayout.setEnabled(false);
+            }
         } else {
-            mPtrFrameLayout.setEnabled(false);
+            mPtrFrameLayout.post(new Runnable() {
+                @Override public void run() {
+                    if (enableOverDrag) {
+                        mPtrFrameLayout.setEnabled(true);
+                        View headerView = mPtrFrameLayout.getHeaderView();
+                        if (headerView != null) headerView.setVisibility(View.GONE);
+                        mPtrFrameLayout.setKeepHeaderWhenRefresh(false);
+                    } else {
+                        mPtrFrameLayout.setEnabled(false);
+                    }
+                }
+            });
         }
     }
 

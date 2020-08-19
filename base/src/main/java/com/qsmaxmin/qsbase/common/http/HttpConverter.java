@@ -3,24 +3,12 @@ package com.qsmaxmin.qsbase.common.http;
 import android.text.TextUtils;
 
 import com.google.gson.Gson;
-import com.qsmaxmin.qsbase.common.log.L;
 
-import org.json.JSONObject;
-
-import java.io.File;
-import java.lang.reflect.Field;
 import java.lang.reflect.Type;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.regex.Pattern;
-
-import okhttp3.MediaType;
-import okhttp3.RequestBody;
 
 
 class HttpConverter {
-    private static final String TAG = "HttpConverter";
-
     private final Gson gson;
 
     HttpConverter() {
@@ -31,9 +19,6 @@ class HttpConverter {
         return gson.fromJson(jsonStr, type);
     }
 
-    /**
-     * 将json格式化输出
-     */
     String formatJson(String sourceStr) {
         if (TextUtils.isEmpty(sourceStr)) return null;
         String str = unicodeToCn(sourceStr);
@@ -76,9 +61,6 @@ class HttpConverter {
         return builder.toString();
     }
 
-    /**
-     * 字符串中，所有以 \\u 开头的UNICODE字符串，全部替换成汉字
-     */
     private String unicodeToCn(final String str) {
         String singlePattern = "[0-9|a-f|A-F]";
         String pattern = singlePattern + singlePattern + singlePattern + singlePattern;
@@ -98,9 +80,6 @@ class HttpConverter {
         return sb.toString();
     }
 
-    /**
-     * 字符串是否以Unicode字符开头。约定Unicode字符以\\u开头。
-     */
     private boolean isStartWithUnicode(String pattern, String str) {
         if (TextUtils.isEmpty(str) || !str.startsWith("\\u") || str.length() < 6) {
             return false;
@@ -109,9 +88,6 @@ class HttpConverter {
         return Pattern.matches(pattern, content);
     }
 
-    /**
-     * 把'\\u'开头的单字转成汉字，如 \\u6B65 ->　步
-     */
     private String unicodeToCnSingle(final String str) {
         int code = Integer.decode("0x" + str.substring(2, 6));
         return String.valueOf((char) code);

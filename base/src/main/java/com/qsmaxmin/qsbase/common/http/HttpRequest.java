@@ -313,7 +313,7 @@ public class HttpRequest {
 
     private void parseFormBody(@NonNull HashMap<String, Object> formMap, @NonNull Object formBody) throws Exception {
         if (formBody instanceof Map) {
-            L.i("QsRequestParams", "methodName:" + methodName + ", FormBody类型为Map，将key和value映射到表单");
+            L.i("QsRequestParams", "methodName:" + methodName + ", @FormBody type of Map....");
             Map dataMap = (Map) formBody;
             for (Object key : dataMap.keySet()) {
                 String keyStr = String.valueOf(key);
@@ -321,7 +321,7 @@ public class HttpRequest {
                 if (!TextUtils.isEmpty(keyStr) && !TextUtils.isEmpty(valueStr)) formMap.put(keyStr, valueStr);
             }
         } else if (formBody instanceof String) {
-            L.i("QsRequestParams", "methodName:" + methodName + ", FormBody类型为String，尝试解析成Json格式（非Json格式不支持）");
+            L.i("QsRequestParams", "methodName:" + methodName + ", FormBody type of String....");
             JSONObject jsonObject = new JSONObject((String) formBody);
             while (jsonObject.keys().hasNext()) {
                 String key = jsonObject.keys().next();
@@ -331,7 +331,7 @@ public class HttpRequest {
                 }
             }
         } else {
-            L.i("QsRequestParams", "methodName:" + methodName + ", FormBody类型为Object，尝试通过反射获取表单数据");
+            L.i("QsRequestParams", "methodName:" + methodName + ", FormBody type of Object....");
             Field[] fieldArr = formBody.getClass().getFields();
             if (fieldArr.length > 0) {
                 for (Field field : fieldArr) {

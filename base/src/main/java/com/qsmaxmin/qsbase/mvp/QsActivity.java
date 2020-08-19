@@ -16,18 +16,15 @@ import android.widget.ScrollView;
 import android.widget.ViewAnimator;
 
 import com.qsmaxmin.qsbase.R;
-import com.qsmaxmin.qsbase.common.aspect.ThreadPoint;
-import com.qsmaxmin.qsbase.common.aspect.ThreadType;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.utils.PresenterUtils;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.common.viewbind.OnKeyDownListener;
-import com.qsmaxmin.qsbase.common.viewbind.ViewBindHelper;
 import com.qsmaxmin.qsbase.common.widget.dialog.QsProgressDialog;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout;
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
-
-import org.greenrobot.eventbus.EventBus;
+import com.qsmaxmin.qsbase.plugin.permission.PermissionCallbackListener;
+import com.qsmaxmin.qsbase.plugin.permission.PermissionHelper;
 
 import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
@@ -92,16 +89,35 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         super.onCreate(savedInstanceState);
         QsHelper.getScreenHelper().pushActivity(this);
         QsHelper.getAppInterface().onActivityCreate(this);
-        ViewBindHelper.bindBundle(this, getIntent().getExtras());
+        bindBundleByQsPlugin(getIntent().getExtras());
         initStatusBar();
         contentView = initView(getLayoutInflater());
         setContentView(contentView);
-        ViewBindHelper.bindView(this, contentView);
-        if (isOpenEventBus() && !EventBus.getDefault().isRegistered(this)) EventBus.getDefault().register(this);
+        bindViewByQsPlugin(contentView);
+
+        if (isOpenEventBus()) {
+            bindEventByQsPlugin();
+        }
         if (!isDelayData()) {
             hasInitData = true;
             initData(savedInstanceState);
         }
+    }
+
+    @Override public void bindBundleByQsPlugin(Bundle bundle) {
+    }
+
+    @Override public void bindViewByQsPlugin(View view) {
+    }
+
+    @Override public boolean isOpenEventBus() {
+        return true;
+    }
+
+    @Override public void bindEventByQsPlugin() {
+    }
+
+    @Override public void unbindEventByQsPlugin() {
     }
 
     @Override protected void onStart() {
@@ -137,7 +153,9 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         mViewAnimator = null;
         onKeyDownListener = null;
         contentView = null;
-        if (isOpenEventBus() && EventBus.getDefault().isRegistered(this)) EventBus.getDefault().unregister(this);
+        if (isOpenEventBus()) {
+            unbindEventByQsPlugin();
+        }
         QsHelper.getAppInterface().onActivityDestroy(this);
         QsHelper.getScreenHelper().popActivity(this);
     }
@@ -235,10 +253,6 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         return this;
     }
 
-    @Override public boolean isOpenEventBus() {
-        return false;
-    }
-
     @Override public boolean isOpenViewState() {
         return false;
     }
@@ -324,7 +338,6 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         loading(QsHelper.getString(resId), cancelAble);
     }
 
-    @ThreadPoint(ThreadType.MAIN)
     @Override public void loading(String message, boolean cancelAble) {
         if (mProgressDialog == null) mProgressDialog = getLoadingDialog();
         if (mProgressDialog != null) {
@@ -339,9 +352,20 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         }
     }
 
-    @ThreadPoint(ThreadType.MAIN)
     @Override public void loadingClose() {
-        if (mProgressDialog != null && mProgressDialog.isAdded()) mProgressDialog.dismissAllowingStateLoss();
+        if (QsHelper.isMainThread()) {
+            if (mProgressDialog != null && mProgressDialog.isAdded()) {
+                mProgressDialog.dismissAllowingStateLoss();
+            }
+        } else {
+            post(new Runnable() {
+                @Override public void run() {
+                    if (mProgressDialog != null && mProgressDialog.isAdded()) {
+                        mProgressDialog.dismissAllowingStateLoss();
+                    }
+                }
+            });
+        }
     }
 
     @Override public void showLoadingView() {
@@ -358,7 +382,6 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         }
     }
 
-    @ThreadPoint(ThreadType.MAIN)
     @Override public void showEmptyView() {
         if (mViewAnimator != null) {
             if (L.isEnable()) L.i(initTag(), "showEmptyView.........");
@@ -371,17 +394,20 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
                     return;
                 }
             }
-            if (L.isEnable()) L.i(initTag(), "showEmptyView.........inflate emptyLayoutId()");
-            View emptyView = getLayoutInflater().inflate(emptyLayoutId(), mViewAnimator, false);
-            emptyView.setTag(R.id.qs_view_state_key, VIEW_STATE_EMPTY);
-            setDefaultViewClickListener(emptyView);
-            mViewAnimator.addView(emptyView);
-            onCreateEmptyView(emptyView);
-            setViewState(mViewAnimator.getChildCount() - 1);
+            post(new Runnable() {
+                @Override public void run() {
+                    if (L.isEnable()) L.i(initTag(), "showEmptyView.........inflate emptyLayoutId()");
+                    View emptyView = getLayoutInflater().inflate(emptyLayoutId(), mViewAnimator, false);
+                    emptyView.setTag(R.id.qs_view_state_key, VIEW_STATE_EMPTY);
+                    setDefaultViewClickListener(emptyView);
+                    mViewAnimator.addView(emptyView);
+                    onCreateEmptyView(emptyView);
+                    setViewState(mViewAnimator.getChildCount() - 1);
+                }
+            });
         }
     }
 
-    @ThreadPoint(ThreadType.MAIN)
     @Override public void showErrorView() {
         if (isOpenViewState() && mViewAnimator != null) {
             if (L.isEnable()) L.i(initTag(), "showErrorView.........");
@@ -394,13 +420,17 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
                     return;
                 }
             }
-            if (L.isEnable()) L.i(initTag(), "showErrorView.........inflate errorLayoutId()");
-            View errorView = getLayoutInflater().inflate(errorLayoutId(), mViewAnimator, false);
-            errorView.setTag(R.id.qs_view_state_key, VIEW_STATE_ERROR);
-            setDefaultViewClickListener(errorView);
-            mViewAnimator.addView(errorView);
-            onCreateErrorView(errorView);
-            setViewState(mViewAnimator.getChildCount() - 1);
+            post(new Runnable() {
+                @Override public void run() {
+                    if (L.isEnable()) L.i(initTag(), "showErrorView.........inflate errorLayoutId()");
+                    View errorView = getLayoutInflater().inflate(errorLayoutId(), mViewAnimator, false);
+                    errorView.setTag(R.id.qs_view_state_key, VIEW_STATE_ERROR);
+                    setDefaultViewClickListener(errorView);
+                    mViewAnimator.addView(errorView);
+                    onCreateErrorView(errorView);
+                    setViewState(mViewAnimator.getChildCount() - 1);
+                }
+            });
         }
     }
 
@@ -519,19 +549,35 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
     }
 
     @Override public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        QsHelper.getPermissionHelper().parsePermissionResultData(requestCode, permissions, grantResults, this);
+        PermissionHelper.parsePermissionResultData(requestCode, permissions, grantResults);
     }
 
-    @ThreadPoint(ThreadType.MAIN)
-    protected void setViewState(int index) {
-        if (mViewAnimator.getDisplayedChild() != index) {
-            mViewAnimator.setDisplayedChild(index);
+    protected void setViewState(final int index) {
+        if (QsHelper.isMainThread()) {
+            if (mViewAnimator.getDisplayedChild() != index) {
+                mViewAnimator.setDisplayedChild(index);
+            }
+        } else {
+            post(new Runnable() {
+                @Override public void run() {
+                    if (mViewAnimator.getDisplayedChild() != index) {
+                        mViewAnimator.setDisplayedChild(index);
+                    }
+                }
+            });
         }
     }
 
-    @ThreadPoint(ThreadType.MAIN)
     @Override public void onBackPressed() {
-        super.onBackPressed();
+        if (QsHelper.isMainThread()) {
+            super.onBackPressed();
+        } else {
+            post(new Runnable() {
+                @Override public void run() {
+                    QsActivity.super.onBackPressed();
+                }
+            });
+        }
     }
 
     /**
@@ -680,6 +726,10 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
 
     @Override public void setOnActivityResultListener(OnActivityResultListener listener) {
         this.activityResultListener = listener;
+    }
+
+    @Override public void requestPermission(PermissionCallbackListener listener, String... permissions) {
+        PermissionHelper.getInstance().startRequestPermission(this, listener, permissions);
     }
 
     @Override public void setOnKeyDownListener(OnKeyDownListener listener) {

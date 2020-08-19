@@ -28,8 +28,6 @@ import com.bumptech.glide.request.FutureTarget;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
-import com.qsmaxmin.qsbase.common.aspect.ThreadPoint;
-import com.qsmaxmin.qsbase.common.aspect.ThreadType;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.utils.glide.transform.PhotoFrameTransform;
 import com.qsmaxmin.qsbase.common.utils.glide.transform.RoundCornersTransformation;
@@ -50,44 +48,54 @@ import androidx.fragment.app.FragmentActivity;
 
 @SuppressWarnings("WeakerAccess")
 public class ImageHelper {
-    public Builder createRequest() {
+    private ImageHelper() {
+    }
+
+    public static Builder createRequest() {
         return new Builder(QsHelper.getApplication());
     }
 
-    public Builder createRequest(Context context) {
+    public static Builder createRequest(Context context) {
         return new Builder(context);
     }
 
-    public Builder createRequest(Activity activity) {
+    public static Builder createRequest(Activity activity) {
         return new Builder(activity);
     }
 
-    public Builder createRequest(FragmentActivity activity) {
+    public static Builder createRequest(FragmentActivity activity) {
         return new Builder(activity);
     }
 
-    public Builder createRequest(androidx.fragment.app.Fragment fragment) {
+    public static Builder createRequest(androidx.fragment.app.Fragment fragment) {
         return new Builder(fragment);
     }
 
-    public Builder createRequest(Fragment fragment) {
+    public static Builder createRequest(Fragment fragment) {
         return new Builder(fragment);
     }
 
-    public Builder createRequest(View view) {
+    public static Builder createRequest(View view) {
         return new Builder(view);
     }
 
-    @ThreadPoint(ThreadType.MAIN)
-    public void clearMemoryCache() {
-        Glide.get(QsHelper.getApplication()).clearMemory();
+    public static void clearMemoryCache() {
+        if (QsHelper.isMainThread()) {
+            Glide.get(QsHelper.getApplication()).clearMemory();
+        } else {
+            QsHelper.post(new Runnable() {
+                @Override public void run() {
+                    Glide.get(QsHelper.getApplication()).clearMemory();
+                }
+            });
+        }
     }
 
-    public void clearDiskCache() {
+    public static void clearDiskCache() {
         Glide.get(QsHelper.getApplication()).clearDiskCache();
     }
 
-    public long getCacheSize() {
+    public static long getCacheSize() {
         try {
             File photoCacheDir = Glide.getPhotoCacheDir(QsHelper.getApplication());
             return getFolderSize(photoCacheDir);
@@ -97,11 +105,11 @@ public class ImageHelper {
         return 0;
     }
 
-    public String getCacheFormatSize() {
+    public static String getCacheFormatSize() {
         return Formatter.formatFileSize(QsHelper.getApplication(), getCacheSize());
     }
 
-    public class Builder {
+    public static class Builder {
         private boolean                 enableHolder = true;
         private RequestManager          manager;
         private Object                  mObject;
@@ -526,16 +534,16 @@ public class ImageHelper {
         }
     }
 
-    @NonNull private String filterOutUrlParams(String url) {
+    @NonNull private static String filterOutUrlParams(String url) {
         Uri uri = Uri.parse(url);
         return uri.getScheme() + "://" + uri.getHost() + uri.getPath();
     }
 
-    private void onLoadImageBefore(Builder builder) {
+    private static void onLoadImageBefore(Builder builder) {
         QsHelper.getAppInterface().onCommonLoadImage(builder);
     }
 
-    private long getFolderSize(File file) {
+    private static long getFolderSize(File file) {
         long size = 0;
         try {
             File[] fileList = file.listFiles();

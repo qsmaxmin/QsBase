@@ -4,8 +4,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 
 import com.qsmaxmin.qsbase.R;
-import com.qsmaxmin.qsbase.common.aspect.ThreadPoint;
-import com.qsmaxmin.qsbase.common.aspect.ThreadType;
+import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.common.widget.listview.LoadingFooter;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrHandler;
@@ -22,7 +21,6 @@ import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
  */
 
 public abstract class QsPullHeaderViewpagerFragment<P extends QsPresenter> extends QsHeaderViewpagerFragment<P> implements QsIPullToRefreshView {
-
     private PtrFrameLayout mPtrFrameLayout;
 
     @Override public int layoutId() {
@@ -33,12 +31,30 @@ public abstract class QsPullHeaderViewpagerFragment<P extends QsPresenter> exten
         return new BeautyCircleRefreshHeader(getContext());
     }
 
-    @ThreadPoint(ThreadType.MAIN) @Override public void startRefreshing() {
-        if (mPtrFrameLayout != null) mPtrFrameLayout.autoRefresh();
+    @Override public void startRefreshing() {
+        if (mPtrFrameLayout == null) return;
+        if (QsHelper.isMainThread()) {
+            mPtrFrameLayout.autoRefresh();
+        } else {
+            mPtrFrameLayout.post(new Runnable() {
+                @Override public void run() {
+                    mPtrFrameLayout.autoRefresh();
+                }
+            });
+        }
     }
 
-    @Override @ThreadPoint(ThreadType.MAIN) public void stopRefreshing() {
-        mPtrFrameLayout.refreshComplete();
+    @Override public void stopRefreshing() {
+        if (mPtrFrameLayout == null) return;
+        if (QsHelper.isMainThread()) {
+            mPtrFrameLayout.refreshComplete();
+        } else {
+            mPtrFrameLayout.post(new Runnable() {
+                @Override public void run() {
+                    mPtrFrameLayout.refreshComplete();
+                }
+            });
+        }
     }
 
     @Override public void openPullRefreshing() {
