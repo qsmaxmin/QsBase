@@ -11,7 +11,7 @@ import androidx.fragment.app.FragmentActivity;
 /**
  * @CreateBy qsmaxmin
  * @Date 2017/6/20 16:49
- * @Description 屏幕管理帮助类
+ * @Description screen helper
  */
 public final class ScreenHelper {
     private static final String TAG = "ScreenHelper";
@@ -53,10 +53,10 @@ public final class ScreenHelper {
             fragmentActivities.add(activity);
             onActivityAdded(activity);
             if (L.isEnable()) {
-                L.i(TAG, "activity入栈:" + activity.getClass().getSimpleName() + "，当前栈大小：" + fragmentActivities.size());
+                L.i(TAG, "activity in:" + activity.getClass().getSimpleName() + "，task size:" + fragmentActivities.size());
             }
         } else {
-            L.e(TAG, "pushActivity 传入的参数为空!");
+            L.e(TAG, "pushActivity param is empty!");
         }
     }
 
@@ -69,10 +69,10 @@ public final class ScreenHelper {
             fragmentActivities.remove(activity);
             onActivityRemoved(activity);
             if (L.isEnable()) {
-                L.i(TAG, "activity出栈:" + activity.getClass().getSimpleName() + "，当前栈大小：" + fragmentActivities.size());
+                L.i(TAG, "activity out:" + activity.getClass().getSimpleName() + "，task size:" + fragmentActivities.size());
             }
         } else {
-            L.e(TAG, "popActivity 传入的参数为空!");
+            L.e(TAG, "popActivity param is empty!");
         }
         if (fragmentActivities.size() == 0) {
             L.i(TAG, "pop all Activity, app shutdown...");
@@ -81,10 +81,6 @@ public final class ScreenHelper {
         }
     }
 
-    /**
-     * 从栈顶向下pop Activity, 直到传入Activity停止
-     * 若入参不为空而该栈中没有该Activity，则pop时留栈底一个Activity
-     */
     public void popAllActivityExceptMain(Class clazz) {
         while (true) {
             if (clazz != null && fragmentActivities.size() <= 1) break;

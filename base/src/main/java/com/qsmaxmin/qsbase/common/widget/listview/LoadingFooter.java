@@ -75,9 +75,6 @@ public class LoadingFooter extends RelativeLayout implements HeaderFooterRecycle
         L.i(TAG, "onAdapterBindViewHolder  state:" + mState);
     }
 
-    /**
-     * 设置状态
-     */
     private void setViewState(State status) {
         switch (status) {
             case Normal:

@@ -16,12 +16,10 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
  */
 
 public class HeaderFooterRecyclerAdapter extends RecyclerView.Adapter {
-
     private List<View>           headerView;
     private List<View>           footerView;
     private RecyclerView.Adapter tagAdapter;
 
-    //定义FooterView类型 和 HeaderView类型
     private final static int HEADER_VIEW_TYPE = Integer.MAX_VALUE / 123;
     private final static int FOOTER_VIEW_TYPE = Integer.MAX_VALUE / 321;
 
@@ -107,9 +105,6 @@ public class HeaderFooterRecyclerAdapter extends RecyclerView.Adapter {
         void onAdapterBindViewHolder();
     }
 
-    /**
-     * headerView 和 footerView  ViewHolder的持有类
-     */
     private class HeaderOrFooterView extends RecyclerView.ViewHolder {
         View view;
 

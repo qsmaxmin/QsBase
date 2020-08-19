@@ -58,18 +58,13 @@ public class QsToast {
 
         @Override
         public void handleMessage(Message msg) {
-            impl.handleMessage(msg);//需要委托给原Handler执行
+            impl.handleMessage(msg);
         }
     }
 
-
-    /**
-     * 简单Toast 消息弹出
-     */
     public static void show(final String msg) {
         show(msg, Toast.LENGTH_SHORT);
     }
-
 
     public static void show(@StringRes int resId) {
         if (resId != 0) show(QsHelper.getString(resId));
@@ -95,9 +90,6 @@ public class QsToast {
         }
     }
 
-    /**
-     * 弹出提示
-     */
     private static void showToast(Context context, String text, int duration) {
         try {
             int size = QsHelper.getScreenHelper().getActivityStack().size();

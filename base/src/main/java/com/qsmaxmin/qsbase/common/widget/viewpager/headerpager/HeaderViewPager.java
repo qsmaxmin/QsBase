@@ -291,9 +291,6 @@ public class HeaderViewPager extends FrameLayout implements OuterScroller {
 
     private float mTempScrollY = TEMP_SCROLL_Y_INIT;
 
-    /**
-     * （as its name）
-     */
     private int calcHeaderTransition(int headerStart, int scrollY, int scrollYIn, int maxHeaderTransition) {
         int headerTransition = headerStart + MagicHeaderUtils.calcDelta(scrollY, scrollYIn);
         headerTransition = Math.min(headerTransition, maxHeaderTransition);
@@ -488,17 +485,10 @@ public class HeaderViewPager extends FrameLayout implements OuterScroller {
      */
     public boolean intercept2InnerScroller = false;
 
-    /**
-     * Whether pointed down on Header. Generated from touch down, and destroyed by Inner scroll stop.）
-     */
     private boolean mPointDownOnHeader;
 
     private final float TOUCH_CLICK_THRESHOLD = MagicHeaderUtils.dp2px(getContext(), 5);
 
-    /**
-     * Maintained by dispatchTouchEvent() and interceptTouchEvent().
-     * Why interceptTouchEvent()？ cuz it's another exit of dispatchTouchEvent().
-     */
     private boolean mProcessTouchEvent = false;
 
     /**
@@ -842,15 +832,6 @@ public class HeaderViewPager extends FrameLayout implements OuterScroller {
         }
     }
 
-    /**
-     * ** （To forbidden multitouch cuz have problem integrated with ***
-     * ** pull to refresh, if you don't need ptr or use other ptr ***
-     * **               framework, you can open it.）              ***
-     * * --------------------------------------------------------- **
-     * *  News: But now PullToRefresh has been fixed, so default to not to forbidden. **
-     * **     But if you wanna forbidden multitouch for some reason,      ***
-     * **               you can still call me.
-     ***/
     public void setForbiddenMultiTouch(boolean forbiddenMultiTouch) {
         mForbiddenMultiTouch = forbiddenMultiTouch;
     }

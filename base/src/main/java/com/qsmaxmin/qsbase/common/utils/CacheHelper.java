@@ -21,7 +21,7 @@ import java.io.InputStreamReader;
 /**
  * @CreateBy qsmaxmin
  * @Date 16/8/10  下午6:14
- * @Description 缓存处理类 将Model对象序列化到本地的/data/data/<package name>/fileName文件中 或者从file读取内容，转换成Model对象
+ * @Description CacheHelper
  */
 public class CacheHelper {
 

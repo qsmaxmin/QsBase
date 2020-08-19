@@ -641,9 +641,6 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
         return savedState;
     }
 
-    /**
-     * 切换是否有动画
-     */
     public void setIsCurrentItemAnimation(boolean isCurrentItemAnimation) {
         this.isCurrentItemAnimation = isCurrentItemAnimation;
     }

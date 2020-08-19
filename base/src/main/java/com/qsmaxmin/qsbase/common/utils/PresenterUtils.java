@@ -16,9 +16,6 @@ import java.lang.reflect.Type;
  */
 @SuppressWarnings("unchecked")
 public final class PresenterUtils {
-    /**
-     * 创建业务类
-     */
     public static <P extends QsPresenter, V extends QsIView> P createPresenter(V iView) {
         Class<? extends QsIView> viewClass = iView.getClass();
         P presenterImpl;

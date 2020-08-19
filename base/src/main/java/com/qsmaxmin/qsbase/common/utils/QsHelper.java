@@ -36,7 +36,7 @@ import androidx.fragment.app.FragmentTransaction;
 /**
  * @CreateBy qsmaxmin
  * @Date 2017/6/20 16:46
- * @Description 帮助类中心
+ * @Description Qs center
  */
 public class QsHelper {
     private static QsHelper       qsHelper;

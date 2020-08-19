@@ -24,8 +24,6 @@ import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
-import androidx.viewpager.widget.PagerAdapter;
-import androidx.viewpager.widget.ViewPager;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -33,12 +31,15 @@ import com.qsmaxmin.qsbase.R;
 
 import java.util.ArrayList;
 
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
+
 import static android.graphics.Paint.ANTI_ALIAS_FLAG;
 
 /**
  * @CreateBy qsmaxmin
  * @Date 2017/2/15 13:32
- * @Description 无限viewpager指示器
+ * @Description CirclePageIndicator
  */
 public class CirclePageIndicator extends View implements PageIndicator {
     private final Paint                mPaintUnSelectedFill = new Paint(ANTI_ALIAS_FLAG);
@@ -230,7 +231,7 @@ public class CirclePageIndicator extends View implements PageIndicator {
         }
 
         void onDraw(Canvas canvas) {
-            if (mCurrentPage == indicators.size() - 1) {//第一个选中左滑，最后一个选中右滑执行这里
+            if (mCurrentPage == indicators.size() - 1) {
                 if (index == 0) {
                     leftX = longOffset + index * centerMargin;
                     rightX = longOffset + index * centerMargin + selectedWidth * mPageOffset;
@@ -301,7 +302,7 @@ public class CirclePageIndicator extends View implements PageIndicator {
     private void drawTranslateSelected(Canvas canvas, int count) {
         float dX;
         float cx = mCurrentPage * centerMargin;
-        if (mCurrentPage == count - 1) {//最后一页，循环
+        if (mCurrentPage == count - 1) {
             cx -= mPageOffset * (centerMargin * (count - 1));
         } else {
             cx += mPageOffset * centerMargin;

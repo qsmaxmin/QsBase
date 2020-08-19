@@ -128,29 +128,16 @@ public class QsThreadPollHelper {
         }
     }
 
-    /**
-     * 池中只有一个线程工作，阻塞队列无界，它能保证按照任务提交的顺序来执行任务
-     */
     private static ThreadPoolExecutor createSingleThreadPool() {
         return new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS,
                 new LinkedBlockingQueue<Runnable>(), generateThread(QsConstants.NAME_SINGLE_THREAD));
     }
 
-    /**
-     * 使用SynchronousQueue作为阻塞队列，队列无界，线程的空闲时限为60秒。
-     * 这种类型的线程池非常适用IO密集的服务，因为IO请求具有密集、数量巨大、不持续、服务器端CPU等待IO响应时间长的特点。
-     * 服务器端为了能提高CPU的使用率就应该为每个IO请求都创建一个线程，以免CPU因为等待IO响应而空闲。
-     */
     private static ThreadPoolExecutor createHttpThreadPool() {
         return new ThreadPoolExecutor(0, Integer.MAX_VALUE, 60, TimeUnit.SECONDS,
                 new SynchronousQueue<Runnable>(), generateThread(QsConstants.NAME_HTTP_THREAD));
     }
 
-    /**
-     * 需指定核心线程数，核心线程数和最大线程数相同。
-     * 使用LinkedBlockingQueue 作为阻塞队列，队列无界，线程空闲时间0秒。
-     * 这种类型的线程池可以适用CPU密集的工作，在这种工作中CPU忙于计算而很少空闲
-     */
     private static ThreadPoolExecutor createWorkThreadPool() {
         return new ThreadPoolExecutor(10, 10, 0L, TimeUnit.MILLISECONDS,
                 new LinkedBlockingQueue<Runnable>(), generateThread(QsConstants.NAME_WORK_THREAD));
@@ -166,5 +153,4 @@ public class QsThreadPollHelper {
             }
         };
     }
-
 }

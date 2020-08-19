@@ -20,7 +20,7 @@ import java.lang.reflect.Method;
 /**
  * @CreateBy qsmaxmin
  * @Date 2017-7-6 12:37:16
- * @Description 自动轮播，支持无限轮播
+ * @Description auto scroll
  */
 public final class AutoScrollViewPager extends QsViewPager {
     public static final int                    DEFAULT_INTERVAL            = 3000;
@@ -231,17 +231,14 @@ public final class AutoScrollViewPager extends QsViewPager {
         return super.onInterceptTouchEvent(ev);
     }
 
-    /**
-     * 反射使view处于被drag状态
-     */
     private void setBeingDragged() {
         try {
             if (mIsBeingDraggedField == null || setScrollStateMethod == null) {
                 mIsBeingDraggedField = ViewPager.class.getDeclaredField("mIsBeingDragged");
-                if (mIsBeingDraggedField != null) mIsBeingDraggedField.setAccessible(true);
+                mIsBeingDraggedField.setAccessible(true);
 
                 setScrollStateMethod = ViewPager.class.getDeclaredMethod("setScrollState", int.class);
-                if (setScrollStateMethod != null) setScrollStateMethod.setAccessible(true);
+                setScrollStateMethod.setAccessible(true);
                 L.i(initTag(), "setBeingDragged based on reflex to get field and method......");
             }
             if (mIsBeingDraggedField != null) mIsBeingDraggedField.set(this, true);
@@ -378,31 +375,19 @@ public final class AutoScrollViewPager extends QsViewPager {
         }
     }
 
-    /**
-     * 设定因子的滑动动画持续时间会改变
-     */
     public void setSwipeScrollDurationFactor(double scrollFactor) {
         swipeScrollFactor = scrollFactor;
     }
 
-    /**
-     * 设定因子的滑动动画持续时间会改变 在自动滚动
-     */
     public void setAutoScrollDurationFactor(double scrollFactor) {
         autoScrollFactor = scrollFactor;
     }
 
-    /**
-     * 执行滚动
-     */
     public void startAutoScroll() {
         isAutoScroll = true;
         sendScrollMessage((int) (interval + scroller.getDuration() / autoScrollFactor * swipeScrollFactor));
     }
 
-    /**
-     * 停止滚动
-     */
     public void stopAutoScroll() {
         isAutoScroll = false;
         handler.removeMessages(SCROLL_WHAT);

@@ -58,13 +58,6 @@ public abstract class QsRecycleAdapterItem<D> implements QsIBindView, QsNotProgu
         return viewLayer;
     }
 
-    /**
-     * 发送事件给view层（Fragment或者Activity）
-     *
-     * @param eventType 事件类型
-     * @param data      数据
-     * @param position  item索引
-     */
     protected final void sendEvent(int eventType, D data, int position) {
         viewLayer.onReceiveAdapterItemEvent(eventType, data, position);
     }

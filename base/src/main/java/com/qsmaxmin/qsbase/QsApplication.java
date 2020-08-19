@@ -48,44 +48,26 @@ public abstract class QsApplication extends Application implements QsIApplicatio
     @Override public void onActivityDestroy(Activity activity) {
     }
 
-    /**
-     * 缺省页面加载中布局
-     */
     @Override public @LayoutRes int loadingLayoutId() {
         return R.layout.qs_default_loading;
     }
 
-    /**
-     * 缺省页面为空布局
-     */
     @Override public @LayoutRes int emptyLayoutId() {
         return R.layout.qs_default_empty;
     }
 
-    /**
-     * 缺省页面加载错误布局
-     */
     @Override public @LayoutRes int errorLayoutId() {
         return R.layout.qs_default_error;
     }
 
-    /**
-     * 公共progressDialog
-     */
     @Override public QsProgressDialog getLoadingDialog() {
         return new DefaultProgressDialog();
     }
 
-    /**
-     * http请求全局回调
-     */
     @Override public QsHttpCallback registerGlobalHttpListener() {
         return null;
     }
 
-    /**
-     * 公共图片加载回调
-     */
     public void onCommonLoadImage(ImageHelper.Builder builder) {
     }
 }

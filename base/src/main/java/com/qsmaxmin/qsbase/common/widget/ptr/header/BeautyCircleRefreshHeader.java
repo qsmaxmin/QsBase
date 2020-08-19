@@ -72,36 +72,24 @@ public class BeautyCircleRefreshHeader extends RelativeLayout implements PtrUIHa
         }
     }
 
-    /**
-     * 开始刷新
-     */
     @Override public void onUIRefreshBegin(PtrFrameLayout ptrFrameLayout) {
         if (circleLogoDrawable != null) {
             circleLogoDrawable.onBegin();
         }
     }
 
-    /**
-     * 刷新完成
-     */
     @Override public void onUIRefreshComplete(PtrFrameLayout ptrFrameLayout) {
         if (circleLogoDrawable != null) {
             circleLogoDrawable.onRefreshComplete();
         }
     }
 
-    /**
-     * 刷新重置
-     */
     @Override public void onUIReset(PtrFrameLayout ptrFrameLayout) {
         if (circleLogoDrawable != null) {
             circleLogoDrawable.onReset();
         }
     }
 
-    /**
-     * 当下拉高度高于设定临界点时改变刷新头状态
-     */
     @Override public void onUIPositionChange(PtrFrameLayout ptrFrameLayout, boolean isUnderTouch, byte status, PtrIndicator ptrIndicator) {
         float percent = Math.min(ptrIndicator.getRatioOfHeaderToHeightRefresh(), ptrIndicator.getCurrentPercent());
         if (checkCanAnimation()) {

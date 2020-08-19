@@ -29,7 +29,7 @@ public interface PtrUIHandler {
     void onUIRefreshComplete(PtrFrameLayout frame);
 
     /**
-     * @param status {@link PtrFrameLayout#PTR_STATUS_INIT}等
+     * @param status {@link PtrFrameLayout#PTR_STATUS_INIT}...
      */
     void onUIPositionChange(PtrFrameLayout frame, boolean isUnderTouch, byte status, PtrIndicator ptrIndicator);
 }

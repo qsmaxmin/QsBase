@@ -82,12 +82,10 @@ public class HeaderFooterRecyclerView extends RecyclerView {
             mAdapter.unregisterDataSetObserver(mAdapterDataObserver);
         }
         mAdapter = new HeaderFooterRecyclerAdapter(adapter, mHeaderViews, mFooterViews);
-        //重新注册一个新的观察者
         mAdapter.registerDataSetObserver(mAdapterDataObserver);
         super.setAdapter(mAdapter);
     }
 
-    //数据观察者
     private AdapterDataObserver mAdapterDataObserver = new AdapterDataObserver() {
         @Override public void onChanged() {
             mAdapter.notifyDataSetChanged();

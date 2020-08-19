@@ -53,10 +53,6 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         return L.isEnable() ? getClass().getSimpleName() : "QsActivity";
     }
 
-    /**
-     * 重写该方法时，一定要注意相关控件及控件id
-     * 如非必要，无需重写
-     */
     @Override public int rootViewLayoutId() {
         if (isOpenViewState()) {
             return actionbarLayoutId() == 0 ? R.layout.qs_view_animator : R.layout.qs_view_animator_ab;
@@ -231,7 +227,7 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
             synchronized (this) {
                 if (presenter == null) {
                     presenter = PresenterUtils.createPresenter(this);
-                    L.i(initTag(), "Presenter初始化完成...");
+                    L.i(initTag(), "Presenter init complete...");
                 }
             }
         }
@@ -311,9 +307,6 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         //custom your logic
     }
 
-    /**
-     * 重写该方法以便自定义进度条样式
-     */
     @Override public QsProgressDialog getLoadingDialog() {
         return QsHelper.getAppInterface().getLoadingDialog();
     }
@@ -580,10 +573,6 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         }
     }
 
-    /**
-     * onKeyDown事件处理顺序：
-     * 优先onKeyDownListener处理
-     */
     @Override public final boolean onKeyDown(int keyCode, KeyEvent event) {
         if (onKeyDownListener != null && onKeyDownListener.onKeyDown(keyCode, event)) return true;
         return onKeyDown(event, keyCode);
@@ -644,8 +633,6 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
                 final int bits = WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS;
                 winParams.flags |= bits;
                 window.setAttributes(winParams);
-            } else {
-                L.e(initTag(), "当前Android SDK版本太低(" + Build.VERSION.SDK_INT + ")，只有SDK版本 >= KITKAT才支持透明状态栏，推荐在actionbarLayoutId()方法中根据该条件给出不同高度的布局");
             }
         } else {
             if (isBlackIconStatusBar() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -666,11 +653,11 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
     }
 
     @Override public void runOnWorkThread(Runnable action) {
-        QsHelper.getThreadHelper().getWorkThreadPoll().execute(action);
+        QsHelper.executeInWorkThread(action);
     }
 
     @Override public void runOnHttpThread(Runnable action) {
-        QsHelper.getThreadHelper().getHttpThreadPoll().execute(action);
+        QsHelper.executeInHttpThread(action);
     }
 
     @Override public FragmentActivity getActivity() {

@@ -244,16 +244,10 @@ public abstract class QsListActivity<P extends QsPresenter, D> extends QsActivit
     @Override public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
     }
 
-    /**
-     * listView是否滑动到顶部
-     */
     @Override public boolean canListScrollDown() {
         return getListView().canScrollVertically(-1);
     }
 
-    /**
-     * listView是否滑动到底部
-     */
     @Override public boolean canListScrollUp() {
         return getListView().canScrollVertically(1);
     }

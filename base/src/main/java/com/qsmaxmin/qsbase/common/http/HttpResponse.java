@@ -25,9 +25,6 @@ public class HttpResponse {
         return response;
     }
 
-    /**
-     * 向响应体提供解密对象
-     */
     public void registerDecryptionProvider(DecryptionProvider provider) {
         this.decryptionProvider = provider;
     }

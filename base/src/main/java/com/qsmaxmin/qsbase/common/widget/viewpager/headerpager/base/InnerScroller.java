@@ -9,36 +9,16 @@ import android.view.View;
  */
 public interface InnerScroller {
 
-    /**
-     * （as its name）
-     */
     void triggerOuterScroll();
 
-    /**
-     * （as its name）
-     * @hide
-     */
     void recordScrollPosition(int firstVisibleItem);
 
-    /**
-     * Called by OuterScroller. verification inside. And will not directly produce scrolling. It will call performScroll() to produce substantial rolling.
-     */
     void syncScroll();
 
-    /**
-     * （as its name）
-     */
     void adjustEmptyHeaderHeight();
-
-    /**************
-     * Methods for use both in and out
-     ****************/
 
     int getInnerScrollY();
 
-    /*********
-     * Methods exploded for customization
-     *************/
     OuterScroller getOuterScroller();
 
     /**
@@ -53,14 +33,8 @@ public interface InnerScroller {
      */
     View getReceiveView();
 
-    /**
-     * （as its name）
-     */
     void scrollToTop();
 
-    /**
-     * （as its name）
-     */
     boolean isScrolling();
 
     /**

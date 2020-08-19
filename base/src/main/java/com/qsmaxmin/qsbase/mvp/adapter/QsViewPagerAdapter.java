@@ -116,7 +116,7 @@ public class QsViewPagerAdapter extends PagerAdapter implements OuterPagerAdapte
             ft.add(fragment, fragment.getClass().getSimpleName() + position);
             ft.commitAllowingStateLoss();
             fragmentManager.executePendingTransactions();
-            fragment.setHasOptionsMenu(false);// 设置actionbar不执行
+            fragment.setHasOptionsMenu(false);
             if (replacePosition != -1) {
                 if (getViewPagerData()[replacePosition].fragment instanceof QsIFragment) {
                     ((QsIFragment) getViewPagerData()[replacePosition].fragment).initDataWhenDelay();

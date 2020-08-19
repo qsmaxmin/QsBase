@@ -94,7 +94,7 @@ public abstract class QsPullListFragment<T extends QsPresenter, D> extends QsLis
     }
 
     @Override public void setLoadingState(final LoadingFooter.State state) {
-        L.i(initTag(), "setLoadingState：" + state);
+        L.i(initTag(), "setLoadingState:" + state);
         if (loadingFooter != null) loadingFooter.setState(state);
     }
 

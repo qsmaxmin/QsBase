@@ -36,7 +36,7 @@ class DownloadExecutor<M extends QsDownloadModel<K>, K> {
 
     void start(final Request.Builder builder) {
         initTime = System.currentTimeMillis();
-        QsHelper.getThreadHelper().getWorkThreadPoll().execute(new Runnable() {
+        QsHelper.executeInWorkThread(new Runnable() {
             @Override public void run() {
                 startInner(builder);
             }

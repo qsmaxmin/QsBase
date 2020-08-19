@@ -247,16 +247,10 @@ public abstract class QsListFragment<P extends QsPresenter, D> extends QsFragmen
     @Override public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
     }
 
-    /**
-     * listView是否滑动到顶部
-     */
     @Override public boolean canListScrollDown() {
         return getListView().canScrollVertically(-1);
     }
 
-    /**
-     * listView是否滑动到底部
-     */
     @Override public boolean canListScrollUp() {
         return getListView().canScrollVertically(1);
     }
@@ -283,7 +277,7 @@ public abstract class QsListFragment<P extends QsPresenter, D> extends QsFragmen
     /*----------------------- 以下是HeaderViewPager支持 ----------------------------*/
     @Override public void setMyOuterScroller(OuterScroller outerScroller, int myPosition) {
         if (getListView() instanceof InnerScroller) {
-            L.i(initTag(), "注册调度控件：  position:" + myPosition);
+            L.i(initTag(), "setMyOuterScroller....position:" + myPosition);
             ((InnerScroller) getListView()).register2Outer(outerScroller, myPosition);
         }
     }

@@ -18,9 +18,6 @@ public class MagicHeaderUtils {
 
     public static final String TAG = "sz[MagicHeaderUtils]";
 
-    /**
-     * （as its name）
-     */
     public static int calcDelta(int value, int base) {
         return value - base;
     }
@@ -32,29 +29,16 @@ public class MagicHeaderUtils {
         return (int) (1f * MagicHeaderUtils.getScreenWidth(context) / drawable.getIntrinsicWidth() * drawable.getIntrinsicHeight());
     }
 
-    /**
-     * （as its name）
-     */
     public static int getHeightWhenFullWidth(Context context, int drawableId) {
         return getHeightWhenFullWidth(context, context.getResources().getDrawable(drawableId));
     }
 
-    /**
-     * Three ways to shift View: margin of LayoutParams, setTransitionX/Y， View's Scroll.
-     * Note: if minSDK > 2.3, using SET_TRANSLATION is ok without nineOldAndroids dependency.
-     * if min SDK <= 2.3, suggest use LAYOUT_PARAMS or View's Scroll.）
-     */
     public interface TranslationMethods {
         int LAYOUT_PARAMS   = 0;
         int SET_TRANSLATION = 1;
         int VIEW_SCROLL     = 2;
     }
 
-    /**
-     * （as its name）
-     * @param translation_Y Positive when upwards
-     * @return true if success
-     */
     @SuppressLint("NewApi") public static boolean setParamY(View view, int translation_Y, int translationMethod) {
         if (view == null) {
             Log.e(TAG, "ERROR: warning: your params contains null in setParamY()");
@@ -98,7 +82,6 @@ public class MagicHeaderUtils {
     }
 
     /**
-     * (as its name).
      * @return Y value, positive when upwards
      */
     @SuppressLint("NewApi") public static float getParamY(View view, int translationMethod) {
@@ -127,9 +110,6 @@ public class MagicHeaderUtils {
         return result;
     }
 
-    /**
-     * （as its name）
-     */
     public static float clamp(float value, float min, float max) {
 
         if (min > max) {
@@ -154,9 +134,6 @@ public class MagicHeaderUtils {
         return (int) (pxValue / scale + 0.5f);
     }
 
-    /**
-     * (as its name)
-     */
     public static int getScreenWidth(Context context) {
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         DisplayMetrics outMetrics = new DisplayMetrics();
@@ -164,9 +141,6 @@ public class MagicHeaderUtils {
         return outMetrics.widthPixels;
     }
 
-    /**
-     * (as its name)
-     */
     public static int getScreenHeight(Context context) {
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         DisplayMetrics outMetrics = new DisplayMetrics();
@@ -194,10 +168,6 @@ public class MagicHeaderUtils {
         event.recycle();
         return result;
     }
-
-    /*********************
-     * ArrayList Tool Method
-     *************************/
 
     public static <T> void ensureCapacityWithEmptyObject(ArrayList<T> arrayList, int capacity, Class<T> clazz) {
         if (arrayList == null) {

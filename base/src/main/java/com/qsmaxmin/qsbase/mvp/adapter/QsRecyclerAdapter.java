@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 /**
  * @CreateBy administrator
  * @Date 2020/4/9 16:39
- * @Description recyclerView适配器
+ * @Description recyclerView adapter
  */
 public class QsRecyclerAdapter<D> extends RecyclerView.Adapter<MyRecycleViewHolder<D>> {
     private final LayoutInflater     mInflater;

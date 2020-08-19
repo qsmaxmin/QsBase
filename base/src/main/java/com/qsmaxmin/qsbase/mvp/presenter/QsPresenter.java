@@ -119,7 +119,7 @@ public class QsPresenter<V extends QsIView> implements QsIPermission, QsNotProgu
                 } catch (Exception e) {
                     L.e(initTag(), "cancel http request failed :" + e.getMessage());
                 }
-            } else {//当前http请求已经被取消
+            } else {
                 L.i(initTag(), "The current HTTP request has been cancelled! requestTag:" + requestTag);
             }
         }
@@ -129,9 +129,6 @@ public class QsPresenter<V extends QsIView> implements QsIPermission, QsNotProgu
         return isSuccess(baseModel, false);
     }
 
-    /**
-     * 请求网络成功，判断数据的完整性
-     */
     public boolean isSuccess(QsModel model, boolean shouldToast) {
         if (model != null && model.isResponseOk()) {
             return true;
@@ -163,9 +160,6 @@ public class QsPresenter<V extends QsIView> implements QsIPermission, QsNotProgu
         }
     }
 
-    /**
-     * 自定义异常处理
-     */
     public void methodError(QsException exception) {
         L.e(initTag(), "methodError... errorType:" + exception.getExceptionType() + " requestTag:" + exception.getRequestTag());
         exception.printStackTrace();
@@ -179,9 +173,6 @@ public class QsPresenter<V extends QsIView> implements QsIPermission, QsNotProgu
         resetViewState();
     }
 
-    /**
-     * 还原View状态
-     */
     private void resetViewState() {
         if (!isViewDetach()) {
             QsIView qsIview = getView();

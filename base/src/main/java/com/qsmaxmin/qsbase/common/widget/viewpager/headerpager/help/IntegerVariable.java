@@ -1,9 +1,5 @@
 package com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.help;
 
-/**
- * 整形变量内。可直接改变里面的值，而不用修改对象引用。
- * （With an Integer inside. Can change value without changing reference.）
- */
 public final class IntegerVariable {
 
     private int mValue;
@@ -24,22 +20,18 @@ public final class IntegerVariable {
 
     @Override
     public boolean equals(Object o) {
-        // 地址
         if(this == o) {
             return true;
         }
 
-        // 同类比较值
         if(o instanceof IntegerVariable) {
             return mValue == ((IntegerVariable)o).getValue();
         }
 
-        // 异类比较值
         if(o instanceof Integer) {
             return mValue == (Integer) o;
         }
 
-        // 无法处理的，扔给父类
         return super.equals(o);
     }
 

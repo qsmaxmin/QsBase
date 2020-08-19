@@ -51,11 +51,6 @@ public class TranslatableLinearLayout extends LinearLayout {
 
     private boolean mProcessTouchEvent;
 
-    /**
-     * 对控件内的触摸进行分发控制，让它只处理看起来的边界内的事件
-     * （control the touch event in this view, to let it
-     * just deal with event located in area where this looks）
-     */
     @Override public boolean dispatchTouchEvent(MotionEvent ev) {
         int visualBottom = getVisualBottom();
         switch (ev.getAction()) {

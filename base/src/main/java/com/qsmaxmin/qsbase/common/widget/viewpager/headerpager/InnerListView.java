@@ -281,11 +281,8 @@ public class InnerListView extends QsListView implements InnerScroller, AbsListV
         if (scrollState == SCROLL_STATE_IDLE) {
 
             if (mOuterScroller != null && mIndex == mOuterScroller.getCurrentInnerScrollerIndex()) {
-                // bug fixed on MX3(API 17): trigger Magic Header not so well cuz onScroll() callback frequency is too low on that device.
-                // 所以这儿再来trigger一下吧，防火防盗防魅族~XD
                 triggerOuterScroll();
                 recordScrollPosition(getFirstVisiblePosition());
-
                 mOuterScroller.onInnerScrollerStop();
             }
         }
@@ -718,7 +715,6 @@ public class InnerListView extends QsListView implements InnerScroller, AbsListV
 
     /**
      * Get ListView pixel scrollY
-     * （Logic ScrollY, can be thousands, even tens of thousands ）
      */
     private int getListViewScrollY() {
 

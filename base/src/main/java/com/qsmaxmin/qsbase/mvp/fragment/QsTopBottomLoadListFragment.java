@@ -75,14 +75,14 @@ public abstract class QsTopBottomLoadListFragment<P extends QsPresenter, D> exte
     }
 
     @Override public void setTopLoadingState(LoadingFooter.State state) {
-        L.i(initTag(), "setTopLoadingState：" + state);
+        L.i(initTag(), "setTopLoadingState:" + state);
         if (topLoadingView != null) {
             topLoadingView.setState(state);
         }
     }
 
     @Override public void setBottomLoadingState(LoadingFooter.State state) {
-        L.i(initTag(), "setBottomLoadingState：" + state);
+        L.i(initTag(), "setBottomLoadingState:" + state);
         if (bottomLoadingView != null) {
             bottomLoadingView.setState(state);
         }

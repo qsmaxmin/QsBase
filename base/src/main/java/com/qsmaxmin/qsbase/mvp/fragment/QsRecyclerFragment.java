@@ -90,7 +90,6 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
         mRecyclerView.addItemDecoration(new CustomItemDecoration());
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                //防止滚动列表时item位置互换及滑动到顶部时对齐顶部
                 if (newState == RecyclerView.SCROLL_STATE_IDLE && getRecyclerViewType() == TYPE_STAGGERED_GRID && getSpanCount() > 1) {
                     int[] spanArr = new int[getSpanCount()];
                     StaggeredGridLayoutManager layoutManager = (StaggeredGridLayoutManager) getRecyclerView().getLayoutManager();
@@ -121,8 +120,7 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
                 final GridLayoutManager manager = new GridLayoutManager(getContext(), getSpanCount());
                 manager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
                     @Override public int getSpanSize(int position) {
-                        /*当有footer或者header时特殊处理，让它占满整个一条*/
-                        L.i(initTag(), "getSpanSize   position:" + position);
+                        L.i(initTag(), "getSpanSize, position:" + position);
                         if (getHeaderLayout() != 0 && position == 0) {
                             return getSpanCount();
                         } else if (getHeaderLayout() != 0 && getFooterLayout() != 0 && position == mList.size() + 1) {
@@ -322,16 +320,10 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
         return false;
     }
 
-    /**
-     * recyclerView是否滑动到顶部
-     */
     @Override public boolean canListScrollDown() {
         return getRecyclerView().canScrollVertically(-1);
     }
 
-    /**
-     * recyclerView是否滑动到底部
-     */
     @Override public boolean canListScrollUp() {
         return getRecyclerView().canScrollVertically(1);
     }

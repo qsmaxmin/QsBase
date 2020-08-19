@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * @CreateBy administrator
  * @Date 2020/4/9 15:23
- * @Description listView适配器
+ * @Description listView adapter
  */
 public class QsListAdapter<D> extends BaseAdapter {
     private final QsIListView<D> listLayer;

@@ -3,8 +3,6 @@ package com.qsmaxmin.qsbase.common.widget.viewpager.autoscroll;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
-import androidx.annotation.NonNull;
-import androidx.viewpager.widget.PagerAdapter;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -16,10 +14,13 @@ import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.viewpager.widget.PagerAdapter;
+
 /**
  * @CreateBy qsmaxmin
  * @Date 2017-7-6 12:37:16
- * @Description 自动轮播适配器
+ * @Description
  */
 public class InfinitePagerAdapter extends PagerAdapter {
     private final List<Object>        urls                 = new ArrayList<>();
@@ -103,25 +104,25 @@ public class InfinitePagerAdapter extends PagerAdapter {
                 Object object = urls.get(virtualPosition);
                 if (object instanceof String) {
                     imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-                    imageView.setImageDrawable(container.getContext().getResources().getDrawable(holderId));
+                    imageView.setImageDrawable(container.getResources().getDrawable(holderId));
                     ImageHelper.ImageRequestListener listener = createImageRequestCallback(imageView);
-                    QsHelper.getImageHelper().createRequest().roundedCorners(corners).load(object).into(imageView, listener);
+                    QsHelper.getImageHelper().roundedCorners(corners).load(object).into(imageView, listener);
                 } else if (object instanceof Bitmap) {
                     imageView.setImageBitmap((Bitmap) object);
                 } else {
                     imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-                    imageView.setImageDrawable(container.getContext().getResources().getDrawable(holderId));
+                    imageView.setImageDrawable(container.getResources().getDrawable(holderId));
                     ImageHelper.ImageRequestListener listener = createImageRequestCallback(imageView);
-                    QsHelper.getImageHelper().createRequest().roundedCorners(corners).load(object).into(imageView, listener);
+                    QsHelper.getImageHelper().roundedCorners(corners).load(object).into(imageView, listener);
                 }
             } else {
                 Object object = urls.get(virtualPosition);
                 if (object instanceof String) {
-                    QsHelper.getImageHelper().createRequest().roundedCorners(corners).load((String) object).into(imageView);
+                    QsHelper.getImageHelper().roundedCorners(corners).load((String) object).into(imageView);
                 } else if (object instanceof Bitmap) {
                     imageView.setImageBitmap((Bitmap) object);
                 } else {
-                    QsHelper.getImageHelper().createRequest().roundedCorners(corners).load(urls.get(virtualPosition)).into(imageView);
+                    QsHelper.getImageHelper().roundedCorners(corners).load(urls.get(virtualPosition)).into(imageView);
                 }
             }
         }

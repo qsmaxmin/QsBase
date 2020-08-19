@@ -39,12 +39,6 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.6'
 
     implementation 'com.github.qsmaxmin:QsAnnotation:1.0.1'
-
-//    delete since 2020.0818
-//    implementation 'org.greenrobot:eventbus:3.1.1'
-//    implementation 'org.aspectj:aspectjrt:1.9.1'
-//    annotationProcessor 'com.github.qsmaxmin:QsPlugin:9.0.3'
-//    annotationProcessor("com.qsmaxmin.qsann:QsPlugin:9.9.9")//local test
 }
 
 uploadArchives {
@@ -55,37 +49,4 @@ uploadArchives {
         pom.artifactId = "QsBase"
         pom.version = "9.9.9"
     }
-}
-
-// 打包源码jar
-task sourcesJar(type: Jar) {
-    from android.sourceSets.main.java.srcDirs
-    classifier = 'sources'
-}
-//编译groovy代码时采用 UTF-8
-tasks.withType(GroovyCompile) {
-    groovyOptions.encoding = "MacRoman"
-}
-
-//编译JAVA文件时采用UTF-8
-tasks.withType(JavaCompile) {
-    options.encoding = "UTF-8"
-}
-
-task javadoc(type: Javadoc) {
-    failOnError false
-    source = android.sourceSets.main.java.sourceFiles
-    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
-    classpath += configurations.compile
-}
-
-// 打包文档jar
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
-    from javadoc.destinationDir
-}
-
-artifacts {
-    archives sourcesJar
-    archives javadocJar
 }

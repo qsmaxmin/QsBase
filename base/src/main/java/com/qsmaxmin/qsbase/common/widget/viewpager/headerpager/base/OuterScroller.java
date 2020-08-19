@@ -3,11 +3,6 @@ package com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.base;
 import androidx.viewpager.widget.ViewPager;
 import android.view.View;
 
-/**
- * @创建人 QS
- * @创建时间 16/11/19  下午6:21
- * @类描述
- */
 public interface OuterScroller extends ViewPager.OnPageChangeListener {
 
     /**
@@ -17,9 +12,6 @@ public interface OuterScroller extends ViewPager.OnPageChangeListener {
      */
     void onInnerScroll(int pageIndex, int scrollY);
 
-    /**
-     * （as its name）
-     */
     void onPageSelected(int position);
 
     /**
@@ -42,15 +34,8 @@ public interface OuterScroller extends ViewPager.OnPageChangeListener {
      */
     void syncPagesPosition(int currentIndex);
 
-
-    /**
-     * （as its name）
-     */
     InnerScroller getCurrentInnerScroller();
 
-    /**
-     * （as its name）
-     */
     int getCurrentInnerScrollerIndex();
 
     /**
@@ -58,9 +43,6 @@ public interface OuterScroller extends ViewPager.OnPageChangeListener {
      */
     void addPagerHeaderView(View view);
 
-    /**
-     * （as its name）
-     */
     void adjustChildrenEmptyHeaderHeight();
 
     /**
@@ -70,10 +52,6 @@ public interface OuterScroller extends ViewPager.OnPageChangeListener {
 
     void registerInnerScroller(int index, InnerScroller innerScroller);
 
-    /************************ 内外刷新联动 **************************/
-    /**
-     * PermissionListener of InnerScroller's PullToRefresh
-     */
     void onInnerPullToRefreshScroll(int scrollY);
 
     /**
@@ -88,7 +66,6 @@ public interface OuterScroller extends ViewPager.OnPageChangeListener {
      */
     void updateRefreshState(boolean isRefreshing);
 
-    /******************* unused methods from OnPageChangeListener ********************/
     /**
      * No need to do anything here
      */

@@ -51,8 +51,6 @@ public class InnerScrollView extends ScrollView implements InnerScroller {
     }
 
     /**
-     * （as its name）
-     *
      * @param firstVisibleItem no use for ScrollView
      */
     @Override public final void recordScrollPosition(int firstVisibleItem) {
@@ -82,12 +80,6 @@ public class InnerScrollView extends ScrollView implements InnerScroller {
         }
     }
 
-    /**
-     * InnerScrollView has 2 states：
-     * 1. EmptyHeader + content + auto completion,
-     * 2. EmptyHeader + emptyContent + autoCompletion.
-     * This method called on OnlyChild's height changed, to ensure in right state.
-     */
     private void updateViewState() {
 
         checkEmptyContent();
@@ -166,7 +158,7 @@ public class InnerScrollView extends ScrollView implements InnerScroller {
     }
 
     protected OuterScroller mOuterScroller;
-    private int mIndex = -1;
+    private   int           mIndex = -1;
 
     @Override public OuterScroller getOuterScroller() {
         return mOuterScroller;
@@ -252,9 +244,6 @@ public class InnerScrollView extends ScrollView implements InnerScroller {
 
     private boolean mGettingScrollY = false;
 
-    /**
-     * （as its name）
-     */
     @Override public final void triggerOuterScroll() {
         if (!mGettingScrollY && mOuterScroller != null) {
             mGettingScrollY = true;
@@ -263,9 +252,6 @@ public class InnerScrollView extends ScrollView implements InnerScroller {
         }
     }
 
-    /************************************************************
-     * ********              View Lifecycle             ********
-     ************************************************************/
     boolean mAttached    = false;
     boolean mHasDetached = false;
 
@@ -515,18 +501,9 @@ public class InnerScrollView extends ScrollView implements InnerScroller {
         SCROLL_STATE_TOUCH_SCROLL
     }
 
-    /**
-     * （as its name）
-     */
     public interface OnScrollStateChangedListener {
-        /**
-         * On Scroll start event. Touch_Scroll and Fling are regarded as the same.
-         */
         void onScrollStart();
 
-        /**
-         * （as its name）
-         */
         void onStop();
     }
 

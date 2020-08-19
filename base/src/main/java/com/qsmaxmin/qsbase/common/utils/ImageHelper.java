@@ -43,7 +43,7 @@ import androidx.fragment.app.FragmentActivity;
 /**
  * @CreateBy qsmaxmin
  * @Date 2017/6/20 17:35
- * @Description 图片加载帮助类
+ * @Description Image helper
  */
 
 @SuppressWarnings("WeakerAccess")

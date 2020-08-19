@@ -27,7 +27,7 @@ public class QsTabViewPagerAdapter extends QsViewPagerAdapter implements PagerSl
     @Override public int getCustomTabView() {
         if (getPagerHelper().getViewPagerLayer() != null) {
             if (getPagerHelper().getViewPagerLayer().getTabItemLayout() == 0) {
-                throw new IllegalArgumentException("QsTabViewPagerAdapter  必须要有自定义布局！getTabItemLayout return>0");
+                throw new IllegalArgumentException("QsTabViewPagerAdapter getTabItemLayout() return 0");
             }
             return getPagerHelper().getViewPagerLayer().getTabItemLayout();
         }

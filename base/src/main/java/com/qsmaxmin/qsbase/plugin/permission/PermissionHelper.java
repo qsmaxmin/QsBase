@@ -99,7 +99,7 @@ public class PermissionHelper {
     private String[] getUnGrantedPermissionArr(String... permissionArr) {
         ArrayList<String> arrayList = null;
         for (String permission : permissionArr) {
-            if (!isPermissionGranted(permission)) {//用户未授权
+            if (!isPermissionGranted(permission)) {
                 if (arrayList == null) arrayList = new ArrayList<>();
                 arrayList.add(permission);
             }

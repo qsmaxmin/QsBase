@@ -46,10 +46,6 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         return L.isEnable() ? getClass().getSimpleName() : "QsFragment";
     }
 
-    /**
-     * 重写该方法时，一定要注意相关控件及控件id
-     * 如非必要，无需重写
-     */
     @Override public int rootViewLayoutId() {
         return isOpenViewState() ? R.layout.qs_view_animator : R.layout.qs_frame_layout;
     }
@@ -165,7 +161,7 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
             synchronized (this) {
                 if (presenter == null) {
                     presenter = PresenterUtils.createPresenter(this);
-                    L.i(initTag(), "Presenter初始化完成...");
+                    L.i(initTag(), "Presenter init complete...");
                 }
             }
         }
@@ -259,9 +255,6 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         //custom your logic
     }
 
-    /**
-     * 重写该方法以便自定义进度条样式
-     */
     @Override public QsProgressDialog getLoadingDialog() {
         return QsHelper.getAppInterface().getLoadingDialog();
     }
@@ -600,11 +593,11 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
     }
 
     @Override public void runOnWorkThread(Runnable action) {
-        QsHelper.getThreadHelper().getWorkThreadPoll().execute(action);
+        QsHelper.executeInWorkThread(action);
     }
 
     @Override public void runOnHttpThread(Runnable action) {
-        QsHelper.getThreadHelper().getHttpThreadPoll().execute(action);
+        QsHelper.executeInHttpThread(action);
     }
 
     @Override public void onFragmentSelectedInViewPager(boolean isSelected, int currentPosition, int totalCount) {

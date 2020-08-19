@@ -49,9 +49,6 @@ public abstract class QsListAdapterItem<D> implements QsIBindView, QsNotProguard
         return viewLayer;
     }
 
-    /**
-     * send event to view layer（fragment or activity）
-     */
     protected final void sendEvent(int eventType, D data, int position) {
         viewLayer.onReceiveAdapterItemEvent(eventType, data, position);
     }

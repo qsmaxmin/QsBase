@@ -34,7 +34,7 @@ public class PtrUIHandlerImpl implements PtrUIHandler {
     }
 
     /**
-     * @param status {@link PtrFrameLayout#PTR_STATUS_INIT}等
+     * @param status {@link PtrFrameLayout#PTR_STATUS_INIT}...
      */
     public void onUIPositionChange(PtrFrameLayout frame, boolean isUnderTouch, byte status, PtrIndicator ptrIndicator) {
     }

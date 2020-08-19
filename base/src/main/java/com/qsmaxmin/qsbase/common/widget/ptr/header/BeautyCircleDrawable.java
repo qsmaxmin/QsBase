@@ -6,7 +6,6 @@ import android.graphics.ColorFilter;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
-import androidx.annotation.NonNull;
 import android.view.animation.LinearInterpolator;
 
 import com.qsmaxmin.qsbase.R;
@@ -14,11 +13,13 @@ import com.qsmaxmin.qsbase.common.utils.QsHelper;
 
 import java.util.ArrayList;
 
+import androidx.annotation.NonNull;
+
 
 /**
  * @CreateBy qsmaxmin
  * @Date 2017/1/16 17:46
- * @Description refresh header 小点转圈圈
+ * @Description refresh header
  */
 public class BeautyCircleDrawable extends Drawable {
 
@@ -137,8 +138,8 @@ public class BeautyCircleDrawable extends Drawable {
         float   maxRadius;
         int     index;
         int     totalCount;
-        double currentAngle = -1f;
-        int    alpha        = 255;
+        double  currentAngle = -1f;
+        int     alpha        = 255;
 
         CirclePoint(float radius, int index, int totalCount) {
             this.radius = radius;

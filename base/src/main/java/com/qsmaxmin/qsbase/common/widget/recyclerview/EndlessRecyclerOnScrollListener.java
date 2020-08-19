@@ -1,31 +1,18 @@
 package com.qsmaxmin.qsbase.common.widget.recyclerview;
 
+import android.view.View;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
-import android.view.View;
 
-/**
- * 继承自RecyclerView.OnScrollListener，可以监听到是否滑动到页面最低部
- */
 public class EndlessRecyclerOnScrollListener extends RecyclerView.OnScrollListener implements OnListLoadNextPageListener {
 
-    /**
-     * 当前RecyclerView类型
-     */
     private LayoutManagerType layoutManagerType;
-
-    /**
-     * 最后一个的位置
-     */
-    private int[] lastPositions;
-
-    /**
-     * 最后一个可见的item的位置
-     */
-    private int lastVisibleItemPosition;
+    private int[]             lastPositions;
+    private int               lastVisibleItemPosition;
 
     private RecyclerView.LayoutManager layoutManager;
 
@@ -77,9 +64,6 @@ public class EndlessRecyclerOnScrollListener extends RecyclerView.OnScrollListen
         }
     }
 
-    /**
-     * 取数组中最大值
-     */
     private int findMax(int[] lastPositions) {
         int max = lastPositions[0];
         for (int value : lastPositions) {
@@ -87,7 +71,6 @@ public class EndlessRecyclerOnScrollListener extends RecyclerView.OnScrollListen
                 max = value;
             }
         }
-
         return max;
     }
 
