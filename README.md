@@ -139,10 +139,11 @@ MVP架构+AOP面向切面编程，摒弃反射、代理等操作，稳定性和�
             @Bind(R.id.tv_name)TextView tv_name;
 
             @Override public void initData(Bundle bundle){
-                getPresenter(userId).requestData();
+                getPresenter().requestData(userId);
             }
 
-            @ThreadPoint(ThreadType.MAIN) public void updateUI(ModelUser modelUser) {
+            @ThreadPoint(ThreadType.MAIN)
+            public void updateUI(ModelUser modelUser) {
                 tv_name.setText(modelUser.userName);
             }
 
@@ -162,7 +163,6 @@ MVP架构+AOP面向切面编程，摒弃反射、代理等操作，稳定性和�
         /**
          * P层
          */
-        @Presenter(MainActivity.class)
         public class MainPresenter extends QsPresenter<MainActivity> {
 
              /**
