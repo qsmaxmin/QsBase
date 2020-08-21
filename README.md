@@ -14,12 +14,11 @@ MVP架构+AOP面向切面编程，摒弃反射、代理等操作，稳定性和�
 
         buildscript {
             repositories {
-                    jcenter()
-                    mavenCentral()
-                    maven {
-                        url 'https://jitpack.io'
-                    }
+                ...
+                maven {
+                    url 'https://jitpack.io'
                 }
+            }
         }
         
         allprojects {
@@ -31,15 +30,15 @@ MVP架构+AOP面向切面编程，摒弃反射、代理等操作，稳定性和�
             }
         }
 
-#### step 2：Module build.gradle 添加依赖
+#### step 2：Module build.gradle 添加插件及依赖
 
         apply plugin: 'com.qsmaxmin.plugin'
         ...
 
         dependencies {
             ...
-            implementation 'com.github.qsmaxmin:QsBase:10.0.0-beta1'
-            annotationProcessor 'com.github.qsmaxmin:QsPlugin:10.0.0'
+            implementation 'com.github.qsmaxmin:QsBase:10.0.1'
+            annotationProcessor 'com.github.qsmaxmin:QsPlugin:10.0.1'
         }
 
 #### step 3：自定义Application
@@ -246,6 +245,15 @@ MVP架构+AOP面向切面编程，摒弃反射、代理等操作，稳定性和�
             QsPullListFragment: 带分页listView的Fragment
             ...
         Fragment写法和Activity一样...
+
+        4，注解的使用
+        @Bind注解可以直接绑定View到field
+        @BindBundle可以直接绑定Bundle值到field
+        @OnClick注解可以绑定View点击事件到method
+        @Subscribe注解可以绑定事件接收到method，可通过QsHelper.eventPost(xxx)发送事件
+        @Property注解可以持久化参数到本地（注意Class必须有@AutoProperty注解才能生效）
+        @ThreadPoint注解的方法，可以让该方法在指定线程中执行
+        @Permission注解的方法，会在方法执行前申请指定的权限，权限申请成功后再接着执行该方法
 
 #### 代码混淆
         -keep class com.qsmaxmin.qsbase** { *; }
