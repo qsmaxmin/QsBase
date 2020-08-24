@@ -10,6 +10,7 @@ import com.qsmaxmin.qsbase.common.utils.QsHelper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -120,27 +121,32 @@ public class PermissionHelper {
         maps.remove(requestCode);
 
         boolean grantedAll = true;
-        ArrayList<String> unGrantedArr = new ArrayList<>();
+        ArrayList<String> unGrantedList = new ArrayList<>();
         for (int i = 0; i < grantResults.length; i++) {
             if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {//用户不同意，向用户展示该权限作用
                 grantedAll = false;
                 if (i < permissions.length) {
                     L.i(TAG, "user un granted permission:" + permissions[i]);
-                    unGrantedArr.add(permissions[i]);
+                    unGrantedList.add(permissions[i]);
                 }
             }
         }
 
-        boolean shouldShowDialog = false;
-        for (String unGrantedStr : unGrantedArr) {
-            if (!ActivityCompat.shouldShowRequestPermissionRationale(builder.getActivity(), unGrantedStr)) {
-                shouldShowDialog = true;
-            }
-        }
-
+        boolean shouldShowDialog = shouldShowRequestPermissionRationale(builder.getActivity(), unGrantedList);
         if (builder.getListener() != null) {
             builder.getListener().onPermissionCallback(grantedAll, shouldShowDialog, permissions, grantResults);
         }
     }
 
+    private static boolean shouldShowRequestPermissionRationale(Activity activity, List<String> unGrantedList) {
+        try {
+            for (String unGrantedStr : unGrantedList) {
+                if (!ActivityCompat.shouldShowRequestPermissionRationale(activity, unGrantedStr)) {
+                    return true;
+                }
+            }
+        } catch (Exception ignored) {
+        }
+        return false;
+    }
 }

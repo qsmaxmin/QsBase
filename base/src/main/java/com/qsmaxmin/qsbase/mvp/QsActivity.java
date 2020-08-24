@@ -1,5 +1,6 @@
 package com.qsmaxmin.qsbase.mvp;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -23,7 +24,6 @@ import com.qsmaxmin.qsbase.common.viewbind.OnKeyDownListener;
 import com.qsmaxmin.qsbase.common.widget.dialog.QsProgressDialog;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout;
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
-import com.qsmaxmin.qsbase.plugin.permission.PermissionCallbackListener;
 import com.qsmaxmin.qsbase.plugin.permission.PermissionHelper;
 
 import androidx.annotation.CallSuper;
@@ -664,6 +664,10 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         return this;
     }
 
+    @Override public Activity getActivityForPermission() {
+        return this;
+    }
+
     @Override public void smoothScrollToTop(boolean autoRefresh) {
         if (contentView == null) return;
         final ScrollView scrollView = (ScrollView) tryGetTargetView(ScrollView.class, contentView);
@@ -713,10 +717,6 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
 
     @Override public void setOnActivityResultListener(OnActivityResultListener listener) {
         this.activityResultListener = listener;
-    }
-
-    @Override public void requestPermission(PermissionCallbackListener listener, String... permissions) {
-        PermissionHelper.getInstance().startRequestPermission(this, listener, permissions);
     }
 
     @Override public void setOnKeyDownListener(OnKeyDownListener listener) {

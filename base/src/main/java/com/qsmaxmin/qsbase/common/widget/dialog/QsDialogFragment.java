@@ -1,5 +1,6 @@
 package com.qsmaxmin.qsbase.common.widget.dialog;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,8 +14,6 @@ import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.plugin.bind.QsIBindBundle;
 import com.qsmaxmin.qsbase.plugin.bind.QsIBindView;
 import com.qsmaxmin.qsbase.plugin.event.QsIBindEvent;
-import com.qsmaxmin.qsbase.plugin.permission.PermissionCallbackListener;
-import com.qsmaxmin.qsbase.plugin.permission.PermissionHelper;
 import com.qsmaxmin.qsbase.plugin.permission.QsIPermission;
 
 import androidx.annotation.CallSuper;
@@ -102,8 +101,8 @@ public abstract class QsDialogFragment extends DialogFragment implements QsIBind
     public void onViewClick(View view) {
     }
 
-    @Override public void requestPermission(PermissionCallbackListener listener, String... permissions) {
-        PermissionHelper.getInstance().startRequestPermission(getActivity(), listener, permissions);
+    @Override public Activity getActivityForPermission() {
+        return getActivity();
     }
 
     protected abstract int layoutId();

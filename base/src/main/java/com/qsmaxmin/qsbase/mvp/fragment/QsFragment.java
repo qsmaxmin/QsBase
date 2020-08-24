@@ -1,5 +1,6 @@
 package com.qsmaxmin.qsbase.mvp.fragment;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -14,8 +15,6 @@ import com.qsmaxmin.qsbase.R;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.utils.PresenterUtils;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
-import com.qsmaxmin.qsbase.plugin.permission.PermissionCallbackListener;
-import com.qsmaxmin.qsbase.plugin.permission.PermissionHelper;
 import com.qsmaxmin.qsbase.common.widget.dialog.QsProgressDialog;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout;
 import com.qsmaxmin.qsbase.mvp.OnActivityResultListener;
@@ -615,12 +614,12 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         }
     }
 
-    @Override public void setOnActivityResultListener(OnActivityResultListener listener) {
-        this.activityResultListener = listener;
+    @Override public Activity getActivityForPermission() {
+        return getActivity();
     }
 
-    @Override public void requestPermission(PermissionCallbackListener listener, String... permissions) {
-        PermissionHelper.getInstance().startRequestPermission(getActivity(), listener, permissions);
+    @Override public void setOnActivityResultListener(OnActivityResultListener listener) {
+        this.activityResultListener = listener;
     }
 
     @Override public boolean shouldInterceptTouchEvent() {

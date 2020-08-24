@@ -1,5 +1,6 @@
 package com.qsmaxmin.qsbase.mvp.presenter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 
@@ -14,8 +15,6 @@ import com.qsmaxmin.qsbase.common.widget.toast.QsToast;
 import com.qsmaxmin.qsbase.mvp.QsIPullToRefreshView;
 import com.qsmaxmin.qsbase.mvp.QsIView;
 import com.qsmaxmin.qsbase.mvp.model.QsConstants;
-import com.qsmaxmin.qsbase.plugin.permission.PermissionCallbackListener;
-import com.qsmaxmin.qsbase.plugin.permission.PermissionHelper;
 import com.qsmaxmin.qsbase.plugin.permission.QsIPermission;
 
 import java.util.ArrayList;
@@ -221,7 +220,7 @@ public class QsPresenter<V extends QsIView> implements QsIPermission, QsNotProgu
         return QsHelper.isNetworkAvailable();
     }
 
-    @Override public void requestPermission(PermissionCallbackListener listener, String... permissions) {
-        PermissionHelper.getInstance().startRequestPermission(getActivity(), listener, permissions);
+    @Override public Activity getActivityForPermission() {
+        return getActivity();
     }
 }
