@@ -10,7 +10,7 @@ MVP架构+AOP面向切面编程，摒弃反射、代理等操作，稳定性和�
 ## 如何使用？
 详细使用请参考完整项目[GrapeUniversity](https://github.com/qsmaxmin/GrapeUniversity)
 
-#### step 1：Project build.gradle 添加依赖
+#### step 1：Project build.gradle 添加仓库地址
 
         buildscript {
             repositories {
@@ -30,16 +30,11 @@ MVP架构+AOP面向切面编程，摒弃反射、代理等操作，稳定性和�
             }
         }
 
-#### step 2：Module build.gradle 添加插件及依赖
+#### step 2：Module build.gradle 添加插件
 
         apply plugin: 'com.qsmaxmin.plugin'
         ...
 
-        dependencies {
-            ...
-            implementation 'com.github.qsmaxmin:QsBase:10.0.1'
-            annotationProcessor 'com.github.qsmaxmin:QsPlugin:10.0.1'
-        }
 
 #### step 3：自定义Application
 
