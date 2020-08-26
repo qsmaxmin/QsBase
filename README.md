@@ -40,6 +40,8 @@ MVP架构+AOP面向切面编程，摒弃反射、代理等操作，稳定性和�
         apply plugin: 'com.qsmaxmin.plugin'
         ...
 
+        完成以上两步，SDK依赖环境就算搭建完毕了。
+
 
 #### step 3：自定义Application
 
