@@ -9,7 +9,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Environment;
-import android.view.View;
 
 import com.qsmaxmin.qsbase.QsIApplication;
 import com.qsmaxmin.qsbase.common.http.HttpHelper;
@@ -52,11 +51,6 @@ public class QsHelper {
             }
         }
         return qsHelper;
-    }
-
-    @SuppressWarnings("unchecked")
-    public static <T extends View> T forceCastToView(View view) {
-        return (T) view;
     }
 
     public static void init(QsIApplication application) {
@@ -138,35 +132,35 @@ public class QsHelper {
         return new CacheHelper();
     }
 
-    public static void intent2Activity(Class clazz) {
+    public static void intent2Activity(Class<?> clazz) {
         intent2ActivityInner(clazz, null, 0, null, 0, 0);
     }
 
-    public static void intent2Activity(Class clazz, Bundle bundle) {
+    public static void intent2Activity(Class<?> clazz, Bundle bundle) {
         intent2ActivityInner(clazz, bundle, 0, null, 0, 0);
     }
 
-    public static void intent2Activity(Class clazz, int requestCode) {
+    public static void intent2Activity(Class<?> clazz, int requestCode) {
         intent2ActivityInner(clazz, null, requestCode, null, 0, 0);
     }
 
-    public static void intent2Activity(Class clazz, Bundle bundle, ActivityOptionsCompat optionsCompat) {
+    public static void intent2Activity(Class<?> clazz, Bundle bundle, ActivityOptionsCompat optionsCompat) {
         intent2ActivityInner(clazz, bundle, 0, optionsCompat, 0, 0);
     }
 
-    public static void intent2Activity(Class clazz, int inAnimId, int outAnimId) {
+    public static void intent2Activity(Class<?> clazz, int inAnimId, int outAnimId) {
         intent2ActivityInner(clazz, null, 0, null, inAnimId, outAnimId);
     }
 
-    public static void intent2Activity(Class clazz, Bundle bundle, int inAnimId, int outAnimId) {
+    public static void intent2Activity(Class<?> clazz, Bundle bundle, int inAnimId, int outAnimId) {
         intent2ActivityInner(clazz, bundle, 0, null, inAnimId, outAnimId);
     }
 
-    public static void intent2Activity(Class clazz, Bundle bundle, int requestCode, ActivityOptionsCompat optionsCompat, int inAnimId, int outAnimId) {
+    public static void intent2Activity(Class<?> clazz, Bundle bundle, int requestCode, ActivityOptionsCompat optionsCompat, int inAnimId, int outAnimId) {
         intent2ActivityInner(clazz, bundle, requestCode, optionsCompat, inAnimId, outAnimId);
     }
 
-    private static void intent2ActivityInner(Class clazz, Bundle bundle, int requestCode, ActivityOptionsCompat optionsCompat, int inAnimId, int outAnimId) {
+    private static void intent2ActivityInner(Class<?> clazz, Bundle bundle, int requestCode, ActivityOptionsCompat optionsCompat, int inAnimId, int outAnimId) {
         FragmentActivity activity = getScreenHelper().currentActivity();
         if (clazz != null && activity != null) {
             Intent intent = new Intent();
