@@ -175,11 +175,10 @@ public class QsHelper {
             if (optionsCompat == null) {
                 if (requestCode > 0) {
                     activity.startActivityForResult(intent, requestCode);
-                    if (inAnimId != 0 || outAnimId != 0) activity.overridePendingTransition(inAnimId, outAnimId);
                 } else {
                     activity.startActivity(intent);
-                    if (inAnimId != 0 || outAnimId != 0) activity.overridePendingTransition(inAnimId, outAnimId);
                 }
+                if (inAnimId != 0 || outAnimId != 0) activity.overridePendingTransition(inAnimId, outAnimId);
             } else {
                 if (requestCode > 0) {
                     ActivityCompat.startActivityForResult(activity, intent, requestCode, optionsCompat.toBundle());
