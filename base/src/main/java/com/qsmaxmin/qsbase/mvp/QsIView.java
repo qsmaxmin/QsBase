@@ -11,6 +11,7 @@ import com.qsmaxmin.qsbase.plugin.bind.QsIBindBundle;
 import com.qsmaxmin.qsbase.plugin.bind.QsIBindView;
 import com.qsmaxmin.qsbase.plugin.event.QsIBindEvent;
 import com.qsmaxmin.qsbase.plugin.permission.QsIPermission;
+import com.qsmaxmin.qsbase.plugin.presenter.QsIPresenter;
 
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
@@ -26,7 +27,7 @@ import androidx.fragment.app.FragmentActivity;
  * @Description
  */
 
-public interface QsIView<P> extends QsIBindView, QsIBindEvent, QsIBindBundle, QsIPermission, QsNotProguard {
+public interface QsIView<P> extends QsIBindView, QsIBindEvent, QsIBindBundle, QsIPermission, QsIPresenter, QsNotProguard {
     int VIEW_STATE_LOADING = 0;
     int VIEW_STATE_CONTENT = 1;
     int VIEW_STATE_EMPTY   = 2;

@@ -13,7 +13,6 @@ import android.widget.ViewAnimator;
 
 import com.qsmaxmin.qsbase.R;
 import com.qsmaxmin.qsbase.common.log.L;
-import com.qsmaxmin.qsbase.common.utils.PresenterUtils;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.common.widget.dialog.QsProgressDialog;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout;
@@ -155,16 +154,16 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         viewAnimator.setAnimateFirstView(viewStateAnimateFirstView());
     }
 
+    @SuppressWarnings("unchecked")
     @Override public P getPresenter() {
         if (presenter == null) {
-            synchronized (this) {
-                if (presenter == null) {
-                    presenter = PresenterUtils.createPresenter(this);
-                    L.i(initTag(), "Presenter init complete...");
-                }
-            }
+            presenter = (P) createPresenter();
         }
         return presenter;
+    }
+
+    @Override public Object createPresenter() {
+        return null;
     }
 
     @Override public void initDataWhenDelay() {

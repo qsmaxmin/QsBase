@@ -18,7 +18,6 @@ import android.widget.ViewAnimator;
 
 import com.qsmaxmin.qsbase.R;
 import com.qsmaxmin.qsbase.common.log.L;
-import com.qsmaxmin.qsbase.common.utils.PresenterUtils;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.common.viewbind.OnKeyDownListener;
 import com.qsmaxmin.qsbase.common.widget.dialog.QsProgressDialog;
@@ -42,7 +41,7 @@ import androidx.fragment.app.FragmentActivity;
  */
 public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity implements QsIActivity {
     private   View                     contentView;
-    private   P                        presenter;
+    protected P                        presenter;
     protected QsProgressDialog         mProgressDialog;
     protected ViewAnimator             mViewAnimator;
     private   boolean                  hasInitData;
@@ -222,16 +221,16 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         viewAnimator.setAnimateFirstView(viewStateAnimateFirstView());
     }
 
+    @SuppressWarnings("unchecked")
     @Override public P getPresenter() {
         if (presenter == null) {
-            synchronized (this) {
-                if (presenter == null) {
-                    presenter = PresenterUtils.createPresenter(this);
-                    L.i(initTag(), "Presenter init complete...");
-                }
-            }
+            presenter = (P) createPresenter();
         }
         return presenter;
+    }
+
+    @Override public Object createPresenter() {
+        return null;
     }
 
     @Override public void initDataWhenDelay() {

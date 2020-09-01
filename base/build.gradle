@@ -38,7 +38,7 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:3.12.1'
     implementation 'com.google.code.gson:gson:2.8.6'
 
-    implementation 'com.github.qsmaxmin:QsAnnotation:1.0.1'
+    implementation 'com.github.qsmaxmin:QsAnnotation:1.0.2'
 }
 
 uploadArchives {
