@@ -158,6 +158,7 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
     @Override public P getPresenter() {
         if (presenter == null) {
             presenter = (P) createPresenter();
+            presenter.initPresenter(this);
         }
         return presenter;
     }

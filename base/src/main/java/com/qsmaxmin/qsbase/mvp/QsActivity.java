@@ -225,6 +225,7 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
     @Override public P getPresenter() {
         if (presenter == null) {
             presenter = (P) createPresenter();
+            presenter.initPresenter(this);
         }
         return presenter;
     }
