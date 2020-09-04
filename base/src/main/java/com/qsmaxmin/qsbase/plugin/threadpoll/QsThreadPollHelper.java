@@ -69,16 +69,44 @@ public class QsThreadPollHelper {
         getInstance().handler.postDelayed(action, delayed);
     }
 
-    public static void runOnWorkThread(Runnable action) {
-        getWorkThreadPoll().execute(action);
+    public static void removeCallbacks(Runnable action) {
+        getInstance().handler.removeCallbacks(action);
     }
 
-    public static void runOnHttpThread(Runnable action) {
-        getHttpThreadPoll().execute(action);
+    public static void runOnWorkThread(final Runnable action) {
+        if (action instanceof SafeRunnable) {
+            getWorkThreadPoll().execute(action);
+        } else {
+            getWorkThreadPoll().execute(new SafeRunnable() {
+                @Override protected void safeRun() {
+                    action.run();
+                }
+            });
+        }
     }
 
-    public static void runOnSingleThread(Runnable action) {
-        getSingleThreadPoll().execute(action);
+    public static void runOnHttpThread(final Runnable action) {
+        if (action instanceof SafeRunnable) {
+            getHttpThreadPoll().execute(action);
+        } else {
+            getHttpThreadPoll().execute(new SafeRunnable() {
+                @Override protected void safeRun() {
+                    action.run();
+                }
+            });
+        }
+    }
+
+    public static void runOnSingleThread(final Runnable action) {
+        if (action instanceof SafeRunnable) {
+            getSingleThreadPoll().execute(action);
+        } else {
+            getSingleThreadPoll().execute(new SafeRunnable() {
+                @Override protected void safeRun() {
+                    action.run();
+                }
+            });
+        }
     }
 
     public static ThreadPoolExecutor getWorkThreadPoll() {
