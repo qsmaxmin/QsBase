@@ -1,5 +1,5 @@
 # QsBase
-## 基于AOP面向切面编程的Android高效开发框架(APT + transform + javassist)
+## 基于AOP面向切面编程的Android高效开发框架(transform + javassist)
 
 MVP架构+AOP面向切面编程，摒弃反射、代理等操作，稳定性和执行效率高
 
