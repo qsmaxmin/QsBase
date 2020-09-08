@@ -382,6 +382,5 @@ public class QsHelper {
         QsThreadPollHelper.release();
         PermissionHelper.release();
         HttpHelper.release();
-        qsHelper = null;
     }
 }
