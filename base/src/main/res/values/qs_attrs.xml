@@ -10,6 +10,7 @@
         <attr name="psts_IndicatorCorner" format="dimension" />
         <attr name="psts_UnderlineColor" format="color" />
         <attr name="psts_DividerColor" format="color" />
+        <attr name="psts_DividerWidth" format="dimension" />
         <attr name="psts_SelectedTextColor" format="color" />
         <attr name="psts_UnSelectedTextColor" format="color" />
         <attr name="psts_UnderlineHeight" format="dimension" />
