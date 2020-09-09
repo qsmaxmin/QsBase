@@ -1,11 +1,13 @@
 package com.qsmaxmin.qsbase.mvp;
 
+import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 
 import com.qsmaxmin.qsbase.R;
 import com.qsmaxmin.qsbase.common.log.L;
+import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.common.widget.viewpager.PagerSlidingTabStrip;
 import com.qsmaxmin.qsbase.common.widget.viewpager.QsViewPager;
 import com.qsmaxmin.qsbase.common.widget.viewpager.ViewPagerHelper;
@@ -58,6 +60,10 @@ public abstract class QsViewPagerActivity<P extends QsPresenter> extends QsActiv
     }
 
     @Override public void initTab(PagerSlidingTabStrip tabStrip) {
+        DisplayMetrics dm = getResources().getDisplayMetrics();
+        tabStrip.setIndicatorWidth((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30, dm));
+        tabStrip.setIndicatorCorner(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1.5f, dm));
+        tabStrip.setIndicatorHeight((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 3, dm));
     }
 
     protected QsViewPagerAdapter createPagerAdapter(ViewPagerHelper pagerHelper) {

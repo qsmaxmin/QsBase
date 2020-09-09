@@ -1,5 +1,6 @@
 package com.qsmaxmin.qsbase.mvp.fragment;
 
+import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -69,8 +70,11 @@ public abstract class QsViewPagerFragment<P extends QsPresenter> extends QsFragm
         }
     }
 
-    @Override public void initTab(PagerSlidingTabStrip tab) {
-
+    @Override public void initTab(PagerSlidingTabStrip tabStrip) {
+        DisplayMetrics dm = getResources().getDisplayMetrics();
+        tabStrip.setIndicatorWidth((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30, dm));
+        tabStrip.setIndicatorCorner(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1.5f, dm));
+        tabStrip.setIndicatorHeight((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 3, dm));
     }
 
     @Override public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
