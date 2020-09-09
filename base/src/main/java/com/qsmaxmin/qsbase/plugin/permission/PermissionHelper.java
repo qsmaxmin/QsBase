@@ -14,6 +14,7 @@ import java.util.List;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentActivity;
 
 /**
  * @CreateBy qsmaxmin
@@ -54,7 +55,8 @@ public class PermissionHelper {
         return true;
     }
 
-    public void startRequestPermission(Activity activity, PermissionCallbackListener listener, String... permissions) {
+    public void startRequestPermission(PermissionCallbackListener listener, String... permissions) {
+        FragmentActivity activity = QsHelper.getScreenHelper().currentActivity();
         if (permissions == null || permissions.length == 0 || activity == null || activity.isFinishing()) return;
         L.i(TAG, "startRequestPermission:" + Arrays.toString(permissions));
 
