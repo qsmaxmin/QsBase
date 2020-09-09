@@ -1,7 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.HeaderViewPager
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/pager"
+<com.qsmaxmin.qsbase.common.widget.headerview.HeaderScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/qs_header_scroll_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@null"/>
+    android:background="@color/colorBackground">
+
+    <FrameLayout
+        android:id="@+id/qs_header_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <com.qsmaxmin.qsbase.common.widget.viewpager.PagerSlidingTabStrip
+        android:id="@android:id/tabs"
+        android:layout_width="match_parent"
+        android:layout_height="50dp" />
+
+    <com.qsmaxmin.qsbase.common.widget.viewpager.QsViewPager
+        android:id="@+id/pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</com.qsmaxmin.qsbase.common.widget.headerview.HeaderScrollView>

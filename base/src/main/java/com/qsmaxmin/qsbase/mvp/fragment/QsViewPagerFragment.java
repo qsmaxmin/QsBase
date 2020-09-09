@@ -1,6 +1,5 @@
 package com.qsmaxmin.qsbase.mvp.fragment;
 
-import android.os.Bundle;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,9 +33,6 @@ public abstract class QsViewPagerFragment<P extends QsPresenter> extends QsFragm
         return R.layout.qs_viewpager_top_tab;
     }
 
-    @Override public void initData(Bundle savedInstanceState) {
-    }
-
     @Override protected View initView(LayoutInflater inflater) {
         View view = super.initView(inflater);
         initCustomView(view);
@@ -46,7 +42,7 @@ public abstract class QsViewPagerFragment<P extends QsPresenter> extends QsFragm
     protected void initCustomView(View view) {
         pager = view.findViewById(R.id.pager);
         tabs = view.findViewById(android.R.id.tabs);
-        initTab(tabs);
+        if (tabs != null) initTab(tabs);
         initViewPager(getModelPagers());
     }
 
@@ -97,7 +93,6 @@ public abstract class QsViewPagerFragment<P extends QsPresenter> extends QsFragm
     }
 
     @Override public void initTabItem(View tabItem, QsModelPager modelPager) {
-
     }
 
     @Override public void replaceViewPageItem(QsModelPager... modelPagers) {

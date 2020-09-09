@@ -37,7 +37,7 @@ public abstract class QsViewPagerActivity<P extends QsPresenter> extends QsActiv
         View view = super.initView(inflater);
         pager = view.findViewById(R.id.pager);
         tabs = view.findViewById(android.R.id.tabs);
-        initTab(tabs);
+        if (tabs != null) initTab(tabs);
         initViewPager(getModelPagers());
         return view;
     }
@@ -58,7 +58,6 @@ public abstract class QsViewPagerActivity<P extends QsPresenter> extends QsActiv
     }
 
     @Override public void initTab(PagerSlidingTabStrip tabStrip) {
-
     }
 
     protected QsViewPagerAdapter createPagerAdapter(ViewPagerHelper pagerHelper) {
@@ -86,6 +85,9 @@ public abstract class QsViewPagerActivity<P extends QsPresenter> extends QsActiv
                 ((QsIFragment) qsModelPager.fragment).onFragmentSelectedInViewPager(position == i, position, allData.length);
             }
         }
+    }
+
+    @Override public void initTabItem(View tabItem, QsModelPager modelPager) {
     }
 
     @Override public void replaceViewPageItem(QsModelPager... modelPagers) {

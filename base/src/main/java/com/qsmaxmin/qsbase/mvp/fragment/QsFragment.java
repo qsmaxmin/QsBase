@@ -15,6 +15,7 @@ import com.qsmaxmin.qsbase.R;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.common.widget.dialog.QsProgressDialog;
+import com.qsmaxmin.qsbase.common.widget.headerview.ScrollerProvider;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout;
 import com.qsmaxmin.qsbase.mvp.OnActivityResultListener;
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
@@ -33,7 +34,7 @@ import androidx.fragment.app.FragmentActivity;
  * @Date 2017/6/21 11:40
  * @Description
  */
-public abstract class QsFragment<P extends QsPresenter> extends Fragment implements QsIFragment, View.OnTouchListener {
+public abstract class QsFragment<P extends QsPresenter> extends Fragment implements QsIFragment, ScrollerProvider, View.OnTouchListener {
     private   P                        presenter;
     private   boolean                  hasInitData;
     protected QsProgressDialog         mProgressDialog;
@@ -628,5 +629,9 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
 
     @Override public boolean isShowBackButtonInDefaultView() {
         return false;
+    }
+
+    @Override public View getScrollableView() {
+        return getView();
     }
 }

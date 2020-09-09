@@ -10,7 +10,6 @@ import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.common.widget.listview.LoadingFooter;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrDefaultHandler;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout;
-import com.qsmaxmin.qsbase.common.widget.ptr.PtrHandler;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrUIHandler;
 import com.qsmaxmin.qsbase.common.widget.ptr.header.BeautyCircleRefreshHeader;
 import com.qsmaxmin.qsbase.mvp.QsIPullView;
@@ -51,15 +50,7 @@ public abstract class QsPullFragment<T extends QsPresenter> extends QsFragment<T
         PtrUIHandler handlerView = getPtrUIHandlerView();
         mPtrFrameLayout.setHeaderView((View) handlerView);
         mPtrFrameLayout.addPtrUIHandler(handlerView);
-        mPtrFrameLayout.setPtrHandler(new PtrHandler() {
-            @Override public boolean checkCanDoRefresh(PtrFrameLayout frame, View content, View header) {
-                return PtrDefaultHandler.checkContentCanBePulledDown(frame, content, header);
-            }
-
-            @Override public void onRefreshBegin(PtrFrameLayout frame) {
-                onRefresh();
-            }
-        });
+        mPtrFrameLayout.setPtrHandler(new PtrDefaultHandler(this));
         childView = view.findViewById(R.id.swipe_child);
         if (viewLayoutId() != 0) {
             if (childView != null) {
@@ -183,5 +174,9 @@ public abstract class QsPullFragment<T extends QsPresenter> extends QsFragment<T
         } else {
             super.smoothScrollToTop(autoRefresh);
         }
+    }
+
+    @Override public View getScrollableView() {
+        return childView;
     }
 }

@@ -10,9 +10,6 @@ import android.widget.ListView;
 import com.qsmaxmin.qsbase.R;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
-import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.base.InnerScroller;
-import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.base.InnerScrollerContainer;
-import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.base.OuterScroller;
 import com.qsmaxmin.qsbase.mvp.QsIListView;
 import com.qsmaxmin.qsbase.mvp.adapter.QsListAdapter;
 import com.qsmaxmin.qsbase.mvp.adapter.QsListAdapterItem;
@@ -26,7 +23,7 @@ import java.util.List;
  * @Date 17/7/2  下午4:29
  * @Description
  */
-public abstract class QsListFragment<P extends QsPresenter, D> extends QsFragment<P> implements QsIListView<D>, InnerScrollerContainer {
+public abstract class QsListFragment<P extends QsPresenter, D> extends QsFragment<P> implements QsIListView<D> {
     protected final List<D>     mList = new ArrayList<>();
     private         ListView    mListView;
     private         BaseAdapter mListAdapter;
@@ -274,11 +271,7 @@ public abstract class QsListFragment<P extends QsPresenter, D> extends QsFragmen
         //for custom logic
     }
 
-    /*----------------------- 以下是HeaderViewPager支持 ----------------------------*/
-    @Override public void setMyOuterScroller(OuterScroller outerScroller, int myPosition) {
-        if (getListView() instanceof InnerScroller) {
-            L.i(initTag(), "setMyOuterScroller....position:" + myPosition);
-            ((InnerScroller) getListView()).register2Outer(outerScroller, myPosition);
-        }
+    @Override public View getScrollableView() {
+        return getListView();
     }
 }

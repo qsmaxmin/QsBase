@@ -8,7 +8,6 @@ import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.widget.listview.LoadingFooter;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrDefaultHandler;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout;
-import com.qsmaxmin.qsbase.common.widget.ptr.PtrHandler;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrUIHandler;
 import com.qsmaxmin.qsbase.common.widget.ptr.header.BeautyCircleRefreshHeader;
 import com.qsmaxmin.qsbase.common.widget.recyclerview.EndlessRecyclerOnScrollListener;
@@ -24,7 +23,7 @@ import java.util.List;
  */
 public abstract class QsPullRecyclerFragment<P extends QsPresenter, D> extends QsRecyclerFragment<P, D> implements QsIPullToRefreshView {
     private   boolean        canLoadingMore = true;
-    private   PtrFrameLayout ptrFrameLayout;
+    private   PtrFrameLayout mPtrFrameLayout;
     protected LoadingFooter  loadingFooter;
 
     @Override public int getFooterLayout() {
@@ -55,37 +54,29 @@ public abstract class QsPullRecyclerFragment<P extends QsPresenter, D> extends Q
 
     private void initPtrFrameLayout(View view) {
         if (view instanceof PtrFrameLayout) {
-            ptrFrameLayout = (PtrFrameLayout) view;
+            mPtrFrameLayout = (PtrFrameLayout) view;
         } else {
-            ptrFrameLayout = view.findViewById(R.id.swipe_container);
+            mPtrFrameLayout = view.findViewById(R.id.swipe_container);
         }
-        if (ptrFrameLayout == null) throw new RuntimeException("PtrFrameLayout is not exist or its id not 'R.id.swipe_container' in current layout!!");
+        if (mPtrFrameLayout == null) throw new RuntimeException("PtrFrameLayout is not exist or its id not 'R.id.swipe_container' in current layout!!");
         PtrUIHandler handlerView = getPtrUIHandlerView();
-        ptrFrameLayout.setHeaderView((View) handlerView);
-        ptrFrameLayout.addPtrUIHandler(handlerView);
-        ptrFrameLayout.setPtrHandler(new PtrHandler() {
-            @Override public boolean checkCanDoRefresh(PtrFrameLayout frame, View content, View header) {
-                return PtrDefaultHandler.checkContentCanBePulledDown(frame, content, header);
-            }
-
-            @Override public void onRefreshBegin(PtrFrameLayout frame) {
-                onRefresh();
-            }
-        });
+        mPtrFrameLayout.setHeaderView((View) handlerView);
+        mPtrFrameLayout.addPtrUIHandler(handlerView);
+        mPtrFrameLayout.setPtrHandler(new PtrDefaultHandler(this));
     }
 
     @Override public void startRefreshing() {
-        if (ptrFrameLayout != null) ptrFrameLayout.post(new Runnable() {
+        if (mPtrFrameLayout != null) mPtrFrameLayout.post(new Runnable() {
             @Override public void run() {
-                ptrFrameLayout.autoRefresh();
+                mPtrFrameLayout.autoRefresh();
             }
         });
     }
 
     @Override public void stopRefreshing() {
-        if (ptrFrameLayout != null) ptrFrameLayout.post(new Runnable() {
+        if (mPtrFrameLayout != null) mPtrFrameLayout.post(new Runnable() {
             @Override public void run() {
-                ptrFrameLayout.refreshComplete();
+                mPtrFrameLayout.refreshComplete();
             }
         });
     }
@@ -100,18 +91,18 @@ public abstract class QsPullRecyclerFragment<P extends QsPresenter, D> extends Q
     }
 
     @Override public void openPullRefreshing() {
-        ptrFrameLayout.setEnabled(true);
-        if (ptrFrameLayout != null) ptrFrameLayout.post(new Runnable() {
+        mPtrFrameLayout.setEnabled(true);
+        if (mPtrFrameLayout != null) mPtrFrameLayout.post(new Runnable() {
             @Override public void run() {
-                ptrFrameLayout.setEnabled(true);
+                mPtrFrameLayout.setEnabled(true);
             }
         });
     }
 
     @Override public void closePullRefreshing() {
-        if (ptrFrameLayout != null) ptrFrameLayout.post(new Runnable() {
+        if (mPtrFrameLayout != null) mPtrFrameLayout.post(new Runnable() {
             @Override public void run() {
-                ptrFrameLayout.setEnabled(false);
+                mPtrFrameLayout.setEnabled(false);
             }
         });
     }
@@ -125,13 +116,13 @@ public abstract class QsPullRecyclerFragment<P extends QsPresenter, D> extends Q
     }
 
     @Override public PtrFrameLayout getPtrFrameLayout() {
-        return ptrFrameLayout;
+        return mPtrFrameLayout;
     }
 
     @Override public void setData(List<D> list, boolean showEmptyView) {
-        if (ptrFrameLayout != null) ptrFrameLayout.post(new Runnable() {
+        if (mPtrFrameLayout != null) mPtrFrameLayout.post(new Runnable() {
             @Override public void run() {
-                ptrFrameLayout.refreshComplete();
+                mPtrFrameLayout.refreshComplete();
             }
         });
         super.setData(list, showEmptyView);
@@ -173,7 +164,7 @@ public abstract class QsPullRecyclerFragment<P extends QsPresenter, D> extends Q
     }
 
     @Override public boolean canPullRefreshing() {
-        return ptrFrameLayout.isEnabled();
+        return mPtrFrameLayout.isEnabled();
     }
 
     @Override public void smoothScrollToTop(boolean autoRefresh) {

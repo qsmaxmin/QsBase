@@ -1,4 +1,4 @@
-package com.qsmaxmin.qsbase.mvp.fragment;
+package com.qsmaxmin.qsbase.mvp;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -7,18 +7,16 @@ import android.view.ViewGroup;
 import com.qsmaxmin.qsbase.R;
 import com.qsmaxmin.qsbase.common.widget.headerview.HeaderScrollView;
 import com.qsmaxmin.qsbase.common.widget.headerview.ScrollerProvider;
-import com.qsmaxmin.qsbase.mvp.QsIHeaderView;
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
 
 import androidx.fragment.app.Fragment;
 
 /**
- * @CreateBy qsmaxmin
- * @Date 2016/11/21 16:06
+ * @CreateBy administrator
+ * @Date 2020/9/9 10:24
  * @Description
  */
-
-public abstract class QsHeaderViewpagerFragment<P extends QsPresenter> extends QsViewPagerFragment<P> implements QsIHeaderView {
+public abstract class QsHeaderViewPagerActivity<P extends QsPresenter> extends QsViewPagerActivity<P> implements QsIHeaderView {
     private HeaderScrollView headerScrollView;
 
     @Override public int layoutId() {
@@ -36,6 +34,7 @@ public abstract class QsHeaderViewpagerFragment<P extends QsPresenter> extends Q
         } else {
             headerScrollView = view.findViewById(R.id.qs_header_scroll_view);
         }
+        if (headerScrollView == null) throw new IllegalStateException("HeaderScrollView is not exist or its id not 'R.id.qs_header_scroll_view' in current layout!!");
         headerScrollView.registerScrollerProvider(this);
         headerScrollView.setOnScrollListener(this);
         if (getHeaderLayout() != 0) {

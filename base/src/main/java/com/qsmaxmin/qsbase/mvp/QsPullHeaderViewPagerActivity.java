@@ -1,4 +1,4 @@
-package com.qsmaxmin.qsbase.mvp.fragment;
+package com.qsmaxmin.qsbase.mvp;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,16 +10,14 @@ import com.qsmaxmin.qsbase.common.widget.ptr.PtrDefaultHandler;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrUIHandler;
 import com.qsmaxmin.qsbase.common.widget.ptr.header.BeautyCircleRefreshHeader;
-import com.qsmaxmin.qsbase.mvp.QsIPullToRefreshView;
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
 
 /**
- * @CreateBy qsmaxmin
- * @Date 2017/9/19 13:43
+ * @CreateBy administrator
+ * @Date 2020/9/9 11:14
  * @Description
  */
-
-public abstract class QsPullHeaderViewpagerFragment<P extends QsPresenter> extends QsHeaderViewpagerFragment<P> implements QsIPullToRefreshView {
+public abstract class QsPullHeaderViewPagerActivity<P extends QsPresenter> extends QsHeaderViewPagerActivity<P> implements QsIPullToRefreshView {
     private PtrFrameLayout mPtrFrameLayout;
 
     @Override public int layoutId() {

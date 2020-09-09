@@ -372,4 +372,7 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
         //for custom logic
     }
 
+    @Override public View getScrollableView() {
+        return getRecyclerView();
+    }
 }

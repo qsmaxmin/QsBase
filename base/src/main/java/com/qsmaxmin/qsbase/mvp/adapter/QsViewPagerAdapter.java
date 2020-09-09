@@ -6,9 +6,6 @@ import android.view.ViewGroup;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.widget.viewpager.QsViewPager;
 import com.qsmaxmin.qsbase.common.widget.viewpager.ViewPagerHelper;
-import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.base.InnerScrollerContainer;
-import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.base.OuterPagerAdapter;
-import com.qsmaxmin.qsbase.common.widget.viewpager.headerpager.base.OuterScroller;
 import com.qsmaxmin.qsbase.mvp.fragment.QsIFragment;
 import com.qsmaxmin.qsbase.mvp.model.QsModelPager;
 
@@ -24,10 +21,9 @@ import androidx.viewpager.widget.PagerAdapter;
  * @Description
  */
 
-public class QsViewPagerAdapter extends PagerAdapter implements OuterPagerAdapter {
+public class QsViewPagerAdapter extends PagerAdapter {
     private static final String          TAG             = "QsViewPagerAdapter";
     private              int             replacePosition = -1;        // 替换标识
-    private              OuterScroller   mOuterScroller;
     private              FragmentManager fragmentManager;
     private              ViewGroup       container;
     private              ViewPagerHelper pagerHelper;
@@ -128,19 +124,11 @@ public class QsViewPagerAdapter extends PagerAdapter implements OuterPagerAdapte
         if (fragment.getView() == null) throw new NullPointerException("fragment has not view...");
         if (fragment.getView().getParent() == null) container.addView(fragment.getView());
 
-        if (mOuterScroller != null && fragment instanceof InnerScrollerContainer) {
-            L.i(TAG, "activate header viewpager... current fragment is:" + fragment.getClass().getSimpleName());
-            ((InnerScrollerContainer) fragment).setMyOuterScroller(mOuterScroller, position);
-        }
         return fragment.getView();
     }
 
     @Override public void notifyDataSetChanged() {
         pagerHelper.resetPageIndex();
         super.notifyDataSetChanged();
-    }
-
-    @Override public void setPageOuterScroller(OuterScroller outerScroller) {
-        this.mOuterScroller = outerScroller;
     }
 }

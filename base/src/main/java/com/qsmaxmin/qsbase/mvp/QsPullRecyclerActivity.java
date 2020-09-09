@@ -65,15 +65,7 @@ public abstract class QsPullRecyclerActivity<P extends QsPresenter, D> extends Q
         PtrUIHandler handlerView = getPtrUIHandlerView();
         mPtrFrameLayout.setHeaderView((View) handlerView);
         mPtrFrameLayout.addPtrUIHandler(handlerView);
-        mPtrFrameLayout.setPtrHandler(new PtrHandler() {
-            @Override public boolean checkCanDoRefresh(PtrFrameLayout frame, View content, View header) {
-                return PtrDefaultHandler.checkContentCanBePulledDown(frame, content, header);
-            }
-
-            @Override public void onRefreshBegin(PtrFrameLayout frame) {
-                onRefresh();
-            }
-        });
+        mPtrFrameLayout.setPtrHandler(new PtrDefaultHandler(this));
     }
 
     @Override public void startRefreshing() {

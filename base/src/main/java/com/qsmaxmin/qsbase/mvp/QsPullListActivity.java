@@ -9,7 +9,6 @@ import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.widget.listview.LoadingFooter;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrDefaultHandler;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout;
-import com.qsmaxmin.qsbase.common.widget.ptr.PtrHandler;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrUIHandler;
 import com.qsmaxmin.qsbase.common.widget.ptr.header.BeautyCircleRefreshHeader;
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
@@ -23,7 +22,7 @@ import java.util.List;
  */
 public abstract class QsPullListActivity<P extends QsPresenter, D> extends QsListActivity<P, D> implements QsIPullToRefreshView {
     private   boolean        canLoadingMore = true;
-    private   PtrFrameLayout ptrLayout;
+    private   PtrFrameLayout mPtrFrameLayout;
     protected LoadingFooter  loadingFooter;
 
     @Override public int layoutId() {
@@ -41,20 +40,12 @@ public abstract class QsPullListActivity<P extends QsPresenter, D> extends QsLis
     @Override protected View initView(LayoutInflater inflater) {
         View view = super.initView(inflater);
 
-        ptrLayout = view.findViewById(R.id.swipe_container);
-        if (ptrLayout == null) throw new RuntimeException("PtrFrameLayout is not exist or its id not 'R.id.swipe_container' in current layout!!");
+        mPtrFrameLayout = view.findViewById(R.id.swipe_container);
+        if (mPtrFrameLayout == null) throw new RuntimeException("PtrFrameLayout is not exist or its id not 'R.id.swipe_container' in current layout!!");
         PtrUIHandler handlerView = getPtrUIHandlerView();
-        ptrLayout.setHeaderView((View) handlerView);
-        ptrLayout.addPtrUIHandler(handlerView);
-        ptrLayout.setPtrHandler(new PtrHandler() {
-            @Override public boolean checkCanDoRefresh(PtrFrameLayout frame, View content, View header) {
-                return PtrDefaultHandler.checkContentCanBePulledDown(frame, content, header);
-            }
-
-            @Override public void onRefreshBegin(PtrFrameLayout frame) {
-                onRefresh();
-            }
-        });
+        mPtrFrameLayout.setHeaderView((View) handlerView);
+        mPtrFrameLayout.addPtrUIHandler(handlerView);
+        mPtrFrameLayout.setPtrHandler(new PtrDefaultHandler(this));
 
         View footerView = getFooterView();
         if (footerView instanceof LoadingFooter) {
@@ -69,21 +60,21 @@ public abstract class QsPullListActivity<P extends QsPresenter, D> extends QsLis
      * 获取下拉刷新控件
      */
     @Override public PtrFrameLayout getPtrFrameLayout() {
-        return ptrLayout;
+        return mPtrFrameLayout;
     }
 
     @Override public void startRefreshing() {
-        if (ptrLayout != null) ptrLayout.post(new Runnable() {
+        if (mPtrFrameLayout != null) mPtrFrameLayout.post(new Runnable() {
             @Override public void run() {
-                ptrLayout.autoRefresh();
+                mPtrFrameLayout.autoRefresh();
             }
         });
     }
 
     public void stopRefreshing() {
-        if (ptrLayout != null) ptrLayout.post(new Runnable() {
+        if (mPtrFrameLayout != null) mPtrFrameLayout.post(new Runnable() {
             @Override public void run() {
-                ptrLayout.refreshComplete();
+                mPtrFrameLayout.refreshComplete();
             }
         });
     }
@@ -98,17 +89,17 @@ public abstract class QsPullListActivity<P extends QsPresenter, D> extends QsLis
     }
 
     @Override public void openPullRefreshing() {
-        if (ptrLayout != null) ptrLayout.post(new Runnable() {
+        if (mPtrFrameLayout != null) mPtrFrameLayout.post(new Runnable() {
             @Override public void run() {
-                ptrLayout.setEnabled(true);
+                mPtrFrameLayout.setEnabled(true);
             }
         });
     }
 
     @Override public void closePullRefreshing() {
-        if (ptrLayout != null) ptrLayout.post(new Runnable() {
+        if (mPtrFrameLayout != null) mPtrFrameLayout.post(new Runnable() {
             @Override public void run() {
-                ptrLayout.setEnabled(false);
+                mPtrFrameLayout.setEnabled(false);
             }
         });
     }
@@ -122,9 +113,9 @@ public abstract class QsPullListActivity<P extends QsPresenter, D> extends QsLis
     }
 
     @Override public void setData(List<D> list, boolean showEmptyView) {
-        ptrLayout.post(new Runnable() {
+        mPtrFrameLayout.post(new Runnable() {
             @Override public void run() {
-                ptrLayout.refreshComplete();
+                mPtrFrameLayout.refreshComplete();
             }
         });
         super.setData(list, showEmptyView);
@@ -164,7 +155,7 @@ public abstract class QsPullListActivity<P extends QsPresenter, D> extends QsLis
     }
 
     @Override public boolean canPullRefreshing() {
-        return ptrLayout.isEnabled();
+        return mPtrFrameLayout.isEnabled();
     }
 
     @Override public void smoothScrollToTop(boolean autoRefresh) {
