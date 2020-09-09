@@ -615,10 +615,6 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         }
     }
 
-    @Override public Activity getActivityForPermission() {
-        return getActivity();
-    }
-
     @Override public void setOnActivityResultListener(OnActivityResultListener listener) {
         this.activityResultListener = listener;
     }

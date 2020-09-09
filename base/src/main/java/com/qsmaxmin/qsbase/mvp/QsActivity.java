@@ -1,6 +1,5 @@
 package com.qsmaxmin.qsbase.mvp;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -661,10 +660,6 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
     }
 
     @Override public FragmentActivity getActivity() {
-        return this;
-    }
-
-    @Override public Activity getActivityForPermission() {
         return this;
     }
 

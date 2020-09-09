@@ -1,6 +1,5 @@
 package com.qsmaxmin.qsbase.mvp.presenter;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 
@@ -15,7 +14,6 @@ import com.qsmaxmin.qsbase.common.widget.toast.QsToast;
 import com.qsmaxmin.qsbase.mvp.QsIPullToRefreshView;
 import com.qsmaxmin.qsbase.mvp.QsIView;
 import com.qsmaxmin.qsbase.mvp.model.QsConstants;
-import com.qsmaxmin.qsbase.plugin.permission.QsIPermission;
 
 import java.util.ArrayList;
 
@@ -31,7 +29,7 @@ import androidx.fragment.app.FragmentActivity;
  * @Date 2017/6/21 16:27
  * @Description
  */
-public class QsPresenter<V extends QsIView> implements QsIPermission, QsNotProguard {
+public class QsPresenter<V extends QsIView> implements QsNotProguard {
     private final ArrayList<String> tagList = new ArrayList<>();
     private       boolean           isAttach;
     private       V                 mView;
@@ -218,9 +216,5 @@ public class QsPresenter<V extends QsIView> implements QsIPermission, QsNotProgu
 
     public boolean isNetworkAvailable() {
         return QsHelper.isNetworkAvailable();
-    }
-
-    @Override public Activity getActivityForPermission() {
-        return getActivity();
     }
 }
