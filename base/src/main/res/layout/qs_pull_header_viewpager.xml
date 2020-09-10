@@ -2,7 +2,6 @@
 <com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/swipe_container"
     android:layout_width="match_parent"
-    android:background="@color/colorBackground"
     android:layout_height="match_parent">
 
     <com.qsmaxmin.qsbase.common.widget.headerview.HeaderScrollView

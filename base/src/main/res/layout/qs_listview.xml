@@ -3,7 +3,6 @@
     android:id="@android:id/list"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorBackground"
     android:divider="@null"
     android:dividerHeight="0dp"
     android:overScrollMode="never" />
