@@ -2,7 +2,6 @@ package com.qsmaxmin.qsbase.mvp.fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ScrollView;
 
 import com.qsmaxmin.qsbase.R;
@@ -22,9 +21,8 @@ import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
  */
 
 public abstract class QsPullFragment<T extends QsPresenter> extends QsFragment<T> implements QsIPullView {
-
     private PtrFrameLayout mPtrFrameLayout;
-    private ViewGroup      childView;
+    private View           childView;
 
     @Override public int layoutId() {
         return R.layout.qs_pulll_view;
@@ -51,13 +49,9 @@ public abstract class QsPullFragment<T extends QsPresenter> extends QsFragment<T
         mPtrFrameLayout.setHeaderView((View) handlerView);
         mPtrFrameLayout.addPtrUIHandler(handlerView);
         mPtrFrameLayout.setPtrHandler(new PtrDefaultHandler(this));
-        childView = view.findViewById(R.id.swipe_child);
         if (viewLayoutId() != 0) {
-            if (childView != null) {
-                inflater.inflate(viewLayoutId(), childView);
-            } else {
-                inflater.inflate(viewLayoutId(), mPtrFrameLayout);
-            }
+            childView = inflater.inflate(viewLayoutId(), mPtrFrameLayout, false);
+            mPtrFrameLayout.addView(childView);
         }
     }
 

@@ -3,14 +3,7 @@
     android:id="@+id/swipe_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorBackground">
+    android:background="@color/colorBackground" />
 
-    <ScrollView
-        android:id="@+id/swipe_child"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:overScrollMode="never"
-        android:scrollbars="none" />
 
-</com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout>
 
