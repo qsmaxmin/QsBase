@@ -165,4 +165,6 @@ public interface QsIView<P> extends QsIBindView, QsIBindEvent, QsIBindBundle, Qs
     void smoothScrollToTop(boolean autoRefresh);
 
     void setOnActivityResultListener(OnActivityResultListener listener);
+
+    int backgroundColor();
 }

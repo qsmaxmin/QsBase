@@ -1,6 +1,5 @@
 package com.qsmaxmin.qsbase.mvp.fragment;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -53,6 +52,7 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         bindBundleByQsPlugin(getArguments());
         View rootView = initView(inflater);
+        if (backgroundColor() != 0) rootView.setBackgroundColor(backgroundColor());
         bindViewByQsPlugin(rootView);
         rootView.setOnTouchListener(this);
         if (isOpenEventBus()) {
@@ -629,5 +629,9 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
 
     @Override public View getScrollableView() {
         return getView();
+    }
+
+    @Override public int backgroundColor() {
+        return 0;
     }
 }

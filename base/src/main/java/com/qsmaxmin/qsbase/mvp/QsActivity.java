@@ -86,6 +86,7 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         bindBundleByQsPlugin(getIntent().getExtras());
         initStatusBar();
         contentView = initView(getLayoutInflater());
+        if (backgroundColor() != 0) contentView.setBackgroundColor(backgroundColor());
         setContentView(contentView);
         bindViewByQsPlugin(contentView);
 
@@ -732,5 +733,9 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
 
     @Override public boolean isTransparentNavigationBar() {
         return false;
+    }
+
+    @Override public int backgroundColor() {
+        return 0;
     }
 }
