@@ -8,7 +8,6 @@ import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.widget.listview.LoadingFooter;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrDefaultHandler;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout;
-import com.qsmaxmin.qsbase.common.widget.ptr.PtrHandler;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrUIHandler;
 import com.qsmaxmin.qsbase.common.widget.ptr.header.BeautyCircleRefreshHeader;
 import com.qsmaxmin.qsbase.common.widget.recyclerview.EndlessRecyclerOnScrollListener;
@@ -22,11 +21,9 @@ import java.util.List;
  * @Description pull recycler activity
  */
 public abstract class QsPullRecyclerActivity<P extends QsPresenter, D> extends QsRecyclerActivity<P, D> implements QsIPullToRefreshView {
-    public static final byte           LOAD_WHEN_SCROLL_TO_BOTTOM = 0;
-    public static final byte           LOAD_WHEN_SECOND_TO_LAST   = 1;
-    private             boolean        canLoadingMore             = true;
-    private             PtrFrameLayout mPtrFrameLayout;
-    protected           LoadingFooter  mLoadingFooter;
+    private   boolean        canLoadingMore = true;
+    private   PtrFrameLayout mPtrFrameLayout;
+    protected LoadingFooter  mLoadingFooter;
 
     @Override public int getFooterLayout() {
         return R.layout.qs_loading_footer;
