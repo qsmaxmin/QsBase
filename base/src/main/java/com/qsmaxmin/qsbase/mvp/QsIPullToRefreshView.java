@@ -28,17 +28,17 @@ public interface QsIPullToRefreshView {
 
     LoadingFooter.State getLoadingState();
 
+    boolean canPullRefreshing();
+
+    boolean canPullLoading();
+
     void openPullRefreshing();
 
     void closePullRefreshing();
 
-    boolean canPullRefreshing();
-
     void openPullLoading();
 
     void closePullLoading();
-
-    boolean canPullLoading();
 
     PtrFrameLayout getPtrFrameLayout();
 }

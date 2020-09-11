@@ -2,6 +2,7 @@ package com.qsmaxmin.qsbase.mvp;
 
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ScrollView;
 
 import com.qsmaxmin.qsbase.R;
@@ -33,11 +34,20 @@ public abstract class QsPullActivity<T extends QsPresenter> extends QsActivity<T
 
     @Override protected View initView(LayoutInflater inflater) {
         View view = super.initView(inflater);
-        initPtrFrameLayout(view, inflater);
+        if (canPullRefreshing()) {
+            initPtrFrameLayout(view);
+            if (viewLayoutId() != 0) {
+                childView = inflater.inflate(viewLayoutId(), mPtrFrameLayout, false);
+                mPtrFrameLayout.addView(childView);
+            }
+        } else {
+            childView = inflater.inflate(viewLayoutId(), (ViewGroup) view, false);
+            ((ViewGroup) view).addView(childView);
+        }
         return view;
     }
 
-    private void initPtrFrameLayout(View view, LayoutInflater inflater) {
+    private void initPtrFrameLayout(View view) {
         if (view instanceof PtrFrameLayout) {
             mPtrFrameLayout = (PtrFrameLayout) view;
         } else {
@@ -48,10 +58,6 @@ public abstract class QsPullActivity<T extends QsPresenter> extends QsActivity<T
         mPtrFrameLayout.setHeaderView((View) handlerView);
         mPtrFrameLayout.addPtrUIHandler(handlerView);
         mPtrFrameLayout.setPtrHandler(new PtrDefaultHandler(this));
-        if (viewLayoutId() != 0) {
-            childView = inflater.inflate(viewLayoutId(), mPtrFrameLayout, false);
-            mPtrFrameLayout.addView(childView);
-        }
     }
 
     /**
@@ -85,58 +91,38 @@ public abstract class QsPullActivity<T extends QsPresenter> extends QsActivity<T
         }
     }
 
-    @Override public void openPullRefreshing() {
-        if (QsHelper.isMainThread()) {
-            mPtrFrameLayout.setEnabled(true);
-        } else {
-            mPtrFrameLayout.post(new Runnable() {
-                @Override public void run() {
-                    mPtrFrameLayout.setEnabled(true);
-                }
-            });
-        }
-    }
-
-    @Override public void closePullRefreshing() {
-        closePullRefreshing(false);
-    }
-
-    @Override public boolean canPullRefreshing() {
-        return mPtrFrameLayout.isEnabled();
-    }
-
-    public void closePullRefreshing(final boolean enableOverDrag) {
-        if (QsHelper.isMainThread()) {
-            if (enableOverDrag) {
-                mPtrFrameLayout.setEnabled(true);
-                View headerView = mPtrFrameLayout.getHeaderView();
-                if (headerView != null) headerView.setVisibility(View.GONE);
-                mPtrFrameLayout.setKeepHeaderWhenRefresh(false);
-            } else {
-                mPtrFrameLayout.setEnabled(false);
-            }
-        } else {
-            mPtrFrameLayout.post(new Runnable() {
-                @Override public void run() {
-                    if (enableOverDrag) {
-                        mPtrFrameLayout.setEnabled(true);
-                        View headerView = mPtrFrameLayout.getHeaderView();
-                        if (headerView != null) headerView.setVisibility(View.GONE);
-                        mPtrFrameLayout.setKeepHeaderWhenRefresh(false);
-                    } else {
-                        mPtrFrameLayout.setEnabled(false);
-                    }
-                }
-            });
-        }
-    }
-
     @Override public final void onLoad() {
         // do nothing
     }
 
+    @Override public boolean canPullRefreshing() {
+        return true;
+    }
+
     @Override public boolean canPullLoading() {
         return false;
+    }
+
+    @Override public final void openPullRefreshing() {
+        if (mPtrFrameLayout != null) mPtrFrameLayout.post(new Runnable() {
+            @Override public void run() {
+                mPtrFrameLayout.setEnabled(true);
+            }
+        });
+    }
+
+    @Override public final void closePullRefreshing() {
+        if (mPtrFrameLayout != null) mPtrFrameLayout.post(new Runnable() {
+            @Override public void run() {
+                mPtrFrameLayout.setEnabled(false);
+            }
+        });
+    }
+
+    @Override public final void openPullLoading() {
+    }
+
+    @Override public final void closePullLoading() {
     }
 
     @Override public final void setLoadingState(LoadingFooter.State state) {
@@ -147,13 +133,6 @@ public abstract class QsPullActivity<T extends QsPresenter> extends QsActivity<T
         return null;
     }
 
-    @Override public final void openPullLoading() {
-        // do nothing
-    }
-
-    @Override public final void closePullLoading() {
-        // do nothing
-    }
 
     @Override public void smoothScrollToTop(boolean autoRefresh) {
         if (childView != null && childView instanceof ScrollView) {

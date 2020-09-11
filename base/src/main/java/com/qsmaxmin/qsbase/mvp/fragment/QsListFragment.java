@@ -121,7 +121,7 @@ public abstract class QsListFragment<P extends QsPresenter, D> extends QsFragmen
         }
     }
 
-    @Override public void addData(final D d) {
+    @Override public final void addData(final D d) {
         if (d != null) {
             if (QsHelper.isMainThread()) {
                 mList.add(d);
@@ -137,15 +137,21 @@ public abstract class QsListFragment<P extends QsPresenter, D> extends QsFragmen
         }
     }
 
-    @Override public void addData(final List<D> list) {
-        if (list != null && !list.isEmpty()) {
+    @Override public final void addData(final List<D> list) {
+        addData(list, mList.size());
+    }
+
+    @Override public void addData(final List<D> list, int position) {
+        if (list != null && !list.isEmpty() && position >= 0) {
             if (QsHelper.isMainThread()) {
-                mList.addAll(list);
+                position = Math.min(position, mList.size());
+                mList.addAll(position, list);
                 updateAdapter(true);
             } else {
+                final int finalPosition = Math.min(position, mList.size());
                 post(new Runnable() {
                     @Override public void run() {
-                        mList.addAll(list);
+                        mList.addAll(finalPosition, list);
                         updateAdapter(true);
                     }
                 });
@@ -153,7 +159,7 @@ public abstract class QsListFragment<P extends QsPresenter, D> extends QsFragmen
         }
     }
 
-    @Override public void delete(final int position) {
+    @Override public final void delete(final int position) {
         if (position >= 0 && position < mList.size()) {
             if (QsHelper.isMainThread()) {
                 mList.remove(position);
@@ -169,7 +175,7 @@ public abstract class QsListFragment<P extends QsPresenter, D> extends QsFragmen
         }
     }
 
-    @Override public void delete(final D d) {
+    @Override public final void delete(final D d) {
         if (d != null) {
             if (QsHelper.isMainThread()) {
                 boolean success;
@@ -187,7 +193,7 @@ public abstract class QsListFragment<P extends QsPresenter, D> extends QsFragmen
         }
     }
 
-    @Override public void deleteAll() {
+    @Override public final void deleteAll() {
         if (!mList.isEmpty()) {
             if (QsHelper.isMainThread()) {
                 mList.clear();

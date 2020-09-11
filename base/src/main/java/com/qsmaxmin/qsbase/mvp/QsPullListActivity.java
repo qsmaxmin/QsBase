@@ -21,12 +21,12 @@ import java.util.List;
  * @Description pull list activity
  */
 public abstract class QsPullListActivity<P extends QsPresenter, D> extends QsListActivity<P, D> implements QsIPullToRefreshView {
-    private   boolean        canLoadingMore = true;
     private   PtrFrameLayout mPtrFrameLayout;
     protected LoadingFooter  loadingFooter;
+    private   boolean        canLoadingMore = true;
 
     @Override public int layoutId() {
-        return R.layout.qs_pull_listview;
+        return canPullRefreshing() ? R.layout.qs_pull_listview : R.layout.qs_listview;
     }
 
     @Override public int getFooterLayout() {
@@ -39,13 +39,9 @@ public abstract class QsPullListActivity<P extends QsPresenter, D> extends QsLis
 
     @Override protected View initView(LayoutInflater inflater) {
         View view = super.initView(inflater);
-
-        mPtrFrameLayout = view.findViewById(R.id.swipe_container);
-        if (mPtrFrameLayout == null) throw new RuntimeException("PtrFrameLayout is not exist or its id not 'R.id.swipe_container' in current layout!!");
-        PtrUIHandler handlerView = getPtrUIHandlerView();
-        mPtrFrameLayout.setHeaderView((View) handlerView);
-        mPtrFrameLayout.addPtrUIHandler(handlerView);
-        mPtrFrameLayout.setPtrHandler(new PtrDefaultHandler(this));
+        if (canPullRefreshing()) {
+            initPtrFrameLayout(view);
+        }
 
         View footerView = getFooterView();
         if (footerView instanceof LoadingFooter) {
@@ -53,7 +49,23 @@ public abstract class QsPullListActivity<P extends QsPresenter, D> extends QsLis
         } else if (footerView != null) {
             loadingFooter = footerView.findViewById(R.id.loading_footer);
         }
+        if (!canPullLoading()) {
+            setLoadingState(LoadingFooter.State.TheEnd);
+        }
         return view;
+    }
+
+    private void initPtrFrameLayout(View view) {
+        if (view instanceof PtrFrameLayout) {
+            mPtrFrameLayout = (PtrFrameLayout) view;
+        } else {
+            mPtrFrameLayout = view.findViewById(R.id.swipe_container);
+        }
+        if (mPtrFrameLayout == null) throw new RuntimeException("PtrFrameLayout is not exist or its id not 'R.id.swipe_container' in current layout!!");
+        PtrUIHandler handlerView = getPtrUIHandlerView();
+        mPtrFrameLayout.setHeaderView((View) handlerView);
+        mPtrFrameLayout.addPtrUIHandler(handlerView);
+        mPtrFrameLayout.setPtrHandler(new PtrDefaultHandler(this));
     }
 
     /**
@@ -64,19 +76,23 @@ public abstract class QsPullListActivity<P extends QsPresenter, D> extends QsLis
     }
 
     @Override public void startRefreshing() {
-        if (mPtrFrameLayout != null) mPtrFrameLayout.post(new Runnable() {
-            @Override public void run() {
-                mPtrFrameLayout.autoRefresh();
-            }
-        });
+        if (mPtrFrameLayout != null && mPtrFrameLayout.isEnabled()) {
+            mPtrFrameLayout.post(new Runnable() {
+                @Override public void run() {
+                    mPtrFrameLayout.autoRefresh();
+                }
+            });
+        }
     }
 
-    public void stopRefreshing() {
-        if (mPtrFrameLayout != null) mPtrFrameLayout.post(new Runnable() {
-            @Override public void run() {
-                mPtrFrameLayout.refreshComplete();
-            }
-        });
+    @Override public void stopRefreshing() {
+        if (mPtrFrameLayout != null) {
+            mPtrFrameLayout.post(new Runnable() {
+                @Override public void run() {
+                    mPtrFrameLayout.refreshComplete();
+                }
+            });
+        }
     }
 
     @Override public void setLoadingState(final LoadingFooter.State state) {
@@ -88,53 +104,26 @@ public abstract class QsPullListActivity<P extends QsPresenter, D> extends QsLis
         return loadingFooter == null ? null : loadingFooter.getState();
     }
 
-    @Override public void openPullRefreshing() {
-        if (mPtrFrameLayout != null) mPtrFrameLayout.post(new Runnable() {
-            @Override public void run() {
-                mPtrFrameLayout.setEnabled(true);
-            }
-        });
-    }
-
-    @Override public void closePullRefreshing() {
-        if (mPtrFrameLayout != null) mPtrFrameLayout.post(new Runnable() {
-            @Override public void run() {
-                mPtrFrameLayout.setEnabled(false);
-            }
-        });
-    }
-
-    @Override public void openPullLoading() {
-        canLoadingMore = true;
-    }
-
-    @Override public void closePullLoading() {
-        canLoadingMore = false;
-    }
-
     @Override public void setData(List<D> list, boolean showEmptyView) {
-        mPtrFrameLayout.post(new Runnable() {
+        super.setData(list, showEmptyView);
+        if (mPtrFrameLayout != null) mPtrFrameLayout.post(new Runnable() {
             @Override public void run() {
                 mPtrFrameLayout.refreshComplete();
             }
         });
-        super.setData(list, showEmptyView);
+        setFooterStateByData(list);
     }
 
-    private void loadingMoreData() {
-        if (loadingFooter != null) {
-            LoadingFooter.State state = loadingFooter.getState();
-            if (!canLoadingMore) {
-                return;
-            } else if (state == LoadingFooter.State.Loading) {
-                if (L.isEnable()) L.i(initTag(), "Under loading..........");
-                return;
-            } else if (state == LoadingFooter.State.TheEnd) {
-                if (L.isEnable()) L.i(initTag(), "no more data...........");
-                return;
-            }
-            setLoadingState(LoadingFooter.State.Loading);
-            onLoad();
+    @Override public void addData(List<D> list, int position) {
+        super.addData(list, position);
+        setFooterStateByData(list);
+    }
+
+    protected void setFooterStateByData(List<D> list) {
+        if (!canPullLoading() || list == null || list.isEmpty()) {
+            setLoadingState(LoadingFooter.State.TheEnd);
+        } else if (canLoadingMore && getLoadingState() != LoadingFooter.State.Normal) {
+            setLoadingState(LoadingFooter.State.Normal);
         }
     }
 
@@ -150,17 +139,58 @@ public abstract class QsPullListActivity<P extends QsPresenter, D> extends QsLis
         }
     }
 
-    @Override public boolean canPullLoading() {
-        return canLoadingMore;
-    }
-
-    @Override public boolean canPullRefreshing() {
-        return mPtrFrameLayout.isEnabled();
+    private void loadingMoreData() {
+        if (canPullLoading() && loadingFooter != null) {
+            LoadingFooter.State state = loadingFooter.getState();
+            if (!canLoadingMore) {
+                return;
+            } else if (state == LoadingFooter.State.Loading) {
+                if (L.isEnable()) L.i(initTag(), "Under loading..........");
+                return;
+            } else if (state == LoadingFooter.State.TheEnd) {
+                if (L.isEnable()) L.i(initTag(), "no more data...........");
+                return;
+            }
+            setLoadingState(LoadingFooter.State.Loading);
+            onLoad();
+        }
     }
 
     @Override public void smoothScrollToTop(boolean autoRefresh) {
         super.smoothScrollToTop(autoRefresh);
         if (autoRefresh) startRefreshing();
+    }
+
+    @Override public boolean canPullRefreshing() {
+        return true;
+    }
+
+    @Override public boolean canPullLoading() {
+        return true;
+    }
+
+    @Override public final void openPullRefreshing() {
+        if (mPtrFrameLayout != null) mPtrFrameLayout.post(new Runnable() {
+            @Override public void run() {
+                mPtrFrameLayout.setEnabled(true);
+            }
+        });
+    }
+
+    @Override public final void closePullRefreshing() {
+        if (mPtrFrameLayout != null) mPtrFrameLayout.post(new Runnable() {
+            @Override public void run() {
+                mPtrFrameLayout.setEnabled(false);
+            }
+        });
+    }
+
+    @Override public final void openPullLoading() {
+        canLoadingMore = true;
+    }
+
+    @Override public final void closePullLoading() {
+        canLoadingMore = false;
     }
 
     protected int onLoadTriggerCondition() {

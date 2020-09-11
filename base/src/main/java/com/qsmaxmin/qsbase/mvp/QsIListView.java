@@ -1,6 +1,5 @@
 package com.qsmaxmin.qsbase.mvp;
 
-import android.app.Activity;
 import android.content.Context;
 import android.view.View;
 import android.widget.AbsListView;
@@ -45,6 +44,8 @@ public interface QsIListView<D> extends AdapterView.OnItemClickListener, Adapter
     void setData(List<D> list, boolean showEmptyView);
 
     void addData(List<D> list);
+
+    void addData(List<D> list, int position);
 
     void addData(D d);
 

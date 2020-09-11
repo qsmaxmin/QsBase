@@ -142,20 +142,8 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
         }
     }
 
-    @Override public void addData(final List<D> list) {
-        if (list != null && !list.isEmpty()) {
-            if (QsHelper.isMainThread()) {
-                mList.addAll(list);
-                updateAdapter(true);
-            } else {
-                post(new Runnable() {
-                    @Override public void run() {
-                        mList.addAll(list);
-                        updateAdapter(true);
-                    }
-                });
-            }
-        }
+    @Override public final void addData(final List<D> list) {
+        addData(list, mList.size());
     }
 
     @Override public void addData(final List<D> list, int position) {
@@ -178,7 +166,7 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
         }
     }
 
-    @Override public void delete(final int position) {
+    @Override public final void delete(final int position) {
         if (position >= 0 && position < mList.size()) {
             if (QsHelper.isMainThread()) {
                 if (mRecyclerViewAdapter != null) mRecyclerViewAdapter.notifyItemRemoved(position);
@@ -196,7 +184,7 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
         }
     }
 
-    @Override public void delete(final D d) {
+    @Override public final void delete(final D d) {
         if (d != null) {
             if (QsHelper.isMainThread()) {
                 boolean success;
@@ -214,7 +202,7 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
         }
     }
 
-    @Override public void deleteAll() {
+    @Override public final void deleteAll() {
         if (!mList.isEmpty()) {
             if (QsHelper.isMainThread()) {
                 mList.clear();
@@ -234,13 +222,13 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
         return mList;
     }
 
-    @Override public List<D> copyData() {
+    @Override public final List<D> copyData() {
         ArrayList<D> list = new ArrayList<>();
         if (!mList.isEmpty()) list.addAll(mList);
         return list;
     }
 
-    @Override public D getData(int position) {
+    @Override public final D getData(int position) {
         if (position >= 0 && position < mList.size()) {
             return mList.get(position);
         }
