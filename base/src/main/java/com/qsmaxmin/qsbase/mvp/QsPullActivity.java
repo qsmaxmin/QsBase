@@ -1,4 +1,4 @@
-package com.qsmaxmin.qsbase.mvp.fragment;
+package com.qsmaxmin.qsbase.mvp;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,7 +11,6 @@ import com.qsmaxmin.qsbase.common.widget.ptr.PtrDefaultHandler;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrUIHandler;
 import com.qsmaxmin.qsbase.common.widget.ptr.header.BeautyCircleRefreshHeader;
-import com.qsmaxmin.qsbase.mvp.QsIPullView;
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
 
 /**
@@ -20,7 +19,7 @@ import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
  * @Description
  */
 
-public abstract class QsPullFragment<T extends QsPresenter> extends QsFragment<T> implements QsIPullView {
+public abstract class QsPullActivity<T extends QsPresenter> extends QsActivity<T> implements QsIPullView {
     private PtrFrameLayout mPtrFrameLayout;
     private View           childView;
 
@@ -168,9 +167,5 @@ public abstract class QsPullFragment<T extends QsPresenter> extends QsFragment<T
         } else {
             super.smoothScrollToTop(autoRefresh);
         }
-    }
-
-    @Override public View getScrollableView() {
-        return childView;
     }
 }
