@@ -302,14 +302,6 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
         //for custom logic
     }
 
-    protected int getSpanCount() {
-        return 2;
-    }
-
-    protected int getRecyclerViewType() {
-        return TYPE_LIST;
-    }
-
     @Override public int getItemViewType(int position) {
         return 0;
     }

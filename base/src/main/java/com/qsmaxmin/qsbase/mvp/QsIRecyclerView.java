@@ -21,10 +21,6 @@ import androidx.recyclerview.widget.RecyclerView;
  */
 
 public interface QsIRecyclerView<D> extends AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
-    byte TYPE_LIST           = 1;
-    byte TYPE_GRID           = 2;
-    byte TYPE_STAGGERED_GRID = 3;
-
     QsRecycleAdapterItem<D> getRecycleAdapterItemInner(LayoutInflater mInflater, ViewGroup parent, int type);
 
     QsRecycleAdapterItem<D> getRecycleAdapterItem(LayoutInflater mInflater, ViewGroup parent, int type);
