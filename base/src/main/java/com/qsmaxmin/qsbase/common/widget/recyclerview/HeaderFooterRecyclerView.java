@@ -16,7 +16,6 @@ import androidx.recyclerview.widget.RecyclerView;
  * @Description
  */
 public class HeaderFooterRecyclerView extends RecyclerView {
-
     private List<View>                  mHeaderViews = new ArrayList<>();
     private List<View>                  mFooterViews = new ArrayList<>();
     private HeaderFooterRecyclerAdapter mAdapter;
@@ -37,9 +36,9 @@ public class HeaderFooterRecyclerView extends RecyclerView {
         boolean success = false;
         if (mHeaderViews.contains(view)) {
             success = mHeaderViews.remove(view);
-        }
-        if (mAdapter != null) {
-            mAdapter.notifyDataSetChanged();
+            if (success && mAdapter != null) {
+                mAdapter.notifyDataSetChanged();
+            }
         }
         return success;
     }
@@ -48,9 +47,9 @@ public class HeaderFooterRecyclerView extends RecyclerView {
         boolean success = false;
         if (mFooterViews.contains(view)) {
             success = mFooterViews.remove(view);
-        }
-        if (mAdapter != null) {
-            mAdapter.notifyDataSetChanged();
+            if (success && mAdapter != null) {
+                mAdapter.notifyDataSetChanged();
+            }
         }
         return success;
     }
@@ -64,47 +63,29 @@ public class HeaderFooterRecyclerView extends RecyclerView {
     }
 
     public void addHeaderView(View view) {
-        mHeaderViews.add(view);
-        if (mAdapter != null) {
-            mAdapter.notifyDataSetChanged();
+        if (!mHeaderViews.contains(view)) {
+            mHeaderViews.add(view);
+            if (mAdapter != null) {
+                mAdapter.notifyDataSetChanged();
+            }
         }
     }
 
     public void addFooterView(View view) {
-        mFooterViews.add(view);
-        if (mAdapter != null) {
-            mAdapter.notifyDataSetChanged();
+        if (!mFooterViews.contains(view)) {
+            mFooterViews.add(view);
+            if (mAdapter != null) {
+                mAdapter.notifyDataSetChanged();
+            }
         }
     }
 
     @Override public void setAdapter(Adapter adapter) {
         if (mAdapter != null) {
-            mAdapter.unregisterDataSetObserver(mAdapterDataObserver);
+            mAdapter.release();
         }
         mAdapter = new HeaderFooterRecyclerAdapter(adapter, mHeaderViews, mFooterViews);
-        mAdapter.registerDataSetObserver(mAdapterDataObserver);
         super.setAdapter(mAdapter);
     }
 
-    private AdapterDataObserver mAdapterDataObserver = new AdapterDataObserver() {
-        @Override public void onChanged() {
-            mAdapter.notifyDataSetChanged();
-        }
-
-        @Override public void onItemRangeChanged(int positionStart, int itemCount) {
-            mAdapter.notifyItemRangeChanged(positionStart + mHeaderViews.size(), itemCount);
-        }
-
-        @Override public void onItemRangeChanged(int positionStart, int itemCount, Object payload) {
-            mAdapter.notifyItemRangeChanged(positionStart + mHeaderViews.size(), itemCount, payload);
-        }
-
-        @Override public void onItemRangeInserted(int positionStart, int itemCount) {
-            mAdapter.notifyItemRangeInserted(positionStart + mHeaderViews.size(), itemCount);
-        }
-
-        @Override public void onItemRangeRemoved(int positionStart, int itemCount) {
-            mAdapter.notifyItemRangeRemoved(positionStart + mHeaderViews.size(), itemCount);
-        }
-    };
 }

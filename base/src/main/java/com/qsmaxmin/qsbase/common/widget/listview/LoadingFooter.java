@@ -1,27 +1,24 @@
 package com.qsmaxmin.qsbase.common.widget.listview;
 
 import android.content.Context;
-import androidx.recyclerview.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewStub;
-import android.widget.RelativeLayout;
+import android.widget.FrameLayout;
 
 import com.qsmaxmin.qsbase.R;
 import com.qsmaxmin.qsbase.common.log.L;
-import com.qsmaxmin.qsbase.common.widget.recyclerview.HeaderFooterRecyclerAdapter;
 
 /**
  * ListView/GridView/RecyclerView 分页加载时使用到的FooterView
  */
-public class LoadingFooter extends RelativeLayout implements HeaderFooterRecyclerAdapter.OnRecyclerViewAdapterBindViewHolder {
+public class LoadingFooter extends FrameLayout {
     private static final String TAG = "LoadingFooter";
     private              State  mState;
     private              View   mNormalView;
     private              View   mLoadingView;
     private              View   mNetworkErrorView;
     private              View   mTheEndView;
-
 
     public LoadingFooter(Context context) {
         super(context);
@@ -45,7 +42,6 @@ public class LoadingFooter extends RelativeLayout implements HeaderFooterRecycle
 
     @Override protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        L.i(TAG, "onAttachedToWindow  state:" + mState);
         if (mState != null) {
             setViewState(mState);
         }
@@ -56,7 +52,7 @@ public class LoadingFooter extends RelativeLayout implements HeaderFooterRecycle
     }
 
     public void setState(State status) {
-        L.i(TAG, "setState  state:" + status);
+        L.i(TAG, "setState  state :" + status);
         if (status != null) {
             this.mState = status;
             post(new Runnable() {
@@ -65,14 +61,6 @@ public class LoadingFooter extends RelativeLayout implements HeaderFooterRecycle
                 }
             });
         }
-    }
-
-    /**
-     * 当recyclerView回调
-     * {@link HeaderFooterRecyclerAdapter#onBindViewHolder(RecyclerView.ViewHolder, int)}
-     */
-    @Override public void onAdapterBindViewHolder() {
-        L.i(TAG, "onAdapterBindViewHolder  state:" + mState);
     }
 
     private void setViewState(State status) {

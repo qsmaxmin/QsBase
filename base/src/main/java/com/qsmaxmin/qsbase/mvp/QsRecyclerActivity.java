@@ -1,6 +1,5 @@
 package com.qsmaxmin.qsbase.mvp;
 
-import android.graphics.Rect;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,10 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 /**
  * @CreateBy qsmaxmin
@@ -81,20 +78,12 @@ public abstract class QsRecyclerActivity<P extends QsPresenter, D> extends QsAct
             recyclerView.addFooterView(footerView);
             bindViewByQsPlugin(footerView);
         }
-        recyclerView.addItemDecoration(new CustomItemDecoration());
+        RecyclerView.ItemDecoration itemDecoration = getItemDecoration();
+        if (itemDecoration != null) {
+            recyclerView.addItemDecoration(itemDecoration);
+        }
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                if (newState == RecyclerView.SCROLL_STATE_IDLE && getRecyclerViewType() == TYPE_STAGGERED_GRID && getSpanCount() > 1) {
-                    int[] spanArr = new int[getSpanCount()];
-                    StaggeredGridLayoutManager layoutManager = (StaggeredGridLayoutManager) getRecyclerView().getLayoutManager();
-                    if (layoutManager != null) layoutManager.findFirstCompletelyVisibleItemPositions(spanArr);
-                    for (int index : spanArr) {
-                        if (index == 1 || index == 0) {
-                            getAdapter().notifyDataSetChanged();
-                            break;
-                        }
-                    }
-                }
                 QsRecyclerActivity.this.onScrollStateChanged(recyclerView, newState);
             }
 
@@ -102,40 +91,10 @@ public abstract class QsRecyclerActivity<P extends QsPresenter, D> extends QsAct
                 QsRecyclerActivity.this.onScrolled(recyclerView, dx, dy);
             }
         });
+        recyclerView.setLayoutManager(getLayoutManager());
+
         recyclerViewAdapter = new QsRecyclerAdapter<>(this, mList, inflater);
         recyclerView.setAdapter(recyclerViewAdapter);
-
-        switch (getRecyclerViewType()) {
-            case TYPE_LIST: {
-                recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                break;
-            }
-            case TYPE_GRID: {
-                final GridLayoutManager manager = new GridLayoutManager(getContext(), getSpanCount());
-                manager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
-                    @Override public int getSpanSize(int position) {
-                        L.i(initTag(), "getSpanSize   position:" + position);
-                        if (getHeaderLayout() != 0 && position == 0) {
-                            return getSpanCount();
-                        } else if (getHeaderLayout() != 0 && getFooterLayout() != 0 && position == mList.size() + 1) {
-                            return getSpanCount();
-                        } else if (getHeaderLayout() == 0 && getFooterLayout() != 0 && position == mList.size()) {
-                            return getSpanCount();
-                        } else {
-                            return 1;
-                        }
-                    }
-                });
-                recyclerView.setLayoutManager(manager);
-                break;
-            }
-            case TYPE_STAGGERED_GRID: {
-                StaggeredGridLayoutManager manager = new StaggeredGridLayoutManager(getSpanCount(), StaggeredGridLayoutManager.VERTICAL);
-                manager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_NONE);
-                recyclerView.setLayoutManager(manager);
-                break;
-            }
-        }
     }
 
     @Override public RecyclerView.Adapter getAdapter() {
@@ -298,9 +257,7 @@ public abstract class QsRecyclerActivity<P extends QsPresenter, D> extends QsAct
         }
     }
 
-
     @Override public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
     }
 
     @Override public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
@@ -331,7 +288,7 @@ public abstract class QsRecyclerActivity<P extends QsPresenter, D> extends QsAct
         //for custom logic
     }
 
-    @Override public QsRecycleAdapterItem<D> getRecycleAdapterItemInner(LayoutInflater mInflater, ViewGroup parent, int type) {
+    @Override public final QsRecycleAdapterItem<D> getRecycleAdapterItemInner(LayoutInflater mInflater, ViewGroup parent, int type) {
         QsRecycleAdapterItem<D> adapterItem = getRecycleAdapterItem(mInflater, parent, type);
         adapterItem.setViewLayer(this);
         return adapterItem;
@@ -339,14 +296,6 @@ public abstract class QsRecyclerActivity<P extends QsPresenter, D> extends QsAct
 
     @Override public void onReceiveAdapterItemEvent(int eventType, D data, int position) {
         L.i(initTag(), "onReceiveAdapterItemEvent......eventType:" + eventType + ", position:" + position);
-    }
-
-    protected int getSpanCount() {
-        return 2;
-    }
-
-    protected int getRecyclerViewType() {
-        return TYPE_LIST;
     }
 
     @Override public int getItemViewType(int position) {
@@ -357,16 +306,11 @@ public abstract class QsRecyclerActivity<P extends QsPresenter, D> extends QsAct
         //for custom logic
     }
 
-    private class CustomItemDecoration extends RecyclerView.ItemDecoration {
-        @Override
-        public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
-            super.getItemOffsets(outRect, view, parent, state);
-            setItemOffset(outRect, view, parent, state);
-        }
+    @Override public RecyclerView.LayoutManager getLayoutManager() {
+        return new LinearLayoutManager(this);
     }
 
-    protected void setItemOffset(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
-        //for custom logic
+    @Override public RecyclerView.ItemDecoration getItemDecoration() {
+        return null;
     }
-
 }

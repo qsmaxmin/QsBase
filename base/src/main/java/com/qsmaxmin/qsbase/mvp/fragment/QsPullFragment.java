@@ -27,7 +27,7 @@ public abstract class QsPullFragment<T extends QsPresenter> extends QsFragment<T
     private ViewGroup      childView;
 
     @Override public int layoutId() {
-        return R.layout.qs_fragment_pull_view;
+        return R.layout.qs_pulll_view;
     }
 
     @Override public PtrUIHandler getPtrUIHandlerView() {

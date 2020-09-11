@@ -1,6 +1,5 @@
 package com.qsmaxmin.qsbase.mvp;
 
-import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -79,6 +78,10 @@ public interface QsIRecyclerView<D> extends AdapterView.OnItemClickListener, Ada
     void onScrolled(RecyclerView recyclerView, int dx, int dy);
 
     void onReceiveAdapterItemEvent(int eventType, D data, int position);
+
+    RecyclerView.LayoutManager getLayoutManager();
+
+    RecyclerView.ItemDecoration getItemDecoration();
 
     Context getContext();
 

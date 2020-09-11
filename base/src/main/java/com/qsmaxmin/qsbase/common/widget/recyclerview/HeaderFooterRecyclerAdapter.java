@@ -14,66 +14,84 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
  * @Date 2016/11/24 11:19
  * @Description
  */
-
 public class HeaderFooterRecyclerAdapter extends RecyclerView.Adapter {
-    private List<View>           headerView;
-    private List<View>           footerView;
-    private RecyclerView.Adapter tagAdapter;
+    private final static int                              HEADER_VIEW_TYPE = 1 << 31;
+    private final static int                              FOOTER_VIEW_TYPE = 1 << 30;
+    private              List<View>                       headerView;
+    private              List<View>                       footerView;
+    private              RecyclerView.Adapter             innerAdapter;
+    private              RecyclerView.AdapterDataObserver dataObserver;
 
-    private final static int HEADER_VIEW_TYPE = Integer.MAX_VALUE / 123;
-    private final static int FOOTER_VIEW_TYPE = Integer.MAX_VALUE / 321;
-
-
-    public HeaderFooterRecyclerAdapter(RecyclerView.Adapter tagAdapter, List<View> headerViews, List<View> footerViews) {
-        this.tagAdapter = tagAdapter;
+    public HeaderFooterRecyclerAdapter(RecyclerView.Adapter innerAdapter, List<View> headerViews, List<View> footerViews) {
+        this.innerAdapter = innerAdapter;
         this.headerView = headerViews;
         this.footerView = footerViews;
+        this.dataObserver = new RecyclerView.AdapterDataObserver() {
+            @Override public void onChanged() {
+                notifyDataSetChanged();
+            }
+
+            @Override public void onItemRangeChanged(int positionStart, int itemCount) {
+                notifyItemRangeChanged(positionStart + headerView.size(), itemCount);
+            }
+
+            @Override public void onItemRangeChanged(int positionStart, int itemCount, Object payload) {
+                notifyItemRangeChanged(positionStart + headerView.size(), itemCount, payload);
+            }
+
+            @Override public void onItemRangeInserted(int positionStart, int itemCount) {
+                notifyItemRangeInserted(positionStart + headerView.size(), itemCount);
+            }
+
+            @Override public void onItemRangeRemoved(int positionStart, int itemCount) {
+                notifyItemRangeRemoved(positionStart + headerView.size(), itemCount);
+            }
+        };
+        innerAdapter.registerAdapterDataObserver(dataObserver);
     }
 
     @Override public int getItemViewType(int position) {
-        int headerNum = headerView.size();
-        if (position < headerNum) {
+        int headerSize = headerView.size();
+        if (position < headerSize) {
             return HEADER_VIEW_TYPE;
         } else {
-            int itemCount = tagAdapter.getItemCount();
-            int realPosition = position - headerNum;
+            int itemCount = innerAdapter.getItemCount();
+            int realPosition = position - headerSize;
             if (realPosition < itemCount) {
-                return tagAdapter.getItemViewType(realPosition);
+                return innerAdapter.getItemViewType(realPosition);
+            } else {
+                return FOOTER_VIEW_TYPE;
             }
         }
-        return FOOTER_VIEW_TYPE;
     }
 
     @NonNull @Override public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         switch (viewType) {
             case HEADER_VIEW_TYPE:
-                return new HeaderOrFooterView(headerView.get(0));
+                return new HeaderFooterViewHolder(headerView.get(0));
             case FOOTER_VIEW_TYPE:
-                return new HeaderOrFooterView(footerView.get(0));
+                return new HeaderFooterViewHolder(footerView.get(0));
             default:
-                return tagAdapter.onCreateViewHolder(parent, viewType);
+                return innerAdapter.onCreateViewHolder(parent, viewType);
         }
     }
 
+    @SuppressWarnings("unchecked")
     @Override public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        int headerNum = headerView.size();
-        if (position < headerNum) {
-            onHeaderFooterBindViewHolder(holder);
-        } else {
-            int itemCount = tagAdapter.getItemCount();
-            int realPosition = position - headerNum;
-            if (realPosition < itemCount) {
-                tagAdapter.onBindViewHolder(holder, realPosition);
-            }
+        int headerSize = headerView.size();
+        int itemCount = innerAdapter.getItemCount();
+        int realPosition = position - headerSize;
+        if (position >= headerSize && realPosition < itemCount) {
+            innerAdapter.onBindViewHolder(holder, realPosition);
         }
     }
 
     @Override public int getItemCount() {
-        return tagAdapter.getItemCount() + headerView.size() + footerView.size();
+        return innerAdapter.getItemCount() + headerView.size() + footerView.size();
     }
 
     @Override public void onViewAttachedToWindow(@NonNull RecyclerView.ViewHolder holder) {
-        if (holder instanceof HeaderOrFooterView) {
+        if (holder instanceof HeaderFooterViewHolder) {
             ViewGroup.LayoutParams layoutParams = holder.itemView.getLayoutParams();
             if (layoutParams instanceof StaggeredGridLayoutManager.LayoutParams) {
                 StaggeredGridLayoutManager.LayoutParams params = (StaggeredGridLayoutManager.LayoutParams) layoutParams;
@@ -82,43 +100,15 @@ public class HeaderFooterRecyclerAdapter extends RecyclerView.Adapter {
         }
     }
 
-    public void registerDataSetObserver(RecyclerView.AdapterDataObserver mDataObserver) {
-        if (tagAdapter != null) {
-            tagAdapter.registerAdapterDataObserver(mDataObserver);
+    public void release() {
+        if (innerAdapter != null) {
+            innerAdapter.unregisterAdapterDataObserver(dataObserver);
         }
     }
 
-    public void unregisterDataSetObserver(RecyclerView.AdapterDataObserver mDataObserver) {
-        if (tagAdapter != null) {
-            tagAdapter.unregisterAdapterDataObserver(mDataObserver);
-        }
-    }
-
-    private void onHeaderFooterBindViewHolder(RecyclerView.ViewHolder holder) {
-        if (holder instanceof HeaderOrFooterView) {
-            HeaderOrFooterView headerHolder = (HeaderOrFooterView) holder;
-            headerHolder.bindData();
-        }
-    }
-
-    public interface OnRecyclerViewAdapterBindViewHolder {
-        void onAdapterBindViewHolder();
-    }
-
-    private class HeaderOrFooterView extends RecyclerView.ViewHolder {
-        View view;
-
-        HeaderOrFooterView(View itemView) {
+    private static class HeaderFooterViewHolder extends RecyclerView.ViewHolder {
+        public HeaderFooterViewHolder(@NonNull View itemView) {
             super(itemView);
-            itemView.setLayoutParams(new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-            this.view = itemView;
-        }
-
-        void bindData() {
-            if (view != null && view instanceof OnRecyclerViewAdapterBindViewHolder) {
-                OnRecyclerViewAdapterBindViewHolder view = (OnRecyclerViewAdapterBindViewHolder) this.view;
-                view.onAdapterBindViewHolder();
-            }
         }
     }
 }
