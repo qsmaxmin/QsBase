@@ -314,8 +314,8 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
         } else {
             return false;
         }
-        return (orientation == RecyclerView.VERTICAL && !view.canScrollVertically(direction))
-                || (orientation == RecyclerView.HORIZONTAL && !view.canScrollHorizontally(direction));
+        return (orientation == RecyclerView.VERTICAL && view.canScrollVertically(direction))
+                || (orientation == RecyclerView.HORIZONTAL && view.canScrollHorizontally(direction));
     }
 
     @Override public View getScrollableView() {

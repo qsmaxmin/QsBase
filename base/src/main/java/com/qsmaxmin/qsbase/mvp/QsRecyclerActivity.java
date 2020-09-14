@@ -313,7 +313,7 @@ public abstract class QsRecyclerActivity<P extends QsPresenter, D> extends QsAct
         } else {
             return false;
         }
-        return (orientation == RecyclerView.VERTICAL && !view.canScrollVertically(direction))
-                || (orientation == RecyclerView.HORIZONTAL && !view.canScrollHorizontally(direction));
+        return (orientation == RecyclerView.VERTICAL && view.canScrollVertically(direction))
+                || (orientation == RecyclerView.HORIZONTAL && view.canScrollHorizontally(direction));
     }
 }
