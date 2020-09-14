@@ -60,9 +60,8 @@ public class HeaderFooterRecyclerAdapter extends RecyclerView.Adapter {
         if (position < headerSize) {
             return HEADER_VIEW_TYPE;
         } else {
-            int itemCount = innerAdapter.getItemCount();
             int realPosition = position - headerSize;
-            if (realPosition < itemCount) {
+            if (realPosition < innerAdapter.getItemCount()) {
                 return innerAdapter.getItemViewType(realPosition);
             } else {
                 return FOOTER_VIEW_TYPE;
