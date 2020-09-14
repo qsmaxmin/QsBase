@@ -47,6 +47,10 @@ public class HeaderFooterRecyclerAdapter extends RecyclerView.Adapter {
             @Override public void onItemRangeRemoved(int positionStart, int itemCount) {
                 notifyItemRangeRemoved(positionStart + headerView.size(), itemCount);
             }
+
+            @Override public void onItemRangeMoved(int fromPosition, int toPosition, int itemCount) {
+                notifyItemMoved(fromPosition, toPosition);
+            }
         };
         innerAdapter.registerAdapterDataObserver(dataObserver);
     }
