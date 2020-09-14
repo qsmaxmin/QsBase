@@ -86,7 +86,6 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         bindBundleByQsPlugin(getIntent().getExtras());
         initStatusBar();
         contentView = initView(getLayoutInflater());
-        if (backgroundColor() != 0) contentView.setBackgroundColor(backgroundColor());
         setContentView(contentView);
         bindViewByQsPlugin(contentView);
 
@@ -179,6 +178,7 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
 
             View contentView = inflater.inflate(layoutId(), mViewAnimator, false);
             contentView.setTag(R.id.qs_view_state_key, VIEW_STATE_CONTENT);
+            if (contentViewBackgroundColor() != 0) contentView.setBackgroundColor(contentViewBackgroundColor());
             mViewAnimator.addView(contentView);
             onCreateContentView(contentView);
 
@@ -735,7 +735,7 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         return false;
     }
 
-    @Override public int backgroundColor() {
+    @Override public int contentViewBackgroundColor() {
         return 0;
     }
 }

@@ -166,5 +166,5 @@ public interface QsIView<P> extends QsIBindView, QsIBindEvent, QsIBindBundle, Qs
 
     void setOnActivityResultListener(OnActivityResultListener listener);
 
-    int backgroundColor();
+    int contentViewBackgroundColor();
 }

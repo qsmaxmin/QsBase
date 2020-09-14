@@ -52,7 +52,6 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         bindBundleByQsPlugin(getArguments());
         View rootView = initView(inflater);
-        if (backgroundColor() != 0) rootView.setBackgroundColor(backgroundColor());
         bindViewByQsPlugin(rootView);
         rootView.setOnTouchListener(this);
         if (isOpenEventBus()) {
@@ -117,6 +116,7 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
 
             View contentView = inflater.inflate(layoutId(), mViewAnimator, false);
             contentView.setTag(R.id.qs_view_state_key, VIEW_STATE_CONTENT);
+            if (contentViewBackgroundColor() != 0) rootView.setBackgroundColor(contentViewBackgroundColor());
             mViewAnimator.addView(contentView);
             onCreateContentView(contentView);
 
@@ -631,7 +631,7 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         return getView();
     }
 
-    @Override public int backgroundColor() {
+    @Override public int contentViewBackgroundColor() {
         return 0;
     }
 }
