@@ -63,9 +63,15 @@ public interface QsIRecyclerView<D> extends AdapterView.OnItemClickListener, Ada
 
     RecyclerView.Adapter getAdapter();
 
-    boolean canListScrollUp();
+    /**
+     * top or left
+     */
+    boolean canRecyclerScrollStart();
 
-    boolean canListScrollDown();
+    /**
+     * bottom or right
+     */
+    boolean canRecyclerScrollEnd();
 
     void onAdapterGetView(int position, int totalCount);
 

@@ -20,6 +20,7 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 /**
  * @CreateBy qsmaxmin
@@ -28,8 +29,8 @@ import androidx.recyclerview.widget.RecyclerView;
  */
 public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFragment<P> implements QsIRecyclerView<D> {
     private final List<D>                  mList = new ArrayList<>();
-    private       HeaderFooterRecyclerView mRecyclerView;
-    private       RecyclerView.Adapter     mRecyclerViewAdapter;
+    private       HeaderFooterRecyclerView recyclerView;
+    private       RecyclerView.Adapter     recyclerViewAdapter;
     private       View                     headerView;
     private       View                     footerView;
 
@@ -53,41 +54,37 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
         return footerView;
     }
 
-    @Override public final HeaderFooterRecyclerView getRecyclerView() {
-        return mRecyclerView;
+    @Override public HeaderFooterRecyclerView getRecyclerView() {
+        return recyclerView;
     }
 
     @Override protected View initView(LayoutInflater inflater) {
         View rootView = super.initView(inflater);
-        initRecycleView(inflater, rootView);
+        initRecycleView(getLayoutInflater(), rootView);
         return rootView;
     }
 
     /**
      * 初始化RecycleView
      */
-    private void initRecycleView(LayoutInflater inflater, View view) {
-        if (view instanceof HeaderFooterRecyclerView) {
-            mRecyclerView = (HeaderFooterRecyclerView) view;
-        } else {
-            mRecyclerView = view.findViewById(android.R.id.list);
-        }
-        if (mRecyclerView == null) throw new RuntimeException("HeaderFooterRecyclerView is not exit or its id not 'android.R.id.list' in current layout!!");
+    private void initRecycleView(LayoutInflater inflater, View rootView) {
+        recyclerView = rootView.findViewById(android.R.id.list);
+        if (recyclerView == null) throw new RuntimeException("HeaderFooterRecyclerView is not exit or its id not 'android.R.id.list' in current layout!!");
         if (getHeaderLayout() != 0) {
             headerView = inflater.inflate(getHeaderLayout(), null);
-            mRecyclerView.addHeaderView(headerView);
+            recyclerView.addHeaderView(headerView);
             bindViewByQsPlugin(headerView);
         }
         if (getFooterLayout() != 0) {
             footerView = inflater.inflate(getFooterLayout(), null);
-            mRecyclerView.addFooterView(footerView);
+            recyclerView.addFooterView(footerView);
             bindViewByQsPlugin(footerView);
         }
         RecyclerView.ItemDecoration itemDecoration = getItemDecoration();
         if (itemDecoration != null) {
-            mRecyclerView.addItemDecoration(itemDecoration);
+            recyclerView.addItemDecoration(itemDecoration);
         }
-        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 QsRecyclerFragment.this.onScrollStateChanged(recyclerView, newState);
             }
@@ -96,14 +93,14 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
                 QsRecyclerFragment.this.onScrolled(recyclerView, dx, dy);
             }
         });
-        mRecyclerView.setLayoutManager(getLayoutManager());
+        recyclerView.setLayoutManager(getLayoutManager());
 
-        mRecyclerViewAdapter = new QsRecyclerAdapter<>(this, mList, inflater);
-        mRecyclerView.setAdapter(mRecyclerViewAdapter);
+        recyclerViewAdapter = new QsRecyclerAdapter<>(this, mList, inflater);
+        recyclerView.setAdapter(recyclerViewAdapter);
     }
 
-    @Override public final RecyclerView.Adapter getAdapter() {
-        return mRecyclerViewAdapter;
+    @Override public RecyclerView.Adapter getAdapter() {
+        return recyclerViewAdapter;
     }
 
     @Override public final void setData(List<D> list) {
@@ -126,7 +123,7 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
         }
     }
 
-    @Override public void addData(final D d) {
+    @Override public final void addData(final D d) {
         if (d != null) {
             if (QsHelper.isMainThread()) {
                 mList.add(d);
@@ -150,14 +147,14 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
         if (list != null && !list.isEmpty() && position >= 0) {
             if (QsHelper.isMainThread()) {
                 position = Math.min(position, mList.size());
-                if (mRecyclerViewAdapter != null) mRecyclerViewAdapter.notifyItemRangeInserted(position, list.size());
+                if (recyclerViewAdapter != null) recyclerViewAdapter.notifyItemRangeInserted(position, list.size());
                 mList.addAll(position, list);
                 updateAdapter(true);
             } else {
                 final int finalPosition = Math.min(position, mList.size());
                 post(new Runnable() {
                     @Override public void run() {
-                        if (mRecyclerViewAdapter != null) mRecyclerViewAdapter.notifyItemRangeInserted(finalPosition, list.size());
+                        if (recyclerViewAdapter != null) recyclerViewAdapter.notifyItemRangeInserted(finalPosition, list.size());
                         mList.addAll(finalPosition, list);
                         updateAdapter(true);
                     }
@@ -169,13 +166,13 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
     @Override public final void delete(final int position) {
         if (position >= 0 && position < mList.size()) {
             if (QsHelper.isMainThread()) {
-                if (mRecyclerViewAdapter != null) mRecyclerViewAdapter.notifyItemRemoved(position);
+                if (recyclerViewAdapter != null) recyclerViewAdapter.notifyItemRemoved(position);
                 mList.remove(position);
                 updateAdapter(true);
             } else {
                 post(new Runnable() {
                     @Override public void run() {
-                        if (mRecyclerViewAdapter != null) mRecyclerViewAdapter.notifyItemRemoved(position);
+                        if (recyclerViewAdapter != null) recyclerViewAdapter.notifyItemRemoved(position);
                         mList.remove(position);
                         updateAdapter(true);
                     }
@@ -239,24 +236,14 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
      * 该方法必须在主线程中执行
      */
     @Override public void updateAdapter(boolean showEmptyView) {
-        if (mRecyclerViewAdapter != null) {
-            mRecyclerViewAdapter.notifyDataSetChanged();
+        if (recyclerViewAdapter != null) {
+            recyclerViewAdapter.notifyDataSetChanged();
             if (mList.isEmpty() && showEmptyView) {
                 showEmptyView();
             } else {
                 showContentView();
             }
         }
-    }
-
-    @Override public final QsRecycleAdapterItem<D> getRecycleAdapterItemInner(LayoutInflater mInflater, ViewGroup parent, int type) {
-        QsRecycleAdapterItem<D> adapterItem = getRecycleAdapterItem(mInflater, parent, type);
-        adapterItem.setViewLayer(this);
-        return adapterItem;
-    }
-
-    @Override public void onReceiveAdapterItemEvent(int eventType, D data, int position) {
-        L.i(initTag(), "onReceiveAdapterItemEvent......eventType:" + eventType + ", position:" + position);
     }
 
     @Override public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -266,12 +253,12 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
         return false;
     }
 
-    @Override public boolean canListScrollDown() {
-        return getRecyclerView().canScrollVertically(-1);
+    @Override public boolean canRecyclerScrollStart() {
+        return canRecyclerScrollInner(-1);
     }
 
-    @Override public boolean canListScrollUp() {
-        return getRecyclerView().canScrollVertically(1);
+    @Override public boolean canRecyclerScrollEnd() {
+        return canRecyclerScrollInner(1);
     }
 
     @Override public void smoothScrollToTop(boolean autoRefresh) {
@@ -282,12 +269,22 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
         });
     }
 
-    @Override public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+    @Override public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
         //for custom logic
     }
 
-    @Override public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+    @Override public void onScrollStateChanged(RecyclerView view, int newState) {
         //for custom logic
+    }
+
+    @Override public final QsRecycleAdapterItem<D> getRecycleAdapterItemInner(LayoutInflater mInflater, ViewGroup parent, int type) {
+        QsRecycleAdapterItem<D> adapterItem = getRecycleAdapterItem(mInflater, parent, type);
+        adapterItem.setViewLayer(this);
+        return adapterItem;
+    }
+
+    @Override public void onReceiveAdapterItemEvent(int eventType, D data, int position) {
+        L.i(initTag(), "onReceiveAdapterItemEvent......eventType:" + eventType + ", position:" + position);
     }
 
     @Override public int getItemViewType(int position) {
@@ -304,6 +301,21 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
 
     @Override public RecyclerView.ItemDecoration getItemDecoration() {
         return null;
+    }
+
+    private boolean canRecyclerScrollInner(int direction) {
+        HeaderFooterRecyclerView view = getRecyclerView();
+        RecyclerView.LayoutManager manager = view.getLayoutManager();
+        int orientation;
+        if (manager instanceof LinearLayoutManager) {
+            orientation = ((LinearLayoutManager) manager).getOrientation();
+        } else if (manager instanceof StaggeredGridLayoutManager) {
+            orientation = ((StaggeredGridLayoutManager) manager).getOrientation();
+        } else {
+            return false;
+        }
+        return (orientation == RecyclerView.VERTICAL && !view.canScrollVertically(direction))
+                || (orientation == RecyclerView.HORIZONTAL && !view.canScrollHorizontally(direction));
     }
 
     @Override public View getScrollableView() {

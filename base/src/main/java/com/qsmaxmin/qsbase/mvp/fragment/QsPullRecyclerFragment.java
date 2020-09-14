@@ -10,7 +10,6 @@ import com.qsmaxmin.qsbase.common.widget.ptr.PtrDefaultHandler;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrUIHandler;
 import com.qsmaxmin.qsbase.common.widget.ptr.header.BeautyCircleRefreshHeader;
-import com.qsmaxmin.qsbase.common.widget.recyclerview.EndlessObserver;
 import com.qsmaxmin.qsbase.mvp.QsIPullToRefreshView;
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
 
@@ -25,10 +24,9 @@ import androidx.recyclerview.widget.RecyclerView;
  * @Description
  */
 public abstract class QsPullRecyclerFragment<P extends QsPresenter, D> extends QsRecyclerFragment<P, D> implements QsIPullToRefreshView {
-    private   boolean         canLoadingMore = true;
-    private   PtrFrameLayout  mPtrFrameLayout;
-    protected LoadingFooter   loadingFooter;
-    private   EndlessObserver endlessObserver;
+    private   boolean        canLoadingMore = true;
+    private   PtrFrameLayout mPtrFrameLayout;
+    protected LoadingFooter  mLoadingFooter;
 
     @Override public int getFooterLayout() {
         return R.layout.qs_loading_footer;
@@ -44,33 +42,20 @@ public abstract class QsPullRecyclerFragment<P extends QsPresenter, D> extends Q
 
     @Override protected View initView(LayoutInflater inflater) {
         View view = super.initView(inflater);
-
         if (canPullRefreshing()) {
             initPtrFrameLayout(view);
         }
-
         View footerView = getFooterView();
         if (footerView instanceof LoadingFooter) {
-            loadingFooter = (LoadingFooter) footerView;
+            mLoadingFooter = (LoadingFooter) footerView;
         } else if (footerView != null) {
-            loadingFooter = footerView.findViewById(R.id.loading_footer);
+            mLoadingFooter = footerView.findViewById(R.id.loading_footer);
         }
-
-        endlessObserver = new EndlessObserver() {
-            @Override public void onLoadNextPage() {
-                loadingMoreData();
-            }
-        };
 
         if (!canPullLoading()) {
             setLoadingState(LoadingFooter.State.TheEnd);
         }
         return view;
-    }
-
-    @CallSuper @Override public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-        super.onScrollStateChanged(recyclerView, newState);
-        endlessObserver.onScrollStateChanged(recyclerView, newState);
     }
 
     private void initPtrFrameLayout(View view) {
@@ -108,11 +93,11 @@ public abstract class QsPullRecyclerFragment<P extends QsPresenter, D> extends Q
 
     @Override public void setLoadingState(final LoadingFooter.State state) {
         L.i(initTag(), "setLoadingState:" + state);
-        if (loadingFooter != null) loadingFooter.setState(state);
+        if (mLoadingFooter != null) mLoadingFooter.setState(state);
     }
 
     @Override public LoadingFooter.State getLoadingState() {
-        return loadingFooter == null ? null : loadingFooter.getState();
+        return mLoadingFooter == null ? null : mLoadingFooter.getState();
     }
 
     @Override public PtrFrameLayout getPtrFrameLayout() {
@@ -142,15 +127,22 @@ public abstract class QsPullRecyclerFragment<P extends QsPresenter, D> extends Q
         }
     }
 
+    @CallSuper @Override public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+        if (onLoadTriggerCondition() == LOAD_WHEN_SCROLL_TO_BOTTOM && newState == RecyclerView.SCROLL_STATE_IDLE && !canRecyclerScrollEnd()) {
+            loadingMoreData();
+        }
+    }
+
     @Override public void onAdapterGetView(int position, int totalCount) {
+        super.onAdapterGetView(position, totalCount);
         if (onLoadTriggerCondition() == LOAD_WHEN_SECOND_TO_LAST && (position == totalCount - 2 || totalCount <= 1)) {
             loadingMoreData();
         }
     }
 
     private void loadingMoreData() {
-        if (canPullLoading() && loadingFooter != null) {
-            LoadingFooter.State state = loadingFooter.getState();
+        if (canPullLoading() && mLoadingFooter != null) {
+            LoadingFooter.State state = mLoadingFooter.getState();
             if (!canLoadingMore) {
                 return;
             } else if (state == LoadingFooter.State.Loading) {

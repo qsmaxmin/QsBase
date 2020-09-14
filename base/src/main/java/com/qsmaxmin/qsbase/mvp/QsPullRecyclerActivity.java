@@ -10,7 +10,6 @@ import com.qsmaxmin.qsbase.common.widget.ptr.PtrDefaultHandler;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrUIHandler;
 import com.qsmaxmin.qsbase.common.widget.ptr.header.BeautyCircleRefreshHeader;
-import com.qsmaxmin.qsbase.common.widget.recyclerview.EndlessObserver;
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
 
 import java.util.List;
@@ -24,10 +23,9 @@ import androidx.recyclerview.widget.RecyclerView;
  * @Description pull recycler activity
  */
 public abstract class QsPullRecyclerActivity<P extends QsPresenter, D> extends QsRecyclerActivity<P, D> implements QsIPullToRefreshView {
-    private   boolean         canLoadingMore = true;
-    private   PtrFrameLayout  mPtrFrameLayout;
-    protected LoadingFooter   mLoadingFooter;
-    private   EndlessObserver endlessObserver;
+    private   boolean        canLoadingMore = true;
+    private   PtrFrameLayout mPtrFrameLayout;
+    protected LoadingFooter  mLoadingFooter;
 
     @Override public int getFooterLayout() {
         return R.layout.qs_loading_footer;
@@ -53,23 +51,11 @@ public abstract class QsPullRecyclerActivity<P extends QsPresenter, D> extends Q
             mLoadingFooter = footerView.findViewById(R.id.loading_footer);
         }
 
-        endlessObserver = new EndlessObserver() {
-            @Override public void onLoadNextPage() {
-                loadingMoreData();
-            }
-        };
-
         if (!canPullLoading()) {
             setLoadingState(LoadingFooter.State.TheEnd);
         }
         return view;
     }
-
-    @CallSuper @Override public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-        super.onScrollStateChanged(recyclerView, newState);
-        endlessObserver.onScrollStateChanged(recyclerView, newState);
-    }
-
 
     private void initPtrFrameLayout(View view) {
         if (view instanceof PtrFrameLayout) {
@@ -140,6 +126,11 @@ public abstract class QsPullRecyclerActivity<P extends QsPresenter, D> extends Q
         }
     }
 
+    @CallSuper @Override public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+        if (onLoadTriggerCondition() == LOAD_WHEN_SCROLL_TO_BOTTOM && newState == RecyclerView.SCROLL_STATE_IDLE && !canRecyclerScrollEnd()) {
+            loadingMoreData();
+        }
+    }
 
     @Override public void onAdapterGetView(int position, int totalCount) {
         super.onAdapterGetView(position, totalCount);

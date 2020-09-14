@@ -19,6 +19,7 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 /**
  * @CreateBy qsmaxmin
@@ -251,12 +252,12 @@ public abstract class QsRecyclerActivity<P extends QsPresenter, D> extends QsAct
         return false;
     }
 
-    @Override public boolean canListScrollDown() {
-        return getRecyclerView().canScrollVertically(-1);
+    @Override public boolean canRecyclerScrollStart() {
+        return canRecyclerScrollInner(-1);
     }
 
-    @Override public boolean canListScrollUp() {
-        return getRecyclerView().canScrollVertically(1);
+    @Override public boolean canRecyclerScrollEnd() {
+        return canRecyclerScrollInner(1);
     }
 
     @Override public void smoothScrollToTop(boolean autoRefresh) {
@@ -267,11 +268,11 @@ public abstract class QsRecyclerActivity<P extends QsPresenter, D> extends QsAct
         });
     }
 
-    @Override public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+    @Override public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
         //for custom logic
     }
 
-    @Override public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+    @Override public void onScrollStateChanged(RecyclerView view, int newState) {
         //for custom logic
     }
 
@@ -299,5 +300,20 @@ public abstract class QsRecyclerActivity<P extends QsPresenter, D> extends QsAct
 
     @Override public RecyclerView.ItemDecoration getItemDecoration() {
         return null;
+    }
+
+    private boolean canRecyclerScrollInner(int direction) {
+        HeaderFooterRecyclerView view = getRecyclerView();
+        RecyclerView.LayoutManager manager = view.getLayoutManager();
+        int orientation;
+        if (manager instanceof LinearLayoutManager) {
+            orientation = ((LinearLayoutManager) manager).getOrientation();
+        } else if (manager instanceof StaggeredGridLayoutManager) {
+            orientation = ((StaggeredGridLayoutManager) manager).getOrientation();
+        } else {
+            return false;
+        }
+        return (orientation == RecyclerView.VERTICAL && !view.canScrollVertically(direction))
+                || (orientation == RecyclerView.HORIZONTAL && !view.canScrollHorizontally(direction));
     }
 }
