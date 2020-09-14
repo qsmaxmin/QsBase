@@ -10,11 +10,14 @@ import com.qsmaxmin.qsbase.common.widget.ptr.PtrDefaultHandler;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrUIHandler;
 import com.qsmaxmin.qsbase.common.widget.ptr.header.BeautyCircleRefreshHeader;
-import com.qsmaxmin.qsbase.common.widget.recyclerview.EndlessRecyclerOnScrollListener;
+import com.qsmaxmin.qsbase.common.widget.recyclerview.EndlessObserver;
 import com.qsmaxmin.qsbase.mvp.QsIPullToRefreshView;
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
 
 import java.util.List;
+
+import androidx.annotation.CallSuper;
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * @CreateBy qsmaxmin
@@ -22,9 +25,10 @@ import java.util.List;
  * @Description
  */
 public abstract class QsPullRecyclerFragment<P extends QsPresenter, D> extends QsRecyclerFragment<P, D> implements QsIPullToRefreshView {
-    private   boolean        canLoadingMore = true;
-    private   PtrFrameLayout mPtrFrameLayout;
-    protected LoadingFooter  loadingFooter;
+    private   boolean         canLoadingMore = true;
+    private   PtrFrameLayout  mPtrFrameLayout;
+    protected LoadingFooter   loadingFooter;
+    private   EndlessObserver endlessObserver;
 
     @Override public int getFooterLayout() {
         return R.layout.qs_loading_footer;
@@ -51,12 +55,22 @@ public abstract class QsPullRecyclerFragment<P extends QsPresenter, D> extends Q
         } else if (footerView != null) {
             loadingFooter = footerView.findViewById(R.id.loading_footer);
         }
-        getRecyclerView().addOnScrollListener(mOnScrollListener);
+
+        endlessObserver = new EndlessObserver() {
+            @Override public void onLoadNextPage() {
+                loadingMoreData();
+            }
+        };
 
         if (!canPullLoading()) {
             setLoadingState(LoadingFooter.State.TheEnd);
         }
         return view;
+    }
+
+    @CallSuper @Override public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+        super.onScrollStateChanged(recyclerView, newState);
+        endlessObserver.onScrollStateChanged(recyclerView, newState);
     }
 
     private void initPtrFrameLayout(View view) {
@@ -127,14 +141,6 @@ public abstract class QsPullRecyclerFragment<P extends QsPresenter, D> extends Q
             setLoadingState(LoadingFooter.State.Normal);
         }
     }
-
-    private EndlessRecyclerOnScrollListener mOnScrollListener = new EndlessRecyclerOnScrollListener() {
-        @Override public void onLoadNextPage(View view) {
-            if (onLoadTriggerCondition() == LOAD_WHEN_SCROLL_TO_BOTTOM) {
-                loadingMoreData();
-            }
-        }
-    };
 
     @Override public void onAdapterGetView(int position, int totalCount) {
         if (onLoadTriggerCondition() == LOAD_WHEN_SECOND_TO_LAST && (position == totalCount - 2 || totalCount <= 1)) {

@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import java.util.List;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
@@ -97,6 +98,23 @@ public class HeaderFooterRecyclerAdapter extends RecyclerView.Adapter {
                 StaggeredGridLayoutManager.LayoutParams params = (StaggeredGridLayoutManager.LayoutParams) layoutParams;
                 params.setFullSpan(true);
             }
+        }
+    }
+
+    @Override public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
+        RecyclerView.LayoutManager manager = recyclerView.getLayoutManager();
+        if (manager instanceof GridLayoutManager) {
+            final GridLayoutManager gridManager = (GridLayoutManager) manager;
+            gridManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+                @Override public int getSpanSize(int position) {
+                    int itemViewType = getItemViewType(position);
+                    if (itemViewType == HEADER_VIEW_TYPE || itemViewType == FOOTER_VIEW_TYPE) {
+                        return gridManager.getSpanCount();
+                    } else {
+                        return 1;
+                    }
+                }
+            });
         }
     }
 

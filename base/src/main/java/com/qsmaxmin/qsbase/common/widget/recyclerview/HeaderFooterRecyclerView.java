@@ -3,6 +3,7 @@ package com.qsmaxmin.qsbase.common.widget.recyclerview;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.ViewGroup;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,6 +65,7 @@ public class HeaderFooterRecyclerView extends RecyclerView {
 
     public void addHeaderView(View view) {
         if (!mHeaderViews.contains(view)) {
+            view.setLayoutParams(new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
             mHeaderViews.add(view);
             if (mAdapter != null) {
                 mAdapter.notifyDataSetChanged();
@@ -73,6 +75,7 @@ public class HeaderFooterRecyclerView extends RecyclerView {
 
     public void addFooterView(View view) {
         if (!mFooterViews.contains(view)) {
+            view.setLayoutParams(new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
             mFooterViews.add(view);
             if (mAdapter != null) {
                 mAdapter.notifyDataSetChanged();
