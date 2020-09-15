@@ -42,7 +42,7 @@ public class QsThreadPollHelper {
     }
 
     public static boolean isMainThread() {
-        return Thread.currentThread() == Looper.getMainLooper().getThread();
+        return Thread.currentThread() == getInstance().handler.getLooper().getThread();
     }
 
     public static boolean isWorkThread() {
