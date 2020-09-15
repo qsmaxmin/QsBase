@@ -52,17 +52,13 @@ public abstract class QsDialogFragment extends DialogFragment implements QsIBind
         }
         View customView = inflater.inflate(layoutId(), null);
         bindViewByQsPlugin(customView);
-        if (isOpenEventBus()) {
-            bindEventByQsPlugin();
-        }
+        bindEventByQsPlugin();
         return customView;
     }
 
     @Override public void onDestroyView() {
         super.onDestroyView();
-        if (isOpenEventBus()) {
-            unbindEventByQsPlugin();
-        }
+        unbindEventByQsPlugin();
     }
 
     @CallSuper @Override public void bindBundleByQsPlugin(Bundle bundle) {
@@ -71,14 +67,10 @@ public abstract class QsDialogFragment extends DialogFragment implements QsIBind
     @CallSuper @Override public void bindViewByQsPlugin(View view) {
     }
 
-    @Override public boolean isOpenEventBus() {
-        return true;
+    @CallSuper @Override public void bindEventByQsPlugin() {
     }
 
-    @Override public void bindEventByQsPlugin() {
-    }
-
-    @Override public void unbindEventByQsPlugin() {
+    @CallSuper @Override public void unbindEventByQsPlugin() {
     }
 
     protected int getDialogTheme() {

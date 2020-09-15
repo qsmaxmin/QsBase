@@ -89,9 +89,7 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         setContentView(contentView);
         bindViewByQsPlugin(contentView);
 
-        if (isOpenEventBus()) {
-            bindEventByQsPlugin();
-        }
+        bindEventByQsPlugin();
         if (!isDelayData()) {
             hasInitData = true;
             initData(savedInstanceState);
@@ -104,17 +102,13 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
     @CallSuper @Override public void bindViewByQsPlugin(View view) {
     }
 
-    @Override public boolean isOpenEventBus() {
-        return true;
+    @CallSuper @Override public void bindEventByQsPlugin() {
     }
 
-    @Override public void bindEventByQsPlugin() {
+    @CallSuper @Override public void unbindEventByQsPlugin() {
     }
 
-    @Override public void unbindEventByQsPlugin() {
-    }
-
-    @Override protected void onStart() {
+    @CallSuper @Override protected void onStart() {
         super.onStart();
         QsHelper.getAppInterface().onActivityStart(this);
     }
@@ -124,17 +118,17 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         QsHelper.getAppInterface().onActivityResume(this);
     }
 
-    @Override protected void onPause() {
+    @CallSuper @Override protected void onPause() {
         super.onPause();
         QsHelper.getAppInterface().onActivityPause(this);
     }
 
-    @Override protected void onStop() {
+    @CallSuper @Override protected void onStop() {
         super.onStop();
         QsHelper.getAppInterface().onActivityStop(this);
     }
 
-    @Override @CallSuper protected void onDestroy() {
+    @CallSuper @Override protected void onDestroy() {
         super.onDestroy();
         if (presenter != null) {
             presenter.setDetach();
@@ -147,9 +141,7 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         mViewAnimator = null;
         onKeyDownListener = null;
         contentView = null;
-        if (isOpenEventBus()) {
-            unbindEventByQsPlugin();
-        }
+        unbindEventByQsPlugin();
         QsHelper.getAppInterface().onActivityDestroy(this);
         QsHelper.getScreenHelper().popActivity(this);
     }
@@ -222,7 +214,7 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
     }
 
     @SuppressWarnings("unchecked")
-    @Override public P getPresenter() {
+    @Override public final P getPresenter() {
         if (presenter == null) {
             presenter = (P) createPresenter();
             presenter.initPresenter(this);
@@ -242,10 +234,9 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
     }
 
     @Override public void onViewClick(View view) {
-
     }
 
-    @Override public Context getContext() {
+    @Override public final Context getContext() {
         return this;
     }
 
@@ -277,16 +268,16 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         return false;
     }
 
-    @Override public void activityFinish() {
+    @Override public final void activityFinish() {
         activityFinish(false);
     }
 
-    @Override public void activityFinish(int enterAnim, int exitAnim) {
+    @Override public final void activityFinish(int enterAnim, int exitAnim) {
         activityFinish();
         overridePendingTransition(enterAnim, exitAnim);
     }
 
-    @Override public void activityFinish(boolean finishAfterTransition) {
+    @Override public final void activityFinish(boolean finishAfterTransition) {
         if (finishAfterTransition) ActivityCompat.finishAfterTransition(this);
         else finish();
     }
@@ -311,27 +302,27 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         return QsHelper.getAppInterface().getLoadingDialog();
     }
 
-    @Override public void loading() {
+    @Override public final void loading() {
         loading(true);
     }
 
-    @Override public void loading(boolean cancelAble) {
+    @Override public final void loading(boolean cancelAble) {
         loading(getString(R.string.loading), cancelAble);
     }
 
-    @Override public void loading(String message) {
+    @Override public final void loading(String message) {
         loading(message, true);
     }
 
-    @Override public void loading(int resId) {
+    @Override public final void loading(int resId) {
         loading(resId, true);
     }
 
-    @Override public void loading(int resId, boolean cancelAble) {
+    @Override public final void loading(int resId, boolean cancelAble) {
         loading(QsHelper.getString(resId), cancelAble);
     }
 
-    @Override public void loading(String message, boolean cancelAble) {
+    @Override public final void loading(String message, boolean cancelAble) {
         if (mProgressDialog == null) mProgressDialog = getLoadingDialog();
         if (mProgressDialog != null) {
             mProgressDialog.setMessage(message);
@@ -345,7 +336,7 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         }
     }
 
-    @Override public void loadingClose() {
+    @Override public final void loadingClose() {
         if (QsHelper.isMainThread()) {
             if (mProgressDialog != null && mProgressDialog.isAdded()) {
                 mProgressDialog.dismissAllowingStateLoss();
@@ -361,21 +352,21 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         }
     }
 
-    @Override public void showLoadingView() {
+    @Override public final void showLoadingView() {
         if (mViewAnimator != null) {
             if (L.isEnable()) L.i(initTag(), "showLoadingView.........");
             setViewState(0);
         }
     }
 
-    @Override public void showContentView() {
+    @Override public final void showContentView() {
         if (mViewAnimator != null) {
             if (L.isEnable()) L.i(initTag(), "showContentView.........");
             setViewState(1);
         }
     }
 
-    @Override public void showEmptyView() {
+    @Override public final void showEmptyView() {
         if (mViewAnimator != null) {
             if (L.isEnable()) L.i(initTag(), "showEmptyView.........");
             int childCount = mViewAnimator.getChildCount();
@@ -401,7 +392,7 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         }
     }
 
-    @Override public void showErrorView() {
+    @Override public final void showErrorView() {
         if (isOpenViewState() && mViewAnimator != null) {
             if (L.isEnable()) L.i(initTag(), "showErrorView.........");
             int childCount = mViewAnimator.getChildCount();
@@ -430,7 +421,7 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
     /**
      * return current showing view
      */
-    @Override public int currentViewState() {
+    @Override public final int currentViewState() {
         if (isOpenViewState() && mViewAnimator != null) {
             int displayedIndex = mViewAnimator.getDisplayedChild();
             View childView = mViewAnimator.getChildAt(displayedIndex);
@@ -439,31 +430,31 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         return -1;
     }
 
-    @Override public void intent2Activity(Class clazz) {
+    @Override public final void intent2Activity(Class clazz) {
         intent2Activity(clazz, null, 0, null, 0, 0);
     }
 
-    @Override public void intent2Activity(Class clazz, int requestCode) {
+    @Override public final void intent2Activity(Class clazz, int requestCode) {
         intent2Activity(clazz, null, requestCode, null, 0, 0);
     }
 
-    @Override public void intent2Activity(Class clazz, Bundle bundle) {
+    @Override public final void intent2Activity(Class clazz, Bundle bundle) {
         intent2Activity(clazz, bundle, 0, null, 0, 0);
     }
 
-    @Override public void intent2Activity(Class clazz, Bundle bundle, int inAnimId, int outAnimId) {
+    @Override public final void intent2Activity(Class clazz, Bundle bundle, int inAnimId, int outAnimId) {
         intent2Activity(clazz, bundle, 0, null, inAnimId, outAnimId);
     }
 
-    @Override public void intent2Activity(Class clazz, Bundle bundle, ActivityOptionsCompat optionsCompat) {
+    @Override public final void intent2Activity(Class clazz, Bundle bundle, ActivityOptionsCompat optionsCompat) {
         intent2Activity(clazz, bundle, 0, optionsCompat, 0, 0);
     }
 
-    @Override public void intent2Activity(Class clazz, Bundle bundle, int requestCode, ActivityOptionsCompat optionsCompat) {
+    @Override public final void intent2Activity(Class clazz, Bundle bundle, int requestCode, ActivityOptionsCompat optionsCompat) {
         intent2Activity(clazz, bundle, requestCode, optionsCompat, 0, 0);
     }
 
-    @Override public void intent2Activity(Class clazz, Bundle bundle, int requestCode, ActivityOptionsCompat optionsCompat, int inAnimId, int outAnimId) {
+    @Override public final void intent2Activity(Class clazz, Bundle bundle, int requestCode, ActivityOptionsCompat optionsCompat, int inAnimId, int outAnimId) {
         if (clazz != null) {
             Intent intent = new Intent();
             intent.setClass(this, clazz);
@@ -485,59 +476,59 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         }
     }
 
-    @Override public void commitFragment(Fragment fragment) {
+    @Override public final void commitFragment(Fragment fragment) {
         commitFragment(fragment, fragment.getClass().getSimpleName());
     }
 
-    @Override public void commitFragment(Fragment fragment, String tag) {
+    @Override public final void commitFragment(Fragment fragment, String tag) {
         commitFragment(android.R.id.custom, fragment, tag);
     }
 
-    @Override public void commitFragment(int layoutId, Fragment fragment) {
+    @Override public final void commitFragment(int layoutId, Fragment fragment) {
         commitFragment(layoutId, fragment, fragment.getClass().getSimpleName());
     }
 
-    @Override public void commitFragment(int layoutId, Fragment fragment, String tag) {
+    @Override public final void commitFragment(int layoutId, Fragment fragment, String tag) {
         QsHelper.commitFragment(getSupportFragmentManager(), layoutId, fragment, tag);
     }
 
-    @Override public void commitFragment(Fragment old, Fragment fragment) {
+    @Override public final void commitFragment(Fragment old, Fragment fragment) {
         commitFragment(old, fragment, fragment.getClass().getSimpleName());
     }
 
-    @Override public void commitFragment(Fragment old, Fragment fragment, String tag) {
+    @Override public final void commitFragment(Fragment old, Fragment fragment, String tag) {
         commitFragment(old, android.R.id.custom, fragment, tag);
     }
 
-    @Override public void commitFragment(Fragment old, int layoutId, Fragment fragment) {
+    @Override public final void commitFragment(Fragment old, int layoutId, Fragment fragment) {
         commitFragment(old, layoutId, fragment, fragment.getClass().getSimpleName());
     }
 
-    @Override public void commitFragment(Fragment old, int layoutId, Fragment fragment, String tag) {
+    @Override public final void commitFragment(Fragment old, int layoutId, Fragment fragment, String tag) {
         QsHelper.commitFragment(getSupportFragmentManager(), old, layoutId, fragment, tag);
     }
 
-    @Override public void commitBackStackFragment(Fragment fragment) {
+    @Override public final void commitBackStackFragment(Fragment fragment) {
         commitBackStackFragment(fragment, fragment.getClass().getSimpleName());
     }
 
-    @Override public void commitBackStackFragment(Fragment fragment, String tag) {
+    @Override public final void commitBackStackFragment(Fragment fragment, String tag) {
         commitBackStackFragment(android.R.id.custom, fragment, tag);
     }
 
-    @Override public void commitBackStackFragment(int layoutId, Fragment fragment) {
+    @Override public final void commitBackStackFragment(int layoutId, Fragment fragment) {
         commitBackStackFragment(layoutId, fragment, fragment.getClass().getSimpleName());
     }
 
-    @Override public void commitBackStackFragment(Fragment fragment, int enterAnim, int exitAnim) {
+    @Override public final void commitBackStackFragment(Fragment fragment, int enterAnim, int exitAnim) {
         QsHelper.commitBackStackFragment(fragment, enterAnim, exitAnim);
     }
 
-    @Override public void commitBackStackFragment(int layoutId, Fragment fragment, String tag) {
+    @Override public final void commitBackStackFragment(int layoutId, Fragment fragment, String tag) {
         QsHelper.commitBackStackFragment(getSupportFragmentManager(), layoutId, fragment, tag);
     }
 
-    @Override public void commitDialogFragment(DialogFragment fragment) {
+    @Override public final void commitDialogFragment(DialogFragment fragment) {
         QsHelper.commitDialogFragment(getSupportFragmentManager(), fragment);
     }
 
@@ -642,25 +633,25 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         }
     }
 
-    @Override public void post(Runnable action) {
+    @Override public final void post(Runnable action) {
         runOnUiThread(action);
     }
 
-    @Override public void postDelayed(Runnable action, long delayed) {
+    @Override public final void postDelayed(Runnable action, long delayed) {
         if (!isFinishing()) {
             QsHelper.postDelayed(action, delayed);
         }
     }
 
-    @Override public void runOnWorkThread(Runnable action) {
+    @Override public final void runOnWorkThread(Runnable action) {
         QsHelper.executeInWorkThread(action);
     }
 
-    @Override public void runOnHttpThread(Runnable action) {
+    @Override public final void runOnHttpThread(Runnable action) {
         QsHelper.executeInHttpThread(action);
     }
 
-    @Override public FragmentActivity getActivity() {
+    @Override public final FragmentActivity getActivity() {
         return this;
     }
 
@@ -711,11 +702,11 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         }
     }
 
-    @Override public void setOnActivityResultListener(OnActivityResultListener listener) {
+    @Override public final void setOnActivityResultListener(OnActivityResultListener listener) {
         this.activityResultListener = listener;
     }
 
-    @Override public void setOnKeyDownListener(OnKeyDownListener listener) {
+    @Override public final void setOnKeyDownListener(OnKeyDownListener listener) {
         this.onKeyDownListener = listener;
     }
 

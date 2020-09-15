@@ -48,7 +48,7 @@ public class QsPresenter<V extends QsIView> implements QsNotProguard {
         isAttach = true;
     }
 
-    public V getView() {
+    public final V getView() {
         if (isViewDetach()) {
             String threadName = Thread.currentThread().getName();
             switch (threadName) {
@@ -63,24 +63,24 @@ public class QsPresenter<V extends QsIView> implements QsNotProguard {
         return mView;
     }
 
-    public void setDetach() {
+    public final void setDetach() {
         isAttach = false;
         mView = null;
         cancelAllHttpRequest();
     }
 
-    public boolean isViewDetach() {
+    public final boolean isViewDetach() {
         return !isAttach || mView == null;
     }
 
     /**
      * 发起http请求
      */
-    protected <T> T createHttpRequest(Class<T> clazz) {
+    protected final <T> T createHttpRequest(Class<T> clazz) {
         return createHttpRequest(clazz, String.valueOf(System.nanoTime()));
     }
 
-    protected <T> T createHttpRequest(Class<T> clazz, String requestTag) {
+    protected final <T> T createHttpRequest(Class<T> clazz, String requestTag) {
         synchronized (tagList) {
             if (!tagList.contains(requestTag)) {
                 tagList.add(requestTag);
@@ -94,7 +94,7 @@ public class QsPresenter<V extends QsIView> implements QsNotProguard {
     /**
      * 取消由当前presenter发起的http请求
      */
-    protected void cancelAllHttpRequest() {
+    protected final void cancelAllHttpRequest() {
         synchronized (tagList) {
             for (String tag : tagList) {
                 try {
@@ -107,7 +107,7 @@ public class QsPresenter<V extends QsIView> implements QsNotProguard {
         }
     }
 
-    protected void cancelHttpRequest(String requestTag) {
+    protected final void cancelHttpRequest(String requestTag) {
         synchronized (tagList) {
             if (tagList.contains(requestTag)) {
                 tagList.remove(requestTag);
@@ -185,36 +185,36 @@ public class QsPresenter<V extends QsIView> implements QsNotProguard {
         }
     }
 
-    @Nullable public FragmentActivity getActivity() {
+    @Nullable public final FragmentActivity getActivity() {
         if (!isViewDetach()) return mView.getActivity();
         return null;
     }
 
-    public String getString(@StringRes int stringId) {
+    public final String getString(@StringRes int stringId) {
         return QsHelper.getString(stringId);
     }
 
-    public String getString(@StringRes int resId, Object... formatArgs) {
+    public final String getString(@StringRes int resId, Object... formatArgs) {
         return QsHelper.getString(resId, formatArgs);
     }
 
-    public Drawable getDrawable(@DrawableRes int resId) {
+    public final Drawable getDrawable(@DrawableRes int resId) {
         return QsHelper.getDrawable(resId);
     }
 
-    public int getColor(@ColorRes int resId) {
+    public final int getColor(@ColorRes int resId) {
         return QsHelper.getColor(resId);
     }
 
-    public float getDimension(@DimenRes int resId) {
+    public final float getDimension(@DimenRes int resId) {
         return QsHelper.getDimension(resId);
     }
 
-    public boolean isSdCardAvailable() {
+    public final boolean isSdCardAvailable() {
         return QsHelper.isSdCardAvailable();
     }
 
-    public boolean isNetworkAvailable() {
+    public final boolean isNetworkAvailable() {
         return QsHelper.isNetworkAvailable();
     }
 }

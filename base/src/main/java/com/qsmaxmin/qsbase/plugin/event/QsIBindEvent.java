@@ -10,11 +10,6 @@ public interface QsIBindEvent {
     /**
      * for QsTransform
      */
-    boolean isOpenEventBus();
-
-    /**
-     * for QsTransform
-     */
     void bindEventByQsPlugin();
 
     /**
