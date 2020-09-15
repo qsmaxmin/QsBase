@@ -60,10 +60,10 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         return rootView;
     }
 
-    @Override public void bindBundleByQsPlugin(Bundle bundle) {
+    @CallSuper @Override public void bindBundleByQsPlugin(Bundle bundle) {
     }
 
-    @Override public void bindViewByQsPlugin(View view) {
+    @CallSuper @Override public void bindViewByQsPlugin(View view) {
     }
 
     @Override public boolean isOpenEventBus() {

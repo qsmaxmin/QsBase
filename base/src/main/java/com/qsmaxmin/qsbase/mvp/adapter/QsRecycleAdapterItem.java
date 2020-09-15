@@ -10,6 +10,7 @@ import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.mvp.QsIRecyclerView;
 import com.qsmaxmin.qsbase.plugin.bind.QsIBindView;
 
+import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 
@@ -32,7 +33,7 @@ public abstract class QsRecycleAdapterItem<D> implements QsIBindView, QsNotProgu
     /**
      * for QsTransform
      */
-    @Override public void bindViewByQsPlugin(View view) {
+    @CallSuper @Override public void bindViewByQsPlugin(View view) {
     }
 
     protected String initTag() {
