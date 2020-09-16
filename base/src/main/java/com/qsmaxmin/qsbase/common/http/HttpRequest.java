@@ -17,8 +17,6 @@ import com.qsmaxmin.qsbase.common.aspect.Path;
 import com.qsmaxmin.qsbase.common.aspect.Query;
 import com.qsmaxmin.qsbase.common.aspect.RequestStyle;
 import com.qsmaxmin.qsbase.common.aspect.TERMINAL;
-import com.qsmaxmin.qsbase.common.exception.QsException;
-import com.qsmaxmin.qsbase.common.exception.QsExceptionType;
 import com.qsmaxmin.qsbase.common.log.L;
 
 import org.json.JSONObject;
@@ -70,7 +68,10 @@ public class HttpRequest {
         this.methodName = method.getName();
         this.returnType = method.getReturnType();
         this.gson = gson;
+        processInner(callback);
+    }
 
+    private void processInner(QsHttpCallback callback) throws Exception {
         Annotation[] methodAnn = method.getAnnotations();
         if (methodAnn.length == 0) {
             throwException("Annotation error... the method:" + methodName + " must have one annotation at least!! @GET @POST or @PUT...");
@@ -394,8 +395,12 @@ public class HttpRequest {
         }
     }
 
-    private void throwException(String message) throws QsException {
-        throw new QsException(QsExceptionType.UNEXPECTED, requestTag, message);
+    private void throwException(String message) throws Exception {
+        throw new Exception(message);
+    }
+
+    private void throwException(Throwable t) throws Exception {
+        throw new Exception(t);
     }
 
     public Request createRequest() {

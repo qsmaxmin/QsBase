@@ -1,7 +1,7 @@
 package com.qsmaxmin.qsbase.plugin.presenter;
 
 /**
- * @CreateBy administrator
+ * @CreateBy qsmaxmin
  * @Date 2020/9/1 10:29
  * @Description
  */

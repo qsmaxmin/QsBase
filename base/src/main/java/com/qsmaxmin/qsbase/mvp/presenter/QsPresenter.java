@@ -5,7 +5,8 @@ import android.graphics.drawable.Drawable;
 
 import com.qsmaxmin.annotation.QsNotProguard;
 import com.qsmaxmin.qsbase.common.exception.QsException;
-import com.qsmaxmin.qsbase.common.exception.QsExceptionType;
+import com.qsmaxmin.qsbase.common.http.HttpHelper;
+import com.qsmaxmin.qsbase.common.http.NetworkErrorCallback;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.model.QsModel;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
@@ -13,9 +14,8 @@ import com.qsmaxmin.qsbase.common.widget.listview.LoadingFooter;
 import com.qsmaxmin.qsbase.common.widget.toast.QsToast;
 import com.qsmaxmin.qsbase.mvp.QsIPullToRefreshView;
 import com.qsmaxmin.qsbase.mvp.QsIView;
-import com.qsmaxmin.qsbase.mvp.model.QsConstants;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 
 import androidx.annotation.ColorRes;
 import androidx.annotation.DimenRes;
@@ -29,10 +29,10 @@ import androidx.fragment.app.FragmentActivity;
  * @Date 2017/6/21 16:27
  * @Description
  */
-public class QsPresenter<V extends QsIView> implements QsNotProguard {
-    private final ArrayList<String> tagList = new ArrayList<>();
-    private       boolean           isAttach;
-    private       V                 mView;
+public class QsPresenter<V extends QsIView> implements NetworkErrorCallback, QsNotProguard {
+    private final HashSet<Object> tagList = new HashSet<>();
+    private       boolean         isAttach;
+    private       V               mView;
 
     protected String initTag() {
         return L.isEnable() ? getClass().getSimpleName() : "QsPresenter";
@@ -49,17 +49,6 @@ public class QsPresenter<V extends QsIView> implements QsNotProguard {
     }
 
     public final V getView() {
-        if (isViewDetach()) {
-            String threadName = Thread.currentThread().getName();
-            switch (threadName) {
-                case QsConstants.NAME_HTTP_THREAD:
-                case QsConstants.NAME_WORK_THREAD:
-                case QsConstants.NAME_SINGLE_THREAD:
-                    throw new QsException(QsExceptionType.CANCEL, null, "current thread:" + threadName + " execute " + initTag() + ".getView() return null, maybe view is destroy...");
-                default:
-                    throw new QsException(QsExceptionType.UNEXPECTED, null, "请不要在非@ThreadPoint注解的线程或其他回调里直接执行getView()方法，必须先确定isViewDetach()返回值为false再调用getView方法");
-            }
-        }
         return mView;
     }
 
@@ -69,6 +58,7 @@ public class QsPresenter<V extends QsIView> implements QsNotProguard {
         cancelAllHttpRequest();
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public final boolean isViewDetach() {
         return !isAttach || mView == null;
     }
@@ -77,18 +67,18 @@ public class QsPresenter<V extends QsIView> implements QsNotProguard {
      * 发起http请求
      */
     protected final <T> T createHttpRequest(Class<T> clazz) {
-        return createHttpRequest(clazz, String.valueOf(System.nanoTime()));
+        return createHttpRequest(clazz, System.nanoTime());
     }
 
-    protected final <T> T createHttpRequest(Class<T> clazz, String requestTag) {
+    protected final <T> T createHttpRequest(Class<T> clazz, Object requestTag) {
         synchronized (tagList) {
             if (!tagList.contains(requestTag)) {
                 tagList.add(requestTag);
             } else {
                 L.e(initTag(), "createHttpRequest Repeated tag:" + requestTag);
             }
-            return QsHelper.getHttpHelper().create(clazz, requestTag);
         }
+        return HttpHelper.getInstance().create(clazz, requestTag, this);
     }
 
     /**
@@ -96,7 +86,7 @@ public class QsPresenter<V extends QsIView> implements QsNotProguard {
      */
     protected final void cancelAllHttpRequest() {
         synchronized (tagList) {
-            for (String tag : tagList) {
+            for (Object tag : tagList) {
                 try {
                     QsHelper.getHttpHelper().cancelRequest(tag);
                 } catch (Exception e) {
@@ -144,7 +134,6 @@ public class QsPresenter<V extends QsIView> implements QsNotProguard {
     public void paging(QsModel model) {
         if (model != null && !isViewDetach()) {
             QsIView qsIView = getView();
-            if (qsIView == null) return;
             if (qsIView instanceof QsIPullToRefreshView) {
                 if (model.isLastPage()) {
                     ((QsIPullToRefreshView) qsIView).setLoadingState(LoadingFooter.State.TheEnd);
@@ -157,16 +146,7 @@ public class QsPresenter<V extends QsIView> implements QsNotProguard {
         }
     }
 
-    public void methodError(QsException exception) {
-        L.e(initTag(), "methodError... errorType:" + exception.getExceptionType() + " requestTag:" + exception.getRequestTag());
-        exception.printStackTrace();
-        switch (exception.getExceptionType()) {
-            case HTTP_ERROR:
-            case NETWORK_ERROR:
-            case UNEXPECTED:
-            case CANCEL:
-                break;
-        }
+    @Override public void methodError(QsException e) {
         resetViewState();
     }
 
@@ -178,7 +158,7 @@ public class QsPresenter<V extends QsIView> implements QsNotProguard {
                 view.stopRefreshing();
                 view.setLoadingState(LoadingFooter.State.NetWorkError);
             }
-            if (qsIview.currentViewState() != QsIView.VIEW_STATE_CONTENT) {
+            if (!qsIview.isShowContentView()) {
                 qsIview.showErrorView();
             }
             qsIview.loadingClose();

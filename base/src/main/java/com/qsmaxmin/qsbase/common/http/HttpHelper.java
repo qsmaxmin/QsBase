@@ -4,7 +4,6 @@ import android.text.TextUtils;
 
 import com.google.gson.Gson;
 import com.qsmaxmin.qsbase.common.exception.QsException;
-import com.qsmaxmin.qsbase.common.exception.QsExceptionType;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.proxy.HttpHandler;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
@@ -26,7 +25,7 @@ import okhttp3.ResponseBody;
  * @Date 2017/6/29 14:53
  * @Description
  */
-
+@SuppressWarnings("unchecked")
 public class HttpHelper {
     private static       HttpHelper     helper;
     private static final String         TAG     = "HttpAdapter";
@@ -85,36 +84,42 @@ public class HttpHelper {
         callback = QsHelper.getAppInterface().registerGlobalHttpListener();
     }
 
-    /**
-     * 创建http接口代理
-     */
     public <T> T create(Class<T> clazz) {
         return create(clazz, System.nanoTime());
+    }
+
+    public <T> T create(Class<T> clazz, Object requestTag) {
+        return create(clazz, requestTag, null);
     }
 
     /**
      * 创建http接口代理
      *
-     * @param requestTag 标签，用来取消http请求
+     * @param clazz         interface
+     * @param requestTag    标签，用来取消http请求
+     * @param errorCallback 用于接收异常
      * @see #cancelRequest(Object)
      */
-    @SuppressWarnings("unchecked")
-    public <T> T create(Class<T> clazz, Object requestTag) {
+    public <T> T create(Class<T> clazz, Object requestTag, NetworkErrorCallback errorCallback) {
         if (clazz != null && clazz.isInterface()) {
-            HttpHandler handler = new HttpHandler(this, requestTag);
+            HttpHandler handler = new HttpHandler(this, requestTag, errorCallback);
             return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class<?>[]{clazz}, handler);
         }
         return null;
     }
 
-    public Object startRequest(Method method, Object[] args, Object requestTag) throws Exception {
-        if (!QsHelper.isNetworkAvailable()) {
-            throw new QsException(QsExceptionType.UNEXPECTED, requestTag, "network error...  method:" + method.getName() + " message:network disable");
+    public Object startRequest(Method method, Object[] args, Object requestTag, NetworkErrorCallback errorCallback) throws QsException {
+        try {
+            if (!QsHelper.isNetworkAvailable()) {
+                throw new QsException(requestTag, errorCallback, "network disable");
+            }
+            HttpRequest httpRequest = new HttpRequest(method, args, requestTag, gson, callback);
+            Request request = httpRequest.createRequest();
+            Call call = client.newCall(request);
+            return createResult(httpRequest, call.execute());
+        } catch (Exception e) {
+            throw new QsException(requestTag, errorCallback, e);
         }
-        HttpRequest httpRequest = new HttpRequest(method, args, requestTag, gson, callback);
-        Request request = httpRequest.createRequest();
-        Call call = client.newCall(request);
-        return createResult(httpRequest, call.execute());
     }
 
     public void cancelRequest(Object requestTag) {
@@ -189,7 +194,7 @@ public class HttpHelper {
             } else {
                 ResponseBody body = response.body();
                 if (body == null) {
-                    throw new QsException(QsExceptionType.HTTP_ERROR, request.getRequestTag(), "http response error... method:" + request.getMethodName() + ", response body is null!!");
+                    throw new Exception("http response error... method:" + request.getMethodName() + ", response body is null!!");
                 }
                 if (callback != null) callback.onHttpResponse(request, httpResponse);
                 String jsonStr = httpResponse.getJsonString();
@@ -209,7 +214,7 @@ public class HttpHelper {
         } else {
             if (callback != null) callback.onHttpResponse(request, httpResponse);
             response.close();
-            throw new QsException(QsExceptionType.HTTP_ERROR, request.getRequestTag(), "http error... method:" + request.getMethodName() + ", http response code = " + responseCode);
+            throw new Exception("http error... method:" + request.getMethodName() + ", http response code = " + responseCode);
         }
     }
 

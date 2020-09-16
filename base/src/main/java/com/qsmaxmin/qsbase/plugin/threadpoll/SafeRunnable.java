@@ -1,18 +1,32 @@
 package com.qsmaxmin.qsbase.plugin.threadpoll;
 
+import com.qsmaxmin.qsbase.common.exception.QsException;
+import com.qsmaxmin.qsbase.common.http.NetworkErrorCallback;
+import com.qsmaxmin.qsbase.common.log.L;
+import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
+
 /**
  * @CreateBy qsmaxmin
  * @Date 2020/6/16 14:09
- * @Description 安全的runnable
+ * @Description safely runnable
+ * @see QsPresenter#methodError(QsException)
  */
 public abstract class SafeRunnable implements Runnable {
 
     @Override public final void run() {
         try {
             safeRun();
+        } catch (QsException e) {
+            NetworkErrorCallback callback = e.getErrorCallback();
+            if (callback != null) {
+                callback.methodError(e);
+            } else if (L.isEnable()) {
+                e.printStackTrace();
+            }
+            if (L.isEnable()) e.printStackTrace();
         } catch (Exception e) {
             onError(e);
-            e.printStackTrace();
+            if (L.isEnable()) e.printStackTrace();
         }
     }
 
