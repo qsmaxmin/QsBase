@@ -102,11 +102,19 @@ public interface QsIView<P> extends QsIBindView, QsIBindEvent, QsIBindBundle, Qs
 
     void showLoadingView();
 
+    void showContentView();
+
     void showEmptyView();
 
     void showErrorView();
 
-    void showContentView();
+    boolean isShowLoadingView();
+
+    boolean isShowContentView();
+
+    boolean isShowEmptyView();
+
+    boolean isShowErrorView();
 
     int currentViewState();
 

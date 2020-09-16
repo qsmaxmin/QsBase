@@ -372,6 +372,23 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         }
     }
 
+    @Override public boolean isShowLoadingView() {
+        return currentViewState() == VIEW_STATE_LOADING;
+    }
+
+    @Override public boolean isShowContentView() {
+        return mViewAnimator == null || currentViewState() == VIEW_STATE_CONTENT;
+    }
+
+    @Override public boolean isShowEmptyView() {
+        return currentViewState() == VIEW_STATE_EMPTY;
+    }
+
+    @Override public boolean isShowErrorView() {
+        return currentViewState() == VIEW_STATE_ERROR;
+    }
+
+
     /**
      * return current showing view
      */
