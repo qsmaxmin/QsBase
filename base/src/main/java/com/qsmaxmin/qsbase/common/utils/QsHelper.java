@@ -128,10 +128,6 @@ public class QsHelper {
         return HttpHelper.getInstance();
     }
 
-    public static CacheHelper getCacheHelper() {
-        return new CacheHelper();
-    }
-
     public static void intent2Activity(Class<?> clazz) {
         intent2ActivityInner(clazz, null, 0, null, 0, 0);
     }
