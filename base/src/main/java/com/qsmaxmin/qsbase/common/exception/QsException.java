@@ -1,6 +1,6 @@
 package com.qsmaxmin.qsbase.common.exception;
 
-import com.qsmaxmin.qsbase.common.http.NetworkErrorCallback;
+import com.qsmaxmin.qsbase.common.http.NetworkErrorReceiver;
 
 /**
  * @CreateBy qsmaxmin
@@ -9,25 +9,25 @@ import com.qsmaxmin.qsbase.common.http.NetworkErrorCallback;
  */
 public class QsException extends RuntimeException {
     private final Object               requestTag;
-    private final NetworkErrorCallback errorCallback;
+    private final NetworkErrorReceiver errorReceiver;
 
-    public QsException(Object requestTag, NetworkErrorCallback errorCallback, String message) {
+    public QsException(Object requestTag, NetworkErrorReceiver errorReceiver, String message) {
         super(message);
         this.requestTag = requestTag;
-        this.errorCallback = errorCallback;
+        this.errorReceiver = errorReceiver;
     }
 
-    public QsException(Object requestTag, NetworkErrorCallback errorCallback, Throwable cause) {
+    public QsException(Object requestTag, NetworkErrorReceiver errorReceiver, Throwable cause) {
         super(cause);
         this.requestTag = requestTag;
-        this.errorCallback = errorCallback;
+        this.errorReceiver = errorReceiver;
     }
 
     public Object getRequestTag() {
         return requestTag;
     }
 
-    public NetworkErrorCallback getErrorCallback() {
-        return errorCallback;
+    public NetworkErrorReceiver getErrorReceiver() {
+        return errorReceiver;
     }
 }

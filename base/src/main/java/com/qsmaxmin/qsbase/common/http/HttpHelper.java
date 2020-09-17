@@ -100,7 +100,7 @@ public class HttpHelper {
      * @param errorCallback 用于接收异常
      * @see #cancelRequest(Object)
      */
-    public <T> T create(Class<T> clazz, Object requestTag, NetworkErrorCallback errorCallback) {
+    public <T> T create(Class<T> clazz, Object requestTag, NetworkErrorReceiver errorCallback) {
         if (clazz != null && clazz.isInterface()) {
             HttpHandler handler = new HttpHandler(this, requestTag, errorCallback);
             return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class<?>[]{clazz}, handler);
@@ -108,17 +108,17 @@ public class HttpHelper {
         return null;
     }
 
-    public Object startRequest(Method method, Object[] args, Object requestTag, NetworkErrorCallback errorCallback) throws QsException {
+    public Object startRequest(Method method, Object[] args, Object requestTag, NetworkErrorReceiver errorReceiver) throws QsException {
         try {
             if (!QsHelper.isNetworkAvailable()) {
-                throw new QsException(requestTag, errorCallback, "network disable");
+                throw new Exception("network disable");
             }
             HttpRequest httpRequest = new HttpRequest(method, args, requestTag, gson, callback);
             Request request = httpRequest.createRequest();
             Call call = client.newCall(request);
             return createResult(httpRequest, call.execute());
         } catch (Exception e) {
-            throw new QsException(requestTag, errorCallback, e);
+            throw new QsException(requestTag, errorReceiver, e);
         }
     }
 

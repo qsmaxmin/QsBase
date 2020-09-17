@@ -6,7 +6,7 @@ import android.graphics.drawable.Drawable;
 import com.qsmaxmin.annotation.QsNotProguard;
 import com.qsmaxmin.qsbase.common.exception.QsException;
 import com.qsmaxmin.qsbase.common.http.HttpHelper;
-import com.qsmaxmin.qsbase.common.http.NetworkErrorCallback;
+import com.qsmaxmin.qsbase.common.http.NetworkErrorReceiver;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.model.QsModel;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
@@ -29,7 +29,7 @@ import androidx.fragment.app.FragmentActivity;
  * @Date 2017/6/21 16:27
  * @Description
  */
-public class QsPresenter<V extends QsIView> implements NetworkErrorCallback, QsNotProguard {
+public class QsPresenter<V extends QsIView> implements NetworkErrorReceiver, QsNotProguard {
     private final HashSet<Object> tagList = new HashSet<>();
     private       boolean         isAttach;
     private       V               mView;
