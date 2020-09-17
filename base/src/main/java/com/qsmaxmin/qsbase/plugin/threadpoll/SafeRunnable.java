@@ -17,12 +17,12 @@ public abstract class SafeRunnable implements Runnable {
         try {
             safeRun();
         } catch (QsException e) {
+            if (L.isEnable()) e.printStackTrace();
             NetworkErrorReceiver receiver = e.getErrorReceiver();
             if (receiver != null) receiver.methodError(e);
-            if (L.isEnable()) e.printStackTrace();
         } catch (Exception e) {
-            onError(e);
             if (L.isEnable()) e.printStackTrace();
+            onError(e);
         }
     }
 
