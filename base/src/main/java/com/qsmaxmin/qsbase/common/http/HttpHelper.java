@@ -95,14 +95,14 @@ public class HttpHelper {
     /**
      * 创建http接口代理
      *
-     * @param clazz         interface
-     * @param requestTag    标签，用来取消http请求
-     * @param errorCallback 用于接收异常
+     * @param clazz      interface
+     * @param requestTag 标签，用来取消http请求
+     * @param receiver   用于接收异常
      * @see #cancelRequest(Object)
      */
-    public <T> T create(Class<T> clazz, Object requestTag, NetworkErrorReceiver errorCallback) {
+    public <T> T create(Class<T> clazz, Object requestTag, NetworkErrorReceiver receiver) {
         if (clazz != null && clazz.isInterface()) {
-            HttpHandler handler = new HttpHandler(this, requestTag, errorCallback);
+            HttpHandler handler = new HttpHandler(this, requestTag, receiver);
             return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class<?>[]{clazz}, handler);
         }
         return null;
