@@ -97,7 +97,7 @@ public class QsPresenter<V extends QsIView> implements NetworkErrorReceiver, QsN
         }
     }
 
-    protected final void cancelHttpRequest(String requestTag) {
+    protected final void cancelHttpRequest(Object requestTag) {
         synchronized (tagList) {
             if (tagList.contains(requestTag)) {
                 tagList.remove(requestTag);
