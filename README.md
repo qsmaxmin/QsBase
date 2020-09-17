@@ -22,7 +22,7 @@ MVP架构+AOP面向切面编程，摒弃反射、代理等操作，稳定性和�
 
             dependencies {
                 ...
-                classpath 'com.github.qsmaxmin:QsTransform:10.1.6'
+                classpath 'com.github.qsmaxmin:QsTransform:10.1.7'
             }
         }
         
