@@ -85,11 +85,15 @@ public class HttpHelper {
     }
 
     public <T> T create(Class<T> clazz) {
-        return create(clazz, System.nanoTime());
+        return create(clazz, System.nanoTime(), null);
     }
 
     public <T> T create(Class<T> clazz, Object requestTag) {
         return create(clazz, requestTag, null);
+    }
+
+    public <T> T create(Class<T> clazz, NetworkErrorReceiver receiver) {
+        return create(clazz, System.nanoTime(), receiver);
     }
 
     /**
