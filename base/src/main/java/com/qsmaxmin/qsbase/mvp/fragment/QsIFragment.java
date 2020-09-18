@@ -15,4 +15,8 @@ public interface QsIFragment extends QsIView {
     void onBackPressed();
 
     void onFragmentSelectedInViewPager(boolean isSelected, int currentPosition, int totalCount);
+
+    void setActivityTitle(CharSequence title);
+
+    void setActivityTitle(CharSequence title, int type);
 }
