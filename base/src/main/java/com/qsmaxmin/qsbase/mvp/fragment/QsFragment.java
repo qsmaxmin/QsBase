@@ -644,6 +644,10 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         return 0;
     }
 
+    protected void setActivityTitle(CharSequence title) {
+        setActivityTitle(title, 0);
+    }
+
     protected void setActivityTitle(CharSequence title, int type) {
         FragmentActivity activity = getActivity();
         if (activity instanceof QsIActivity) {
