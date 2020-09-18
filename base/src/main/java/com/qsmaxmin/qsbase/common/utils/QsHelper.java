@@ -76,10 +76,6 @@ public class QsHelper {
         return ImageHelper.createRequest();
     }
 
-    public static QsThreadPollHelper getThreadHelper() {
-        return QsThreadPollHelper.getInstance();
-    }
-
     public static boolean isMainThread() {
         return QsThreadPollHelper.isMainThread();
     }

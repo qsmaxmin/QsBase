@@ -5,6 +5,7 @@ import android.text.TextUtils;
 
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
+import com.qsmaxmin.qsbase.plugin.threadpoll.QsThreadPollHelper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -174,7 +175,7 @@ public class QsDownloader<M extends QsDownloadModel<K>, K> {
     }
 
     private void post(Runnable action) {
-        QsHelper.getThreadHelper().post(action);
+        QsThreadPollHelper.post(action);
     }
 
     @SuppressWarnings({"unchecked"})

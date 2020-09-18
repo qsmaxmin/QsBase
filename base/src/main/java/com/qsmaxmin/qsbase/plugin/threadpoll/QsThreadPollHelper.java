@@ -30,7 +30,7 @@ public class QsThreadPollHelper {
         handler = new Handler(Looper.getMainLooper());
     }
 
-    public static QsThreadPollHelper getInstance() {
+    private static QsThreadPollHelper getInstance() {
         if (helper == null) {
             synchronized (QsThreadPollHelper.class) {
                 if (helper == null) {
