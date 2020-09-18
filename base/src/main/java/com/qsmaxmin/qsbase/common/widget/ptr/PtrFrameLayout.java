@@ -1,17 +1,14 @@
 package com.qsmaxmin.qsbase.common.widget.ptr;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
-import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.animation.Interpolator;
 import android.widget.Scroller;
-import android.widget.TextView;
 
 import com.qsmaxmin.qsbase.R;
 import com.qsmaxmin.qsbase.common.widget.ptr.indicator.PtrIndicator;
@@ -105,8 +102,19 @@ public class PtrFrameLayout extends ViewGroup {
         mPtrIndicator.setRatioOfHeaderHeightToRefresh(ratio);
     }
 
-    @SuppressLint("SetTextI18n")
-    @Override protected void onFinishInflate() {
+    @Override protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        if (mScrollChecker != null) {
+            mScrollChecker.destroy();
+        }
+
+        if (mPerformRefreshCompleteDelay != null) {
+            removeCallbacks(mPerformRefreshCompleteDelay);
+        }
+    }
+
+
+    private void checkChild() {
         final int childCount = getChildCount();
         if (childCount > 2) {
             throw new IllegalStateException("PtrFrameLayout can only contains 2 children");
@@ -142,34 +150,17 @@ public class PtrFrameLayout extends ViewGroup {
         } else if (childCount == 1) {
             mContent = getChildAt(0);
         } else {
-            TextView errorView = new TextView(getContext());
-            errorView.setClickable(true);
-            errorView.setTextColor(0xffff6600);
-            errorView.setGravity(Gravity.CENTER);
-            errorView.setTextSize(20);
-            errorView.setText("The content view in PtrFrameLayout is empty. Do you forget to specify its id in xml layout file?");
-            mContent = errorView;
-            addView(mContent);
+            mHeaderView = null;
+            mContent = null;
         }
         if (mHeaderView != null) {
             mHeaderView.bringToFront();
-        }
-        super.onFinishInflate();
-    }
-
-    @Override protected void onDetachedFromWindow() {
-        super.onDetachedFromWindow();
-        if (mScrollChecker != null) {
-            mScrollChecker.destroy();
-        }
-
-        if (mPerformRefreshCompleteDelay != null) {
-            removeCallbacks(mPerformRefreshCompleteDelay);
         }
     }
 
     @Override protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        checkChild();
         if (mHeaderView != null) {
             measureChildWithMargins(mHeaderView, widthMeasureSpec, 0, heightMeasureSpec, 0);
             MarginLayoutParams lp = (MarginLayoutParams) mHeaderView.getLayoutParams();
@@ -714,7 +705,7 @@ public class PtrFrameLayout extends ViewGroup {
 
             ViewGroup.LayoutParams lp = header.getLayoutParams();
             if (lp == null) {
-                lp = new LayoutParams(-1, -2);
+                lp = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                 header.setLayoutParams(lp);
             }
             mHeaderView = header;
