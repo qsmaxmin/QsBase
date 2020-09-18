@@ -608,7 +608,7 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         QsHelper.executeInHttpThread(action);
     }
 
-    @Override public final void onFragmentSelectedInViewPager(boolean isSelected, int currentPosition, int totalCount) {
+    @Override public void onFragmentSelectedInViewPager(boolean isSelected, int currentPosition, int totalCount) {
         L.i(initTag(), "onFragmentSelectedInViewPager..... isSelected:" + isSelected + "  currentPosition:" + currentPosition + "  totalCount:" + totalCount);
     }
 
