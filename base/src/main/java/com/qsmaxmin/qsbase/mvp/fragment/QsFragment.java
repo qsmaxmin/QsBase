@@ -17,6 +17,7 @@ import com.qsmaxmin.qsbase.common.widget.dialog.QsProgressDialog;
 import com.qsmaxmin.qsbase.common.widget.headerview.ScrollerProvider;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout;
 import com.qsmaxmin.qsbase.mvp.OnActivityResultListener;
+import com.qsmaxmin.qsbase.mvp.QsIActivity;
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
 
 import androidx.annotation.CallSuper;
@@ -641,5 +642,12 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
 
     @Override public int contentViewBackgroundColor() {
         return 0;
+    }
+
+    protected void setActivityTitle(CharSequence title, int type) {
+        FragmentActivity activity = getActivity();
+        if (activity instanceof QsIActivity) {
+            ((QsIActivity) activity).setActivityTitle(title, type);
+        }
     }
 }

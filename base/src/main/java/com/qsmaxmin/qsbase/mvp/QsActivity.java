@@ -727,6 +727,10 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         this.onKeyDownListener = listener;
     }
 
+    @Override public void setActivityTitle(CharSequence title, int type) {
+        //custom your logic
+    }
+
     @Override public boolean isShowBackButtonInDefaultView() {
         return false;
     }

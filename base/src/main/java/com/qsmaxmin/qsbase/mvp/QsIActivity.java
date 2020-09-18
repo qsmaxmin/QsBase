@@ -25,4 +25,6 @@ public interface QsIActivity extends QsIView {
     boolean onKeyDown(KeyEvent event, int keyCode);
 
     void setOnKeyDownListener(OnKeyDownListener listener);
+
+    void setActivityTitle(CharSequence title, int type);
 }
