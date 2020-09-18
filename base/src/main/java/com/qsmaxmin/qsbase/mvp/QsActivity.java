@@ -268,16 +268,16 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         return false;
     }
 
-    @Override public final void activityFinish() {
+    @Override public void activityFinish() {
         activityFinish(false);
     }
 
-    @Override public final void activityFinish(int enterAnim, int exitAnim) {
+    @Override public void activityFinish(int enterAnim, int exitAnim) {
         activityFinish();
         overridePendingTransition(enterAnim, exitAnim);
     }
 
-    @Override public final void activityFinish(boolean finishAfterTransition) {
+    @Override public void activityFinish(boolean finishAfterTransition) {
         if (finishAfterTransition) ActivityCompat.finishAfterTransition(this);
         else finish();
     }

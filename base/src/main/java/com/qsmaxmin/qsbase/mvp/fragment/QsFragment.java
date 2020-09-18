@@ -198,17 +198,17 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         return false;
     }
 
-    @Override public final void activityFinish() {
+    @Override public void activityFinish() {
         activityFinish(false);
     }
 
-    @Override public final void activityFinish(int enterAnim, int exitAnim) {
+    @Override public void activityFinish(int enterAnim, int exitAnim) {
         activityFinish();
         FragmentActivity activity = getActivity();
         if (activity != null) activity.overridePendingTransition(enterAnim, exitAnim);
     }
 
-    @Override public final void activityFinish(boolean finishAfterTransition) {
+    @Override public void activityFinish(boolean finishAfterTransition) {
         FragmentActivity activity = getActivity();
         if (activity == null) return;
         if (finishAfterTransition) {
