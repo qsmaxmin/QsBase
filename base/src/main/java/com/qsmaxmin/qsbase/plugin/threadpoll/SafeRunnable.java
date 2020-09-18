@@ -12,7 +12,7 @@ import com.qsmaxmin.qsbase.common.log.L;
  */
 public abstract class SafeRunnable implements Runnable {
 
-    @Override public final void run() {
+    @Override public void run() {
         try {
             safeRun();
         } catch (QsException e) {
