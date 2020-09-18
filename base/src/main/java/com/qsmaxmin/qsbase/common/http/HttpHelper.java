@@ -117,8 +117,8 @@ public class HttpHelper {
             if (!QsHelper.isNetworkAvailable()) {
                 throw new Exception("network disable");
             }
-            HttpRequest httpRequest = new HttpRequest(method, args, requestTag, gson, callback);
-            Request request = httpRequest.createRequest();
+            HttpRequest httpRequest = new HttpRequest(method, args, requestTag, gson);
+            Request request = httpRequest.createRequest(callback);
             Call call = client.newCall(request);
             return createResult(httpRequest, call.execute());
         } catch (Exception e) {

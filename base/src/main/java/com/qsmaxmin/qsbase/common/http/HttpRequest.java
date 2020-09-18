@@ -58,23 +58,21 @@ public class HttpRequest {
     private HashMap<String, String> queryMap;
     private Object                  requestBody;
     private String                  url;
-    private RequestBody             httpRequestBody;
     private Headers.Builder         headerBuilder;
 
-    public HttpRequest(Method method, Object[] args, Object requestTag, Gson gson, QsHttpCallback callback) throws Exception {
+    public HttpRequest(Method method, Object[] args, Object requestTag, Gson gson) {
         this.method = method;
         this.args = args;
         this.requestTag = requestTag;
         this.methodName = method.getName();
         this.returnType = method.getReturnType();
         this.gson = gson;
-        processInner(callback);
     }
 
-    private void processInner(QsHttpCallback callback) throws Exception {
+    Request createRequest(QsHttpCallback callback) throws Exception {
         Annotation[] methodAnn = method.getAnnotations();
         if (methodAnn.length == 0) {
-            throwException("Annotation error... the method:" + methodName + " must have one annotation at least!! @GET @POST or @PUT...");
+            throw new Exception("Annotation error... the method:" + methodName + " must have one annotation at least!! @GET @POST or @PUT...");
         }
 
         Annotation pathAnnotation = null;
@@ -89,7 +87,7 @@ public class HttpRequest {
         }
 
         if (pathAnnotation == null) {
-            throwException("Annotation error... the method:" + methodName + " must has an annotation,such as:@PUT @POST or @GET...");
+            throw new Exception("Annotation error... the method:" + methodName + " must has an annotation,such as:@PUT @POST or @GET...");
         }
 
         if (pathAnnotation instanceof POST) {
@@ -111,29 +109,26 @@ public class HttpRequest {
             path = ((PATCH) pathAnnotation).value();
             requestType = "PATCH";
         } else {
-            throwException("Annotation error... the method:" + methodName + " must has an annotation, such as:@PUT @POST or @GET...");
-            return;
+            throw new Exception("Annotation error... the method:" + methodName + " must has an annotation, such as:@PUT @POST or @GET...");
         }
+
+        String mimeType = "application/json; charset=UTF-8";
+        List<Object> pathReplaceList = null;
 
         if (args != null && args.length > 0) {
             Annotation[][] paramsAnnTotal = method.getParameterAnnotations();
             if (paramsAnnTotal.length != args.length) {
-                throwException("params error method:" + methodName + " params have to have one annotation, such as @Query @Path");
-                return;
+                throw new Exception("params error method:" + methodName + " params have to have one annotation, such as @Query @Path");
             }
             Annotation[] paramsAnn = new Annotation[paramsAnnTotal.length];
             for (int i = 0; i < paramsAnnTotal.length; i++) {
                 Annotation[] annotations = paramsAnnTotal[i];
                 if (annotations.length != 1) {
-                    throwException("params error method:" + methodName + " params have to have one annotation, but there is more than one !");
-                    return;
+                    throw new Exception("params error method:" + methodName + " params have to have one annotation, but there is more than one !");
                 } else {
                     paramsAnn[i] = annotations[0];
                 }
             }
-
-            List<Object> pathReplaceList = null;
-            String mimeType = "application/json; charset=UTF-8";
 
             for (int i = 0; i < paramsAnn.length; i++) {
                 Annotation annotation = paramsAnn[i];
@@ -141,8 +136,7 @@ public class HttpRequest {
                     requestBody = args[i];
                     mimeType = ((Body) annotation).mimeType();
                     if (TextUtils.isEmpty(mimeType)) {
-                        throwException("request body exception...  method:" + methodName + "  the annotation @Body not have mimeType value");
-                        return;
+                        throw new Exception("request body exception...  method:" + methodName + "  the annotation @Body not have mimeType value");
                     }
                     break;
                 } else if (annotation instanceof Query) {
@@ -168,48 +162,52 @@ public class HttpRequest {
                     pathReplaceList.add(args[i]);
                 }
             }
+        }
 
-            if (callback != null) callback.processParams(this);
+        if (callback != null) callback.processParams(this);
 
-            if (TextUtils.isEmpty(terminal)) {
-                throwException("url terminal error... method:" + methodName + ", terminal is null...");
-                return;
-            }
-            if (TextUtils.isEmpty(path)) {
-                throwException("url path error... method:" + methodName + ", path is null...");
-                return;
-            }
+        if (TextUtils.isEmpty(terminal)) {
+            throw new Exception("url terminal error... method:" + methodName + ", terminal is null...");
+        }
+        if (TextUtils.isEmpty(path)) {
+            throw new Exception("url path error... method:" + methodName + ", path is null...");
+        }
 
-            if (pathReplaceList != null) {
-                path = String.format(path, pathReplaceList.toArray());
-            }
-            StringBuilder urlBuilder = new StringBuilder(terminal);
-            urlBuilder.append(path);
+        if (pathReplaceList != null) {
+            path = String.format(path, pathReplaceList.toArray());
+        }
+        StringBuilder urlBuilder = new StringBuilder(terminal);
+        urlBuilder.append(path);
 
-            if (queryMap != null && !queryMap.isEmpty()) {
-                int i = 0;
-                Uri uri = Uri.parse(urlBuilder.toString());
-                String uriQuery = uri.getQuery();
-                boolean shouldAdd = TextUtils.isEmpty(uriQuery) && urlBuilder.charAt(urlBuilder.length() - 1) != '?';
-                for (String key : queryMap.keySet()) {
-                    String value = queryMap.get(key);
-                    urlBuilder.append((i == 0 && shouldAdd) ? '?' : '&').append(key).append('=').append(value);
-                    i++;
-                }
-            }
-            url = urlBuilder.toString();
-            if (L.isEnable()) {
-                L.i("QsRequestParams", "start request....method:" + method.getName() + ", url:" + url);
-            }
-
-            if (shouldProcessBody()) {
-                if (requestBody != null) {
-                    httpRequestBody = createRequestBodyByObject(mimeType, requestBody);
-                } else if (formMap != null) {
-                    httpRequestBody = createRequestBodyByForm(formMap);
-                }
+        if (queryMap != null && !queryMap.isEmpty()) {
+            int i = 0;
+            Uri uri = Uri.parse(urlBuilder.toString());
+            String uriQuery = uri.getQuery();
+            boolean shouldAdd = TextUtils.isEmpty(uriQuery) && urlBuilder.charAt(urlBuilder.length() - 1) != '?';
+            for (String key : queryMap.keySet()) {
+                String value = queryMap.get(key);
+                urlBuilder.append((i == 0 && shouldAdd) ? '?' : '&').append(key).append('=').append(value);
+                i++;
             }
         }
+        url = urlBuilder.toString();
+        if (L.isEnable()) {
+            L.i("HttpRequest", "start request....method:" + method.getName() + ", url:" + url);
+        }
+
+        RequestBody httpRequestBody = null;
+        if (shouldProcessBody()) {
+            if (requestBody != null) {
+                httpRequestBody = createRequestBodyByObject(mimeType, requestBody);
+            } else if (formMap != null) {
+                httpRequestBody = createRequestBodyByForm(formMap);
+            }
+        }
+
+        Request.Builder builder = new Request.Builder();
+        if (headerBuilder != null) builder.headers(headerBuilder.build());
+        if (requestTag != null) builder.tag(requestTag);
+        return builder.url(url).method(requestType, httpRequestBody).build();
     }
 
     private boolean shouldProcessBody() {
@@ -394,20 +392,4 @@ public class HttpRequest {
             return builder.build();
         }
     }
-
-    private void throwException(String message) throws Exception {
-        throw new Exception(message);
-    }
-
-    private void throwException(Throwable t) throws Exception {
-        throw new Exception(t);
-    }
-
-    public Request createRequest() {
-        Request.Builder builder = new Request.Builder();
-        if (headerBuilder != null) builder.headers(headerBuilder.build());
-        if (requestTag != null) builder.tag(requestTag);
-        return builder.url(url).method(requestType, httpRequestBody).build();
-    }
-
 }
