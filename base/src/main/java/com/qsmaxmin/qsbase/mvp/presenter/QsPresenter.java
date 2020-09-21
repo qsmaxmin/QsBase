@@ -27,7 +27,7 @@ import androidx.fragment.app.FragmentActivity;
 /**
  * @CreateBy qsmaxmin
  * @Date 2017/6/21 16:27
- * @Description
+ * @Description support only: int, long, float, boolean, String, Set<String>
  */
 public class QsPresenter<V extends QsIView> implements NetworkErrorReceiver, QsNotProguard {
     private final HashSet<Object> tagList = new HashSet<>();
