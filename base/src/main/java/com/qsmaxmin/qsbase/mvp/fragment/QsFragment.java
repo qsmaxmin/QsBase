@@ -55,6 +55,7 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         View rootView = initView(inflater);
         bindViewByQsPlugin(rootView);
         rootView.setOnTouchListener(this);
+        onViewCreated(rootView);
         bindEventByQsPlugin();
         return rootView;
     }
@@ -91,6 +92,10 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         }
         mViewAnimator = null;
         unbindEventByQsPlugin();
+    }
+
+    @Override public void onViewCreated(View view) {
+        //custom your logic
     }
 
     protected View initView(LayoutInflater inflater) {

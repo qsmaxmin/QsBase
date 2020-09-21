@@ -88,12 +88,17 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         contentView = initView(getLayoutInflater());
         setContentView(contentView);
         bindViewByQsPlugin(contentView);
+        onViewCreated(contentView);
 
         bindEventByQsPlugin();
         if (!isDelayData()) {
             hasInitData = true;
             initData(savedInstanceState);
         }
+    }
+
+    @Override public void onViewCreated(View view) {
+        //custom your logic
     }
 
     @CallSuper @Override public void bindBundleByQsPlugin(Bundle bundle) {

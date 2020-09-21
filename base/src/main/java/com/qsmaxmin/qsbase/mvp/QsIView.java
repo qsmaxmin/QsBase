@@ -54,6 +54,8 @@ public interface QsIView<P> extends QsIBindView, QsIBindEvent, QsIBindBundle, Qs
 
     QsProgressDialog getLoadingDialog();
 
+    void onViewCreated(View view);
+
     void initData(Bundle savedInstanceState);
 
     void onViewClick(View view);
