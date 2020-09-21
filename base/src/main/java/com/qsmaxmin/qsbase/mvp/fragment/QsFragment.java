@@ -19,6 +19,7 @@ import com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout;
 import com.qsmaxmin.qsbase.mvp.OnActivityResultListener;
 import com.qsmaxmin.qsbase.mvp.QsIActivity;
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
+import com.qsmaxmin.qsbase.plugin.threadpoll.QsThreadPollHelper;
 
 import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
@@ -653,10 +654,18 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         setActivityTitle(title, 0);
     }
 
-    @Override public void setActivityTitle(CharSequence title, int type) {
-        FragmentActivity activity = getActivity();
+    @Override public void setActivityTitle(final CharSequence title, final int type) {
+        final FragmentActivity activity = getActivity();
         if (activity instanceof QsIActivity) {
-            ((QsIActivity) activity).setActivityTitle(title, type);
+            if (QsThreadPollHelper.isMainThread()) {
+                ((QsIActivity) activity).setActivityTitle(title, type);
+            } else {
+                post(new Runnable() {
+                    @Override public void run() {
+                        ((QsIActivity) activity).setActivityTitle(title, type);
+                    }
+                });
+            }
         }
     }
 }
