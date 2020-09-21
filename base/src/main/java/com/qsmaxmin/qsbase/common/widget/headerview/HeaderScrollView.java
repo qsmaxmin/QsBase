@@ -1,6 +1,7 @@
 package com.qsmaxmin.qsbase.common.widget.headerview;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -10,6 +11,8 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.widget.LinearLayout;
 import android.widget.Scroller;
+
+import com.qsmaxmin.qsbase.R;
 
 /**
  * @CreateBy qsmaxmin
@@ -24,6 +27,7 @@ public class HeaderScrollView extends LinearLayout {
     private              HeaderScrollHelper   helper;
     private              HeaderScrollListener headerScrollListener;
     private              int                  headHeight;
+    private              int                  tabOffsetY;
     private              int                  contentHeight;
     private              int                  maxScrollY;
     private              int                  lastScrollerY;
@@ -33,26 +37,32 @@ public class HeaderScrollView extends LinearLayout {
     private              float                lastY;
     private              boolean              verticalScrollFlag;
     private              SmoothScrollRunnable scrollRunnable;
+    private              boolean              isSendDownEvent;
 
     public HeaderScrollView(Context context) {
         super(context);
-        init();
+        init(null);
     }
 
     public HeaderScrollView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init();
+        init(attrs);
     }
 
     public HeaderScrollView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init();
+        init(attrs);
     }
 
-    private void init() {
+    private void init(AttributeSet attrs) {
         setOrientation(VERTICAL);
         scroller = new Scroller(getContext());
         helper = new HeaderScrollHelper(getContext());
+        if (attrs != null) {
+            TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.HeaderScrollView);
+            tabOffsetY = (int) typedArray.getDimension(R.styleable.HeaderScrollView_hsv_tabOffsetY, 0);
+            typedArray.recycle();
+        }
     }
 
     @Override protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -61,23 +71,21 @@ public class HeaderScrollView extends LinearLayout {
             measureChildWithMargins(headView, widthMeasureSpec, 0, MeasureSpec.UNSPECIFIED, 0);
             LayoutParams lp = (LayoutParams) headView.getLayoutParams();
             headHeight = headView.getMeasuredHeight() + lp.topMargin + lp.bottomMargin;
-            maxScrollY = headHeight;
             contentHeight = MeasureSpec.getSize(heightMeasureSpec);
-            super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(headHeight + contentHeight, MeasureSpec.EXACTLY));
+            maxScrollY = headHeight - tabOffsetY;
+            super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(headHeight + contentHeight - tabOffsetY, MeasureSpec.EXACTLY));
         } else {
             super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         }
     }
 
     @Override protected int computeVerticalScrollRange() {
-        return headHeight + contentHeight;
+        return headHeight + contentHeight - tabOffsetY;
     }
 
     @Override protected int computeVerticalScrollExtent() {
         return contentHeight;
     }
-
-    boolean isSendDownEvent;
 
     @Override public boolean dispatchTouchEvent(MotionEvent ev) {
         float currentX = ev.getX();
@@ -214,8 +222,8 @@ public class HeaderScrollView extends LinearLayout {
         super.scrollTo(x, y);
     }
 
-    @Override protected void onScrollChanged(int l, int t, int oldl, int oldt) {
-        super.onScrollChanged(l, t, oldl, oldt);
+    @Override protected void onScrollChanged(int l, int t, int oldL, int oldT) {
+        super.onScrollChanged(l, t, oldL, oldT);
         if (headerScrollListener != null) {
             headerScrollListener.onHeaderScroll(t, maxScrollY);
         }

@@ -60,4 +60,8 @@
         <attr name="layout_widthPercent" format="string" />
         <attr name="layout_heightPercent" format="string" />
     </declare-styleable>
+
+    <declare-styleable name="HeaderScrollView">
+        <attr name="hsv_tabOffsetY" format="dimension" />
+    </declare-styleable>
 </resources>
