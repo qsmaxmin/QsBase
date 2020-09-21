@@ -10,6 +10,7 @@ import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.widget.viewpager.PagerSlidingTabStrip;
 import com.qsmaxmin.qsbase.common.widget.viewpager.QsViewPager;
 import com.qsmaxmin.qsbase.common.widget.viewpager.ViewPagerHelper;
+import com.qsmaxmin.qsbase.mvp.QsIView;
 import com.qsmaxmin.qsbase.mvp.QsIViewPager;
 import com.qsmaxmin.qsbase.mvp.adapter.QsTabViewPagerAdapter;
 import com.qsmaxmin.qsbase.mvp.adapter.QsViewPagerAdapter;
@@ -109,7 +110,7 @@ public abstract class QsViewPagerFragment<P extends QsPresenter> extends QsFragm
     }
 
     @Override public Fragment getCurrentFragment() {
-        return adapter.getAllData()[pager.getCurrentItem()].fragment;
+        return adapter == null ? null : adapter.getAllData()[pager.getCurrentItem()].fragment;
     }
 
     @Override public void setIndex(int index, boolean bool) {
@@ -148,14 +149,9 @@ public abstract class QsViewPagerFragment<P extends QsPresenter> extends QsFragm
     }
 
     @Override public void smoothScrollToTop(boolean autoRefresh) {
-        QsViewPagerAdapter adapter = getViewPagerAdapter();
-        if (adapter == null) return;
-        QsModelPager[] allData = adapter.getAllData();
-        int currentItem = getViewPager().getCurrentItem();
-        if (allData == null || currentItem < 0 || currentItem >= allData.length) return;
-        QsModelPager modelPager = allData[currentItem];
-        if (modelPager != null && modelPager.fragment instanceof QsIFragment) {
-            ((QsIFragment) modelPager.fragment).smoothScrollToTop(autoRefresh);
+        Fragment fragment = getCurrentFragment();
+        if (fragment instanceof QsIView) {
+            ((QsIView) fragment).smoothScrollToTop(autoRefresh);
         }
     }
 }

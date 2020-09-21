@@ -7,7 +7,6 @@ import android.view.View;
 
 import com.qsmaxmin.qsbase.R;
 import com.qsmaxmin.qsbase.common.log.L;
-import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.common.widget.viewpager.PagerSlidingTabStrip;
 import com.qsmaxmin.qsbase.common.widget.viewpager.QsViewPager;
 import com.qsmaxmin.qsbase.common.widget.viewpager.ViewPagerHelper;
@@ -133,7 +132,7 @@ public abstract class QsViewPagerActivity<P extends QsPresenter> extends QsActiv
     }
 
     @Override public Fragment getCurrentFragment() {
-        return adapter.getAllData()[pager.getCurrentItem()].fragment;
+        return adapter == null ? null : adapter.getAllData()[pager.getCurrentItem()].fragment;
     }
 
     protected int getOffscreenPageLimit() {
@@ -142,5 +141,12 @@ public abstract class QsViewPagerActivity<P extends QsPresenter> extends QsActiv
 
     protected int getPageMargin() {
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4, getResources().getDisplayMetrics());
+    }
+
+    @Override public void smoothScrollToTop(boolean autoRefresh) {
+        Fragment fragment = getCurrentFragment();
+        if (fragment instanceof QsIView) {
+            ((QsIView) fragment).smoothScrollToTop(autoRefresh);
+        }
     }
 }

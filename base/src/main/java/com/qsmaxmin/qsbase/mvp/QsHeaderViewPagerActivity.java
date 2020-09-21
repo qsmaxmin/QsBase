@@ -59,4 +59,9 @@ public abstract class QsHeaderViewPagerActivity<P extends QsPresenter> extends Q
         }
         return null;
     }
+
+    @Override public void smoothScrollToTop(boolean autoRefresh) {
+        super.smoothScrollToTop(autoRefresh);
+        headerScrollView.smoothScrollToTop();
+    }
 }

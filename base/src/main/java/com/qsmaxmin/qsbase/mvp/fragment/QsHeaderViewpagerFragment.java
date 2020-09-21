@@ -53,6 +53,11 @@ public abstract class QsHeaderViewpagerFragment<P extends QsPresenter> extends Q
         //custom your logic
     }
 
+    @Override public void smoothScrollToTop(boolean autoRefresh) {
+        super.smoothScrollToTop(autoRefresh);
+        headerScrollView.smoothScrollToTop();
+    }
+
     @Override public View getScrollableView() {
         Fragment fragment = getCurrentFragment();
         if (fragment instanceof ScrollerProvider) {
@@ -60,4 +65,5 @@ public abstract class QsHeaderViewpagerFragment<P extends QsPresenter> extends Q
         }
         return null;
     }
+
 }

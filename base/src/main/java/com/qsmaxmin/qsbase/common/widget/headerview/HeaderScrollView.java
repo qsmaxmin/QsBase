@@ -1,10 +1,13 @@
 package com.qsmaxmin.qsbase.common.widget.headerview;
 
 import android.content.Context;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.Interpolator;
 import android.widget.LinearLayout;
 import android.widget.Scroller;
 
@@ -29,6 +32,7 @@ public class HeaderScrollView extends LinearLayout {
     private              float                dy;
     private              float                lastY;
     private              boolean              verticalScrollFlag;
+    private              SmoothScrollRunnable scrollRunnable;
 
     public HeaderScrollView(Context context) {
         super(context);
@@ -239,5 +243,65 @@ public class HeaderScrollView extends LinearLayout {
 
     public void setOnScrollListener(HeaderScrollListener onScrollListener) {
         this.headerScrollListener = onScrollListener;
+    }
+
+    public void smoothScrollToTop() {
+        if (scrollRunnable == null) scrollRunnable = new SmoothScrollRunnable();
+        scrollRunnable.scrollToPos(0);
+    }
+
+    public void smoothScrollToBottom() {
+        if (scrollRunnable == null) scrollRunnable = new SmoothScrollRunnable();
+        scrollRunnable.scrollToPos(getMaxScrollY());
+    }
+
+    public void smoothScrollTo(int y) {
+        if (scrollRunnable == null) scrollRunnable = new SmoothScrollRunnable();
+        scrollRunnable.scrollToPos(y);
+    }
+
+    private class SmoothScrollRunnable implements Runnable {
+        private final Interpolator interpolator;
+        private       float        startY;
+        private       float        endY;
+        private       float        currentY;
+        private       float        step;
+
+        public SmoothScrollRunnable() {
+            interpolator = new DecelerateInterpolator(2f);
+        }
+
+        @Override public void run() {
+            if (shouldScroll()) {
+                currentY += step;
+                float ratio = interpolator.getInterpolation((currentY - startY) / (endY - startY));
+                scrollTo(0, (int) (startY + (endY - startY) * ratio));
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    postOnAnimation(this);
+                } else {
+                    postDelayed(this, 16L);
+                }
+            }
+        }
+
+        public void scrollToPos(int y) {
+            if (y < 0) {
+                y = 0;
+            } else if (y > getMaxScrollY()) {
+                y = getMaxScrollY();
+            }
+            startY = getScrollY();
+            endY = y;
+            currentY = startY;
+            step = (endY - startY) / 30f;
+            if (shouldScroll()) {
+                removeCallbacks(this);
+                post(this);
+            }
+        }
+
+        private boolean shouldScroll() {
+            return Math.abs(endY - currentY) >= 1f;
+        }
     }
 }
