@@ -5,7 +5,7 @@ MVP架构+AOP面向切面编程，摒弃反射、代理等操作，稳定性和�
 
 积累很多框架封装思想，能够轻松驾驭任何典型的APP项目开发
 
-轻量级框架，轻松实现类似EventBus，ButterKnife，Retrofit等核心注解功能，使代码简介优雅。
+轻量级框架，轻松实现类似EventBus，ButterKnife，Retrofit等核心注解功能，使代码简洁优雅。
 
 ## 如何使用？
 详细使用请参考完整项目[GrapeUniversity](https://github.com/qsmaxmin/GrapeUniversity)
