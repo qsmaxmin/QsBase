@@ -12,7 +12,7 @@ public interface QsIProperty {
     /**
      * auto generate code by QsTransform
      */
-    void readPropertiesByQsPlugin(Map map);
+    void readPropertiesByQsPlugin(Map<String, ?> map);
 
     /**
      * auto generate code by QsTransform
