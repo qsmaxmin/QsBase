@@ -9,7 +9,6 @@ import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
 
 import java.util.Map;
-import java.util.Set;
 
 
 /**
@@ -74,11 +73,20 @@ public abstract class QsProperties implements QsIProperty, QsNotProguard {
         sp.edit().clear().apply();
     }
 
-
+    /**
+     * String
+     */
     protected final void putString(String key, String value) {
         if (edit != null) edit.putString(key, value);
     }
 
+    protected final String getString(Map<String, ?> map, String key) {
+        return (String) map.get(key);
+    }
+
+    /**
+     * int
+     */
     protected final void putInt(String key, int value) {
         if (edit != null) edit.putInt(key, value);
     }
@@ -87,70 +95,6 @@ public abstract class QsProperties implements QsIProperty, QsNotProguard {
         if (edit != null) {
             edit.putInt(key, value == null ? 0 : value);
         }
-    }
-
-    protected final void putFloat(String key, float value) {
-        if (edit != null) edit.putFloat(key, value);
-    }
-
-    protected final void putFloat2(String key, Float value) {
-        if (edit != null) {
-            edit.putFloat(key, value == null ? 0f : value);
-        }
-    }
-
-    protected final void putLong(String key, long value) {
-        if (edit != null) edit.putLong(key, value);
-    }
-
-    protected final void putLong2(String key, Long value) {
-        if (edit != null) {
-            edit.putLong(key, value == null ? 0L : value);
-        }
-    }
-
-    protected final void putBoolean(String key, boolean value) {
-        if (edit != null) edit.putBoolean(key, value);
-    }
-
-    protected final void putBoolean2(String key, Boolean value) {
-        if (edit != null) edit.putBoolean(key, value == null ? false : value);
-    }
-
-    protected final void putStringSet(String key, Set<String> value) {
-        if (edit != null) edit.putStringSet(key, value);
-    }
-
-    protected final void putByte(String key, byte value) {
-        if (edit != null) edit.putInt(key, value);
-    }
-
-    protected final void putByte2(String key, Byte value) {
-        if (edit != null) edit.putInt(key, value == null ? 0 : value);
-    }
-
-    protected final void putShort(String key, short value) {
-        if (edit != null) edit.putInt(key, value);
-    }
-
-    protected final void putShort2(String key, Short value) {
-        if (edit != null) edit.putInt(key, value == null ? 0 : value);
-    }
-
-    protected final void putDouble(String key, double value) {
-        if (edit != null) edit.putString(key, String.valueOf(value));
-    }
-
-    protected final void putDouble2(String key, Double value) {
-        if (edit != null) edit.putString(key, value == null ? null : String.valueOf(value));
-    }
-
-    protected final void putChar(String key, char value) {
-        if (edit != null) edit.putInt(key, value);
-    }
-
-    protected final void putChar2(String key, Character value) {
-        if (edit != null) edit.putInt(key, value == null ? 0 : value);
     }
 
     protected final int getInt(Map<String, ?> map, String key) {
@@ -162,6 +106,20 @@ public abstract class QsProperties implements QsIProperty, QsNotProguard {
         return (Integer) map.get(key);
     }
 
+
+    /**
+     * float
+     */
+    protected final void putFloat(String key, float value) {
+        if (edit != null) edit.putFloat(key, value);
+    }
+
+    protected final void putFloat2(String key, Float value) {
+        if (edit != null) {
+            edit.putFloat(key, value == null ? 0f : value);
+        }
+    }
+
     protected final float getFloat(Map<String, ?> map, String key) {
         Object o = map.get(key);
         return o == null ? 0f : (float) o;
@@ -169,6 +127,19 @@ public abstract class QsProperties implements QsIProperty, QsNotProguard {
 
     protected final Float getFloat2(Map<String, ?> map, String key) {
         return (Float) map.get(key);
+    }
+
+    /**
+     * long
+     */
+    protected final void putLong(String key, long value) {
+        if (edit != null) edit.putLong(key, value);
+    }
+
+    protected final void putLong2(String key, Long value) {
+        if (edit != null) {
+            edit.putLong(key, value == null ? 0L : value);
+        }
     }
 
     protected final long getLong(Map<String, ?> map, String key) {
@@ -180,6 +151,17 @@ public abstract class QsProperties implements QsIProperty, QsNotProguard {
         return (Long) map.get(key);
     }
 
+    /**
+     * boolean
+     */
+    protected final void putBoolean(String key, boolean value) {
+        if (edit != null) edit.putBoolean(key, value);
+    }
+
+    protected final void putBoolean2(String key, Boolean value) {
+        if (edit != null) edit.putBoolean(key, value == null ? false : value);
+    }
+
     protected final boolean getBoolean(Map<String, ?> map, String key) {
         Object o = map.get(key);
         return o != null && (boolean) o;
@@ -189,13 +171,16 @@ public abstract class QsProperties implements QsIProperty, QsNotProguard {
         return (Boolean) map.get(key);
     }
 
-    protected final String getString(Map<String, ?> map, String key) {
-        return (String) map.get(key);
+
+    /**
+     * byte, saved as int
+     */
+    protected final void putByte(String key, byte value) {
+        if (edit != null) edit.putInt(key, value);
     }
 
-    @SuppressWarnings("unchecked")
-    protected final Set<String> getStringSet(Map<String, ?> map, String key) {
-        return (Set<String>) map.get(key);
+    protected final void putByte2(String key, Byte value) {
+        if (edit != null) edit.putInt(key, value == null ? 0 : value);
     }
 
     protected final byte getByte(Map<String, ?> map, String key) {
@@ -209,6 +194,18 @@ public abstract class QsProperties implements QsIProperty, QsNotProguard {
         return ((Integer) o).byteValue();
     }
 
+
+    /**
+     * short, saved as int
+     */
+    protected final void putShort(String key, short value) {
+        if (edit != null) edit.putInt(key, value);
+    }
+
+    protected final void putShort2(String key, Short value) {
+        if (edit != null) edit.putInt(key, value == null ? 0 : value);
+    }
+
     protected final short getShort(Map<String, ?> map, String key) {
         Object o = map.get(key);
         return o == null ? 0 : (short) ((int) o);
@@ -220,19 +217,42 @@ public abstract class QsProperties implements QsIProperty, QsNotProguard {
         return ((Integer) o).shortValue();
     }
 
+    /**
+     * double, saved as String
+     */
+    protected final void putDouble(String key, double value) {
+        if (edit != null) edit.putString(key, String.valueOf(value));
+    }
+
+    protected final void putDouble2(String key, Double value) {
+        if (edit != null) edit.putString(key, value == null ? null : String.valueOf(value));
+    }
+
     protected final double getDouble(Map<String, ?> map, String key) {
+        Double d = getDouble2(map, key);
+        return d == null ? 0 : d;
+    }
+
+    protected final Double getDouble2(Map<String, ?> map, String key) {
         Object o = map.get(key);
-        if (o == null) return 0d;
+        if (o == null) return null;
         try {
             return Double.parseDouble(((String) o));
         } catch (Exception e) {
             if (L.isEnable()) e.printStackTrace();
-            return 0d;
+            return null;
         }
     }
 
-    protected final Double getDouble2(Map<String, ?> map, String key) {
-        return getDouble(map, key);
+    /**
+     * char, saved as int
+     */
+    protected final void putChar(String key, char value) {
+        if (edit != null) edit.putInt(key, value);
+    }
+
+    protected final void putChar2(String key, Character value) {
+        if (edit != null) edit.putInt(key, value == null ? 0 : value);
     }
 
     protected final char getChar(Map<String, ?> map, String key) {
@@ -246,6 +266,9 @@ public abstract class QsProperties implements QsIProperty, QsNotProguard {
         return (char) ((int) o);
     }
 
+    /**
+     * Object, saved as json String
+     */
     protected void putObject(String key, Object obj) {
         if (edit != null) {
             if (obj == null) {
