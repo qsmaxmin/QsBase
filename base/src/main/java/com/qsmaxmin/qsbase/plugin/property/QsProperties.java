@@ -200,38 +200,50 @@ public abstract class QsProperties implements QsIProperty, QsNotProguard {
 
     protected final byte getByte(Map<String, ?> map, String key) {
         Object o = map.get(key);
-        return o == null ? 0 : (byte) o;
+        return o == null ? 0 : (byte) ((int) o);
     }
 
     protected final Byte getByte2(Map<String, ?> map, String key) {
-        return (Byte) map.get(key);
+        Object o = map.get(key);
+        if (o == null) return 0;
+        return ((Integer) o).byteValue();
     }
 
     protected final short getShort(Map<String, ?> map, String key) {
         Object o = map.get(key);
-        return o == null ? 0 : (short) o;
+        return o == null ? 0 : (short) ((int) o);
     }
 
     protected final Short getShort2(Map<String, ?> map, String key) {
-        return (Short) map.get(key);
+        Object o = map.get(key);
+        if (o == null) return 0;
+        return ((Integer) o).shortValue();
     }
 
     protected final double getDouble(Map<String, ?> map, String key) {
         Object o = map.get(key);
-        return o == null ? 0 : (double) o;
+        if (o == null) return 0d;
+        try {
+            return Double.parseDouble(((String) o));
+        } catch (Exception e) {
+            if (L.isEnable()) e.printStackTrace();
+            return 0d;
+        }
     }
 
     protected final Double getDouble2(Map<String, ?> map, String key) {
-        return (Double) map.get(key);
+        return getDouble(map, key);
     }
 
     protected final char getChar(Map<String, ?> map, String key) {
         Object o = map.get(key);
-        return o == null ? 0 : (char) o;
+        return o == null ? 0 : (char) ((int) o);
     }
 
     protected final Character getChar2(Map<String, ?> map, String key) {
-        return (Character) map.get(key);
+        Object o = map.get(key);
+        if (o == null) return 0;
+        return (char) ((int) o);
     }
 
     protected void putObject(String key, Object obj) {
