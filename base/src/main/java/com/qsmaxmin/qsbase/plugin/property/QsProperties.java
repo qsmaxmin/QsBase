@@ -15,7 +15,7 @@ import java.util.Map;
  * @CreateBy qsmaxmin
  * @Date 2017/7/3 9:15
  * @Description QsTransform supported, Never change any code !!!
- * support only: int, long, float, boolean, String, Set<String>
+ * It can store everything, and pay attention to confusion when storing objects.
  */
 @SuppressWarnings("rawtypes")
 public abstract class QsProperties implements QsIProperty, QsNotProguard {
