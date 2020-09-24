@@ -115,7 +115,7 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
 
             View contentView = inflater.inflate(layoutId(), mViewAnimator, false);
             contentView.setTag(R.id.qs_view_state_key, VIEW_STATE_CONTENT);
-            if (contentViewBackgroundColor() != 0) rootView.setBackgroundColor(contentViewBackgroundColor());
+            if (contentViewBackgroundColor() != 0) contentView.setBackgroundColor(contentViewBackgroundColor());
             mViewAnimator.addView(contentView);
             onCreateContentView(contentView);
 
