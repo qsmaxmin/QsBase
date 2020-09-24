@@ -3,11 +3,11 @@ package com.qsmaxmin.qsbase.mvp;
 import android.view.View;
 
 import com.qsmaxmin.qsbase.common.widget.viewpager.PagerSlidingTabStrip;
-import com.qsmaxmin.qsbase.common.widget.viewpager.QsViewPager;
-import com.qsmaxmin.qsbase.mvp.adapter.QsViewPagerAdapter;
+import com.qsmaxmin.qsbase.mvp.adapter.QsIPagerAdapter;
 import com.qsmaxmin.qsbase.mvp.model.QsModelPager;
 
 import androidx.fragment.app.Fragment;
+import androidx.viewpager.widget.ViewPager;
 
 /**
  * @CreateBy qsmaxmin
@@ -29,15 +29,13 @@ public interface QsIViewPager {
 
     QsModelPager[] getModelPagers();
 
-    void replaceViewPageItem(QsModelPager... modelPagers);
-
     void setIndex(int index, boolean bool);
 
     PagerSlidingTabStrip getTab();
 
-    QsViewPager getViewPager();
+    ViewPager getViewPager();
 
-    QsViewPagerAdapter getViewPagerAdapter();
+    QsIPagerAdapter getViewPagerAdapter();
 
     int getTabItemLayout();
 

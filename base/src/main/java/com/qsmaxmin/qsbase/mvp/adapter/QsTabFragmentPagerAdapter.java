@@ -2,7 +2,6 @@ package com.qsmaxmin.qsbase.mvp.adapter;
 
 import android.view.View;
 
-import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.widget.viewpager.PagerSlidingTabStrip;
 import com.qsmaxmin.qsbase.common.widget.viewpager.ViewPagerHelper;
 
@@ -14,14 +13,10 @@ import androidx.fragment.app.FragmentManager;
  * @Description
  */
 
-public class QsTabViewPagerAdapter extends QsViewPagerAdapter implements PagerSlidingTabStrip.CustomTabProvider {
+public class QsTabFragmentPagerAdapter extends QsFragmentPagerAdapter implements PagerSlidingTabStrip.CustomTabProvider {
 
-    protected String initTag() {
-        return L.isEnable() ? getClass().getSimpleName() : "QsTabViewPagerAdapter";
-    }
-
-    public QsTabViewPagerAdapter(FragmentManager fragmentManager, ViewPagerHelper helper) {
-        super(fragmentManager, helper);
+    public QsTabFragmentPagerAdapter(FragmentManager fm, ViewPagerHelper helper) {
+        super(fm, helper);
     }
 
     @Override public int getCustomTabView() {
@@ -36,7 +31,7 @@ public class QsTabViewPagerAdapter extends QsViewPagerAdapter implements PagerSl
 
     @Override public void initTabsItem(View view, int position) {
         if (getPagerHelper().getViewPagerLayer() != null) {
-            getPagerHelper().getViewPagerLayer().initTabItem(view, getPagerHelper().getViewPagerData()[position]);
+            getPagerHelper().getViewPagerLayer().initTabItem(view, getPagerHelper().getModelPagers()[position]);
         }
     }
 }
