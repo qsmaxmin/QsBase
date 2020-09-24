@@ -22,7 +22,7 @@ public class ViewPagerHelper {
     private final QsModelPager[]       viewPagerData;
     private       View                 oldView     = null;
     private       int                  oldPosition = 0;
-    private       boolean              hasPageSelected;        // 当前page索引（切换之前）
+    private       boolean              hasPageSelected;
 
     public ViewPagerHelper(QsIViewPager viewPagerLayer, ViewPager pager, PagerSlidingTabStrip tabs, QsModelPager[] modelPagers) {
         this.viewPagerLayer = viewPagerLayer;
