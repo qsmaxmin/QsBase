@@ -190,6 +190,7 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
             }
             ViewGroup customView = rootView.findViewById(android.R.id.custom);
             View contentView = inflater.inflate(layoutId(), customView, false);
+            if (contentViewBackgroundColor() != 0) contentView.setBackgroundColor(contentViewBackgroundColor());
             customView.addView(contentView);
             onCreateContentView(contentView);
 

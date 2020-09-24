@@ -127,6 +127,7 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         } else {
             ViewGroup customView = rootView.findViewById(android.R.id.custom);
             View contentView = inflater.inflate(layoutId(), customView, false);
+            if (contentViewBackgroundColor() != 0) contentView.setBackgroundColor(contentViewBackgroundColor());
             customView.addView(contentView);
             onCreateContentView(contentView);
 
