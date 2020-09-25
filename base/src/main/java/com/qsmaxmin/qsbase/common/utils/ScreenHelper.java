@@ -69,7 +69,6 @@ public final class ScreenHelper {
             if (L.isEnable()) {
                 L.i(TAG, "activity out:" + activity + "，task size:" + fragmentActivities.size());
             }
-
             if (fragmentActivities.size() == 0) {
                 L.i(TAG, "pop all Activity......");
                 if (listeners != null) listeners.clear();
@@ -78,18 +77,19 @@ public final class ScreenHelper {
     }
 
     public void popAllActivityExceptMain(Class clazz) {
-        while (true) {
-            if (clazz != null && fragmentActivities.size() <= 1) break;
-            FragmentActivity activity = currentActivity();
-            if (activity == null || activity.getClass().equals(clazz)) break;
-            popActivity(activity);
-            activity.finish();
+        FragmentActivity[] array = this.fragmentActivities.toArray(new FragmentActivity[0]);
+        for (FragmentActivity activity : array) {
+            if (clazz != activity.getClass()) {
+                activity.finish();
+            } else {
+                break;
+            }
         }
     }
 
     public void popAllActivity() {
-        while (fragmentActivities.size() > 0) {
-            FragmentActivity activity = fragmentActivities.get(0);
+        FragmentActivity[] array = this.fragmentActivities.toArray(new FragmentActivity[0]);
+        for (FragmentActivity activity : array) {
             activity.finish();
         }
     }
