@@ -56,12 +56,14 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
     @Override public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (interceptBackPressed()) {
-            requireActivity().getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(false) {
+            requireActivity().getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
                 @Override public void handleOnBackPressed() {
-                    if (L.isEnable()) L.e(initTag(), "handleOnBackPressed..........");
+                    if (L.isEnable()) L.i(initTag(), "handleOnBackPressed..........");
                     onBackPressed();
                 }
             });
+        } else if (L.isEnable()) {
+            L.i(initTag(), "interceptBackPressed() return false, if you want to intercept back pressed event, override it and return true!");
         }
     }
 
