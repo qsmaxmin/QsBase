@@ -64,18 +64,16 @@ public final class ScreenHelper {
      * 出栈
      */
     public void popActivity(FragmentActivity activity) {
-        if (activity != null) {
-            fragmentActivities.remove(activity);
+        if (activity != null && fragmentActivities.remove(activity)) {
             onActivityRemoved(activity);
             if (L.isEnable()) {
                 L.i(TAG, "activity out:" + activity + "，task size:" + fragmentActivities.size());
             }
-        } else {
-            L.e(TAG, "popActivity param is empty!");
-        }
-        if (fragmentActivities.size() == 0) {
-            L.i(TAG, "pop all Activity......");
-            if (listeners != null) listeners.clear();
+
+            if (fragmentActivities.size() == 0) {
+                L.i(TAG, "pop all Activity......");
+                if (listeners != null) listeners.clear();
+            }
         }
     }
 
@@ -85,13 +83,14 @@ public final class ScreenHelper {
             FragmentActivity activity = currentActivity();
             if (activity == null || activity.getClass().equals(clazz)) break;
             popActivity(activity);
+            activity.finish();
         }
     }
 
     public void popAllActivity() {
         while (fragmentActivities.size() > 0) {
-            FragmentActivity fragmentActivity = fragmentActivities.get(0);
-            popActivity(fragmentActivity);
+            FragmentActivity activity = fragmentActivities.get(0);
+            activity.finish();
         }
     }
 
