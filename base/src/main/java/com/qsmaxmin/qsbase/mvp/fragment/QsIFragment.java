@@ -10,7 +10,9 @@ import com.qsmaxmin.qsbase.mvp.QsIView;
 
 public interface QsIFragment extends QsIView {
 
-    boolean shouldInterceptTouchEvent();
+    boolean interceptTouchEvent();
+
+    boolean interceptBackPressed();
 
     void onBackPressed();
 

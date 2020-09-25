@@ -21,6 +21,7 @@ import com.qsmaxmin.qsbase.mvp.QsIActivity;
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
 import com.qsmaxmin.qsbase.plugin.threadpoll.QsThreadPollHelper;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -29,6 +30,8 @@ import androidx.core.app.ActivityOptionsCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 /**
  * @CreateBy qsmaxmin
@@ -48,6 +51,18 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
 
     @Override public int rootViewLayoutId() {
         return isOpenViewState() ? R.layout.qs_view_animator : R.layout.qs_frame_layout;
+    }
+
+    @Override public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (interceptBackPressed()) {
+            requireActivity().getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(false) {
+                @Override public void handleOnBackPressed() {
+                    if (L.isEnable()) L.e(initTag(), "handleOnBackPressed..........");
+                    onBackPressed();
+                }
+            });
+        }
     }
 
     @Override @Nullable @CallSuper
@@ -259,8 +274,11 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
     }
 
     @Override public void onBackPressed() {
-        FragmentActivity activity = getActivity();
-        if (activity != null) activity.onBackPressed();
+        FragmentManager manager = getFragmentManager();
+        if (manager != null) {
+            FragmentTransaction ft = manager.beginTransaction();
+            ft.remove(this).commitAllowingStateLoss();
+        }
     }
 
     @Override public final void loading() {
@@ -621,7 +639,7 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
     }
 
     @Override public boolean onTouch(View v, MotionEvent event) {
-        return shouldInterceptTouchEvent();
+        return interceptTouchEvent();
     }
 
     @Override public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -635,8 +653,16 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         this.activityResultListener = listener;
     }
 
-    @Override public boolean shouldInterceptTouchEvent() {
+    @Override public boolean interceptTouchEvent() {
         return true;
+    }
+
+    /**
+     * if return true, this fragment will intercept onBackPressed event,
+     * and {@link #onBackPressed()}will be execute.
+     */
+    @Override public boolean interceptBackPressed() {
+        return false;
     }
 
     @Override public boolean isShowBackButtonInDefaultView() {
