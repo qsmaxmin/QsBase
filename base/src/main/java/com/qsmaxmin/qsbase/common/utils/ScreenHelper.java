@@ -53,7 +53,7 @@ public final class ScreenHelper {
             fragmentActivities.add(activity);
             onActivityAdded(activity);
             if (L.isEnable()) {
-                L.i(TAG, "activity in:" + activity.getClass().getSimpleName() + "，task size:" + fragmentActivities.size());
+                L.i(TAG, "activity in:" + activity + "，task size:" + fragmentActivities.size());
             }
         } else {
             L.e(TAG, "pushActivity param is empty!");
@@ -65,18 +65,16 @@ public final class ScreenHelper {
      */
     public void popActivity(FragmentActivity activity) {
         if (activity != null) {
-            activity.finish();
             fragmentActivities.remove(activity);
             onActivityRemoved(activity);
             if (L.isEnable()) {
-                L.i(TAG, "activity out:" + activity.getClass().getSimpleName() + "，task size:" + fragmentActivities.size());
+                L.i(TAG, "activity out:" + activity + "，task size:" + fragmentActivities.size());
             }
         } else {
             L.e(TAG, "popActivity param is empty!");
         }
         if (fragmentActivities.size() == 0) {
-            L.i(TAG, "pop all Activity, app shutdown...");
-            QsHelper.release();
+            L.i(TAG, "pop all Activity......");
             if (listeners != null) listeners.clear();
         }
     }
@@ -85,8 +83,7 @@ public final class ScreenHelper {
         while (true) {
             if (clazz != null && fragmentActivities.size() <= 1) break;
             FragmentActivity activity = currentActivity();
-            if (activity == null) break;
-            if (activity.getClass().equals(clazz)) break;
+            if (activity == null || activity.getClass().equals(clazz)) break;
             popActivity(activity);
         }
     }
