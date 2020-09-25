@@ -500,55 +500,27 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
     }
 
     @Override public final void commitFragment(Fragment fragment) {
-        commitFragment(fragment, fragment.getClass().getSimpleName());
+        QsHelper.commitFragment(getSupportFragmentManager(), android.R.id.custom, fragment);
     }
 
     @Override public final void commitFragment(Fragment fragment, String tag) {
-        commitFragment(android.R.id.custom, fragment, tag);
+        QsHelper.commitFragment(getSupportFragmentManager(), android.R.id.custom, fragment, tag);
+    }
+
+    @Override public final void commitFragment(Fragment fragment, String tag, int enterAnim, int existAnim) {
+        QsHelper.commitFragment(getSupportFragmentManager(), android.R.id.custom, fragment, tag, enterAnim, existAnim);
     }
 
     @Override public final void commitFragment(int layoutId, Fragment fragment) {
-        commitFragment(layoutId, fragment, fragment.getClass().getSimpleName());
+        QsHelper.commitFragment(getSupportFragmentManager(), layoutId, fragment);
     }
 
     @Override public final void commitFragment(int layoutId, Fragment fragment, String tag) {
         QsHelper.commitFragment(getSupportFragmentManager(), layoutId, fragment, tag);
     }
 
-    @Override public final void commitFragment(Fragment old, Fragment fragment) {
-        commitFragment(old, fragment, fragment.getClass().getSimpleName());
-    }
-
-    @Override public final void commitFragment(Fragment old, Fragment fragment, String tag) {
-        commitFragment(old, android.R.id.custom, fragment, tag);
-    }
-
-    @Override public final void commitFragment(Fragment old, int layoutId, Fragment fragment) {
-        commitFragment(old, layoutId, fragment, fragment.getClass().getSimpleName());
-    }
-
-    @Override public final void commitFragment(Fragment old, int layoutId, Fragment fragment, String tag) {
-        QsHelper.commitFragment(getSupportFragmentManager(), old, layoutId, fragment, tag);
-    }
-
-    @Override public final void commitBackStackFragment(Fragment fragment) {
-        commitBackStackFragment(fragment, fragment.getClass().getSimpleName());
-    }
-
-    @Override public final void commitBackStackFragment(Fragment fragment, String tag) {
-        commitBackStackFragment(android.R.id.custom, fragment, tag);
-    }
-
-    @Override public final void commitBackStackFragment(int layoutId, Fragment fragment) {
-        commitBackStackFragment(layoutId, fragment, fragment.getClass().getSimpleName());
-    }
-
-    @Override public final void commitBackStackFragment(Fragment fragment, int enterAnim, int exitAnim) {
-        QsHelper.commitBackStackFragment(fragment, enterAnim, exitAnim);
-    }
-
-    @Override public final void commitBackStackFragment(int layoutId, Fragment fragment, String tag) {
-        QsHelper.commitBackStackFragment(getSupportFragmentManager(), layoutId, fragment, tag);
+    @Override public final void commitFragment(int layoutId, Fragment fragment, String tag, int enterAnim, int existAnim) {
+        QsHelper.commitFragment(getSupportFragmentManager(), layoutId, fragment, tag, enterAnim, existAnim);
     }
 
     @Override public final void commitDialogFragment(DialogFragment fragment) {

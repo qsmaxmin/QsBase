@@ -132,33 +132,19 @@ public interface QsIView<P> extends QsIBindView, QsIBindEvent, QsIBindBundle, Qs
 
     void intent2Activity(Class clazz, Bundle bundle, int requestCode, ActivityOptionsCompat optionsCompat);
 
-    void intent2Activity(Class clazz, Bundle bundle, int requestCode, ActivityOptionsCompat optionsCompat, int inAnimId, int outAnimId);
+    void intent2Activity(Class clazz, Bundle bundle, int requestCode, ActivityOptionsCompat optionsCompat, int enterAnim, int existAnim);
 
     void commitFragment(Fragment fragment);
 
     void commitFragment(Fragment fragment, String tag);
 
+    void commitFragment(Fragment fragment, String tag, int enterAnim, int existAnim);
+
     void commitFragment(int layoutId, Fragment fragment);
 
     void commitFragment(int layoutId, Fragment fragment, String tag);
 
-    void commitFragment(Fragment old, Fragment fragment);
-
-    void commitFragment(Fragment old, Fragment fragment, String tag);
-
-    void commitFragment(Fragment old, int layoutId, Fragment fragment);
-
-    void commitFragment(Fragment old, int layoutId, Fragment fragment, String tag);
-
-    void commitBackStackFragment(Fragment fragment);
-
-    void commitBackStackFragment(Fragment fragment, String tag);
-
-    void commitBackStackFragment(int layoutId, Fragment fragment);
-
-    void commitBackStackFragment(Fragment fragment, int enterAnim, int exitAnim);
-
-    void commitBackStackFragment(int layoutId, Fragment fragment, String tag);
+    void commitFragment(int layoutId, Fragment fragment, String tag, int enterAnim, int existAnim);
 
     void commitDialogFragment(DialogFragment fragment);
 

@@ -175,72 +175,35 @@ public class QsHelper {
         }
     }
 
-    public static void commitFragment(Fragment fragment) {
-        commitFragmentInner(null, null, android.R.id.custom, fragment, fragment.getClass().getSimpleName());
+    public static void commitFragment(FragmentManager manager, int layoutId, Fragment fragment) {
+        commitFragment(manager, layoutId, fragment, fragment.getClass().getSimpleName(), 0, 0);
     }
 
-    public static void commitFragment(Fragment fragment, String tag) {
-        commitFragmentInner(null, null, android.R.id.custom, fragment, tag);
+    public static void commitFragment(FragmentManager manager, int layoutId, Fragment fragment, String tag) {
+        commitFragment(manager, layoutId, fragment, tag, 0, 0);
     }
 
-    public static void commitFragment(int layoutId, Fragment fragment) {
-        commitFragmentInner(null, null, layoutId, fragment, fragment.getClass().getSimpleName());
-    }
-
-    public static void commitFragment(int layoutId, Fragment fragment, String tag) {
-        commitFragmentInner(null, null, layoutId, fragment, tag);
-    }
-
-    public static void commitFragment(FragmentManager fragmentManager, int layoutId, Fragment fragment, String tag) {
-        commitFragmentInner(fragmentManager, null, layoutId, fragment, tag);
-    }
-
-    public static void commitFragment(Fragment old, Fragment fragment) {
-        commitFragmentInner(null, old, android.R.id.custom, fragment, fragment.getClass().getSimpleName());
-    }
-
-    public static void commitFragment(Fragment old, Fragment fragment, String tag) {
-        commitFragmentInner(null, old, android.R.id.custom, fragment, tag);
-    }
-
-    public static void commitFragment(Fragment old, int layoutId, Fragment fragment) {
-        commitFragmentInner(null, old, layoutId, fragment, fragment.getClass().getSimpleName());
-    }
-
-    public static void commitFragment(Fragment old, int layoutId, Fragment fragment, String tag) {
-        commitFragmentInner(null, old, layoutId, fragment, tag);
-    }
-
-    public static void commitFragment(FragmentManager fragmentManager, Fragment old, int layoutId, Fragment fragment, String tag) {
-        commitFragmentInner(fragmentManager, old, layoutId, fragment, tag);
-    }
-
-    private static void commitFragmentInner(FragmentManager manager, final Fragment old, final int layoutId, final Fragment fragment, final String tag) {
-        if (manager == null) {
-            FragmentActivity activity = getScreenHelper().currentActivity();
-            if (activity == null) return;
-            manager = activity.getSupportFragmentManager();
-        }
+    public static void commitFragment(FragmentManager manager, final int layoutId, final Fragment fragment, final String tag, final int enterAnim, final int existAnim) {
+        if (manager == null || layoutId == 0 || fragment == null) return;
         if (isMainThread()) {
-            if (layoutId != 0 && fragment != null && !fragment.isAdded()) {
-                FragmentTransaction fragmentTransaction = manager.beginTransaction();
-                if (old != null) fragmentTransaction.detach(old);
-                fragmentTransaction.replace(layoutId, fragment, tag).setTransition(FragmentTransaction.TRANSIT_NONE).commitAllowingStateLoss();
+            if (!fragment.isAdded()) {
+                FragmentTransaction ft = manager.beginTransaction();
+                if (enterAnim != 0 || existAnim != 0) ft.setCustomAnimations(enterAnim, existAnim);
+                ft.add(layoutId, fragment, tag).commitNowAllowingStateLoss();
             }
         } else {
             final FragmentManager finalManager = manager;
             post(new Runnable() {
                 @Override public void run() {
-                    if (layoutId != 0 && fragment != null && !fragment.isAdded()) {
-                        FragmentTransaction fragmentTransaction = finalManager.beginTransaction();
-                        if (old != null) fragmentTransaction.detach(old);
-                        fragmentTransaction.replace(layoutId, fragment, tag).setTransition(FragmentTransaction.TRANSIT_NONE).commitAllowingStateLoss();
+                    if (!fragment.isAdded()) {
+                        FragmentTransaction ft = finalManager.beginTransaction();
+                        if (enterAnim != 0 || existAnim != 0) ft.setCustomAnimations(enterAnim, existAnim);
+                        ft.add(layoutId, fragment, tag).commitNowAllowingStateLoss();
                     }
                 }
             });
         }
     }
-
 
     public static void commitBackStackFragment(Fragment fragment) {
         commitBackStackFragmentInner(null, android.R.id.custom, fragment, fragment.getClass().getSimpleName(), 0, 0);
