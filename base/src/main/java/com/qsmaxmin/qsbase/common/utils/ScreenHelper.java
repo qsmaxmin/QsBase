@@ -77,11 +77,21 @@ public final class ScreenHelper {
     }
 
     public void popAllActivityExceptMain(Class clazz) {
+        popAllActivityExceptMain(clazz, true);
+    }
+
+    /**
+     * 依次关闭栈里的activity
+     *
+     * @param clazz     指定的activity不关闭
+     * @param interrupt 便利到指定activity时是否中断操作, true中断, false不中断
+     */
+    public void popAllActivityExceptMain(Class clazz, boolean interrupt) {
         FragmentActivity[] array = this.fragmentActivities.toArray(new FragmentActivity[0]);
         for (FragmentActivity activity : array) {
             if (clazz != activity.getClass()) {
                 activity.finish();
-            } else {
+            } else if (interrupt) {
                 break;
             }
         }
