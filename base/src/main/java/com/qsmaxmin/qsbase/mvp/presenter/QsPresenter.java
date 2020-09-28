@@ -146,6 +146,9 @@ public class QsPresenter<V extends QsIView> implements NetworkErrorReceiver, QsN
         }
     }
 
+    /**
+     * 当前Presenter请求网络出错时，都会回调该方法
+     */
     @Override public void methodError(QsException e) {
         if (L.isEnable()) L.e(initTag(), "methodError..." + e.getMessage());
         resetViewState();

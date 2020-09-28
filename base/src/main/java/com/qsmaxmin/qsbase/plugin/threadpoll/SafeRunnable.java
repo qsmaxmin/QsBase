@@ -15,10 +15,6 @@ public abstract class SafeRunnable implements Runnable {
     @Override public void run() {
         try {
             safeRun();
-        } catch (QsException e) {
-            if (L.isEnable()) e.printStackTrace();
-            NetworkErrorReceiver receiver = e.getErrorReceiver();
-            if (receiver != null) receiver.methodError(e);
         } catch (Exception e) {
             if (L.isEnable()) e.printStackTrace();
             onError(e);
