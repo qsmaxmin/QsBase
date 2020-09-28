@@ -108,14 +108,18 @@ public abstract class QsRecyclerActivity<P extends QsPresenter, D> extends QsAct
 
     @Override public void setData(final List<D> list, final boolean showEmptyView) {
         if (QsHelper.isMainThread()) {
-            mList.clear();
-            if (list != null && !list.isEmpty()) mList.addAll(list);
+            if (list != mList) {
+                mList.clear();
+                if (list != null && !list.isEmpty()) mList.addAll(list);
+            }
             updateAdapter(showEmptyView);
         } else {
             post(new Runnable() {
                 @Override public void run() {
-                    mList.clear();
-                    if (list != null && !list.isEmpty()) mList.addAll(list);
+                    if (list != mList) {
+                        mList.clear();
+                        if (list != null && !list.isEmpty()) mList.addAll(list);
+                    }
                     updateAdapter(showEmptyView);
                 }
             });
