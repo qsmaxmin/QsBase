@@ -84,7 +84,8 @@ public final class ScreenHelper {
      */
     public void popAllActivityExceptMain(Class clazz, boolean interrupt) {
         FragmentActivity[] array = this.fragmentActivities.toArray(new FragmentActivity[0]);
-        for (FragmentActivity activity : array) {
+        for (int i = array.length - 1; i > -1; i--) {
+            FragmentActivity activity = array[i];
             if (clazz != activity.getClass()) {
                 activity.finish();
             } else if (interrupt) {
@@ -95,8 +96,8 @@ public final class ScreenHelper {
 
     public void popAllActivity() {
         FragmentActivity[] array = this.fragmentActivities.toArray(new FragmentActivity[0]);
-        for (FragmentActivity activity : array) {
-            activity.finish();
+        for (int i = array.length - 1; i > -1; i--) {
+            array[i].finish();
         }
     }
 
