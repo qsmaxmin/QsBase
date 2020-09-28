@@ -53,7 +53,7 @@ public final class ScreenHelper {
             fragmentActivities.add(activity);
             onActivityAdded(activity);
             if (L.isEnable()) {
-                L.i(TAG, "activity in:" + activity + "，task size:" + fragmentActivities.size());
+                L.i(TAG, "pushActivity:" + activity + "，task size:" + fragmentActivities.size());
             }
         } else {
             L.e(TAG, "pushActivity param is empty!");
@@ -67,11 +67,7 @@ public final class ScreenHelper {
         if (activity != null && fragmentActivities.remove(activity)) {
             onActivityRemoved(activity);
             if (L.isEnable()) {
-                L.i(TAG, "activity out:" + activity + "，task size:" + fragmentActivities.size());
-            }
-            if (fragmentActivities.size() == 0) {
-                L.i(TAG, "pop all Activity......");
-                if (listeners != null) listeners.clear();
+                L.i(TAG, "popActivity:" + activity + "，task size:" + fragmentActivities.size());
             }
         }
     }
@@ -102,6 +98,16 @@ public final class ScreenHelper {
         for (FragmentActivity activity : array) {
             activity.finish();
         }
+    }
+
+    public boolean contains(Class clazz) {
+        FragmentActivity[] array = this.fragmentActivities.toArray(new FragmentActivity[0]);
+        for (FragmentActivity ac : array) {
+            if (ac.getClass() == clazz) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public Stack<FragmentActivity> getActivityStack() {
