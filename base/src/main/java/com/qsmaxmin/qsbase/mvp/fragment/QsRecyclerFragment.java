@@ -267,11 +267,13 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
     }
 
     @Override public void smoothScrollToTop(boolean autoRefresh) {
-        getRecyclerView().post(new Runnable() {
-            @Override public void run() {
-                getRecyclerView().smoothScrollToPosition(0);
-            }
-        });
+        if (getRecyclerView() != null) {
+            getRecyclerView().post(new Runnable() {
+                @Override public void run() {
+                    getRecyclerView().smoothScrollToPosition(0);
+                }
+            });
+        }
     }
 
     @Override public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -310,6 +312,7 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
 
     private boolean canRecyclerScrollInner(int direction) {
         HeaderFooterRecyclerView view = getRecyclerView();
+        if (view == null) return false;
         RecyclerView.LayoutManager manager = view.getLayoutManager();
         int orientation;
         if (manager instanceof LinearLayoutManager) {

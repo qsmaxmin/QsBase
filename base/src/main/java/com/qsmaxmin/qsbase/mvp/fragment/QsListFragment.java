@@ -255,24 +255,26 @@ public abstract class QsListFragment<P extends QsPresenter, D> extends QsFragmen
     }
 
     @Override public boolean canListScrollDown() {
-        return getListView().canScrollVertically(-1);
+        return getListView() != null && getListView().canScrollVertically(-1);
     }
 
     @Override public boolean canListScrollUp() {
-        return getListView().canScrollVertically(1);
+        return getListView() != null && getListView().canScrollVertically(1);
     }
 
     @Override public void smoothScrollToTop(boolean autoRefresh) {
-        final int firstVisiblePosition = getListView().getFirstVisiblePosition();
-        if (firstVisiblePosition > 3) getListView().setSelection(3);
-        getListView().post(new Runnable() {
+        final ListView listView = getListView();
+        if (listView == null) return;
+        final int firstVisiblePosition = listView.getFirstVisiblePosition();
+        if (firstVisiblePosition > 3) listView.setSelection(3);
+        listView.post(new Runnable() {
             @Override public void run() {
-                getListView().smoothScrollToPositionFromTop(0, 0, 500);
+                listView.smoothScrollToPositionFromTop(0, 0, 500);
             }
         });
-        getListView().postDelayed(new Runnable() {
+        listView.postDelayed(new Runnable() {
             @Override public void run() {
-                getListView().setSelection(0);
+                listView.setSelection(0);
             }
         }, 600);
     }
