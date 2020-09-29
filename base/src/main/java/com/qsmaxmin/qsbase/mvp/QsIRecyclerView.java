@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 
 import com.qsmaxmin.qsbase.common.widget.recyclerview.HeaderFooterRecyclerView;
+import com.qsmaxmin.qsbase.common.widget.recyclerview.QsItemDecoration;
 import com.qsmaxmin.qsbase.mvp.adapter.QsRecycleAdapterItem;
 
 import java.util.List;
@@ -83,7 +84,7 @@ public interface QsIRecyclerView<D> extends AdapterView.OnItemClickListener, Ada
 
     RecyclerView.LayoutManager getLayoutManager();
 
-    RecyclerView.ItemDecoration getItemDecoration();
+    QsItemDecoration getItemDecoration();
 
     Context getContext();
 

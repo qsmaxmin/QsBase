@@ -9,6 +9,7 @@ import com.qsmaxmin.qsbase.R;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.common.widget.recyclerview.HeaderFooterRecyclerView;
+import com.qsmaxmin.qsbase.common.widget.recyclerview.QsItemDecoration;
 import com.qsmaxmin.qsbase.mvp.adapter.QsRecycleAdapterItem;
 import com.qsmaxmin.qsbase.mvp.adapter.QsRecyclerAdapter;
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
@@ -302,7 +303,7 @@ public abstract class QsRecyclerActivity<P extends QsPresenter, D> extends QsAct
         return new LinearLayoutManager(this);
     }
 
-    @Override public RecyclerView.ItemDecoration getItemDecoration() {
+    @Override public QsItemDecoration getItemDecoration() {
         return null;
     }
 
