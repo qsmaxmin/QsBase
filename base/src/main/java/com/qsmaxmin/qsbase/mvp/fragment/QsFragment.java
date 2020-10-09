@@ -484,6 +484,10 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         QsHelper.commitFragment(getChildFragmentManager(), android.R.id.custom, fragment, tag);
     }
 
+    @Override public void commitFragment(Fragment fragment, int enterAnim, int existAnim) {
+        QsHelper.commitFragment(getChildFragmentManager(), android.R.id.custom, fragment, fragment.getClass().getSimpleName(), enterAnim, existAnim);
+    }
+
     @Override public final void commitFragment(Fragment fragment, String tag, int enterAnim, int existAnim) {
         QsHelper.commitFragment(getChildFragmentManager(), android.R.id.custom, fragment, tag, enterAnim, existAnim);
     }
@@ -494,6 +498,10 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
 
     @Override public final void commitFragment(int layoutId, Fragment fragment, String tag) {
         QsHelper.commitFragment(getChildFragmentManager(), layoutId, fragment, tag);
+    }
+
+    @Override public void commitFragment(int layoutId, Fragment fragment, int enterAnim, int existAnim) {
+        QsHelper.commitFragment(getChildFragmentManager(), layoutId, fragment, fragment.getClass().getSimpleName(), enterAnim, existAnim);
     }
 
     @Override public final void commitFragment(int layoutId, Fragment fragment, String tag, int enterAnim, int existAnim) {

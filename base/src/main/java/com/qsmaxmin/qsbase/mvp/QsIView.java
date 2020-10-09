@@ -140,9 +140,13 @@ public interface QsIView<P> extends QsIBindView, QsIBindEvent, QsIBindBundle, Qs
 
     void commitFragment(Fragment fragment, String tag, int enterAnim, int existAnim);
 
+    void commitFragment(Fragment fragment, int enterAnim, int existAnim);
+
     void commitFragment(int layoutId, Fragment fragment);
 
     void commitFragment(int layoutId, Fragment fragment, String tag);
+
+    void commitFragment(int layoutId, Fragment fragment, int enterAnim, int existAnim);
 
     void commitFragment(int layoutId, Fragment fragment, String tag, int enterAnim, int existAnim);
 
