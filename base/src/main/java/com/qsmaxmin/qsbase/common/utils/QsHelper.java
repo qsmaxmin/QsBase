@@ -204,86 +204,34 @@ public class QsHelper {
         }
     }
 
-    public static void commitBackStackFragment(Fragment fragment) {
-        commitBackStackFragmentInner(null, android.R.id.custom, fragment, fragment.getClass().getSimpleName(), 0, 0);
+    /**
+     * @see #commitDialogFragment(FragmentManager, DialogFragment)
+     * @deprecated
+     */
+    public static void commitDialogFragment(DialogFragment fragment) {
+        commitDialogFragmentInner(null, fragment);
     }
 
-    public static void commitBackStackFragment(Fragment fragment, String tag) {
-        commitBackStackFragmentInner(null, android.R.id.custom, fragment, tag, 0, 0);
+    public static void commitDialogFragment(FragmentManager manager, DialogFragment fragment) {
+        commitDialogFragmentInner(manager, fragment);
     }
 
-    public static void commitBackStackFragment(int layoutId, Fragment fragment) {
-        commitBackStackFragmentInner(null, layoutId, fragment, fragment.getClass().getSimpleName(), 0, 0);
-    }
-
-    public static void commitBackStackFragment(Fragment fragment, int enterAnim, int exitAnim) {
-        commitBackStackFragmentInner(null, android.R.id.custom, fragment, fragment.getClass().getSimpleName(), enterAnim, exitAnim);
-    }
-
-    public static void commitBackStackFragment(int layoutId, Fragment fragment, String tag) {
-        commitBackStackFragmentInner(null, layoutId, fragment, tag, 0, 0);
-    }
-
-    public static void commitBackStackFragment(FragmentManager fragmentManager, int layoutId, Fragment fragment, String tag) {
-        commitBackStackFragmentInner(fragmentManager, layoutId, fragment, tag, 0, 0);
-    }
-
-    public static void commitBackStackFragment(FragmentManager fragmentManager, int layoutId, Fragment fragment, String tag, int enterAnim, int exitAnim) {
-        commitBackStackFragmentInner(fragmentManager, layoutId, fragment, tag, enterAnim, exitAnim);
-    }
-
-    private static void commitBackStackFragmentInner(FragmentManager manager, final int layoutId, final Fragment fragment, final String tag, final int enterAnim, final int exitAnim) {
+    private static void commitDialogFragmentInner(FragmentManager manager, final DialogFragment fragment) {
         if (manager == null) {
             FragmentActivity activity = getScreenHelper().currentActivity();
             if (activity == null) return;
             manager = activity.getSupportFragmentManager();
         }
         if (isMainThread()) {
-            if (layoutId != 0 && fragment != null && !fragment.isAdded()) {
-                FragmentTransaction transaction = manager.beginTransaction();
-                if (enterAnim != 0 || exitAnim != 0) transaction.setCustomAnimations(enterAnim, exitAnim, enterAnim, exitAnim);
-                transaction.add(layoutId, fragment, tag).addToBackStack(null).setTransition(FragmentTransaction.TRANSIT_NONE).commitAllowingStateLoss();
+            if (fragment != null && !fragment.isAdded()) {
+                manager.beginTransaction().add(fragment, fragment.getClass().getSimpleName()).commitAllowingStateLoss();
             }
         } else {
             final FragmentManager finalManager = manager;
             post(new Runnable() {
                 @Override public void run() {
-                    if (layoutId != 0 && fragment != null && !fragment.isAdded()) {
-                        FragmentTransaction transaction = finalManager.beginTransaction();
-                        if (enterAnim != 0 || exitAnim != 0) transaction.setCustomAnimations(enterAnim, exitAnim, enterAnim, exitAnim);
-                        transaction.add(layoutId, fragment, tag).addToBackStack(null).setTransition(FragmentTransaction.TRANSIT_NONE).commitAllowingStateLoss();
-                    }
-                }
-            });
-        }
-
-    }
-
-    public static void commitDialogFragment(DialogFragment dialogFragment) {
-        commitDialogFragmentInner(null, dialogFragment);
-    }
-
-
-    public static void commitDialogFragment(FragmentManager fragmentManager, DialogFragment dialogFragment) {
-        commitDialogFragmentInner(fragmentManager, dialogFragment);
-    }
-
-    private static void commitDialogFragmentInner(FragmentManager manager, final DialogFragment dialogFragment) {
-        if (manager == null) {
-            FragmentActivity activity = getScreenHelper().currentActivity();
-            if (activity == null) return;
-            manager = activity.getSupportFragmentManager();
-        }
-        if (isMainThread()) {
-            if (dialogFragment != null && !dialogFragment.isAdded()) {
-                manager.beginTransaction().add(dialogFragment, dialogFragment.getClass().getSimpleName()).commitAllowingStateLoss();
-            }
-        } else {
-            final FragmentManager finalManager = manager;
-            post(new Runnable() {
-                @Override public void run() {
-                    if (dialogFragment != null && !dialogFragment.isAdded()) {
-                        finalManager.beginTransaction().add(dialogFragment, dialogFragment.getClass().getSimpleName()).commitAllowingStateLoss();
+                    if (fragment != null && !fragment.isAdded()) {
+                        finalManager.beginTransaction().add(fragment, fragment.getClass().getSimpleName()).commitAllowingStateLoss();
                     }
                 }
             });
