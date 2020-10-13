@@ -36,7 +36,7 @@ public abstract class QsListAdapterItem<D> implements QsIBindView, QsNotProguard
     @CallSuper @Override public void bindViewByQsPlugin(View view) {
     }
 
-    public abstract void bindData(D t, int position, int count);
+    public abstract void bindData(D data, int position, int count);
 
     public void onViewClick(View view) {
     }
