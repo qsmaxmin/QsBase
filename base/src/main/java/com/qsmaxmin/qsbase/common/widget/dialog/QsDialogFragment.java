@@ -185,9 +185,9 @@ public abstract class QsDialogFragment extends DialogFragment implements QsIBind
             if (bundle != null) intent.putExtras(bundle);
             if (optionsCompat == null) {
                 if (requestCode > 0) {
-                    startActivityForResult(intent, requestCode);
+                    activity.startActivityForResult(intent, requestCode);
                 } else {
-                    startActivity(intent);
+                    activity.startActivity(intent);
                 }
                 if (inAnimId != 0 || outAnimId != 0) activity.overridePendingTransition(inAnimId, outAnimId);
             } else {
