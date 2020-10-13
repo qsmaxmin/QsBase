@@ -1,5 +1,6 @@
 package com.qsmaxmin.qsbase.common.widget.dialog;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +18,8 @@ import com.qsmaxmin.qsbase.plugin.event.QsIBindEvent;
 import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.ActivityOptionsCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
@@ -147,6 +150,53 @@ public abstract class QsDialogFragment extends DialogFragment implements QsIBind
                     show(manager, getClass().getSimpleName());
                 }
             });
+        }
+    }
+
+    public final void intent2Activity(Class clazz) {
+        intent2Activity(clazz, null, 0, null, 0, 0);
+    }
+
+    public final void intent2Activity(Class clazz, int requestCode) {
+        intent2Activity(clazz, null, requestCode, null, 0, 0);
+    }
+
+    public final void intent2Activity(Class clazz, Bundle bundle) {
+        intent2Activity(clazz, bundle, 0, null, 0, 0);
+    }
+
+    public final void intent2Activity(Class clazz, Bundle bundle, int inAnimId, int outAnimId) {
+        intent2Activity(clazz, bundle, 0, null, inAnimId, outAnimId);
+    }
+
+    public final void intent2Activity(Class clazz, Bundle bundle, ActivityOptionsCompat optionsCompat) {
+        intent2Activity(clazz, bundle, 0, optionsCompat, 0, 0);
+    }
+
+    public final void intent2Activity(Class clazz, Bundle bundle, int requestCode, ActivityOptionsCompat optionsCompat) {
+        intent2Activity(clazz, bundle, requestCode, optionsCompat, 0, 0);
+    }
+
+    public final void intent2Activity(Class clazz, Bundle bundle, int requestCode, ActivityOptionsCompat optionsCompat, int inAnimId, int outAnimId) {
+        FragmentActivity activity = getActivity();
+        if (clazz != null && activity != null && !activity.isFinishing()) {
+            Intent intent = new Intent();
+            intent.setClass(activity, clazz);
+            if (bundle != null) intent.putExtras(bundle);
+            if (optionsCompat == null) {
+                if (requestCode > 0) {
+                    startActivityForResult(intent, requestCode);
+                } else {
+                    startActivity(intent);
+                }
+                if (inAnimId != 0 || outAnimId != 0) activity.overridePendingTransition(inAnimId, outAnimId);
+            } else {
+                if (requestCode > 0) {
+                    ActivityCompat.startActivityForResult(activity, intent, requestCode, optionsCompat.toBundle());
+                } else {
+                    ActivityCompat.startActivity(activity, intent, optionsCompat.toBundle());
+                }
+            }
         }
     }
 }
