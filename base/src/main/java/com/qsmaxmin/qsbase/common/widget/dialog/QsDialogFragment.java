@@ -28,6 +28,7 @@ import androidx.fragment.app.FragmentManager;
  * @Description
  */
 public abstract class QsDialogFragment extends DialogFragment implements QsIBindView, QsIBindBundle, QsIBindEvent, QsNotProguard {
+    private SimpleClickListener listener;
 
     @Override public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,6 +95,15 @@ public abstract class QsDialogFragment extends DialogFragment implements QsIBind
     protected abstract int layoutId();
 
     protected abstract void initData();
+
+    public QsDialogFragment setClickListener(SimpleClickListener listener) {
+        this.listener = listener;
+        return this;
+    }
+
+    protected SimpleClickListener getClickListener() {
+        return listener;
+    }
 
     public void show() {
         show(QsHelper.getScreenHelper().currentActivity(), null);
