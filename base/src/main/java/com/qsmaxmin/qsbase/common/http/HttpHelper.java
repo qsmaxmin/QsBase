@@ -115,7 +115,7 @@ public class HttpHelper {
     public Object startRequest(Method method, Object[] args, Object requestTag, NetworkErrorReceiver errorReceiver) {
         try {
             if (!QsHelper.isNetworkAvailable()) {
-                errorReceiver.methodError(new QsException(requestTag, "network disable"));
+                if (errorReceiver != null) errorReceiver.methodError(new QsException(requestTag, "network disable"));
                 return null;
             }
             HttpRequest httpRequest = new HttpRequest(method, args, requestTag, gson);
@@ -123,7 +123,7 @@ public class HttpHelper {
             Call call = client.newCall(request);
             return createResult(httpRequest, call.execute());
         } catch (Exception e) {
-            errorReceiver.methodError(new QsException(requestTag, e));
+            if (errorReceiver != null) errorReceiver.methodError(new QsException(requestTag, e));
             if (L.isEnable()) e.printStackTrace();
             return null;
         }
