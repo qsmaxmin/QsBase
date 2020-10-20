@@ -35,7 +35,7 @@ MVP架构+AOP面向切面编程，摒弃反射、代理等操作，稳定性和�
             }
         }
 
-#### step 2：当前Module下的 'build.gradle' 添加插件
+#### step 2：app Module下的 'build.gradle' 添加插件
 
         apply plugin: 'com.qsmaxmin.plugin'
         ...
