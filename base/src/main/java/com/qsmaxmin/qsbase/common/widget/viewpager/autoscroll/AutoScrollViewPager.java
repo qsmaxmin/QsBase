@@ -3,8 +3,6 @@ package com.qsmaxmin.qsbase.common.widget.viewpager.autoscroll;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
-import androidx.viewpager.widget.PagerAdapter;
-import androidx.viewpager.widget.ViewPager;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -13,15 +11,18 @@ import android.view.animation.Interpolator;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.widget.viewpager.QsViewPager;
 
-import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 
 /**
  * @CreateBy qsmaxmin
  * @Date 2017-7-6 12:37:16
  * @Description auto scroll
  */
+@SuppressWarnings("unused")
 public final class AutoScrollViewPager extends QsViewPager {
     public static final int                    DEFAULT_INTERVAL            = 3000;
     public static final int                    LEFT                        = 0;
@@ -167,11 +168,11 @@ public final class AutoScrollViewPager extends QsViewPager {
                 startAutoScroll();
             }
         }
-        if (dispatchTouchEventByScrollMode(ev)) return super.dispatchTouchEvent(ev);
+        dispatchTouchEventByScrollMode(ev);
         return super.dispatchTouchEvent(ev);
     }
 
-    private boolean dispatchTouchEventByScrollMode(MotionEvent ev) {
+    private void dispatchTouchEventByScrollMode(MotionEvent ev) {
         if (slideBorderMode == SLIDE_BORDER_MODE_TO_PARENT || slideBorderMode == SLIDE_BORDER_MODE_CYCLE) {
             float touchX = ev.getX();
             if (ev.getAction() == MotionEvent.ACTION_DOWN) {
@@ -189,10 +190,8 @@ public final class AutoScrollViewPager extends QsViewPager {
                     }
                     getParent().requestDisallowInterceptTouchEvent(true);
                 }
-                return true;
             }
         }
-        return false;
     }
 
     @Override public boolean onInterceptTouchEvent(MotionEvent arg0) {
@@ -254,29 +253,25 @@ public final class AutoScrollViewPager extends QsViewPager {
     }
 
     private static class MyHandler extends Handler {
-        private WeakReference<AutoScrollViewPager> reference;
+        private AutoScrollViewPager reference;
 
         MyHandler(AutoScrollViewPager viewPager) {
-            reference = new WeakReference<>(viewPager);
+            reference = viewPager;
         }
 
         @Override public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            switch (msg.what) {
-                case SCROLL_WHAT:
-                    AutoScrollViewPager viewPager = reference.get();
-                    if (viewPager == null) return;
-                    boolean shown = viewPager.isShown();
-                    if (shown) {
-                        viewPager.scroller.setScrollDurationFactor(viewPager.autoScrollFactor);
-                        viewPager.scrollOnce();
-                        viewPager.scroller.setScrollDurationFactor(viewPager.swipeScrollFactor);
-                    } else {
-                        L.i("AutoScrollViewPager", "can not visible, not scroll....");
-                    }
-                    viewPager.sendScrollMessage(viewPager.interval + viewPager.scroller.getDuration());
-                default:
-                    break;
+            if (msg.what == SCROLL_WHAT) {
+                AutoScrollViewPager viewPager = reference;
+                if (viewPager == null) return;
+                boolean shown = viewPager.isShown();
+                if (shown) {
+                    viewPager.scroller.setScrollDurationFactor(viewPager.autoScrollFactor);
+                    viewPager.scrollOnce();
+                    viewPager.scroller.setScrollDurationFactor(viewPager.swipeScrollFactor);
+                } else {
+                    L.i("AutoScrollViewPager", "can not visible, not scroll....");
+                }
+                viewPager.sendScrollMessage(viewPager.interval + viewPager.scroller.getDuration());
             }
         }
     }
@@ -367,9 +362,13 @@ public final class AutoScrollViewPager extends QsViewPager {
 
     public void setScrollerInterpolator(Interpolator interpolator) {
         try {
-            Field mInterpolator = scroller.getClass().getSuperclass().getDeclaredField("mInterpolator");
-            mInterpolator.setAccessible(true);
-            mInterpolator.set(scroller, interpolator);
+            Class<?> superclass = scroller.getClass().getSuperclass();
+            if (superclass != null) {
+                Field mInterpolator = superclass.getDeclaredField("mInterpolator");
+                mInterpolator.setAccessible(true);
+                mInterpolator.set(scroller, interpolator);
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
