@@ -2,39 +2,65 @@ package com.qsmaxmin.qsbase.mvp.adapter;
 
 import android.view.View;
 
-import com.qsmaxmin.annotation.QsNotProguard;
+import com.qsmaxmin.qsbase.mvp.QsIViewPager;
 import com.qsmaxmin.qsbase.mvp.model.QsModelPager;
-import com.qsmaxmin.qsbase.plugin.bind.QsIBindView;
+import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
 
-import androidx.annotation.CallSuper;
+import java.util.ArrayList;
 
 /**
  * @CreateBy qsmaxmin
  * @Date 2020/10/26 15:22
  * @Description tab 适配器
  */
-public abstract class QsTabAdapter implements QsIBindView, QsNotProguard {
+public class QsTabAdapter {
+    private final QsIViewPager                viewLayer;
+    private final ArrayList<QsTabAdapterItem> items;
 
-    public final void init(View itemView, QsModelPager pager, int position, int totalCount) {
-        bindViewByQsPlugin(itemView);
-        bindData(pager, position, totalCount);
+    public <P extends QsPresenter> QsTabAdapter(QsIViewPager viewLayer) {
+        this.viewLayer = viewLayer;
+        QsModelPager[] modelPagers = viewLayer.getModelPagers();
+        this.items = new ArrayList<>(modelPagers.length);
+        for (int i = 0; i < modelPagers.length; i++) {
+            QsTabAdapterItem tabAdapterItem = viewLayer.createTabAdapterItem(i);
+            if (tabAdapterItem == null) {
+                throw new IllegalStateException(viewLayer.getClass().getName() + ".isCustomTabView() return true, but createTabAdapterItem return null!");
+            }
+            items.add(tabAdapterItem);
+        }
     }
 
-    /**
-     * for QsTransform
-     */
-    @CallSuper @Override public void bindViewByQsPlugin(View view) {
+    public int tabItemLayoutId(int position) {
+        return items.get(position).tabItemLayoutId();
     }
 
-    public abstract int tabItemLayoutId();
+    public QsModelPager[] getModelPagers() {
+        return viewLayer.getModelPagers();
+    }
 
-    public abstract void bindData(QsModelPager pager, int position, int totalCount);
+    public final void init(View itemView, int position) {
+        QsTabAdapterItem adapterItem = items.get(position);
+        adapterItem.init(itemView, getModelPagers());
+    }
 
-    public abstract void onPageSelected(View currentView, View oldView, int currentPosition, int oldPosition);
+    public void onPageSelected(View currentView, View oldView, int currentPosition, int oldPosition) {
+        if (currentPosition >= 0 && currentPosition < items.size()) {
+            items.get(currentPosition).onPageSelectChanged(true);
+        }
+        if (oldPosition >= 0 && oldPosition < items.size()) {
+            items.get(oldPosition).onPageSelectChanged(false);
+        }
+    }
 
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+        for(QsTabAdapterItem item:items){
+            item.onPageScrolled(position,positionOffset,positionOffsetPixels);
+        }
     }
 
     public void onPageScrollStateChanged(int state) {
+        for(QsTabAdapterItem item:items){
+            item.onPageScrollStateChanged(state);
+        }
     }
 }

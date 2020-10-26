@@ -4,7 +4,7 @@ import android.view.View;
 
 import com.qsmaxmin.qsbase.common.widget.viewpager.PagerSlidingTabStrip;
 import com.qsmaxmin.qsbase.mvp.adapter.QsIPagerAdapter;
-import com.qsmaxmin.qsbase.mvp.adapter.QsTabAdapter;
+import com.qsmaxmin.qsbase.mvp.adapter.QsTabAdapterItem;
 import com.qsmaxmin.qsbase.mvp.model.QsModelPager;
 
 import androidx.fragment.app.Fragment;
@@ -38,7 +38,9 @@ public interface QsIViewPager {
 
     QsIPagerAdapter getViewPagerAdapter();
 
-    QsTabAdapter createTabAdapter();
+    QsTabAdapterItem createTabAdapterItem(int position);
+
+    boolean isCustomTabView();
 
     void initTab(PagerSlidingTabStrip tabStrip);
 

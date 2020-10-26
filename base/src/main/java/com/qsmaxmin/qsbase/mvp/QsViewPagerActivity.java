@@ -12,6 +12,7 @@ import com.qsmaxmin.qsbase.common.widget.viewpager.ViewPagerHelper;
 import com.qsmaxmin.qsbase.mvp.adapter.QsFragmentPagerAdapter;
 import com.qsmaxmin.qsbase.mvp.adapter.QsIPagerAdapter;
 import com.qsmaxmin.qsbase.mvp.adapter.QsTabAdapter;
+import com.qsmaxmin.qsbase.mvp.adapter.QsTabAdapterItem;
 import com.qsmaxmin.qsbase.mvp.adapter.QsTabFragmentPagerAdapter;
 import com.qsmaxmin.qsbase.mvp.model.QsModelPager;
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
@@ -49,10 +50,13 @@ public abstract class QsViewPagerActivity<P extends QsPresenter> extends QsActiv
 
     @Override public void initViewPager(QsModelPager[] modelPagers, int offScreenPageLimit) {
         if (modelPagers != null && modelPagers.length > 0) {
-            QsTabAdapter tabAdapter = createTabAdapter();
-            ViewPagerHelper pagerHelper = new ViewPagerHelper(this, pager, tabs, modelPagers, tabAdapter);
-
-            adapter = createPagerAdapter(pagerHelper, tabAdapter != null);
+            if (isCustomTabView()) {
+                ViewPagerHelper pagerHelper = new ViewPagerHelper(this, pager, tabs, modelPagers, new QsTabAdapter(this));
+                adapter = createPagerAdapter(pagerHelper, true);
+            } else {
+                ViewPagerHelper pagerHelper = new ViewPagerHelper(this, pager, tabs, modelPagers, null);
+                adapter = createPagerAdapter(pagerHelper, false);
+            }
             pager.setAdapter(adapter.getAdapter());
             pager.setPageMargin(getPageMargin());
             pager.setOffscreenPageLimit(offScreenPageLimit);
@@ -95,8 +99,12 @@ public abstract class QsViewPagerActivity<P extends QsPresenter> extends QsActiv
         }
     }
 
-    @Override public QsTabAdapter createTabAdapter() {
+    @Override public QsTabAdapterItem createTabAdapterItem(int position) {
         return null;
+    }
+
+    @Override public boolean isCustomTabView() {
+        return false;
     }
 
     @Override public final PagerSlidingTabStrip getTab() {

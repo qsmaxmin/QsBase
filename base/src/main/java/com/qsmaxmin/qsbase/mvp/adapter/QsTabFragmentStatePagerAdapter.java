@@ -21,14 +21,14 @@ public class QsTabFragmentStatePagerAdapter extends QsFragmentStatePagerAdapter 
 
     @Override public int getCustomTabView(int position) {
         if (getPagerHelper().getTabAdapter() != null) {
-            return getPagerHelper().getTabAdapter().tabItemLayoutId();
+            return getPagerHelper().getTabAdapter().tabItemLayoutId(position);
         }
         return 0;
     }
 
     @Override public void initTabsItem(View view, int position) {
         if (getPagerHelper().getTabAdapter() != null && position >= 0 && position < getCount()) {
-            getPagerHelper().getTabAdapter().init(view, getModelPager(position), position, getCount());
+            getPagerHelper().getTabAdapter().init(view, position);
         }
     }
 }
