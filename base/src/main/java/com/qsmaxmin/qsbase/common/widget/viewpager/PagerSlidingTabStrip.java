@@ -77,7 +77,7 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
     }
 
     public interface CustomTabProvider {
-        int getCustomTabView();
+        int getCustomTabView(int position);
 
         void initTabsItem(View view, int position);
     }
@@ -219,7 +219,7 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
     private void addCustomTab(final int position) {
         CustomTabProvider adapter = (CustomTabProvider) pager.getAdapter();
         if (adapter == null) return;
-        View tab = LayoutInflater.from(getContext()).inflate(adapter.getCustomTabView(), null);
+        View tab = LayoutInflater.from(getContext()).inflate(adapter.getCustomTabView(position), tabsContainer, false);
         adapter.initTabsItem(tab, position);
         tab.setFocusable(true);
         tab.setOnClickListener(new OnClickListener() {

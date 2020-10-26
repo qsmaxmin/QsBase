@@ -3,6 +3,7 @@ package com.qsmaxmin.qsbase.common.widget.viewpager;
 import android.view.View;
 
 import com.qsmaxmin.qsbase.mvp.QsIViewPager;
+import com.qsmaxmin.qsbase.mvp.adapter.QsTabAdapter;
 import com.qsmaxmin.qsbase.mvp.fragment.QsIFragment;
 import com.qsmaxmin.qsbase.mvp.model.QsModelPager;
 
@@ -20,15 +21,17 @@ public class ViewPagerHelper {
     private final ViewPager            pager;
     private final PagerSlidingTabStrip tabs;
     private final QsModelPager[]       viewPagerData;
+    private final QsTabAdapter         tabAdapter;
     private       View                 oldView     = null;
     private       int                  oldPosition = 0;
     private       boolean              hasPageSelected;
 
-    public ViewPagerHelper(QsIViewPager viewPagerLayer, ViewPager pager, PagerSlidingTabStrip tabs, QsModelPager[] modelPagers) {
+    public ViewPagerHelper(QsIViewPager viewPagerLayer, ViewPager pager, PagerSlidingTabStrip tabs, QsModelPager[] modelPagers, QsTabAdapter tabAdapter) {
         this.viewPagerLayer = viewPagerLayer;
         this.viewPagerData = modelPagers;
         this.tabs = tabs;
         this.pager = pager;
+        this.tabAdapter = tabAdapter;
         pager.addOnPageChangeListener(new MyPageChangeListener());
     }
 
@@ -48,6 +51,10 @@ public class ViewPagerHelper {
         return viewPagerData[pager.getCurrentItem()].fragment;
     }
 
+    public QsTabAdapter getTabAdapter() {
+        return tabAdapter;
+    }
+
     public void resetPageIndex() {
         hasPageSelected = false;
     }
@@ -63,7 +70,12 @@ public class ViewPagerHelper {
     private class MyPageChangeListener implements ViewPager.OnPageChangeListener {
 
         @Override public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-            viewPagerLayer.onPageScrolled(position, positionOffset, positionOffsetPixels);
+            if (tabAdapter != null) {
+                tabAdapter.onPageScrolled(position, positionOffset, positionOffsetPixels);
+            }
+            if (viewPagerLayer != null) {
+                viewPagerLayer.onPageScrolled(position, positionOffset, positionOffsetPixels);
+            }
         }
 
         @Override public void onPageSelected(int position) {
@@ -85,13 +97,23 @@ public class ViewPagerHelper {
 
             View currentView = (tabs == null ? null : tabs.getTabsContainer().getChildAt(position));
 
-            viewPagerLayer.onPageSelected(currentView, oldView, position, oldPosition);
+            if (tabAdapter != null) {
+                tabAdapter.onPageSelected(currentView, oldView, position, oldPosition);
+            }
+            if (viewPagerLayer != null) {
+                viewPagerLayer.onPageSelected(currentView, oldView, position, oldPosition);
+            }
             oldView = currentView;
             oldPosition = position;
         }
 
         @Override public void onPageScrollStateChanged(int state) {
-            if (viewPagerLayer != null) viewPagerLayer.onPageScrollStateChanged(state);
+            if (tabAdapter != null) {
+                tabAdapter.onPageScrollStateChanged(state);
+            }
+            if (viewPagerLayer != null) {
+                viewPagerLayer.onPageScrollStateChanged(state);
+            }
         }
     }
 }

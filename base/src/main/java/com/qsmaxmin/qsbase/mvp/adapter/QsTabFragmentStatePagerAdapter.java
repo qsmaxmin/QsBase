@@ -19,19 +19,16 @@ public class QsTabFragmentStatePagerAdapter extends QsFragmentStatePagerAdapter 
         super(fm, helper);
     }
 
-    @Override public int getCustomTabView() {
-        if (getPagerHelper().getViewPagerLayer() != null) {
-            if (getPagerHelper().getViewPagerLayer().getTabItemLayout() == 0) {
-                throw new IllegalArgumentException("QsTabViewPagerAdapter getTabItemLayout() return 0");
-            }
-            return getPagerHelper().getViewPagerLayer().getTabItemLayout();
+    @Override public int getCustomTabView(int position) {
+        if (getPagerHelper().getTabAdapter() != null) {
+            return getPagerHelper().getTabAdapter().tabItemLayoutId();
         }
         return 0;
     }
 
     @Override public void initTabsItem(View view, int position) {
-        if (getPagerHelper().getViewPagerLayer() != null) {
-            getPagerHelper().getViewPagerLayer().initTabItem(view, getPagerHelper().getModelPagers()[position]);
+        if (getPagerHelper().getTabAdapter() != null && position >= 0 && position < getCount()) {
+            getPagerHelper().getTabAdapter().init(view, getModelPager(position), position, getCount());
         }
     }
 }
