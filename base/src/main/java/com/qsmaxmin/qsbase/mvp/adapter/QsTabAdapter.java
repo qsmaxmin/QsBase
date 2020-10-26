@@ -14,12 +14,11 @@ import java.util.ArrayList;
  * @Description tab 适配器
  */
 public class QsTabAdapter {
-    private final QsIViewPager                viewLayer;
     private final ArrayList<QsTabAdapterItem> items;
+    private final QsModelPager[]              modelPagers;
 
-    public <P extends QsPresenter> QsTabAdapter(QsIViewPager viewLayer) {
-        this.viewLayer = viewLayer;
-        QsModelPager[] modelPagers = viewLayer.getModelPagers();
+    public <P extends QsPresenter> QsTabAdapter(QsIViewPager viewLayer, QsModelPager[] modelPagers) {
+        this.modelPagers = modelPagers;
         this.items = new ArrayList<>(modelPagers.length);
         for (int i = 0; i < modelPagers.length; i++) {
             QsTabAdapterItem tabAdapterItem = viewLayer.createTabAdapterItem(i);
@@ -35,7 +34,7 @@ public class QsTabAdapter {
     }
 
     public QsModelPager[] getModelPagers() {
-        return viewLayer.getModelPagers();
+        return modelPagers;
     }
 
     public final void init(View itemView, int position) {
@@ -53,13 +52,13 @@ public class QsTabAdapter {
     }
 
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-        for(QsTabAdapterItem item:items){
-            item.onPageScrolled(position,positionOffset,positionOffsetPixels);
+        for (QsTabAdapterItem item : items) {
+            item.onPageScrolled(position, positionOffset, positionOffsetPixels);
         }
     }
 
     public void onPageScrollStateChanged(int state) {
-        for(QsTabAdapterItem item:items){
+        for (QsTabAdapterItem item : items) {
             item.onPageScrollStateChanged(state);
         }
     }

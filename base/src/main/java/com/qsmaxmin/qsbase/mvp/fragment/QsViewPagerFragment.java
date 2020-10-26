@@ -57,7 +57,7 @@ public abstract class QsViewPagerFragment<P extends QsPresenter> extends QsFragm
     @Override public void initViewPager(QsModelPager[] modelPagers, int offScreenPageLimit) {
         if (modelPagers != null && modelPagers.length > 0) {
             if (isCustomTabView()) {
-                ViewPagerHelper pagerHelper = new ViewPagerHelper(this, pager, tabs, modelPagers, new QsTabAdapter(this));
+                ViewPagerHelper pagerHelper = new ViewPagerHelper(this, pager, tabs, modelPagers, new QsTabAdapter(this, modelPagers));
                 adapter = createPagerAdapter(pagerHelper, true);
             } else {
                 ViewPagerHelper pagerHelper = new ViewPagerHelper(this, pager, tabs, modelPagers, null);
@@ -111,6 +111,10 @@ public abstract class QsViewPagerFragment<P extends QsPresenter> extends QsFragm
 
     @Override public QsTabAdapterItem createTabAdapterItem(int position) {
         return null;
+    }
+
+    @Override public boolean isCustomTabView() {
+        return false;
     }
 
     @Override public final PagerSlidingTabStrip getTab() {
