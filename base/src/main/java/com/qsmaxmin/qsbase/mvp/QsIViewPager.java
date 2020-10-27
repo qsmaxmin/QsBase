@@ -27,7 +27,7 @@ public interface QsIViewPager {
 
     void initViewPager(QsModelPager[] modelPagers, int offScreenPageLimit);
 
-    QsModelPager[] getModelPagers();
+    QsModelPager[] createModelPagers();
 
     void setIndex(int index, boolean bool);
 

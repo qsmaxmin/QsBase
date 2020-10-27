@@ -41,7 +41,7 @@ public abstract class QsViewPagerActivity<P extends QsPresenter> extends QsActiv
         pager = view.findViewById(R.id.pager);
         tabs = view.findViewById(android.R.id.tabs);
         if (tabs != null) initTab(tabs);
-        initViewPager(getModelPagers());
+        initViewPager(createModelPagers());
         return view;
     }
 

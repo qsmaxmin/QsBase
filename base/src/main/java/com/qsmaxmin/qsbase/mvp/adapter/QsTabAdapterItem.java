@@ -12,7 +12,8 @@ import com.qsmaxmin.qsbase.plugin.bind.QsIBindView;
  * @Description
  */
 public abstract class QsTabAdapterItem implements QsIBindView, QsNotProguard {
-    private final int position;
+    private final int            position;
+    private       QsModelPager[] modelPagers;
 
     /**
      * for QsTransform
@@ -29,9 +30,18 @@ public abstract class QsTabAdapterItem implements QsIBindView, QsNotProguard {
     }
 
     public final void init(View itemView, QsModelPager[] modelPagers) {
+        this.modelPagers = modelPagers;
         bindViewByQsPlugin(itemView);
         initView(itemView);
-        bindData(modelPagers, position);
+        bindData(modelPagers[position], position);
+    }
+
+    protected final QsModelPager[] getModelPagers() {
+        return modelPagers;
+    }
+
+    protected final QsModelPager getModelPager(int index) {
+        return modelPagers[index];
     }
 
     protected void initView(View itemView) {
@@ -40,7 +50,7 @@ public abstract class QsTabAdapterItem implements QsIBindView, QsNotProguard {
 
     public abstract int tabItemLayoutId();
 
-    public abstract void bindData(QsModelPager[] pagers, int position);
+    public abstract void bindData(QsModelPager pagers, int position);
 
     public abstract void onPageSelectChanged(boolean selected);
 

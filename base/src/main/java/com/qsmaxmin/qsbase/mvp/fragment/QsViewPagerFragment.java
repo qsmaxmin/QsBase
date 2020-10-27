@@ -48,11 +48,11 @@ public abstract class QsViewPagerFragment<P extends QsPresenter> extends QsFragm
         pager = view.findViewById(R.id.pager);
         tabs = view.findViewById(android.R.id.tabs);
         if (tabs != null) initTab(tabs);
-        initViewPager(getModelPagers());
+        initViewPager(createModelPagers());
     }
 
     @Override public void initViewPager(QsModelPager[] modelPagers) {
-        initViewPager(getModelPagers(), getOffscreenPageLimit());
+        initViewPager(createModelPagers(), getOffscreenPageLimit());
     }
 
     @Override public void initViewPager(QsModelPager[] modelPagers, int offScreenPageLimit) {
