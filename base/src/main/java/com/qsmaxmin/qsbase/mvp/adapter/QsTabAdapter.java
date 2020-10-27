@@ -4,7 +4,6 @@ import android.view.View;
 
 import com.qsmaxmin.qsbase.mvp.QsIViewPager;
 import com.qsmaxmin.qsbase.mvp.model.QsModelPager;
-import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
 
 import java.util.ArrayList;
 
@@ -17,7 +16,7 @@ public class QsTabAdapter {
     private final ArrayList<QsTabAdapterItem> items;
     private final QsModelPager[]              modelPagers;
 
-    public <P extends QsPresenter> QsTabAdapter(QsIViewPager viewLayer, QsModelPager[] modelPagers, QsTabAdapterItem firstTabItem) {
+    public QsTabAdapter(QsIViewPager viewLayer, QsModelPager[] modelPagers, QsTabAdapterItem firstTabItem) {
         this.modelPagers = modelPagers;
         this.items = new ArrayList<>(modelPagers.length);
         items.add(firstTabItem);
@@ -51,7 +50,7 @@ public class QsTabAdapter {
         if (adapterItem != null) adapterItem.init(itemView, getModelPagers());
     }
 
-    public void onPageSelected( int currentPosition, int oldPosition) {
+    public void onPageSelected(int currentPosition, int oldPosition) {
         if (currentPosition >= 0 && currentPosition < items.size()) {
             items.get(currentPosition).onPageSelectChanged(true);
         }

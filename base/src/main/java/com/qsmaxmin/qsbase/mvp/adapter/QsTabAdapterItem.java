@@ -13,6 +13,7 @@ import com.qsmaxmin.qsbase.plugin.bind.QsIBindView;
  */
 public abstract class QsTabAdapterItem implements QsIBindView, QsNotProguard {
     private final int position;
+
     /**
      * for QsTransform
      */
@@ -34,11 +35,12 @@ public abstract class QsTabAdapterItem implements QsIBindView, QsNotProguard {
     }
 
     protected void initView(View itemView) {
+        //custom your logic
     }
 
     public abstract int tabItemLayoutId();
 
-    public abstract void bindData(QsModelPager[] pager, int position);
+    public abstract void bindData(QsModelPager[] pagers, int position);
 
     public abstract void onPageSelectChanged(boolean selected);
 
