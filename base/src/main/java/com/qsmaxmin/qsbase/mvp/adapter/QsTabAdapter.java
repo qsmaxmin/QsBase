@@ -23,7 +23,7 @@ public class QsTabAdapter {
         for (int i = 1; i < modelPagers.length; i++) {
             QsTabAdapterItem tabAdapterItem = viewLayer.createTabAdapterItem(i);
             if (tabAdapterItem == null) {
-                throw new IllegalStateException(viewLayer.getClass().getName() + ".isCustomTabView() return true, but createTabAdapterItem return null!");
+                throw new IllegalStateException(viewLayer.getClass().getName() + ".createTabAdapterItem() cannot return null!");
             }
             items.add(tabAdapterItem);
         }
