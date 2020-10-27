@@ -3,6 +3,7 @@ package com.qsmaxmin.qsbase.mvp.adapter;
 import android.view.View;
 
 import com.qsmaxmin.annotation.QsNotProguard;
+import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.mvp.model.QsModelPager;
 import com.qsmaxmin.qsbase.plugin.bind.QsIBindView;
 
@@ -14,6 +15,10 @@ import com.qsmaxmin.qsbase.plugin.bind.QsIBindView;
 public abstract class QsTabAdapterItem implements QsIBindView, QsNotProguard {
     private final int            position;
     private       QsModelPager[] modelPagers;
+
+    protected String initTag() {
+        return L.isEnable() ? getClass().getSimpleName() : "QsTabAdapterItem";
+    }
 
     /**
      * for QsTransform
