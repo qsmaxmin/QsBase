@@ -1,5 +1,6 @@
 package com.qsmaxmin.qsbase.mvp.adapter;
 
+import android.content.Context;
 import android.view.View;
 
 import com.qsmaxmin.annotation.QsNotProguard;
@@ -14,6 +15,7 @@ import com.qsmaxmin.qsbase.plugin.bind.QsIBindView;
  */
 public abstract class QsTabAdapterItem implements QsIBindView, QsNotProguard {
     private final int            position;
+    private       View           itemView;
     private       QsModelPager[] modelPagers;
 
     protected String initTag() {
@@ -35,6 +37,7 @@ public abstract class QsTabAdapterItem implements QsIBindView, QsNotProguard {
     }
 
     public final void init(View itemView, QsModelPager[] modelPagers) {
+        this.itemView = itemView;
         this.modelPagers = modelPagers;
         bindViewByQsPlugin(itemView);
         initView(itemView);
@@ -51,6 +54,14 @@ public abstract class QsTabAdapterItem implements QsIBindView, QsNotProguard {
 
     protected void initView(View itemView) {
         //custom your logic
+    }
+
+    protected View getItemView() {
+        return itemView;
+    }
+
+    protected Context getContext() {
+        return itemView.getContext();
     }
 
     public abstract int tabItemLayoutId();
