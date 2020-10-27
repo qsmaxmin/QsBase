@@ -51,7 +51,7 @@ public abstract class QsViewPagerActivity<P extends QsPresenter> extends QsActiv
 
     @Override public void initViewPager(QsModelPager[] modelPagers, int offScreenPageLimit) {
         if (modelPagers != null && modelPagers.length > 0) {
-            ViewPagerHelper pagerHelper = new ViewPagerHelper(this, pager, tabs, modelPagers);
+            ViewPagerHelper pagerHelper = new ViewPagerHelper(this, pager, modelPagers);
             QsTabAdapterItem firstTabItem = createTabAdapterItem(0);
             if (firstTabItem != null) {
                 tabAdapter = new QsTabAdapter(this, modelPagers, firstTabItem);

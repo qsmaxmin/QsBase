@@ -20,7 +20,7 @@ public class ViewPagerHelper {
     private final QsModelPager[] viewPagerData;
     private       int            oldPosition = 0;
 
-    public ViewPagerHelper(QsIViewPager viewPagerLayer, ViewPager pager, PagerSlidingTabStrip tabs, QsModelPager[] modelPagers) {
+    public ViewPagerHelper(QsIViewPager viewPagerLayer, ViewPager pager, QsModelPager[] modelPagers) {
         this.viewPagerLayer = viewPagerLayer;
         this.viewPagerData = modelPagers;
         this.pager = pager;
