@@ -1,7 +1,5 @@
 package com.qsmaxmin.qsbase.common.widget.viewpager;
 
-import android.view.View;
-
 import com.qsmaxmin.qsbase.mvp.QsIViewPager;
 import com.qsmaxmin.qsbase.mvp.adapter.QsTabAdapter;
 import com.qsmaxmin.qsbase.mvp.fragment.QsIFragment;
@@ -17,21 +15,15 @@ import androidx.viewpager.widget.ViewPager;
  */
 
 public class ViewPagerHelper {
-    private final QsIViewPager         viewPagerLayer;
-    private final ViewPager            pager;
-    private final PagerSlidingTabStrip tabs;
-    private final QsModelPager[]       viewPagerData;
-    private final QsTabAdapter         tabAdapter;
-    private       View                 oldView     = null;
-    private       int                  oldPosition = 0;
-    private       boolean              hasPageSelected;
+    private final QsIViewPager   viewPagerLayer;
+    private final ViewPager      pager;
+    private final QsModelPager[] viewPagerData;
+    private       int            oldPosition = 0;
 
-    public ViewPagerHelper(QsIViewPager viewPagerLayer, ViewPager pager, PagerSlidingTabStrip tabs, QsModelPager[] modelPagers, QsTabAdapter tabAdapter) {
+    public ViewPagerHelper(QsIViewPager viewPagerLayer, ViewPager pager, PagerSlidingTabStrip tabs, QsModelPager[] modelPagers) {
         this.viewPagerLayer = viewPagerLayer;
         this.viewPagerData = modelPagers;
-        this.tabs = tabs;
         this.pager = pager;
-        this.tabAdapter = tabAdapter;
         pager.addOnPageChangeListener(new MyPageChangeListener());
     }
 
@@ -52,11 +44,7 @@ public class ViewPagerHelper {
     }
 
     public QsTabAdapter getTabAdapter() {
-        return tabAdapter;
-    }
-
-    public void resetPageIndex() {
-        hasPageSelected = false;
+        return viewPagerLayer.getTabAdapter();
     }
 
     public ViewPager getViewPager() {
@@ -70,8 +58,8 @@ public class ViewPagerHelper {
     private class MyPageChangeListener implements ViewPager.OnPageChangeListener {
 
         @Override public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-            if (tabAdapter != null) {
-                tabAdapter.onPageScrolled(position, positionOffset, positionOffsetPixels);
+            if (getTabAdapter() != null) {
+                getTabAdapter().onPageScrolled(position, positionOffset, positionOffsetPixels);
             }
             if (viewPagerLayer != null) {
                 viewPagerLayer.onPageScrolled(position, positionOffset, positionOffsetPixels);
@@ -79,9 +67,6 @@ public class ViewPagerHelper {
         }
 
         @Override public void onPageSelected(int position) {
-            if (!hasPageSelected && tabs != null) oldView = tabs.getTabsContainer().getChildAt(0);
-            hasPageSelected = true;
-
             for (int i = 0; i < viewPagerData.length; i++) {
                 QsModelPager qsModelPager = viewPagerData[i];
                 if (qsModelPager.fragment instanceof QsIFragment) {
@@ -95,21 +80,18 @@ public class ViewPagerHelper {
                 }
             }
 
-            View currentView = (tabs == null ? null : tabs.getTabsContainer().getChildAt(position));
-
-            if (tabAdapter != null) {
-                tabAdapter.onPageSelected(currentView, oldView, position, oldPosition);
+            if (getTabAdapter() != null) {
+                getTabAdapter().onPageSelected(position, oldPosition);
             }
             if (viewPagerLayer != null) {
-                viewPagerLayer.onPageSelected(currentView, oldView, position, oldPosition);
+                viewPagerLayer.onPageSelected(position, oldPosition);
             }
-            oldView = currentView;
             oldPosition = position;
         }
 
         @Override public void onPageScrollStateChanged(int state) {
-            if (tabAdapter != null) {
-                tabAdapter.onPageScrollStateChanged(state);
+            if (getTabAdapter() != null) {
+                getTabAdapter().onPageScrollStateChanged(state);
             }
             if (viewPagerLayer != null) {
                 viewPagerLayer.onPageScrollStateChanged(state);

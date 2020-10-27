@@ -32,6 +32,7 @@ public abstract class QsViewPagerFragment<P extends QsPresenter> extends QsFragm
     private ViewPager            pager;
     private PagerSlidingTabStrip tabs;
     private QsIPagerAdapter      adapter;
+    private QsTabAdapter         tabAdapter;
 
     @Override public int layoutId() {
         return R.layout.qs_viewpager_top_tab;
@@ -56,11 +57,12 @@ public abstract class QsViewPagerFragment<P extends QsPresenter> extends QsFragm
 
     @Override public void initViewPager(QsModelPager[] modelPagers, int offScreenPageLimit) {
         if (modelPagers != null && modelPagers.length > 0) {
-            if (isCustomTabView()) {
-                ViewPagerHelper pagerHelper = new ViewPagerHelper(this, pager, tabs, modelPagers, new QsTabAdapter(this, modelPagers));
+            ViewPagerHelper pagerHelper = new ViewPagerHelper(this, pager, tabs, modelPagers);
+            QsTabAdapterItem firstTabItem = createTabAdapterItem(0);
+            if (firstTabItem != null) {
+                tabAdapter = new QsTabAdapter(this, modelPagers, firstTabItem);
                 adapter = createPagerAdapter(pagerHelper, true);
             } else {
-                ViewPagerHelper pagerHelper = new ViewPagerHelper(this, pager, tabs, modelPagers, null);
                 adapter = createPagerAdapter(pagerHelper, false);
             }
             pager.setAdapter(adapter.getAdapter());
@@ -91,7 +93,7 @@ public abstract class QsViewPagerFragment<P extends QsPresenter> extends QsFragm
     @Override public void onPageScrollStateChanged(int state) {
     }
 
-    @Override public void onPageSelected(View currentTabItem, View oldTabItem, int position, int oldPosition) {
+    @Override public void onPageSelected(int position, int oldPosition) {
     }
 
     @Override public final Fragment getCurrentFragment() {
@@ -113,9 +115,6 @@ public abstract class QsViewPagerFragment<P extends QsPresenter> extends QsFragm
         return null;
     }
 
-    @Override public boolean isCustomTabView() {
-        return false;
-    }
 
     @Override public final PagerSlidingTabStrip getTab() {
         return tabs;
@@ -127,6 +126,10 @@ public abstract class QsViewPagerFragment<P extends QsPresenter> extends QsFragm
 
     @Override public final QsIPagerAdapter getViewPagerAdapter() {
         return adapter;
+    }
+
+    @Override public final QsTabAdapter getTabAdapter() {
+        return tabAdapter;
     }
 
     protected int getOffscreenPageLimit() {

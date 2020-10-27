@@ -197,7 +197,6 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
             } else {
                 addTextTab(i, String.valueOf(pager.getAdapter().getPageTitle(i)));
             }
-
         }
         updateTabStyles();
 

@@ -17,10 +17,11 @@ public class QsTabAdapter {
     private final ArrayList<QsTabAdapterItem> items;
     private final QsModelPager[]              modelPagers;
 
-    public <P extends QsPresenter> QsTabAdapter(QsIViewPager viewLayer, QsModelPager[] modelPagers) {
+    public <P extends QsPresenter> QsTabAdapter(QsIViewPager viewLayer, QsModelPager[] modelPagers, QsTabAdapterItem firstTabItem) {
         this.modelPagers = modelPagers;
         this.items = new ArrayList<>(modelPagers.length);
-        for (int i = 0; i < modelPagers.length; i++) {
+        items.add(firstTabItem);
+        for (int i = 1; i < modelPagers.length; i++) {
             QsTabAdapterItem tabAdapterItem = viewLayer.createTabAdapterItem(i);
             if (tabAdapterItem == null) {
                 throw new IllegalStateException(viewLayer.getClass().getName() + ".isCustomTabView() return true, but createTabAdapterItem return null!");
@@ -29,20 +30,28 @@ public class QsTabAdapter {
         }
     }
 
-    public int tabItemLayoutId(int position) {
+    public final int tabItemLayoutId(int position) {
         return items.get(position).tabItemLayoutId();
     }
 
-    public QsModelPager[] getModelPagers() {
+    public final QsModelPager[] getModelPagers() {
         return modelPagers;
     }
 
-    public final void init(View itemView, int position) {
-        QsTabAdapterItem adapterItem = items.get(position);
-        adapterItem.init(itemView, getModelPagers());
+    public final ArrayList<QsTabAdapterItem> getTabAdapterItems() {
+        return items;
     }
 
-    public void onPageSelected(View currentView, View oldView, int currentPosition, int oldPosition) {
+    public final QsTabAdapterItem getTabAdapterItem(int index) {
+        return (index < 0 || index >= items.size()) ? null : items.get(index);
+    }
+
+    final void init(View itemView, int position) {
+        QsTabAdapterItem adapterItem = getTabAdapterItem(position);
+        if (adapterItem != null) adapterItem.init(itemView, getModelPagers());
+    }
+
+    public void onPageSelected( int currentPosition, int oldPosition) {
         if (currentPosition >= 0 && currentPosition < items.size()) {
             items.get(currentPosition).onPageSelectChanged(true);
         }

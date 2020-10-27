@@ -1,9 +1,8 @@
 package com.qsmaxmin.qsbase.mvp;
 
-import android.view.View;
-
 import com.qsmaxmin.qsbase.common.widget.viewpager.PagerSlidingTabStrip;
 import com.qsmaxmin.qsbase.mvp.adapter.QsIPagerAdapter;
+import com.qsmaxmin.qsbase.mvp.adapter.QsTabAdapter;
 import com.qsmaxmin.qsbase.mvp.adapter.QsTabAdapterItem;
 import com.qsmaxmin.qsbase.mvp.model.QsModelPager;
 
@@ -20,7 +19,7 @@ public interface QsIViewPager {
 
     void onPageScrollStateChanged(int state);
 
-    void onPageSelected(View currentTabItem, View oldTabItem, int position, int oldPosition);
+    void onPageSelected(int position, int oldPosition);
 
     void onPageScrolled(int position, float positionOffset, int positionOffsetPixels);
 
@@ -40,7 +39,7 @@ public interface QsIViewPager {
 
     QsTabAdapterItem createTabAdapterItem(int position);
 
-    boolean isCustomTabView();
+    QsTabAdapter getTabAdapter();
 
     void initTab(PagerSlidingTabStrip tabStrip);
 

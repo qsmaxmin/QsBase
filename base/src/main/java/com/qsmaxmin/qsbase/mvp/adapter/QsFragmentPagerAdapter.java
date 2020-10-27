@@ -35,7 +35,6 @@ public class QsFragmentPagerAdapter extends FragmentPagerAdapter implements QsIP
     }
 
     @Override public void notifyDataSetChanged() {
-        pagerHelper.resetPageIndex();
         super.notifyDataSetChanged();
     }
 

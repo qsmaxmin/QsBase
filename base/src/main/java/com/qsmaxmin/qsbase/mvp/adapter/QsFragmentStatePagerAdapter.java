@@ -35,7 +35,6 @@ public class QsFragmentStatePagerAdapter extends FragmentStatePagerAdapter imple
     }
 
     @Override public void notifyDataSetChanged() {
-        pagerHelper.resetPageIndex();
         super.notifyDataSetChanged();
     }
 
