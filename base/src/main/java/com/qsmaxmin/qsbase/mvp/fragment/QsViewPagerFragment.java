@@ -4,6 +4,7 @@ import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 
 import com.qsmaxmin.qsbase.R;
 import com.qsmaxmin.qsbase.common.log.L;
@@ -19,6 +20,8 @@ import com.qsmaxmin.qsbase.mvp.adapter.QsTabFragmentPagerAdapter;
 import com.qsmaxmin.qsbase.mvp.model.QsModelPager;
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
@@ -38,8 +41,8 @@ public abstract class QsViewPagerFragment<P extends QsPresenter> extends QsFragm
         return R.layout.qs_viewpager_top_tab;
     }
 
-    @Override protected View initView(LayoutInflater inflater) {
-        View view = super.initView(inflater);
+    @Override protected View initView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container) {
+        View view = super.initView(inflater, container);
         initCustomView(view);
         return view;
     }

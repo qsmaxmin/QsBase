@@ -70,7 +70,7 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
     @Override @Nullable @CallSuper
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         bindBundleByQsPlugin(getArguments());
-        View rootView = initView(inflater);
+        View rootView = initView(inflater, container);
         bindViewByQsPlugin(rootView);
         rootView.setOnTouchListener(this);
         onViewCreated(rootView);
@@ -116,10 +116,10 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         //custom your logic
     }
 
-    protected View initView(LayoutInflater inflater) {
+    protected View initView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container) {
         long s0 = 0;
         if (L.isEnable()) s0 = System.nanoTime();
-        View rootView = inflater.inflate(rootViewLayoutId(), null);
+        View rootView = inflater.inflate(rootViewLayoutId(), container, false);
         if (isOpenViewState()) {
             mViewAnimator = rootView.findViewById(R.id.qs_view_animator);
             initViewAnimator(mViewAnimator);

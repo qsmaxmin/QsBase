@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
@@ -59,8 +60,8 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
         return recyclerView;
     }
 
-    @Override protected View initView(LayoutInflater inflater) {
-        View rootView = super.initView(inflater);
+    @Override protected View initView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container) {
+        View rootView = super.initView(inflater, container);
         initRecycleView(getLayoutInflater(), rootView);
         return rootView;
     }

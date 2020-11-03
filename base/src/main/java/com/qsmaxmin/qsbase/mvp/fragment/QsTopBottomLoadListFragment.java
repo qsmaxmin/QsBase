@@ -2,6 +2,7 @@ package com.qsmaxmin.qsbase.mvp.fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AbsListView;
 
 import com.qsmaxmin.qsbase.R;
@@ -11,6 +12,9 @@ import com.qsmaxmin.qsbase.common.widget.listview.LoadingFooter;
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
 
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 /**
  * @CreateBy qsmaxmin
@@ -26,8 +30,8 @@ public abstract class QsTopBottomLoadListFragment<P extends QsPresenter, D> exte
     private             LoadingFooter bottomLoadingView;
 
 
-    @Override protected View initView(LayoutInflater inflater) {
-        View view = super.initView(inflater);
+    @Override protected View initView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container) {
+        View view = super.initView(inflater, container);
 
         View headerView = getHeaderView();
         if (headerView instanceof LoadingFooter) {

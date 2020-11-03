@@ -10,6 +10,8 @@ import com.qsmaxmin.qsbase.common.widget.headerview.ScrollerProvider;
 import com.qsmaxmin.qsbase.mvp.QsIHeaderView;
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 /**
@@ -29,8 +31,8 @@ public abstract class QsHeaderViewpagerFragment<P extends QsPresenter> extends Q
         return 0;
     }
 
-    @Override protected View initView(LayoutInflater inflater) {
-        View view = super.initView(inflater);
+    @Override protected View initView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container) {
+        View view = super.initView(inflater, container);
         if (view instanceof HeaderScrollView) {
             headerScrollView = (HeaderScrollView) view;
         } else {

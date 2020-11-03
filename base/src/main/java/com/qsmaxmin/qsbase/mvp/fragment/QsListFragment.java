@@ -2,6 +2,7 @@ package com.qsmaxmin.qsbase.mvp.fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
@@ -17,6 +18,9 @@ import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 /**
  * @CreateBy qsmaxmin
@@ -62,8 +66,8 @@ public abstract class QsListFragment<P extends QsPresenter, D> extends QsFragmen
         return 0;
     }
 
-    @Override protected View initView(LayoutInflater inflater) {
-        View rootView = super.initView(inflater);
+    @Override protected View initView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container) {
+        View rootView = super.initView(inflater, container);
         mListView = rootView.findViewById(android.R.id.list);
         if (mListView == null) throw new RuntimeException("ListView is not exit or its id not 'android.R.id.list' in current layout!!");
         if (getHeaderLayout() != 0) {

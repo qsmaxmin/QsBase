@@ -2,6 +2,7 @@ package com.qsmaxmin.qsbase.mvp.fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AbsListView;
 
 import com.qsmaxmin.qsbase.R;
@@ -15,6 +16,9 @@ import com.qsmaxmin.qsbase.mvp.QsIPullToRefreshView;
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
 
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 /**
  * @CreateBy qsmaxmin
@@ -38,8 +42,8 @@ public abstract class QsPullListFragment<T extends QsPresenter, D> extends QsLis
         return new BeautyCircleRefreshHeader(getContext());
     }
 
-    @Override protected View initView(LayoutInflater inflater) {
-        View view = super.initView(inflater);
+    @Override protected View initView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container) {
+        View view = super.initView(inflater, container);
         if (canPullRefreshing()) {
             initPtrFrameLayout(view);
         }
