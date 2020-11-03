@@ -143,11 +143,18 @@ public abstract class QsDialogFragment extends DialogFragment implements QsIBind
         }
         if (bundle != null) setArguments(bundle);
         if (QsHelper.isMainThread()) {
-            show(manager, getClass().getSimpleName());
+            try {
+                show(manager, getClass().getSimpleName());
+            } catch (Exception ignored) {
+            }
+
         } else {
             QsHelper.post(new Runnable() {
                 @Override public void run() {
-                    show(manager, getClass().getSimpleName());
+                    try {
+                        show(manager, getClass().getSimpleName());
+                    } catch (Exception ignored) {
+                    }
                 }
             });
         }
