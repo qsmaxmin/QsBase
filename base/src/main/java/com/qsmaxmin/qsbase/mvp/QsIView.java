@@ -44,13 +44,13 @@ public interface QsIView<P> extends QsIBindView, QsIBindEvent, QsIBindBundle, Qs
 
     @LayoutRes int errorLayoutId();
 
-    void onCreateLoadingView(@NonNull View loadingView);
+    void onLoadingViewCreated(@NonNull View loadingView);
 
-    void onCreateContentView(@NonNull View contentView);
+    void onContentViewCreated(@NonNull View contentView);
 
-    void onCreateEmptyView(@NonNull View emptyView);
+    void onEmptyViewCreated(@NonNull View emptyView);
 
-    void onCreateErrorView(@NonNull View errorView);
+    void onErrorViewCreated(@NonNull View errorView);
 
     QsProgressDialog getLoadingDialog();
 

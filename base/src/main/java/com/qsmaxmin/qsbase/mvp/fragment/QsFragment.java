@@ -128,13 +128,13 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
             loadingView.setTag(R.id.qs_view_state_key, VIEW_STATE_LOADING);
             setDefaultViewClickListener(loadingView);
             mViewAnimator.addView(loadingView);
-            onCreateLoadingView(loadingView);
+            onLoadingViewCreated(loadingView);
 
             View contentView = inflater.inflate(layoutId(), mViewAnimator, false);
             contentView.setTag(R.id.qs_view_state_key, VIEW_STATE_CONTENT);
             if (contentViewBackgroundColor() != 0) contentView.setBackgroundColor(contentViewBackgroundColor());
             mViewAnimator.addView(contentView);
-            onCreateContentView(contentView);
+            onContentViewCreated(contentView);
 
             if (L.isEnable()) {
                 long s1 = System.nanoTime();
@@ -146,7 +146,7 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
             View contentView = inflater.inflate(layoutId(), customView, false);
             if (contentViewBackgroundColor() != 0) contentView.setBackgroundColor(contentViewBackgroundColor());
             customView.addView(contentView);
-            onCreateContentView(contentView);
+            onContentViewCreated(contentView);
 
             if (L.isEnable()) {
                 long s1 = System.nanoTime();
@@ -255,19 +255,19 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         return QsHelper.getAppInterface().errorLayoutId();
     }
 
-    @Override public void onCreateLoadingView(@NonNull View loadingView) {
+    @Override public void onLoadingViewCreated(@NonNull View loadingView) {
         //custom your logic
     }
 
-    @Override public void onCreateContentView(@NonNull View contentView) {
+    @Override public void onContentViewCreated(@NonNull View contentView) {
         //custom your logic
     }
 
-    @Override public void onCreateEmptyView(@NonNull View emptyView) {
+    @Override public void onEmptyViewCreated(@NonNull View emptyView) {
         //custom your logic
     }
 
-    @Override public void onCreateErrorView(@NonNull View errorView) {
+    @Override public void onErrorViewCreated(@NonNull View errorView) {
         //custom your logic
     }
 
@@ -366,7 +366,7 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
                     emptyView.setTag(R.id.qs_view_state_key, VIEW_STATE_EMPTY);
                     setDefaultViewClickListener(emptyView);
                     mViewAnimator.addView(emptyView);
-                    onCreateEmptyView(emptyView);
+                    onEmptyViewCreated(emptyView);
                     setViewState(mViewAnimator.getChildCount() - 1);
                 }
             });
@@ -393,7 +393,7 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
                     errorView.setTag(R.id.qs_view_state_key, VIEW_STATE_ERROR);
                     setDefaultViewClickListener(errorView);
                     mViewAnimator.addView(errorView);
-                    onCreateErrorView(errorView);
+                    onErrorViewCreated(errorView);
                     setViewState(mViewAnimator.getChildCount() - 1);
                 }
             });
