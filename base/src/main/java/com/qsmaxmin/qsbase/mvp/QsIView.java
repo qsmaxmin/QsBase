@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.animation.Animation;
 
 import com.qsmaxmin.annotation.QsNotProguard;
+import com.qsmaxmin.qsbase.common.viewbind.OnActivityResultListener;
 import com.qsmaxmin.qsbase.common.widget.dialog.QsProgressDialog;
 import com.qsmaxmin.qsbase.plugin.bind.QsIBindBundle;
 import com.qsmaxmin.qsbase.plugin.bind.QsIBindView;
@@ -23,9 +24,8 @@ import androidx.fragment.app.FragmentActivity;
 /**
  * @CreateBy qsmaxmin
  * @Date 2017/6/21 14:02
- * @Description
+ * @Description MVP架构，View层基类
  */
-
 public interface QsIView<P> extends QsIBindView, QsIBindEvent, QsIBindBundle, QsIPresenter, QsNotProguard {
     int VIEW_STATE_LOADING = 0;
     int VIEW_STATE_CONTENT = 1;
@@ -59,10 +59,6 @@ public interface QsIView<P> extends QsIBindView, QsIBindEvent, QsIBindBundle, Qs
     void initData(Bundle savedInstanceState);
 
     void onViewClick(View view);
-
-    boolean isDelayData();
-
-    void initDataWhenDelay();
 
     P getPresenter();
 
@@ -167,4 +163,6 @@ public interface QsIView<P> extends QsIBindView, QsIBindEvent, QsIBindBundle, Qs
     void setOnActivityResultListener(OnActivityResultListener listener);
 
     int contentViewBackgroundColor();
+
+    void onBackPressed();
 }

@@ -1,4 +1,4 @@
-package com.qsmaxmin.qsbase.mvp.model;
+package com.qsmaxmin.qsbase;
 
 /**
  * @CreateBy qsmaxmin
@@ -9,7 +9,6 @@ package com.qsmaxmin.qsbase.mvp.model;
 public class QsConstants {
     private QsConstants() {
     }
-
     /**
      * 线程名称
      */

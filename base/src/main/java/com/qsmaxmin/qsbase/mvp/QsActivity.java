@@ -2,15 +2,11 @@ package com.qsmaxmin.qsbase.mvp;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.widget.ScrollView;
 import android.widget.ViewAnimator;
@@ -18,6 +14,8 @@ import android.widget.ViewAnimator;
 import com.qsmaxmin.qsbase.R;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
+import com.qsmaxmin.qsbase.common.utils.ViewHelper;
+import com.qsmaxmin.qsbase.common.viewbind.OnActivityResultListener;
 import com.qsmaxmin.qsbase.common.viewbind.OnKeyDownListener;
 import com.qsmaxmin.qsbase.common.widget.dialog.QsProgressDialog;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout;
@@ -43,7 +41,6 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
     protected P                        presenter;
     protected QsProgressDialog         mProgressDialog;
     protected ViewAnimator             mViewAnimator;
-    private   boolean                  hasInitData;
     private   OnKeyDownListener        onKeyDownListener;
     private   OnActivityResultListener activityResultListener;
 
@@ -64,7 +61,7 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
     }
 
     @Override public int layoutId() {
-        return R.layout.qs_frame_layout;
+        return 0;
     }
 
     @Override public int loadingLayoutId() {
@@ -79,7 +76,7 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         return QsHelper.getAppInterface().errorLayoutId();
     }
 
-    @Override @CallSuper protected void onCreate(Bundle savedInstanceState) {
+    @CallSuper @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         QsHelper.getScreenHelper().pushActivity(this);
         QsHelper.getAppInterface().onActivityCreate(this);
@@ -91,10 +88,7 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         onViewCreated(contentView);
 
         bindEventByQsPlugin();
-        if (!isDelayData()) {
-            hasInitData = true;
-            initData(savedInstanceState);
-        }
+        initData(savedInstanceState);
     }
 
     @Override public void onViewCreated(View view) {
@@ -143,8 +137,8 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
             mProgressDialog.dismissAllowingStateLoss();
             mProgressDialog = null;
         }
-        mViewAnimator = null;
         onKeyDownListener = null;
+        activityResultListener = null;
         contentView = null;
         unbindEventByQsPlugin();
         QsHelper.getAppInterface().onActivityDestroy(this);
@@ -159,13 +153,14 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         if (L.isEnable()) s0 = System.nanoTime();
         ViewGroup rootView = (ViewGroup) inflater.inflate(rootViewLayoutId(), null);
 
+        if (actionbarLayoutId() != 0) {
+            ViewGroup actionbarContainer = rootView.findViewById(R.id.qs_actionbar_parent);
+            inflater.inflate(actionbarLayoutId(), actionbarContainer, true);
+        }
+
         if (isOpenViewState()) {
-            if (actionbarLayoutId() != 0) {
-                ViewGroup actionbarContainer = rootView.findViewById(R.id.qs_actionbar_parent);
-                inflater.inflate(actionbarLayoutId(), actionbarContainer, true);
-            }
             mViewAnimator = rootView.findViewById(R.id.qs_view_animator);
-            initViewAnimator(mViewAnimator);
+            ViewHelper.initViewAnimator(mViewAnimator, this);
 
             View loadingView = inflater.inflate(loadingLayoutId(), mViewAnimator, false);
             loadingView.setTag(R.id.qs_view_state_key, VIEW_STATE_LOADING);
@@ -173,26 +168,26 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
             mViewAnimator.addView(loadingView);
             onLoadingViewCreated(loadingView);
 
-            View contentView = inflater.inflate(layoutId(), mViewAnimator, false);
-            contentView.setTag(R.id.qs_view_state_key, VIEW_STATE_CONTENT);
-            if (contentViewBackgroundColor() != 0) contentView.setBackgroundColor(contentViewBackgroundColor());
-            mViewAnimator.addView(contentView);
-            onContentViewCreated(contentView);
+            if (layoutId() != 0) {
+                View targetView = inflater.inflate(layoutId(), mViewAnimator, false);
+                targetView.setTag(R.id.qs_view_state_key, VIEW_STATE_CONTENT);
+                if (contentViewBackgroundColor() != 0) targetView.setBackgroundColor(contentViewBackgroundColor());
+                mViewAnimator.addView(targetView);
+                onContentViewCreated(targetView);
+            }
 
             if (L.isEnable()) {
                 long s1 = System.nanoTime();
                 L.i(initTag(), "initView...view inflate complete(viewState is open), use time:" + (s1 - s0) / 1000_000f + "ms");
             }
         } else {
-            if (actionbarLayoutId() != 0) {
-                ViewGroup actionbarContainer = rootView.findViewById(R.id.qs_actionbar_parent);
-                inflater.inflate(actionbarLayoutId(), actionbarContainer, true);
+            if (layoutId() != 0) {
+                ViewGroup customView = rootView.findViewById(android.R.id.custom);
+                View targetView = inflater.inflate(layoutId(), customView, false);
+                if (contentViewBackgroundColor() != 0) targetView.setBackgroundColor(contentViewBackgroundColor());
+                customView.addView(targetView);
+                onContentViewCreated(targetView);
             }
-            ViewGroup customView = rootView.findViewById(android.R.id.custom);
-            View contentView = inflater.inflate(layoutId(), customView, false);
-            if (contentViewBackgroundColor() != 0) contentView.setBackgroundColor(contentViewBackgroundColor());
-            customView.addView(contentView);
-            onContentViewCreated(contentView);
 
             if (L.isEnable()) {
                 long s1 = System.nanoTime();
@@ -200,23 +195,6 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
             }
         }
         return rootView;
-    }
-
-
-    private void initViewAnimator(ViewAnimator viewAnimator) {
-        Animation inAnimation = viewStateInAnimation();
-        if (inAnimation != null) {
-            viewAnimator.setInAnimation(inAnimation);
-        } else if (viewStateInAnimationId() != 0) {
-            viewAnimator.setInAnimation(getContext(), viewStateInAnimationId());
-        }
-        Animation outAnimation = viewStateOutAnimation();
-        if (outAnimation != null) {
-            viewAnimator.setOutAnimation(outAnimation);
-        } else if (viewStateOutAnimationId() != 0) {
-            viewAnimator.setOutAnimation(getContext(), viewStateOutAnimationId());
-        }
-        viewAnimator.setAnimateFirstView(viewStateAnimateFirstView());
     }
 
     @SuppressWarnings("unchecked")
@@ -230,13 +208,6 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
 
     @Override public Object createPresenter() {
         return null;
-    }
-
-    @Override public void initDataWhenDelay() {
-        if (!hasInitData && isDelayData()) {
-            initData(getIntent().getExtras());
-            hasInitData = true;
-        }
     }
 
     @Override public void onViewClick(View view) {
@@ -270,10 +241,6 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         return true;
     }
 
-    @Override public boolean isDelayData() {
-        return false;
-    }
-
     @Override public void activityFinish() {
         activityFinish(false);
     }
@@ -284,8 +251,11 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
     }
 
     @Override public void activityFinish(boolean finishAfterTransition) {
-        if (finishAfterTransition) ActivityCompat.finishAfterTransition(this);
-        else finish();
+        if (finishAfterTransition) {
+            ActivityCompat.finishAfterTransition(this);
+        } else {
+            finish();
+        }
     }
 
     @Override public void onLoadingViewCreated(@NonNull View loadingView) {
@@ -343,18 +313,8 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
     }
 
     @Override public final void loadingClose() {
-        if (QsHelper.isMainThread()) {
-            if (mProgressDialog != null && mProgressDialog.isAdded()) {
-                mProgressDialog.dismissAllowingStateLoss();
-            }
-        } else {
-            post(new Runnable() {
-                @Override public void run() {
-                    if (mProgressDialog != null && mProgressDialog.isAdded()) {
-                        mProgressDialog.dismissAllowingStateLoss();
-                    }
-                }
-            });
+        if (mProgressDialog != null && mProgressDialog.isAdded()) {
+            mProgressDialog.dismissAllowingStateLoss();
         }
     }
 
@@ -477,26 +437,8 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         intent2Activity(clazz, bundle, requestCode, optionsCompat, 0, 0);
     }
 
-    @Override public final void intent2Activity(Class clazz, Bundle bundle, int requestCode, ActivityOptionsCompat optionsCompat, int inAnimId, int outAnimId) {
-        if (clazz != null) {
-            Intent intent = new Intent();
-            intent.setClass(this, clazz);
-            if (bundle != null) intent.putExtras(bundle);
-            if (optionsCompat == null) {
-                if (requestCode > 0) {
-                    startActivityForResult(intent, requestCode);
-                } else {
-                    startActivity(intent);
-                }
-                if (inAnimId != 0 || outAnimId != 0) overridePendingTransition(inAnimId, outAnimId);
-            } else {
-                if (requestCode > 0) {
-                    ActivityCompat.startActivityForResult(this, intent, requestCode, optionsCompat.toBundle());
-                } else {
-                    ActivityCompat.startActivity(this, intent, optionsCompat.toBundle());
-                }
-            }
-        }
+    @Override public final void intent2Activity(Class clazz, Bundle bundle, int requestCode, ActivityOptionsCompat optionsCompat, int enterAnim, int existAnim) {
+        ViewHelper.intent2Activity(this, clazz, bundle, requestCode, optionsCompat, enterAnim, existAnim);
     }
 
     @Override public final void commitFragment(Fragment fragment) {
@@ -507,7 +449,7 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         QsHelper.commitFragment(getSupportFragmentManager(), android.R.id.custom, fragment, tag);
     }
 
-    @Override public void commitFragment(Fragment fragment, int enterAnim, int existAnim) {
+    @Override public final void commitFragment(Fragment fragment, int enterAnim, int existAnim) {
         QsHelper.commitFragment(getSupportFragmentManager(), android.R.id.custom, fragment, fragment.getClass().getSimpleName(), enterAnim, existAnim);
     }
 
@@ -523,7 +465,7 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         QsHelper.commitFragment(getSupportFragmentManager(), layoutId, fragment, tag);
     }
 
-    @Override public void commitFragment(int layoutId, Fragment fragment, int enterAnim, int existAnim) {
+    @Override public final void commitFragment(int layoutId, Fragment fragment, int enterAnim, int existAnim) {
         QsHelper.commitFragment(getSupportFragmentManager(), layoutId, fragment, fragment.getClass().getSimpleName(), enterAnim, existAnim);
     }
 
@@ -540,18 +482,20 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
     }
 
     protected void setViewState(final int index) {
-        if (QsHelper.isMainThread()) {
-            if (mViewAnimator.getDisplayedChild() != index) {
-                mViewAnimator.setDisplayedChild(index);
-            }
-        } else {
-            post(new Runnable() {
-                @Override public void run() {
-                    if (mViewAnimator.getDisplayedChild() != index) {
-                        mViewAnimator.setDisplayedChild(index);
-                    }
+        if (mViewAnimator != null) {
+            if (QsHelper.isMainThread()) {
+                if (mViewAnimator.getDisplayedChild() != index) {
+                    mViewAnimator.setDisplayedChild(index);
                 }
-            });
+            } else {
+                post(new Runnable() {
+                    @Override public void run() {
+                        if (mViewAnimator.getDisplayedChild() != index) {
+                            mViewAnimator.setDisplayedChild(index);
+                        }
+                    }
+                });
+            }
         }
     }
 
@@ -577,63 +521,11 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
     }
 
     private void setDefaultViewClickListener(View view) {
-        if (view != null) {
-            View backView = view.findViewById(R.id.qs_back_in_default_view);
-            if (backView != null) {
-                if (isShowBackButtonInDefaultView()) {
-                    backView.setVisibility(View.VISIBLE);
-                    backView.setOnClickListener(new View.OnClickListener() {
-                        @Override public void onClick(View v) {
-                            onBackPressed();
-                        }
-                    });
-                } else {
-                    backView.setVisibility(View.GONE);
-                }
-            }
-            View reloadView = view.findViewById(R.id.qs_reload_in_default_view);
-            if (reloadView != null) reloadView.setOnClickListener(new View.OnClickListener() {
-                @Override public void onClick(View v) {
-                    showLoadingView();
-                    initData(getIntent().getExtras());
-                }
-            });
-        }
+        ViewHelper.setDefaultViewClickListener(view, this);
     }
 
     protected void initStatusBar() {
-        if (isTransparentStatusBar() || isTransparentNavigationBar()) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                Window window = getWindow();
-                if (isTransparentNavigationBar()) {
-                    window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-                    window.setNavigationBarColor(Color.TRANSPARENT);
-                }
-
-                if (isTransparentStatusBar()) {
-                    window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-                    window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-                    window.setStatusBarColor(Color.TRANSPARENT);
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && isBlackIconStatusBar()) {
-                        window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
-                    } else {
-                        window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
-                    }
-                }
-
-            } else if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
-                Window window = getWindow();
-                WindowManager.LayoutParams winParams = window.getAttributes();
-                final int bits = WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS;
-                winParams.flags |= bits;
-                window.setAttributes(winParams);
-            }
-        } else {
-            if (isBlackIconStatusBar() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                Window window = getWindow();
-                window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-            }
-        }
+        ViewHelper.initStatusBar(this, isTransparentStatusBar(), isTransparentNavigationBar(), isBlackIconStatusBar());
     }
 
     @Override public final void post(Runnable action) {
@@ -659,8 +551,9 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
     }
 
     @Override public void smoothScrollToTop(boolean autoRefresh) {
-        if (contentView == null) return;
-        final ScrollView scrollView = (ScrollView) tryGetTargetView(ScrollView.class, contentView);
+        View view = contentView;
+        if (view == null) return;
+        final ScrollView scrollView = ViewHelper.tryGetTargetView(ScrollView.class, view);
         if (scrollView != null) {
             scrollView.post(new Runnable() {
                 @Override public void run() {
@@ -668,9 +561,8 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
                 }
             });
         }
-
         if (autoRefresh) {
-            final PtrFrameLayout frameLayout = (PtrFrameLayout) tryGetTargetView(PtrFrameLayout.class, contentView);
+            final PtrFrameLayout frameLayout = ViewHelper.tryGetTargetView(PtrFrameLayout.class, view);
             if (frameLayout != null) {
                 frameLayout.post(new Runnable() {
                     @Override public void run() {
@@ -679,23 +571,6 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
                 });
             }
         }
-    }
-
-    private View tryGetTargetView(Class clazz, View parentView) {
-        View targetView = null;
-        if (parentView.getClass() == clazz) {
-            targetView = parentView;
-        } else {
-            if (parentView instanceof ViewGroup) {
-                int childCount = ((ViewGroup) parentView).getChildCount();
-                for (int i = 0; i < childCount; i++) {
-                    View childAt = ((ViewGroup) parentView).getChildAt(i);
-                    targetView = tryGetTargetView(clazz, childAt);
-                    if (targetView != null) break;
-                }
-            }
-        }
-        return targetView;
     }
 
     @Override protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {

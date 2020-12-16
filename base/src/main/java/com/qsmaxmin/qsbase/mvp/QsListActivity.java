@@ -88,11 +88,11 @@ public abstract class QsListActivity<P extends QsPresenter, D> extends QsActivit
     }
 
     @Override public void onReceiveAdapterItemEvent(int eventType, D data, int position) {
-        L.i(initTag(), "onReceiveAdapterItemEvent......eventType:" + eventType + ", position:" + position);
+        if (L.isEnable()) L.i(initTag(), "onReceiveAdapterItemEvent......eventType:" + eventType + ", position:" + position);
     }
 
     @Override public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        L.i(initTag(), "onItemClick... position:" + position);
+        if (L.isEnable()) L.i(initTag(), "onItemClick... position:" + position);
     }
 
     @Override public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {

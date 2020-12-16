@@ -14,11 +14,13 @@ public interface QsIFragment extends QsIView {
 
     boolean interceptBackPressed();
 
-    void onBackPressed();
-
     void onFragmentSelectedInViewPager(boolean isSelected, int currentPosition, int totalCount);
 
     void setActivityTitle(CharSequence title);
 
     void setActivityTitle(CharSequence title, int type);
+
+    boolean isDelayData();
+
+    void initDataWhenDelay();
 }

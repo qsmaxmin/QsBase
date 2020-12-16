@@ -160,6 +160,46 @@ public abstract class QsDialogFragment extends DialogFragment implements QsIBind
         }
     }
 
+    @Override public void dismiss() {
+        if (QsHelper.isMainThread()) {
+            dismissSuper();
+        } else {
+            QsHelper.post(new Runnable() {
+                @Override public void run() {
+                    dismissSuper();
+                }
+            });
+        }
+    }
+
+    @Override public void dismissAllowingStateLoss() {
+        if (QsHelper.isMainThread()) {
+            dismissAllowingStateLossSuper();
+        } else {
+            QsHelper.post(new Runnable() {
+                @Override public void run() {
+                    dismissAllowingStateLossSuper();
+                }
+            });
+        }
+    }
+
+    private void dismissAllowingStateLossSuper() {
+        try {
+            super.dismissAllowingStateLoss();
+        } catch (Exception e) {
+            if (L.isEnable()) L.e(initTag(), e);
+        }
+    }
+
+    private void dismissSuper() {
+        try {
+            super.dismiss();
+        } catch (Exception e) {
+            if (L.isEnable()) L.e(initTag(), e);
+        }
+    }
+
     public final void intent2Activity(Class clazz) {
         intent2Activity(clazz, null, 0, null, 0, 0);
     }

@@ -22,12 +22,10 @@ import androidx.annotation.Nullable;
  * @Description listView滑动到顶部和底部都能加载更多数据
  */
 public abstract class QsTopBottomLoadListFragment<P extends QsPresenter, D> extends QsListFragment<P, D> implements QsITopBottomLoadView<D> {
-    public static final byte          LOAD_WHEN_SCROLL_TO_BOTTOM = 0;
-    public static final byte          LOAD_WHEN_SECOND_TO_LAST   = 1;
-    private             boolean       canTopLoading              = true;
-    private             boolean       canBottomLoading           = true;
-    private             LoadingFooter topLoadingView;
-    private             LoadingFooter bottomLoadingView;
+    private boolean       isTopLoadingOpen    = true;
+    private boolean       isBottomLoadingOpen = true;
+    private LoadingFooter topLoadingView;
+    private LoadingFooter bottomLoadingView;
 
 
     @Override protected View initView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container) {
@@ -40,6 +38,12 @@ public abstract class QsTopBottomLoadListFragment<P extends QsPresenter, D> exte
         View footerView = getFooterView();
         if (footerView instanceof LoadingFooter) {
             this.bottomLoadingView = (LoadingFooter) footerView;
+        }
+        if (!canTopLoading()) {
+            setTopLoadingState(LoadingFooter.State.TheEnd);
+        }
+        if (!canBottomLoading()) {
+            setBottomLoadingState(LoadingFooter.State.TheEnd);
         }
         return view;
     }
@@ -55,11 +59,11 @@ public abstract class QsTopBottomLoadListFragment<P extends QsPresenter, D> exte
     @Override public void onScrollStateChanged(AbsListView view, int scrollState) {
         super.onScrollStateChanged(view, scrollState);
         if (onLoadTriggerCondition() == LOAD_WHEN_SCROLL_TO_BOTTOM && scrollState == SCROLL_STATE_IDLE) {
-            if (canTopLoading && !canListScrollDown()) {
+            if (isTopLoadingOpen && !canListScrollDown()) {
                 loadingTopData();
             }
 
-            if (canBottomLoading && !canListScrollUp()) {
+            if (isBottomLoadingOpen && !canListScrollUp()) {
                 loadingBottomData();
             }
         }
@@ -68,11 +72,11 @@ public abstract class QsTopBottomLoadListFragment<P extends QsPresenter, D> exte
     @Override public void onAdapterGetView(int position, int totalCount) {
         super.onAdapterGetView(position, totalCount);
         if (onLoadTriggerCondition() == LOAD_WHEN_SECOND_TO_LAST) {
-            if (canTopLoading && position == 0) {
+            if (isTopLoadingOpen && position == 0) {
                 loadingTopData();
             }
 
-            if (canBottomLoading && position == totalCount - 2 || totalCount == 1) {
+            if (isBottomLoadingOpen && position == totalCount - 2 || totalCount == 1) {
                 loadingBottomData();
             }
         }
@@ -101,19 +105,27 @@ public abstract class QsTopBottomLoadListFragment<P extends QsPresenter, D> exte
     }
 
     @Override public void openTopLoading() {
-        canTopLoading = true;
+        isTopLoadingOpen = true;
     }
 
     @Override public void closeTopLoading() {
-        canTopLoading = false;
+        isTopLoadingOpen = false;
     }
 
     @Override public void openBottomLoading() {
-        canBottomLoading = true;
+        isBottomLoadingOpen = true;
     }
 
     @Override public void closeBottomLoading() {
-        canBottomLoading = false;
+        isBottomLoadingOpen = false;
+    }
+
+    @Override public boolean canTopLoading() {
+        return true;
+    }
+
+    @Override public boolean canBottomLoading() {
+        return true;
     }
 
     @Override public void addTopData(final List<D> list) {
@@ -126,12 +138,14 @@ public abstract class QsTopBottomLoadListFragment<P extends QsPresenter, D> exte
                 mList.addAll(0, list);
                 updateAdapter(true);
                 getListView().setSelectionFromTop(list.size() + index + 1, topMargin);
+                setTopLoadingStateByData(list);
             } else {
                 post(new Runnable() {
                     @Override public void run() {
                         mList.addAll(0, list);
                         updateAdapter(true);
                         getListView().setSelectionFromTop(list.size() + index + 1, topMargin);
+                        setTopLoadingStateByData(list);
                     }
                 });
             }
@@ -142,12 +156,33 @@ public abstract class QsTopBottomLoadListFragment<P extends QsPresenter, D> exte
         addData(list);
     }
 
+    @Override public void addData(List<D> list, int position) {
+        super.addData(list, position);
+        setBottomLoadingStateByData(list);
+    }
+
+    protected void setBottomLoadingStateByData(List<D> list) {
+        if (list == null || list.isEmpty()) {
+            setBottomLoadingState(LoadingFooter.State.TheEnd);
+        } else if (isBottomLoadingOpen && getBottomLoadingState() != LoadingFooter.State.Normal) {
+            setBottomLoadingState(LoadingFooter.State.Normal);
+        }
+    }
+
+    protected void setTopLoadingStateByData(List<D> list) {
+        if (list == null || list.isEmpty()) {
+            setTopLoadingState(LoadingFooter.State.TheEnd);
+        } else if (isTopLoadingOpen && getTopLoadingState() != LoadingFooter.State.Normal) {
+            setTopLoadingState(LoadingFooter.State.Normal);
+        }
+    }
+
     protected int onLoadTriggerCondition() {
         return LOAD_WHEN_SECOND_TO_LAST;
     }
 
     private void loadingBottomData() {
-        if (canBottomLoading && bottomLoadingView != null) {
+        if (isBottomLoadingOpen && bottomLoadingView != null) {
             LoadingFooter.State state = bottomLoadingView.getState();
             if (state == LoadingFooter.State.Loading) {
                 L.i(initTag(), "Under bottom loading..........");
@@ -162,7 +197,7 @@ public abstract class QsTopBottomLoadListFragment<P extends QsPresenter, D> exte
     }
 
     private void loadingTopData() {
-        if (canTopLoading && topLoadingView != null) {
+        if (isTopLoadingOpen && topLoadingView != null) {
             LoadingFooter.State state = topLoadingView.getState();
             if (state == LoadingFooter.State.Loading) {
                 L.i(initTag(), "Under top loading..........");

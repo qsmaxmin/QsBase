@@ -17,9 +17,9 @@ import androidx.recyclerview.widget.RecyclerView;
  * @Description
  */
 public class HeaderFooterRecyclerView extends RecyclerView {
-    private List<View>                  mHeaderViews = new ArrayList<>();
-    private List<View>                  mFooterViews = new ArrayList<>();
-    private HeaderFooterRecyclerAdapter mAdapter;
+    private final List<View>                  mHeaderViews = new ArrayList<>();
+    private final List<View>                  mFooterViews = new ArrayList<>();
+    private       HeaderFooterRecyclerAdapter mAdapter;
 
     public HeaderFooterRecyclerView(Context context) {
         super(context);

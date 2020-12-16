@@ -14,7 +14,6 @@ import androidx.viewpager.widget.ViewPager;
 public class QsViewPager extends ViewPager {
     private boolean canScroll = true;
 
-
     public QsViewPager(Context context) {
         this(context, null);
     }

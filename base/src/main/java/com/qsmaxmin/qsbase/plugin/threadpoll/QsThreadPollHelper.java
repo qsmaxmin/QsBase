@@ -3,7 +3,7 @@ package com.qsmaxmin.qsbase.plugin.threadpoll;
 import android.os.Handler;
 import android.os.Looper;
 
-import com.qsmaxmin.qsbase.mvp.model.QsConstants;
+import com.qsmaxmin.qsbase.QsConstants;
 
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.SynchronousQueue;

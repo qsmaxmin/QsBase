@@ -13,10 +13,11 @@ import android.widget.ViewAnimator;
 import com.qsmaxmin.qsbase.R;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
+import com.qsmaxmin.qsbase.common.utils.ViewHelper;
+import com.qsmaxmin.qsbase.common.viewbind.OnActivityResultListener;
 import com.qsmaxmin.qsbase.common.widget.dialog.QsProgressDialog;
 import com.qsmaxmin.qsbase.common.widget.headerview.ScrollerProvider;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout;
-import com.qsmaxmin.qsbase.mvp.OnActivityResultListener;
 import com.qsmaxmin.qsbase.mvp.QsIActivity;
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
 import com.qsmaxmin.qsbase.plugin.threadpoll.QsThreadPollHelper;
@@ -122,7 +123,7 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         View rootView = inflater.inflate(rootViewLayoutId(), container, false);
         if (isOpenViewState()) {
             mViewAnimator = rootView.findViewById(R.id.qs_view_animator);
-            initViewAnimator(mViewAnimator);
+            ViewHelper.initViewAnimator(mViewAnimator, this);
 
             View loadingView = inflater.inflate(loadingLayoutId(), mViewAnimator, false);
             loadingView.setTag(R.id.qs_view_state_key, VIEW_STATE_LOADING);
@@ -154,22 +155,6 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
             }
         }
         return rootView;
-    }
-
-    private void initViewAnimator(ViewAnimator viewAnimator) {
-        Animation inAnimation = viewStateInAnimation();
-        if (inAnimation != null) {
-            viewAnimator.setInAnimation(inAnimation);
-        } else if (viewStateInAnimationId() != 0) {
-            viewAnimator.setInAnimation(getContext(), viewStateInAnimationId());
-        }
-        Animation outAnimation = viewStateOutAnimation();
-        if (outAnimation != null) {
-            viewAnimator.setOutAnimation(outAnimation);
-        } else if (viewStateOutAnimationId() != 0) {
-            viewAnimator.setOutAnimation(getContext(), viewStateOutAnimationId());
-        }
-        viewAnimator.setAnimateFirstView(viewStateAnimateFirstView());
     }
 
     @SuppressWarnings("unchecked")
@@ -530,35 +515,14 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
 
     private void setDefaultViewClickListener(View view) {
         if (view != null) {
-            View backView = view.findViewById(R.id.qs_back_in_default_view);
-            if (backView != null) {
-                if (isShowBackButtonInDefaultView()) {
-                    backView.setVisibility(View.VISIBLE);
-                    backView.setOnClickListener(new View.OnClickListener() {
-                        @Override public void onClick(View v) {
-                            if (getActivity() != null) getActivity().onBackPressed();
-                        }
-                    });
-                } else {
-                    backView.setVisibility(View.GONE);
-                }
-            }
-            View reloadView = view.findViewById(R.id.qs_reload_in_default_view);
-            if (reloadView != null) {
-                reloadView.setOnClickListener(new View.OnClickListener() {
-                    @Override public void onClick(View v) {
-                        showLoadingView();
-                        initData(getArguments());
-                    }
-                });
-            }
+            ViewHelper.setDefaultViewClickListener(view, this);
         }
     }
 
     @Override public void smoothScrollToTop(boolean autoRefresh) {
         View view = getView();
         if (view == null) return;
-        final ScrollView scrollView = (ScrollView) tryGetTargetView(ScrollView.class, view);
+        final ScrollView scrollView = ViewHelper.tryGetTargetView(ScrollView.class, view);
         if (scrollView != null) {
             scrollView.post(new Runnable() {
                 @Override public void run() {
@@ -566,9 +530,8 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
                 }
             });
         }
-
         if (autoRefresh) {
-            final PtrFrameLayout frameLayout = (PtrFrameLayout) tryGetTargetView(PtrFrameLayout.class, view);
+            final PtrFrameLayout frameLayout = ViewHelper.tryGetTargetView(PtrFrameLayout.class, view);
             if (frameLayout != null) {
                 frameLayout.post(new Runnable() {
                     @Override public void run() {
@@ -577,23 +540,6 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
                 });
             }
         }
-    }
-
-    private View tryGetTargetView(Class clazz, View parentView) {
-        View targetView = null;
-        if (parentView.getClass() == clazz) {
-            targetView = parentView;
-        } else {
-            if (parentView instanceof ViewGroup) {
-                int childCount = ((ViewGroup) parentView).getChildCount();
-                for (int i = 0; i < childCount; i++) {
-                    View childAt = ((ViewGroup) parentView).getChildAt(i);
-                    targetView = tryGetTargetView(clazz, childAt);
-                    if (targetView != null) break;
-                }
-            }
-        }
-        return targetView;
     }
 
     @Override public final void post(Runnable action) {

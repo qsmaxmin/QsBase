@@ -10,6 +10,8 @@ import java.util.List;
  * @Description
  */
 public interface QsITopBottomLoadView<D> {
+    byte LOAD_WHEN_SCROLL_TO_BOTTOM = 0;
+    byte LOAD_WHEN_SECOND_TO_LAST   = 1;
 
     void onTopLoading();
 
@@ -30,6 +32,10 @@ public interface QsITopBottomLoadView<D> {
     void openBottomLoading();
 
     void closeBottomLoading();
+
+    boolean canTopLoading();
+
+    boolean canBottomLoading();
 
     void addTopData(List<D> list);
 

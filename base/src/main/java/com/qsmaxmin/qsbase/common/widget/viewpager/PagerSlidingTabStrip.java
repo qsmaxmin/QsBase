@@ -17,6 +17,7 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
@@ -77,7 +78,9 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
     }
 
     public interface CustomTabProvider {
-        int getCustomTabView(int position);
+        int getCustomTabViewId(int position);
+
+        View getCustomTabView(LayoutInflater inflater, ViewGroup parent, int position);
 
         void initTabsItem(View view, int position);
     }
@@ -218,7 +221,12 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
     private void addCustomTab(final int position) {
         CustomTabProvider adapter = (CustomTabProvider) pager.getAdapter();
         if (adapter == null) return;
-        View tab = LayoutInflater.from(getContext()).inflate(adapter.getCustomTabView(position), tabsContainer, false);
+        View tab;
+        if (adapter.getCustomTabViewId(position) != 0) {
+            tab = LayoutInflater.from(getContext()).inflate(adapter.getCustomTabViewId(position), tabsContainer, false);
+        } else {
+            tab = adapter.getCustomTabView(LayoutInflater.from(getContext()), tabsContainer, position);
+        }
         adapter.initTabsItem(tab, position);
         tab.setFocusable(true);
         tab.setOnClickListener(new OnClickListener() {

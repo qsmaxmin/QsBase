@@ -1,9 +1,9 @@
 package com.qsmaxmin.qsbase.common.widget.viewpager;
 
-import com.qsmaxmin.qsbase.mvp.QsIViewPager;
-import com.qsmaxmin.qsbase.mvp.adapter.QsTabAdapter;
 import com.qsmaxmin.qsbase.mvp.fragment.QsIFragment;
-import com.qsmaxmin.qsbase.mvp.model.QsModelPager;
+import com.qsmaxmin.qsbase.mvvm.MvIViewPager;
+import com.qsmaxmin.qsbase.mvvm.adapter.MvTabAdapter;
+import com.qsmaxmin.qsbase.mvvm.model.MvModelPager;
 
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
@@ -14,28 +14,28 @@ import androidx.viewpager.widget.ViewPager;
  * @Description
  */
 
-public class ViewPagerHelper {
-    private final QsIViewPager   viewPagerLayer;
+public class MvViewPagerHelper {
+    private final MvIViewPager   viewPagerLayer;
     private final ViewPager      pager;
-    private final QsModelPager[] viewPagerData;
+    private final MvModelPager[] viewPagerData;
     private       int            oldPosition = 0;
 
-    public ViewPagerHelper(QsIViewPager viewPagerLayer, ViewPager pager, QsModelPager[] modelPagers) {
+    public MvViewPagerHelper(MvIViewPager viewPagerLayer, ViewPager pager, MvModelPager[] modelPagers) {
         this.viewPagerLayer = viewPagerLayer;
         this.viewPagerData = modelPagers;
         this.pager = pager;
         pager.addOnPageChangeListener(new MyPageChangeListener());
     }
 
-    public QsModelPager[] getModelPagers() {
+    public MvModelPager[] getModelPagers() {
         return viewPagerData;
     }
 
-    public QsModelPager getModelPager(int position) {
+    public MvModelPager getModelPager(int position) {
         return viewPagerData[position];
     }
 
-    public QsModelPager getCurrentPager() {
+    public MvModelPager getCurrentPager() {
         return viewPagerData[pager.getCurrentItem()];
     }
 
@@ -43,7 +43,7 @@ public class ViewPagerHelper {
         return viewPagerData[pager.getCurrentItem()].fragment;
     }
 
-    public QsTabAdapter getTabAdapter() {
+    public MvTabAdapter getTabAdapter() {
         return viewPagerLayer.getTabAdapter();
     }
 
@@ -51,7 +51,7 @@ public class ViewPagerHelper {
         return pager;
     }
 
-    public QsIViewPager getViewPagerLayer() {
+    public MvIViewPager getViewPagerLayer() {
         return viewPagerLayer;
     }
 
@@ -68,7 +68,7 @@ public class ViewPagerHelper {
 
         @Override public void onPageSelected(int position) {
             for (int i = 0; i < viewPagerData.length; i++) {
-                QsModelPager qsModelPager = viewPagerData[i];
+                MvModelPager qsModelPager = viewPagerData[i];
                 if (qsModelPager.fragment instanceof QsIFragment) {
                     ((QsIFragment) qsModelPager.fragment).onFragmentSelectedInViewPager(position == i, position, viewPagerData.length);
                 }

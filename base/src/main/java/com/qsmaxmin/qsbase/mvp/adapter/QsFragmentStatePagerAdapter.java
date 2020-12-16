@@ -1,6 +1,6 @@
 package com.qsmaxmin.qsbase.mvp.adapter;
 
-import com.qsmaxmin.qsbase.common.widget.viewpager.ViewPagerHelper;
+import com.qsmaxmin.qsbase.common.widget.viewpager.QsViewPagerHelper;
 import com.qsmaxmin.qsbase.mvp.model.QsModelPager;
 
 import androidx.annotation.NonNull;
@@ -15,9 +15,9 @@ import androidx.viewpager.widget.PagerAdapter;
  * @Description 适合大量页面，不断重建和销毁
  */
 public class QsFragmentStatePagerAdapter extends FragmentStatePagerAdapter implements QsIPagerAdapter {
-    private final ViewPagerHelper pagerHelper;
+    private final QsViewPagerHelper pagerHelper;
 
-    public QsFragmentStatePagerAdapter(FragmentManager fm, ViewPagerHelper pagerHelper) {
+    public QsFragmentStatePagerAdapter(FragmentManager fm, QsViewPagerHelper pagerHelper) {
         super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         this.pagerHelper = pagerHelper;
     }
@@ -58,7 +58,7 @@ public class QsFragmentStatePagerAdapter extends FragmentStatePagerAdapter imple
         return pagerHelper.getCurrentFragment();
     }
 
-    protected ViewPagerHelper getPagerHelper() {
+    protected QsViewPagerHelper getPagerHelper() {
         return pagerHelper;
     }
 }

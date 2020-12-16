@@ -16,7 +16,7 @@ import java.util.List;
  */
 public class QsListAdapter<D> extends BaseAdapter {
     private final QsIListView<D> listLayer;
-    private       List<D>        mList;
+    private final List<D>        mList;
 
     public QsListAdapter(QsIListView<D> listLayer, List<D> list) {
         this.listLayer = listLayer;

@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import com.qsmaxmin.qsbase.R;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.widget.viewpager.PagerSlidingTabStrip;
-import com.qsmaxmin.qsbase.common.widget.viewpager.ViewPagerHelper;
+import com.qsmaxmin.qsbase.common.widget.viewpager.QsViewPagerHelper;
 import com.qsmaxmin.qsbase.mvp.QsIView;
 import com.qsmaxmin.qsbase.mvp.QsIViewPager;
 import com.qsmaxmin.qsbase.mvp.adapter.QsFragmentPagerAdapter;
@@ -60,7 +60,7 @@ public abstract class QsViewPagerFragment<P extends QsPresenter> extends QsFragm
 
     @Override public void initViewPager(QsModelPager[] modelPagers, int offScreenPageLimit) {
         if (modelPagers != null && modelPagers.length > 0) {
-            ViewPagerHelper pagerHelper = new ViewPagerHelper(this, pager, modelPagers);
+            QsViewPagerHelper pagerHelper = new QsViewPagerHelper(this, pager, modelPagers);
             QsTabAdapterItem firstTabItem = createTabAdapterItem(0);
             if (firstTabItem != null) {
                 tabAdapter = new QsTabAdapter(this, modelPagers, firstTabItem);
@@ -75,7 +75,7 @@ public abstract class QsViewPagerFragment<P extends QsPresenter> extends QsFragm
         }
     }
 
-    protected QsIPagerAdapter createPagerAdapter(ViewPagerHelper pagerHelper, boolean customTabView) {
+    protected QsIPagerAdapter createPagerAdapter(QsViewPagerHelper pagerHelper, boolean customTabView) {
         if (customTabView) {
             return new QsTabFragmentPagerAdapter(getChildFragmentManager(), pagerHelper);
         } else {

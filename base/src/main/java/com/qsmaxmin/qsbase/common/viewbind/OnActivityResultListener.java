@@ -1,4 +1,4 @@
-package com.qsmaxmin.qsbase.mvp;
+package com.qsmaxmin.qsbase.common.viewbind;
 
 import android.content.Intent;
 

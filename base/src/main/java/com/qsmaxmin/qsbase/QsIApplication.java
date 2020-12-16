@@ -2,10 +2,14 @@ package com.qsmaxmin.qsbase;
 
 import android.app.Activity;
 import android.app.Application;
+import android.view.LayoutInflater;
+import android.view.ViewGroup;
 
 import com.qsmaxmin.qsbase.common.http.QsHttpCallback;
 import com.qsmaxmin.qsbase.common.utils.ImageHelper;
 import com.qsmaxmin.qsbase.common.widget.dialog.QsProgressDialog;
+import com.qsmaxmin.qsbase.mvp.QsIView;
+import com.qsmaxmin.qsbase.mvvm.MvIView;
 
 import androidx.annotation.LayoutRes;
 
@@ -32,10 +36,34 @@ public interface QsIApplication {
 
     void onActivityDestroy(Activity activity);
 
+    /**
+     * 全局加载中布局
+     *
+     * @see QsIView#isOpenViewState() return true生效
+     * @see QsIView#loadingLayoutId()
+     * @see MvIView#isOpenViewState() return true生效
+     * @see MvIView#onCreateLoadingView(LayoutInflater, ViewGroup)
+     */
     @LayoutRes int loadingLayoutId();
 
+    /**
+     * 全局空页面布局
+     *
+     * @see QsIView#isOpenViewState() return true生效
+     * @see QsIView#emptyLayoutId()
+     * @see MvIView#isOpenViewState() return true生效
+     * @see MvIView#onCreateEmptyView(LayoutInflater, ViewGroup)
+     */
     @LayoutRes int emptyLayoutId();
 
+    /**
+     * 全局数据异常布局
+     *
+     * @see QsIView#isOpenViewState() return true生效
+     * @see QsIView#errorLayoutId()
+     * @see MvIView#isOpenViewState() return true生效
+     * @see MvIView#onCreateErrorView(LayoutInflater, ViewGroup)
+     */
     @LayoutRes int errorLayoutId();
 
     /**
