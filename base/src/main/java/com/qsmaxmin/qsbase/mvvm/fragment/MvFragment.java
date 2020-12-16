@@ -635,14 +635,16 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
     }
 
     @Override public void methodError(QsException e) {
-        if (this instanceof QsIPullToRefreshView) {
-            QsIPullToRefreshView view = (QsIPullToRefreshView) this;
-            view.stopRefreshing();
-            view.setLoadingState(LoadingFooter.State.NetWorkError);
+        if (isAdded() && !isDetached()) {
+            if (this instanceof QsIPullToRefreshView) {
+                QsIPullToRefreshView view = (QsIPullToRefreshView) this;
+                view.stopRefreshing();
+                view.setLoadingState(LoadingFooter.State.NetWorkError);
+            }
+            if (!isShowContentView()) {
+                showErrorView();
+            }
+            loadingClose();
         }
-        if (!isShowContentView()) {
-            showErrorView();
-        }
-        loadingClose();
     }
 }
