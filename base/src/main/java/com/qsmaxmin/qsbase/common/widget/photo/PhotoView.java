@@ -32,9 +32,7 @@ import androidx.appcompat.widget.AppCompatImageView;
  * A zoomable ImageView. See {@link PhotoViewAttacher} for most of the details on how the zooming
  * is accomplished
  */
-@SuppressWarnings("unused")
 public class PhotoView extends AppCompatImageView {
-
     private PhotoViewAttacher   attacher;
     private ImageView.ScaleType pendingScaleType;
 
