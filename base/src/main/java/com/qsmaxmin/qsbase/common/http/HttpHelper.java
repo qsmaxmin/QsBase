@@ -125,7 +125,7 @@ public class HttpHelper {
             return createResult(httpRequest, call.execute());
         } catch (Exception e) {
             if (errorReceiver != null) errorReceiver.methodError(new QsException(requestTag, e));
-            if (L.isEnable()) e.printStackTrace();
+            if (L.isEnable()) L.e(TAG, e.getMessage(), e);
             return null;
         }
     }
