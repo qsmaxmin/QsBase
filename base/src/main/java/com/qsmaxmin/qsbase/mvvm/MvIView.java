@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 
 import com.qsmaxmin.annotation.QsNotProguard;
+import com.qsmaxmin.qsbase.common.http.NetworkErrorReceiver;
 import com.qsmaxmin.qsbase.common.viewbind.OnActivityResultListener;
 import com.qsmaxmin.qsbase.common.widget.dialog.QsProgressDialog;
 import com.qsmaxmin.qsbase.plugin.bind.QsIBindBundle;
@@ -24,7 +25,7 @@ import androidx.fragment.app.FragmentActivity;
  * @Date 2020/12/8 14:42
  * @Description MVVM架构，View层基类
  */
-public interface MvIView extends QsIBindEvent, QsIBindBundle, QsNotProguard {
+public interface MvIView extends QsIBindEvent, QsIBindBundle, QsNotProguard, NetworkErrorReceiver {
     int VIEW_STATE_LOADING = 0;
     int VIEW_STATE_CONTENT = 1;
     int VIEW_STATE_EMPTY   = 2;
@@ -149,4 +150,12 @@ public interface MvIView extends QsIBindEvent, QsIBindBundle, QsNotProguard {
     int contentViewBackgroundColor();
 
     void onBackPressed();
+
+    <T> T createHttpRequest(Class<T> clazz);
+
+    <T> T createHttpRequest(Class<T> clazz, Object tag);
+
+    <T> T createHttpRequest(Class<T> clazz, NetworkErrorReceiver receiver);
+
+    <T> T createHttpRequest(Class<T> clazz, Object requestTag, NetworkErrorReceiver receiver);
 }

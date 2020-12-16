@@ -151,7 +151,7 @@ MVP(或MVVM)架构+AOP面向切面编程，摒弃反射、代理等操作，稳�
              */
             @ThreadPoint(ThreadType.HTTP)
             public void requestDataFromNetwork(String userId) {
-                UserHttp http = HttpHelper.getInstance().create(UserHttp.class);
+                UserHttp http = createHttpRequest(UserHttp.class);
                 ModelUser modelUser = http.requestUserData(userId);
                 updateUI(modelUser);
             }

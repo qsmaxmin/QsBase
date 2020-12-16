@@ -11,15 +11,22 @@ import android.widget.ScrollView;
 import android.widget.ViewAnimator;
 
 import com.qsmaxmin.qsbase.R;
+import com.qsmaxmin.qsbase.common.exception.QsException;
+import com.qsmaxmin.qsbase.common.http.HttpHelper;
+import com.qsmaxmin.qsbase.common.http.NetworkErrorReceiver;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.common.utils.ViewHelper;
 import com.qsmaxmin.qsbase.common.viewbind.OnActivityResultListener;
 import com.qsmaxmin.qsbase.common.widget.dialog.QsProgressDialog;
 import com.qsmaxmin.qsbase.common.widget.headerview.ScrollerProvider;
+import com.qsmaxmin.qsbase.common.widget.listview.LoadingFooter;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout;
 import com.qsmaxmin.qsbase.mvp.QsIActivity;
+import com.qsmaxmin.qsbase.mvp.QsIPullToRefreshView;
 import com.qsmaxmin.qsbase.plugin.threadpoll.QsThreadPollHelper;
+
+import java.util.HashSet;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.CallSuper;
@@ -43,6 +50,7 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
     protected QsProgressDialog         mProgressDialog;
     protected ViewAnimator             mViewAnimator;
     private   OnActivityResultListener activityResultListener;
+    private   HashSet<Object>          requestTags;
 
     @Override public String initTag() {
         return L.isEnable() ? getClass().getSimpleName() : "QsFragment";
@@ -100,6 +108,7 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
         }
         mViewAnimator = null;
         unbindEventByQsPlugin();
+        cancelAllHttpRequest();
     }
 
     protected View initView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container) {
@@ -587,5 +596,53 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
                 });
             }
         }
+    }
+
+    @Override @Nullable public final <T> T createHttpRequest(Class<T> clazz) {
+        return createHttpRequest(clazz, System.nanoTime(), this);
+    }
+
+    @Override @Nullable public final <T> T createHttpRequest(Class<T> clazz, Object tag) {
+        return createHttpRequest(clazz, tag, this);
+    }
+
+    @Override @Nullable public final <T> T createHttpRequest(Class<T> clazz, NetworkErrorReceiver receiver) {
+        return createHttpRequest(clazz, System.nanoTime(), receiver);
+    }
+
+    @Override @Nullable public final <T> T createHttpRequest(Class<T> clazz, Object requestTag, NetworkErrorReceiver receiver) {
+        synchronized (this) {
+            if (requestTags == null) requestTags = new HashSet<>();
+            if (!requestTags.contains(requestTag)) {
+                requestTags.add(requestTag);
+            } else {
+                L.e(initTag(), "createHttpRequest Repeated tag:" + requestTag);
+            }
+        }
+        return HttpHelper.getInstance().create(clazz, requestTag, receiver);
+    }
+
+    /**
+     * 取消由当前Fragment发起的http请求
+     */
+    protected final void cancelAllHttpRequest() {
+        if (requestTags != null) {
+            synchronized (this) {
+                QsHelper.getHttpHelper().cancelRequest(requestTags);
+                requestTags.clear();
+            }
+        }
+    }
+
+    @Override public void methodError(QsException e) {
+        if (this instanceof QsIPullToRefreshView) {
+            QsIPullToRefreshView view = (QsIPullToRefreshView) this;
+            view.stopRefreshing();
+            view.setLoadingState(LoadingFooter.State.NetWorkError);
+        }
+        if (!isShowContentView()) {
+            showErrorView();
+        }
+        loadingClose();
     }
 }

@@ -12,14 +12,21 @@ import android.widget.ScrollView;
 import android.widget.ViewAnimator;
 
 import com.qsmaxmin.qsbase.R;
+import com.qsmaxmin.qsbase.common.exception.QsException;
+import com.qsmaxmin.qsbase.common.http.HttpHelper;
+import com.qsmaxmin.qsbase.common.http.NetworkErrorReceiver;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.common.utils.ViewHelper;
 import com.qsmaxmin.qsbase.common.viewbind.OnActivityResultListener;
 import com.qsmaxmin.qsbase.common.viewbind.OnKeyDownListener;
 import com.qsmaxmin.qsbase.common.widget.dialog.QsProgressDialog;
+import com.qsmaxmin.qsbase.common.widget.listview.LoadingFooter;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout;
+import com.qsmaxmin.qsbase.mvp.QsIPullToRefreshView;
 import com.qsmaxmin.qsbase.plugin.permission.PermissionHelper;
+
+import java.util.HashSet;
 
 import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
@@ -41,6 +48,7 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
     private OnActivityResultListener activityResultListener;
     private OnKeyDownListener        onKeyDownListener;
     private View                     rootView;
+    private HashSet<Object>          requestTags;
 
     @CallSuper @Override public void bindBundleByQsPlugin(Bundle bundle) {
     }
@@ -79,6 +87,8 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
         }
         onKeyDownListener = null;
         activityResultListener = null;
+        cancelAllHttpRequest();
+
         unbindEventByQsPlugin();
         QsHelper.getAppInterface().onActivityDestroy(this);
         QsHelper.getScreenHelper().popActivity(this);
@@ -549,5 +559,53 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
                 });
             }
         }
+    }
+
+    @Override @Nullable public final <T> T createHttpRequest(Class<T> clazz) {
+        return createHttpRequest(clazz, System.nanoTime(), this);
+    }
+
+    @Override @Nullable public final <T> T createHttpRequest(Class<T> clazz, Object tag) {
+        return createHttpRequest(clazz, tag, this);
+    }
+
+    @Override @Nullable public final <T> T createHttpRequest(Class<T> clazz, NetworkErrorReceiver receiver) {
+        return createHttpRequest(clazz, System.nanoTime(), receiver);
+    }
+
+    @Override @Nullable public final <T> T createHttpRequest(Class<T> clazz, Object requestTag, NetworkErrorReceiver receiver) {
+        synchronized (this) {
+            if (requestTags == null) requestTags = new HashSet<>();
+            if (!requestTags.contains(requestTag)) {
+                requestTags.add(requestTag);
+            } else {
+                L.e(initTag(), "createHttpRequest Repeated tag:" + requestTag);
+            }
+        }
+        return HttpHelper.getInstance().create(clazz, requestTag, receiver);
+    }
+
+    /**
+     * 取消由当前Activity发起的http请求
+     */
+    protected final void cancelAllHttpRequest() {
+        if (requestTags != null) {
+            synchronized (this) {
+                QsHelper.getHttpHelper().cancelRequest(requestTags);
+                requestTags.clear();
+            }
+        }
+    }
+
+    @Override public void methodError(QsException e) {
+        if (this instanceof QsIPullToRefreshView) {
+            QsIPullToRefreshView view = (QsIPullToRefreshView) this;
+            view.stopRefreshing();
+            view.setLoadingState(LoadingFooter.State.NetWorkError);
+        }
+        if (!isShowContentView()) {
+            showErrorView();
+        }
+        loadingClose();
     }
 }

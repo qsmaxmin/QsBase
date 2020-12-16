@@ -10,6 +10,7 @@ import com.qsmaxmin.qsbase.common.utils.QsHelper;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -150,6 +151,34 @@ public class HttpHelper {
                     if (requestTag.equals(request.tag())) {
                         if (L.isEnable()) {
                             L.i(TAG, "cancel running request ... requestTag=" + requestTag + "  url=" + call.request().url());
+                        }
+                        call.cancel();
+                    }
+                }
+            }
+        }
+    }
+
+    public void cancelRequest(Collection<Object> list) {
+        if (client != null && list != null) {
+            synchronized (client.dispatcher()) {
+                Dispatcher dispatcher = client.dispatcher();
+                List<Call> queuedCalls = dispatcher.queuedCalls();
+                for (Call call : queuedCalls) {
+                    Request request = call.request();
+                    if (list.contains(request.tag())) {
+                        if (L.isEnable()) {
+                            L.i(TAG, "cancel queued request success... requestTag=" + list + "  url=" + request.url());
+                        }
+                        call.cancel();
+                    }
+                }
+                List<Call> runningCalls = dispatcher.runningCalls();
+                for (Call call : runningCalls) {
+                    Request request = call.request();
+                    if (list.contains(request.tag())) {
+                        if (L.isEnable()) {
+                            L.i(TAG, "cancel running request ... requestTag=" + list + "  url=" + call.request().url());
                         }
                         call.cancel();
                     }
