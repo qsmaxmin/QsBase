@@ -2,6 +2,7 @@ package com.qsmaxmin.qsbase.mvvm;
 
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import com.qsmaxmin.qsbase.common.viewbind.OnKeyDownListener;
@@ -26,5 +27,5 @@ public interface MvIActivity extends MvIView {
 
     void setActivityTitle(CharSequence title, int type);
 
-    void onCreateActionbarView(LayoutInflater inflater, ViewGroup parent);
+    View onCreateActionbarView(LayoutInflater inflater, ViewGroup parent);
 }

@@ -107,7 +107,8 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
         initData(savedInstanceState);
     }
 
-    @Override public void onCreateActionbarView(LayoutInflater inflater, ViewGroup parent) {
+    @Override public View onCreateActionbarView(LayoutInflater inflater, ViewGroup parent) {
+        return null;
     }
 
     @Override public View onCreateLoadingView(LayoutInflater inflater, ViewGroup parent) {
@@ -125,11 +126,14 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
     protected View initView(LayoutInflater inflater) {
         long s0 = 0;
         if (L.isEnable()) s0 = System.currentTimeMillis();
-        ViewGroup rootView = (ViewGroup) inflater.inflate(rootViewLayoutId(), null);
+        View rootView = inflater.inflate(rootViewLayoutId(), null);
 
         ViewGroup actionbarContainer = rootView.findViewById(R.id.qs_actionbar_parent);
         if (actionbarContainer != null) {
-            onCreateActionbarView(inflater, actionbarContainer);
+            View actionbarView = onCreateActionbarView(inflater, actionbarContainer);
+            if (actionbarView != null && actionbarView.getParent() == null) {
+                actionbarContainer.addView(actionbarView);
+            }
         }
 
         if (isOpenViewState()) {
