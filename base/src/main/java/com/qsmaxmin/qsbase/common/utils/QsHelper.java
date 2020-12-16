@@ -280,7 +280,7 @@ public class QsHelper {
     /**
      * 释放内存
      */
-    static void release() {
+    public static void release() {
         QsThreadPollHelper.release();
         PermissionHelper.release();
         HttpHelper.release();
