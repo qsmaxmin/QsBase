@@ -54,7 +54,12 @@ public abstract class QsDialogFragment extends DialogFragment implements QsIBind
             getDialog().setCanceledOnTouchOutside(true);
             getDialog().setCancelable(true);
         }
-        View customView = inflater.inflate(layoutId(), container, false);
+        View customView;
+        if (layoutId() != 0) {
+            customView = inflater.inflate(layoutId(), container, false);
+        } else {
+            customView = onCreateContentView(inflater, container);
+        }
         bindViewByQsPlugin(customView);
         bindEventByQsPlugin();
         return customView;
@@ -95,7 +100,13 @@ public abstract class QsDialogFragment extends DialogFragment implements QsIBind
     public void onViewClick(View view) {
     }
 
-    protected abstract int layoutId();
+    protected int layoutId() {
+        return 0;
+    }
+
+    protected View onCreateContentView(LayoutInflater inflater, ViewGroup parent) {
+        return null;
+    }
 
     protected abstract void initData();
 
