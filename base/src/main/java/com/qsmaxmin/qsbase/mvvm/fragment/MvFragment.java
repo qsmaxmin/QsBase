@@ -60,6 +60,10 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
         return isOpenViewState() ? R.layout.qs_view_animator : R.layout.qs_frame_layout;
     }
 
+    @Override public void onViewClick(View view) {
+        //custom your logic
+    }
+
     @Override public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (interceptBackPressed()) {

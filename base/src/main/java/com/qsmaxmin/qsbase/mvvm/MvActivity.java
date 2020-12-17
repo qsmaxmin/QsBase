@@ -196,6 +196,10 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
         }
     }
 
+    @Override public void onViewClick(View view) {
+        //custom your logic
+    }
+
     @Override public Context getContext() {
         return this;
     }

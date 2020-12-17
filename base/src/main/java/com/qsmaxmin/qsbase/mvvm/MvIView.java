@@ -33,6 +33,8 @@ public interface MvIView extends QsIBindEvent, QsIBindBundle, QsNotProguard, Net
 
     String initTag();
 
+    void onViewClick(View view);
+
     int rootViewLayoutId();
 
     QsProgressDialog getLoadingDialog();
