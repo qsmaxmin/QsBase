@@ -1,5 +1,6 @@
 package com.qsmaxmin.qsbase.common.widget.dialog;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -12,6 +13,7 @@ import com.qsmaxmin.qsbase.R;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.common.utils.ViewHelper;
+import com.qsmaxmin.qsbase.mvp.QsIView;
 import com.qsmaxmin.qsbase.mvvm.IView;
 import com.qsmaxmin.qsbase.plugin.bind.QsIBindBundle;
 import com.qsmaxmin.qsbase.plugin.bind.QsIBindView;
@@ -108,6 +110,90 @@ public abstract class QsDialogFragment extends DialogFragment implements IView, 
             if (ViewHelper.isFastClick(interval)) return;
         }
         onViewClick(view);
+    }
+
+    @Override public void loading() {
+        if (getActivity() instanceof IView) {
+            ((IView) getActivity()).loading();
+        } else if (getActivity() instanceof QsIView) {
+            ((QsIView) getActivity()).loading();
+        }
+    }
+
+    @Override public void loading(int resId) {
+        if (getActivity() instanceof IView) {
+            ((IView) getActivity()).loading(resId);
+        } else if (getActivity() instanceof QsIView) {
+            ((QsIView) getActivity()).loading(resId);
+        }
+    }
+
+    @Override public void loading(String message) {
+        if (getActivity() instanceof IView) {
+            ((IView) getActivity()).loading(message);
+        } else if (getActivity() instanceof QsIView) {
+            ((QsIView) getActivity()).loading(message);
+        }
+    }
+
+    @Override public void loading(boolean cancelAble) {
+        if (getActivity() instanceof IView) {
+            ((IView) getActivity()).loading(cancelAble);
+        } else if (getActivity() instanceof QsIView) {
+            ((QsIView) getActivity()).loading(cancelAble);
+        }
+    }
+
+    @Override public void loading(int resId, boolean cancelAble) {
+        if (getActivity() instanceof IView) {
+            ((IView) getActivity()).loading(resId, cancelAble);
+        } else if (getActivity() instanceof QsIView) {
+            ((QsIView) getActivity()).loading(resId, cancelAble);
+        }
+    }
+
+    @Override public void loading(String message, boolean cancelAble) {
+        if (getActivity() instanceof IView) {
+            ((IView) getActivity()).loading(message, cancelAble);
+        } else if (getActivity() instanceof QsIView) {
+            ((QsIView) getActivity()).loading(message, cancelAble);
+        }
+    }
+
+    @Override public void loadingClose() {
+        if (getActivity() instanceof IView) {
+            ((IView) getActivity()).loadingClose();
+        } else if (getActivity() instanceof QsIView) {
+            ((QsIView) getActivity()).loadingClose();
+        }
+    }
+
+    @Nullable @Override public Context getContext() {
+        return super.getContext();
+    }
+
+    @Override public void activityFinish() {
+        if (getActivity() instanceof IView) {
+            ((IView) getActivity()).activityFinish();
+        } else if (getActivity() instanceof QsIView) {
+            ((QsIView) getActivity()).activityFinish();
+        }
+    }
+
+    @Override public void activityFinish(int enterAnim, int exitAnim) {
+        if (getActivity() instanceof IView) {
+            ((IView) getActivity()).activityFinish(enterAnim, exitAnim);
+        } else if (getActivity() instanceof QsIView) {
+            ((QsIView) getActivity()).activityFinish(enterAnim, exitAnim);
+        }
+    }
+
+    @Override public void activityFinish(boolean finishAfterTransition) {
+        if (getActivity() instanceof IView) {
+            ((IView) getActivity()).activityFinish(finishAfterTransition);
+        } else if (getActivity() instanceof QsIView) {
+            ((QsIView) getActivity()).activityFinish(finishAfterTransition);
+        }
     }
 
     protected void onViewClick(View view) {

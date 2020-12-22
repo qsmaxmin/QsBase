@@ -23,7 +23,7 @@ public class MvTabAdapter {
         this.items = new ArrayList<>(modelPagers.length);
         items.add(firstTabItem);
         for (int i = 1; i < modelPagers.length; i++) {
-            MvTabAdapterItem tabAdapterItem = viewLayer.createTabAdapterItem(i);
+            MvTabAdapterItem tabAdapterItem = viewLayer.createTabAdapterItemInner(i);
             if (tabAdapterItem == null) {
                 throw new IllegalStateException(viewLayer.getClass().getName() + ".createTabAdapterItem() cannot return null!");
             }

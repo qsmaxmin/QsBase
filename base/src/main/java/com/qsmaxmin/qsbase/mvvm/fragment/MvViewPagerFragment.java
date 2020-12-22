@@ -60,7 +60,7 @@ public abstract class MvViewPagerFragment extends MvFragment implements MvIViewP
     @Override public void initViewPager(MvModelPager[] modelPagers, int offScreenPageLimit) {
         if (modelPagers != null && modelPagers.length > 0) {
             MvViewPagerHelper pagerHelper = new MvViewPagerHelper(this, pager, modelPagers);
-            MvTabAdapterItem firstTabItem = createTabAdapterItem(0);
+            MvTabAdapterItem firstTabItem = createTabAdapterItemInner(0);
             if (firstTabItem != null) {
                 tabAdapter = new MvTabAdapter(this, modelPagers, firstTabItem);
                 adapter = createPagerAdapter(pagerHelper, true);
@@ -111,6 +111,12 @@ public abstract class MvViewPagerFragment extends MvFragment implements MvIViewP
         } else {
             L.e(initTag(), "adapter is null.... override getModelPagers() return not null or call initViewPager() before !");
         }
+    }
+
+    @Override public MvTabAdapterItem createTabAdapterItemInner(int position) {
+        MvTabAdapterItem item = createTabAdapterItem(position);
+        if (item != null) item.setLayer(this);
+        return item;
     }
 
     @Override public MvTabAdapterItem createTabAdapterItem(int position) {

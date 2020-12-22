@@ -40,6 +40,74 @@ public abstract class MvRecycleAdapterItem<D> implements IView, QsNotProguard {
         onViewClick(view);
     }
 
+    @Override public final Context getContext() {
+        return viewLayer.getContext();
+    }
+
+    @Override public final FragmentActivity getActivity() {
+        return viewLayer.getActivity();
+    }
+
+    @Override public final void loading() {
+        if (getActivity() instanceof IView) {
+            ((IView) getActivity()).loading();
+        }
+    }
+
+    @Override public final void loading(int resId) {
+        if (getActivity() instanceof IView) {
+            ((IView) getActivity()).loading(resId);
+        }
+    }
+
+    @Override public final void loading(String message) {
+        if (getActivity() instanceof IView) {
+            ((IView) getActivity()).loading(message);
+        }
+    }
+
+    @Override public final void loading(boolean cancelAble) {
+        if (getActivity() instanceof IView) {
+            ((IView) getActivity()).loading(cancelAble);
+        }
+    }
+
+    @Override public final void loading(int resId, boolean cancelAble) {
+        if (getActivity() instanceof IView) {
+            ((IView) getActivity()).loading(resId, cancelAble);
+        }
+    }
+
+    @Override public final void loading(String message, boolean cancelAble) {
+        if (getActivity() instanceof IView) {
+            ((IView) getActivity()).loading(message, cancelAble);
+        }
+    }
+
+    @Override public final void loadingClose() {
+        if (getActivity() instanceof IView) {
+            ((IView) getActivity()).loadingClose();
+        }
+    }
+
+    @Override public final void activityFinish() {
+        if (getActivity() instanceof IView) {
+            ((IView) getActivity()).activityFinish();
+        }
+    }
+
+    @Override public final void activityFinish(int enterAnim, int exitAnim) {
+        if (getActivity() instanceof IView) {
+            ((IView) getActivity()).activityFinish(enterAnim, exitAnim);
+        }
+    }
+
+    @Override public final void activityFinish(boolean finishAfterTransition) {
+        if (getActivity() instanceof IView) {
+            ((IView) getActivity()).activityFinish(finishAfterTransition);
+        }
+    }
+
     protected void onViewClick(View view) {
     }
 
@@ -69,14 +137,6 @@ public abstract class MvRecycleAdapterItem<D> implements IView, QsNotProguard {
 
     protected final void sendEvent(int eventType, D data, int position) {
         viewLayer.onReceiveAdapterItemEvent(eventType, data, position);
-    }
-
-    public final Context getContext() {
-        return viewLayer.getContext();
-    }
-
-    protected final FragmentActivity getActivity() {
-        return viewLayer.getActivity();
     }
 
     public final void intent2Activity(Class clazz) {

@@ -1,6 +1,5 @@
 package com.qsmaxmin.qsbase.mvvm;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,7 +17,6 @@ import androidx.annotation.StringRes;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 
 /**
  * @CreateBy administrator
@@ -49,8 +47,6 @@ public interface MvIView extends IView, QsIBindEvent, QsIBindBundle, QsNotProgua
 
     void initData(Bundle savedInstanceState);
 
-    Context getContext();
-
     boolean isOpenViewState();
 
     Animation viewStateInAnimation();
@@ -70,20 +66,6 @@ public interface MvIView extends IView, QsIBindEvent, QsIBindBundle, QsNotProgua
     void activityFinish(int enterAnim, int exitAnim);
 
     void activityFinish(boolean finishAfterTransition);
-
-    void loading();
-
-    void loading(String message);
-
-    void loading(boolean cancelAble);
-
-    void loading(@StringRes int resId);
-
-    void loading(@StringRes int resId, boolean cancelAble);
-
-    void loading(String message, boolean cancelAble);
-
-    void loadingClose();
 
     void showLoadingView();
 
@@ -142,8 +124,6 @@ public interface MvIView extends IView, QsIBindEvent, QsIBindBundle, QsNotProgua
     void runOnHttpThread(Runnable action);
 
     void runOnWorkThread(Runnable action);
-
-    FragmentActivity getActivity();
 
     void smoothScrollToTop(boolean autoRefresh);
 

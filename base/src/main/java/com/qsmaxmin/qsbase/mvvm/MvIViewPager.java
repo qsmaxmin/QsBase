@@ -37,6 +37,8 @@ public interface MvIViewPager {
 
     MvIPagerAdapter getViewPagerAdapter();
 
+    MvTabAdapterItem createTabAdapterItemInner(int position);
+
     MvTabAdapterItem createTabAdapterItem(int position);
 
     MvTabAdapter getTabAdapter();
