@@ -23,9 +23,9 @@ import androidx.fragment.app.FragmentActivity;
 /**
  * @CreateBy administrator
  * @Date 2020/12/8 14:42
- * @Description MVVM架构，View层基类
+ * @Description MVVM架构的View层基类
  */
-public interface MvIView extends QsIBindEvent, QsIBindBundle, QsNotProguard, NetworkErrorReceiver {
+public interface MvIView extends IView, QsIBindEvent, QsIBindBundle, QsNotProguard, NetworkErrorReceiver {
     int VIEW_STATE_LOADING = 0;
     int VIEW_STATE_CONTENT = 1;
     int VIEW_STATE_EMPTY   = 2;

@@ -196,6 +196,17 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
         }
     }
 
+    @Override public final void onViewClicked(View view) {
+        onViewClicked(view, 400);
+    }
+
+    @Override public final void onViewClicked(View view, long interval) {
+        if (interval > 0) {
+            if (ViewHelper.isFastClick(interval)) return;
+        }
+        onViewClick(view);
+    }
+
     @Override public void onViewClick(View view) {
         //custom your logic
     }

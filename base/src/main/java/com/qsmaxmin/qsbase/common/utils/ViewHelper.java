@@ -26,6 +26,17 @@ import androidx.core.app.ActivityOptionsCompat;
  * @Description
  */
 public class ViewHelper {
+    private static long lastClickTime;
+
+    public static boolean isFastClick(long interval) {
+        long time = System.currentTimeMillis();
+        if (time - lastClickTime < interval) {
+            return true;
+        }
+        lastClickTime = time;
+        return false;
+    }
+
     public static void initStatusBar(Activity activity, boolean transparentStatus, boolean transparentNavigation, boolean blackIconInStatus) {
         if (transparentStatus || transparentNavigation) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

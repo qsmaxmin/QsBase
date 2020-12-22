@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 
 import com.qsmaxmin.annotation.QsNotProguard;
 import com.qsmaxmin.qsbase.common.log.L;
+import com.qsmaxmin.qsbase.common.utils.ViewHelper;
+import com.qsmaxmin.qsbase.mvvm.IView;
 import com.qsmaxmin.qsbase.mvvm.MvIListView;
 
 import androidx.annotation.NonNull;
@@ -21,8 +23,22 @@ import androidx.fragment.app.FragmentActivity;
  * @Date 16/8/4
  * @Description ListView holder
  */
-public abstract class MvListAdapterItem<D> implements QsNotProguard {
+public abstract class MvListAdapterItem<D> implements QsNotProguard, IView {
     private MvIListView<D> viewLayer;
+
+    @Override public final void onViewClicked(View view) {
+        onViewClicked(view, 400);
+    }
+
+    @Override public final void onViewClicked(View view, long interval) {
+        if (interval > 0) {
+            if (ViewHelper.isFastClick(interval)) return;
+        }
+        onViewClick(view);
+    }
+
+    protected void onViewClick(View view) {
+    }
 
     protected String initTag() {
         return L.isEnable() ? getClass().getSimpleName() : "MvListAdapterItem";

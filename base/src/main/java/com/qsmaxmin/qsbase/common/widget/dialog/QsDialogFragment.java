@@ -11,6 +11,8 @@ import com.qsmaxmin.annotation.QsNotProguard;
 import com.qsmaxmin.qsbase.R;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
+import com.qsmaxmin.qsbase.common.utils.ViewHelper;
+import com.qsmaxmin.qsbase.mvvm.IView;
 import com.qsmaxmin.qsbase.plugin.bind.QsIBindBundle;
 import com.qsmaxmin.qsbase.plugin.bind.QsIBindView;
 import com.qsmaxmin.qsbase.plugin.event.QsIBindEvent;
@@ -30,7 +32,7 @@ import androidx.fragment.app.FragmentManager;
  * @Date 17/8/3  上午12:35
  * @Description
  */
-public abstract class QsDialogFragment extends DialogFragment implements QsIBindView, QsIBindBundle, QsIBindEvent, QsNotProguard {
+public abstract class QsDialogFragment extends DialogFragment implements IView, QsIBindView, QsIBindBundle, QsIBindEvent, QsNotProguard {
     private SimpleClickListener listener;
 
     @Override public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -97,7 +99,18 @@ public abstract class QsDialogFragment extends DialogFragment implements QsIBind
         return L.isEnable() ? getClass().getSimpleName() : "QsDialogFragment";
     }
 
-    public void onViewClick(View view) {
+    @Override public final void onViewClicked(View view) {
+        onViewClicked(view, 400);
+    }
+
+    @Override public final void onViewClicked(View view, long interval) {
+        if (interval > 0) {
+            if (ViewHelper.isFastClick(interval)) return;
+        }
+        onViewClick(view);
+    }
+
+    protected void onViewClick(View view) {
     }
 
     protected int layoutId() {

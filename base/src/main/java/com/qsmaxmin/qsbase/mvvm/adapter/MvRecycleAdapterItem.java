@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 
 import com.qsmaxmin.annotation.QsNotProguard;
 import com.qsmaxmin.qsbase.common.log.L;
+import com.qsmaxmin.qsbase.common.utils.ViewHelper;
+import com.qsmaxmin.qsbase.mvvm.IView;
 import com.qsmaxmin.qsbase.mvvm.MvIRecyclerView;
 
 import androidx.annotation.NonNull;
@@ -23,9 +25,23 @@ import androidx.fragment.app.FragmentActivity;
  * @Description RecyclerView holder
  */
 @SuppressWarnings({"SameParameterValue"})
-public abstract class MvRecycleAdapterItem<D> implements QsNotProguard {
+public abstract class MvRecycleAdapterItem<D> implements IView, QsNotProguard {
     private final View               itemView;
     private       MvIRecyclerView<D> viewLayer;
+
+    @Override public final void onViewClicked(View view) {
+        onViewClicked(view, 400);
+    }
+
+    @Override public final void onViewClicked(View view, long interval) {
+        if (interval > 0) {
+            if (ViewHelper.isFastClick(interval)) return;
+        }
+        onViewClick(view);
+    }
+
+    protected void onViewClick(View view) {
+    }
 
     public MvRecycleAdapterItem(LayoutInflater inflater, ViewGroup parent) {
         itemView = onCreateItemView(inflater, parent);
