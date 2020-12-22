@@ -112,7 +112,7 @@ public abstract class QsDialogFragment extends DialogFragment implements IView, 
         onViewClick(view);
     }
 
-    @Override public void loading() {
+    @Override public final void loading() {
         if (getActivity() instanceof IView) {
             ((IView) getActivity()).loading();
         } else if (getActivity() instanceof QsIView) {
@@ -120,7 +120,7 @@ public abstract class QsDialogFragment extends DialogFragment implements IView, 
         }
     }
 
-    @Override public void loading(int resId) {
+    @Override public final void loading(int resId) {
         if (getActivity() instanceof IView) {
             ((IView) getActivity()).loading(resId);
         } else if (getActivity() instanceof QsIView) {
@@ -128,7 +128,7 @@ public abstract class QsDialogFragment extends DialogFragment implements IView, 
         }
     }
 
-    @Override public void loading(String message) {
+    @Override public final void loading(String message) {
         if (getActivity() instanceof IView) {
             ((IView) getActivity()).loading(message);
         } else if (getActivity() instanceof QsIView) {
@@ -136,7 +136,7 @@ public abstract class QsDialogFragment extends DialogFragment implements IView, 
         }
     }
 
-    @Override public void loading(boolean cancelAble) {
+    @Override public final void loading(boolean cancelAble) {
         if (getActivity() instanceof IView) {
             ((IView) getActivity()).loading(cancelAble);
         } else if (getActivity() instanceof QsIView) {
@@ -144,7 +144,7 @@ public abstract class QsDialogFragment extends DialogFragment implements IView, 
         }
     }
 
-    @Override public void loading(int resId, boolean cancelAble) {
+    @Override public final void loading(int resId, boolean cancelAble) {
         if (getActivity() instanceof IView) {
             ((IView) getActivity()).loading(resId, cancelAble);
         } else if (getActivity() instanceof QsIView) {
@@ -152,7 +152,7 @@ public abstract class QsDialogFragment extends DialogFragment implements IView, 
         }
     }
 
-    @Override public void loading(String message, boolean cancelAble) {
+    @Override public final void loading(String message, boolean cancelAble) {
         if (getActivity() instanceof IView) {
             ((IView) getActivity()).loading(message, cancelAble);
         } else if (getActivity() instanceof QsIView) {
@@ -160,7 +160,7 @@ public abstract class QsDialogFragment extends DialogFragment implements IView, 
         }
     }
 
-    @Override public void loadingClose() {
+    @Override public final void loadingClose() {
         if (getActivity() instanceof IView) {
             ((IView) getActivity()).loadingClose();
         } else if (getActivity() instanceof QsIView) {
@@ -168,7 +168,7 @@ public abstract class QsDialogFragment extends DialogFragment implements IView, 
         }
     }
 
-    @Nullable @Override public Context getContext() {
+    @Nullable @Override public final Context getContext() {
         return super.getContext();
     }
 
