@@ -15,7 +15,7 @@ import okhttp3.OkHttpClient;
 public class QsDownloadHelper {
     private final  HashMap<Class, QsDownloader> downloaderHolder = new HashMap<>();
     private static QsDownloadHelper             helper;
-    private        OkHttpClient                 httpClient;
+    private final  OkHttpClient                 httpClient;
 
     private QsDownloadHelper() {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
