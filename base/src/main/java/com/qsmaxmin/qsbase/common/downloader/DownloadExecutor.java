@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.util.Set;
 
+import androidx.annotation.NonNull;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Headers;
@@ -48,28 +49,35 @@ class DownloadExecutor<M extends QsDownloadModel<K>, K> {
         if (L.isEnable()) L.i(TAG, "download started......id:" + model.getId() + ", time gone:" + getTimeGone());
 
         final File targetFile = new File(model.getFilePath());
+        String name = targetFile.getName();
+        File parentFile = targetFile.getParentFile();
+        File tempFile = new File(parentFile, name + "_temp");
+
         if (targetFile.exists()) {
-            checkFileBeforeDownload(builder, targetFile);
+            postDownloadComplete(targetFile);
         } else {
-            File parentFile = targetFile.getParentFile();
             if (!parentFile.exists() && !parentFile.mkdirs()) {
                 L.e(TAG, "create dir failed...dir:" + parentFile.getPath());
                 postDownloadFailed("create dir failed, dir:" + parentFile.getPath());
                 return;
             }
-            startDownload(builder.build(), targetFile, 0);
+            if (tempFile.exists() && tempFile.length() > 0) {
+                checkFileBeforeDownload(builder, tempFile);
+            } else {
+                startDownload(builder.build(), tempFile, 0);
+            }
         }
     }
 
-    private void checkFileBeforeDownload(final Request.Builder builder, final File targetFile) {
-        L.i(TAG, "old file exists....size:" + targetFile.length() + ", path:" + targetFile.getPath());
+    private void checkFileBeforeDownload(final Request.Builder builder, final File tempFile) {
+        L.i(TAG, "old file exists....size:" + tempFile.length() + ", path:" + tempFile.getPath());
         downloader.getClient().newCall(builder.build()).enqueue(new Callback() {
-            @Override public void onFailure(Call call, IOException e) {
+            @Override public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 postDownloadFailed(e.getMessage());
                 e.printStackTrace();
             }
 
-            @Override public void onResponse(Call call, Response response) throws IOException {
+            @Override public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 try {
                     if (response.isSuccessful()) {
                         ResponseBody body = response.body();
@@ -78,14 +86,14 @@ class DownloadExecutor<M extends QsDownloadModel<K>, K> {
                             postDownloadFailed("download failed, body is empty!");
                             return;
                         }
-                        long existsLength = targetFile.length();
+                        long existsLength = tempFile.length();
                         if (existsLength < body.contentLength()) {
                             Request request = builder.header("RANGE", "bytes=" + existsLength + "-").build();
-                            startDownload(request, targetFile, existsLength);
+                            startDownload(request, tempFile, existsLength);
                         } else if (existsLength == body.contentLength()) {
                             if (L.isEnable()) L.i(TAG, "need not download file, exists file length matched contentLength, id:" + model.getId());
                             postDownloading(existsLength, existsLength);
-                            postDownloadComplete();
+                            postDownloadComplete(tempFile);
                         }
                     } else {
                         L.e(TAG, "onResponse failed, response code=" + response.code());
@@ -101,17 +109,17 @@ class DownloadExecutor<M extends QsDownloadModel<K>, K> {
         });
     }
 
-    private void startDownload(Request request, final File targetFile, final long rangStartPoint) {
+    private void startDownload(Request request, final File tempFile, final long rangStartPoint) {
         downloader.getClient().newCall(request).enqueue(new Callback() {
-            @Override public void onFailure(Call call, IOException e) {
+            @Override public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 postDownloadFailed(e.getMessage());
                 e.printStackTrace();
             }
 
-            @Override public void onResponse(Call call, Response response) throws IOException {
+            @Override public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (L.isEnable()) printResponseHeader(response);
-
                 RandomAccessFile accessFile = null;
+                boolean downloadSuccess = false;
                 try {
                     if (response.isSuccessful()) {
                         if (L.isEnable()) L.i(TAG, "response OK.......id:" + model.getId() + ", time gone:" + getTimeGone());
@@ -127,7 +135,7 @@ class DownloadExecutor<M extends QsDownloadModel<K>, K> {
 
                             if (contentLength > 0) {
                                 long totalLength = startPoint + contentLength;
-                                accessFile = new RandomAccessFile(targetFile, "rwd");
+                                accessFile = new RandomAccessFile(tempFile, "rwd");
                                 accessFile.seek(startPoint);
                                 if (startPoint > 0) {
                                     postDownloading(startPoint, totalLength);
@@ -154,7 +162,7 @@ class DownloadExecutor<M extends QsDownloadModel<K>, K> {
                                 }
                                 if (tempLength == totalLength) {
                                     if (L.isEnable()) L.i(TAG, "download success, id:" + model.getId() + ", time gone:" + getTimeGone());
-                                    postDownloadComplete();
+                                    downloadSuccess = true;
                                 } else {
                                     if (L.isEnable()) L.e(TAG, "download failed, content length not matched, wanted:" + totalLength + ", but:" + tempLength);
                                     postDownloadFailed("content length not matched, wanted:" + totalLength + ", but:" + tempLength);
@@ -177,6 +185,9 @@ class DownloadExecutor<M extends QsDownloadModel<K>, K> {
                 } finally {
                     close(response);
                     close(accessFile);
+                    if (downloadSuccess) {
+                        postDownloadComplete(tempFile);
+                    }
                 }
             }
         });
@@ -186,7 +197,6 @@ class DownloadExecutor<M extends QsDownloadModel<K>, K> {
         if (response == null) return;
         int code = response.code();
         Headers headers = response.headers();
-        if (headers == null) return;
         Set<String> names = headers.names();
         StringBuilder sb = new StringBuilder("onResponse......code:" + code);
         for (String name : names) {
@@ -209,9 +219,24 @@ class DownloadExecutor<M extends QsDownloadModel<K>, K> {
         downloader.postDownloadFailed(model, msg);
     }
 
-    private void postDownloadComplete() {
+    private void postDownloadComplete(File tempFile) {
         downloader.removeExecutorFromTask(model);
-        downloader.postDownloadComplete(model);
+
+        if (!tempFile.getAbsolutePath().equals(model.getFilePath())) {
+            File targetFile = new File(model.getFilePath());
+            if (targetFile.exists()) {
+                boolean delete = targetFile.delete();
+                L.i(TAG, "delete old file(success:" + delete + "):" + targetFile.getAbsolutePath());
+            }
+            boolean success = tempFile.renameTo(targetFile);
+            if (success) {
+                downloader.postDownloadComplete(model);
+            } else {
+                downloader.postDownloadFailed(model, "tempFile(" + tempFile.getAbsolutePath() + ") rename to file(" + model.getFilePath() + ") failed....");
+            }
+        } else {
+            downloader.postDownloadComplete(model);
+        }
     }
 
     private void close(Closeable closeable) {
