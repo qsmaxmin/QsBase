@@ -5,20 +5,21 @@ package com.qsmaxmin.qsbase.common.downloader;
  * @Date 2021/1/11 17:13
  * @Description
  */
-public class DownloadListenerAdapter implements DownloadListener {
-    @Override public void onDownloadStart(QsDownloadModel model) {
-        
-    }
+public class DownloadListenerAdapter<T extends QsDownloadModel> implements DownloadListener<T> {
 
-    @Override public void onDownloading(QsDownloadModel model, long size, long totalSize) {
+    @Override public void onDownloadStart(T model) {
 
     }
 
-    @Override public void onDownloadComplete(QsDownloadModel model) {
+    @Override public void onDownloading(T model, long size, long totalSize) {
 
     }
 
-    @Override public void onDownloadFailed(QsDownloadModel model, String message) {
+    @Override public void onDownloadComplete(T model) {
+
+    }
+
+    @Override public void onDownloadFailed(T model, String message) {
 
     }
 }
