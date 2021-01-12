@@ -25,13 +25,13 @@ public class QsDownloadHelper {
         httpClient = builder.build();
     }
 
-    @SuppressWarnings({"unchecked", "CastCanBeRemovedNarrowingVariableType"})
+    @SuppressWarnings({"unchecked"})
     public static <M extends QsDownloadModel<K>, K> QsDownloader<M, K> getDownloader(Class<M> clazz) {
         if (clazz == null) return null;
-        Object object = getInstance().downloaderHolder.get(clazz);
-        if (object == null) {
-            QsDownloader<M, K> downloader = new QsDownloader<>(getInstance().httpClient, clazz);
+        QsDownloader<M, K> downloader = getInstance().downloaderHolder.get(clazz);
+        if (downloader == null) {
             synchronized (getInstance().downloaderHolder) {
+                downloader = new QsDownloader<>(getInstance().httpClient, clazz);
                 getInstance().downloaderHolder.put(clazz, downloader);
             }
             if (L.isEnable()) {
@@ -40,16 +40,15 @@ public class QsDownloadHelper {
                 int size = getInstance().downloaderHolder.size();
                 L.i("QsDownloadHelper", "getDownloader(no cached)....clazz:" + className + ", downloader:" + name + ", cache size:" + size);
             }
-            return downloader;
         } else {
             if (L.isEnable()) {
-                String name = object.getClass().getSimpleName();
+                String name = downloader.getClass().getSimpleName();
                 String className = clazz.getSimpleName();
                 int size = getInstance().downloaderHolder.size();
                 L.i("QsDownloadHelper", "getDownloader(cached)....clazz:" + className + ", downloader:" + name + ", cache size:" + size);
             }
-            return (QsDownloader<M, K>) object;
         }
+        return downloader;
     }
 
     private static QsDownloadHelper getInstance() {
