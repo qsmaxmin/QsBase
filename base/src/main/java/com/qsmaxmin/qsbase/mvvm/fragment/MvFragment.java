@@ -1,6 +1,5 @@
 package com.qsmaxmin.qsbase.mvvm.fragment;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -412,6 +411,10 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
         intent2Activity(clazz, null, requestCode, null, 0, 0);
     }
 
+    @Override public final void intent2Activity(Class clazz, Bundle bundle, int requestCode) {
+        intent2Activity(clazz, bundle, requestCode, null, 0, 0);
+    }
+
     @Override public final void intent2Activity(Class clazz, Bundle bundle) {
         intent2Activity(clazz, bundle, 0, null, 0, 0);
     }
@@ -428,27 +431,8 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
         intent2Activity(clazz, bundle, requestCode, optionsCompat, 0, 0);
     }
 
-    @Override public final void intent2Activity(Class clazz, Bundle bundle, int requestCode, ActivityOptionsCompat optionsCompat, int inAnimId, int outAnimId) {
-        FragmentActivity activity = getActivity();
-        if (clazz != null && activity != null) {
-            Intent intent = new Intent();
-            intent.setClass(activity, clazz);
-            if (bundle != null) intent.putExtras(bundle);
-            if (optionsCompat == null) {
-                if (requestCode > 0) {
-                    startActivityForResult(intent, requestCode);
-                } else {
-                    startActivity(intent);
-                }
-                if (inAnimId != 0 || outAnimId != 0) activity.overridePendingTransition(inAnimId, outAnimId);
-            } else {
-                if (requestCode > 0) {
-                    ActivityCompat.startActivityForResult(activity, intent, requestCode, optionsCompat.toBundle());
-                } else {
-                    ActivityCompat.startActivity(activity, intent, optionsCompat.toBundle());
-                }
-            }
-        }
+    @Override public final void intent2Activity(Class clazz, Bundle bundle, int requestCode, ActivityOptionsCompat optionsCompat, int enterAnim, int existAnim) {
+        ViewHelper.intent2Activity(this, clazz, bundle, requestCode, optionsCompat, enterAnim, existAnim);
     }
 
     @Override public final void commitFragment(Fragment fragment) {

@@ -1,6 +1,7 @@
 package com.qsmaxmin.qsbase.mvvm.adapter;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import com.qsmaxmin.qsbase.mvvm.IView;
 import com.qsmaxmin.qsbase.mvvm.MvIView;
 import com.qsmaxmin.qsbase.mvvm.model.MvModelPager;
 
+import androidx.core.app.ActivityOptionsCompat;
 import androidx.fragment.app.FragmentActivity;
 
 /**
@@ -141,6 +143,38 @@ public abstract class MvTabAdapterItem implements IView, QsNotProguard {
 
     @Override public final FragmentActivity getActivity() {
         return viewLayer.getActivity();
+    }
+
+    @Override public final void intent2Activity(Class clazz) {
+        intent2Activity(clazz, null, 0, null, 0, 0);
+    }
+
+    @Override public final void intent2Activity(Class clazz, int requestCode) {
+        intent2Activity(clazz, null, requestCode, null, 0, 0);
+    }
+
+    @Override public final void intent2Activity(Class clazz, Bundle bundle) {
+        intent2Activity(clazz, bundle, 0, null, 0, 0);
+    }
+
+    @Override public final void intent2Activity(Class clazz, Bundle bundle, int requestCode) {
+        intent2Activity(clazz, bundle, requestCode, null, 0, 0);
+    }
+
+    @Override public final void intent2Activity(Class clazz, Bundle bundle, int inAnimId, int outAnimId) {
+        intent2Activity(clazz, bundle, 0, null, inAnimId, outAnimId);
+    }
+
+    @Override public final void intent2Activity(Class clazz, Bundle bundle, ActivityOptionsCompat optionsCompat) {
+        intent2Activity(clazz, bundle, 0, optionsCompat, 0, 0);
+    }
+
+    @Override public final void intent2Activity(Class clazz, Bundle bundle, int requestCode, ActivityOptionsCompat optionsCompat) {
+        intent2Activity(clazz, bundle, requestCode, optionsCompat, 0, 0);
+    }
+
+    @Override public final void intent2Activity(Class clazz, Bundle bundle, int requestCode, ActivityOptionsCompat optionsCompat, int enterAnim, int existAnim) {
+        ViewHelper.intent2Activity(getActivity(), clazz, bundle, requestCode, optionsCompat, enterAnim, existAnim);
     }
 
     public abstract View onCreateTabItemView(LayoutInflater inflater, ViewGroup parent);

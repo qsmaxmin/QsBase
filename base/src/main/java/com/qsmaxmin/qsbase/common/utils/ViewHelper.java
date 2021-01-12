@@ -19,6 +19,8 @@ import com.qsmaxmin.qsbase.mvvm.MvIView;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.ActivityOptionsCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 
 /**
  * @CreateBy administrator
@@ -107,6 +109,31 @@ public class ViewHelper {
                     activity.startActivityForResult(intent, requestCode);
                 } else {
                     activity.startActivity(intent);
+                }
+                if (inAnimId != 0 || outAnimId != 0) activity.overridePendingTransition(inAnimId, outAnimId);
+            } else {
+                if (requestCode > 0) {
+                    ActivityCompat.startActivityForResult(activity, intent, requestCode, optionsCompat.toBundle());
+                } else {
+                    ActivityCompat.startActivity(activity, intent, optionsCompat.toBundle());
+                }
+            }
+        }
+    }
+
+    public static void intent2Activity(Fragment fragment, Class clazz, Bundle bundle, int requestCode, ActivityOptionsCompat optionsCompat, int inAnimId, int outAnimId) {
+        if (fragment != null && clazz != null) {
+            Context context = fragment.getContext();
+            FragmentActivity activity = fragment.getActivity();
+            if (context == null || activity == null) return;
+            Intent intent = new Intent();
+            intent.setClass(context, clazz);
+            if (bundle != null) intent.putExtras(bundle);
+            if (optionsCompat == null) {
+                if (requestCode > 0) {
+                    fragment.startActivityForResult(intent, requestCode);
+                } else {
+                    fragment.startActivity(intent);
                 }
                 if (inAnimId != 0 || outAnimId != 0) activity.overridePendingTransition(inAnimId, outAnimId);
             } else {

@@ -1,9 +1,11 @@
 package com.qsmaxmin.qsbase.mvvm;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.view.View;
 
 import androidx.annotation.StringRes;
+import androidx.core.app.ActivityOptionsCompat;
 import androidx.fragment.app.FragmentActivity;
 
 /**
@@ -39,4 +41,21 @@ public interface IView {
     void activityFinish(int enterAnim, int exitAnim);
 
     void activityFinish(boolean finishAfterTransition);
+
+    void intent2Activity(Class clazz);
+
+    void intent2Activity(Class clazz, int requestCode);
+
+    void intent2Activity(Class clazz, Bundle bundle);
+
+    void intent2Activity(Class clazz, Bundle bundle, int requestCode);
+
+    void intent2Activity(Class clazz, Bundle bundle, int inAnimId, int outAnimId);
+
+    void intent2Activity(Class clazz, Bundle bundle, ActivityOptionsCompat optionsCompat);
+
+    void intent2Activity(Class clazz, Bundle bundle, int requestCode, ActivityOptionsCompat optionsCompat);
+
+    void intent2Activity(Class clazz, Bundle bundle, int requestCode, ActivityOptionsCompat optionsCompat, int enterAnim, int existAnim);
+
 }

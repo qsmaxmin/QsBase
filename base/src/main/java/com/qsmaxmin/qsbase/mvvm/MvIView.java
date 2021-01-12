@@ -85,20 +85,6 @@ public interface MvIView extends IView, QsIBindEvent, QsIBindBundle, QsNotProgua
 
     int currentViewState();
 
-    void intent2Activity(Class clazz);
-
-    void intent2Activity(Class clazz, int requestCode);
-
-    void intent2Activity(Class clazz, Bundle bundle);
-
-    void intent2Activity(Class clazz, Bundle bundle, int inAnimId, int outAnimId);
-
-    void intent2Activity(Class clazz, Bundle bundle, ActivityOptionsCompat optionsCompat);
-
-    void intent2Activity(Class clazz, Bundle bundle, int requestCode, ActivityOptionsCompat optionsCompat);
-
-    void intent2Activity(Class clazz, Bundle bundle, int requestCode, ActivityOptionsCompat optionsCompat, int enterAnim, int existAnim);
-
     void commitFragment(Fragment fragment);
 
     void commitFragment(Fragment fragment, String tag);

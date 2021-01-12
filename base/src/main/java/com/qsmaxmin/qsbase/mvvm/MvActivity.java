@@ -410,6 +410,10 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
         intent2Activity(clazz, bundle, 0, null, 0, 0);
     }
 
+    @Override public final void intent2Activity(Class clazz, Bundle bundle, int requestCode) {
+        intent2Activity(clazz, bundle, requestCode, null, 0, 0);
+    }
+
     @Override public final void intent2Activity(Class clazz, Bundle bundle, int inAnimId, int outAnimId) {
         intent2Activity(clazz, bundle, 0, null, inAnimId, outAnimId);
     }
