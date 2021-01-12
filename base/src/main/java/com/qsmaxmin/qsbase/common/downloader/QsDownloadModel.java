@@ -16,7 +16,14 @@ public interface QsDownloadModel<K> {
      */
     K getId();
 
+    /**
+     * 创建http请求所需参数的封装类，包括下载链接，自定义请求头等
+     * 例如：return new Request.Builder().url(downloadUrl).header("Referer", "customReferer");
+     */
     Request.Builder getRequest();
 
+    /**
+     * 下载文件保存的路径
+     */
     String getFilePath();
 }
