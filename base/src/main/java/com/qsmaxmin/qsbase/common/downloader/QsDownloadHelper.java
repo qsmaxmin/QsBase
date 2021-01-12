@@ -10,7 +10,10 @@ import okhttp3.OkHttpClient;
 /**
  * @CreateBy qsmaxmin
  * @Date 2020/3/16 9:40
- * @Description download helper
+ * @Description 文件下载管理器，统一管理所有类型的下载任务
+ * 根据下载实体(QsDownloadModel)的不同，创建不同的QsDownload对象。
+ * @see QsDownloader
+ * @see QsDownloadModel
  */
 public class QsDownloadHelper {
     private final  HashMap<Class, QsDownloader> downloaderHolder = new HashMap<>();

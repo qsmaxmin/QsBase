@@ -4,7 +4,6 @@ import android.os.Looper;
 import android.text.TextUtils;
 
 import com.qsmaxmin.qsbase.common.log.L;
-import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.plugin.threadpoll.QsThreadPollHelper;
 
 import java.util.ArrayList;
@@ -26,8 +25,8 @@ public class QsDownloader<M extends QsDownloadModel<K>, K> {
     private final String                       TAG;
     private final HashMap<K, DownloadExecutor> executorMap    = new HashMap<>();
     private final List<DownloadListener<M>>    globeListeners = new ArrayList<>();
-    private       OkHttpClient                 httpClient;
-    private       Class                        httpTag;
+    private final OkHttpClient                 httpClient;
+    private final Class                        httpTag;
 
     QsDownloader(OkHttpClient client, Class<M> tag) {
         this.httpClient = client;
