@@ -24,15 +24,27 @@ import okhttp3.Request;
 @SuppressWarnings("rawtypes")
 public class QsDownloader<M extends QsDownloadModel<K>, K> {
     private final String                       TAG;
-    private final HashMap<K, DownloadExecutor> executorMap    = new HashMap<>();
-    private final List<DownloadListener<M>>    globeListeners = new ArrayList<>();
+    private final HashMap<K, DownloadExecutor> executorMap                   = new HashMap<>();
+    private final List<DownloadListener<M>>    globeListeners                = new ArrayList<>();
     private final OkHttpClient                 httpClient;
     private final Class                        httpTag;
+    private       boolean                      supportBreakPointTransmission = true;
 
     QsDownloader(OkHttpClient client, Class<M> tag) {
         this.httpClient = client;
         this.httpTag = tag;
         this.TAG = "QsDownloader-" + httpTag.getSimpleName();
+    }
+
+    /**
+     * 设置是否开启断点续传功能，默认开启
+     */
+    public void setSupportBreakPointTransmission(boolean supportBreakPointTransmission) {
+        this.supportBreakPointTransmission = supportBreakPointTransmission;
+    }
+
+    public boolean isSupportBreakPointTransmission() {
+        return supportBreakPointTransmission;
     }
 
     public void startDownload(final M model) {

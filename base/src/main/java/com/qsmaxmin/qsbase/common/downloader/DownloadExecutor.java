@@ -70,7 +70,7 @@ class DownloadExecutor<M extends QsDownloadModel<K>, K> {
             }
 
             File tempFile = getCacheFile(targetFile);
-            if (tempFile.exists() && tempFile.length() > 0) {
+            if (downloader.isSupportBreakPointTransmission() && tempFile.exists() && tempFile.length() > 0) {
                 checkFileBeforeDownload(builder, tempFile);
             } else {
                 startDownload(builder.build(), tempFile, 0);
