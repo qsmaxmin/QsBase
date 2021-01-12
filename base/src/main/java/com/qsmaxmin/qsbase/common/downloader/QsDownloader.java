@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.plugin.threadpoll.QsThreadPollHelper;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -67,9 +68,28 @@ public class QsDownloader<M extends QsDownloadModel<K>, K> {
         executor.start(builder);
     }
 
-    @SuppressWarnings("WeakerAccess")
     public boolean isDownloading(M m) {
         return executorMap.get(m.getId()) != null;
+    }
+
+    public boolean isDownloading(K k) {
+        return executorMap.get(k) != null;
+    }
+
+    /**
+     * 清除指定下载文件的缓存
+     */
+    public boolean cleanDownloadCache(M m) {
+        if (isDownloading(m)) {
+            if (L.isEnable()) L.e(TAG, "cleanDownloadCache failed, The cache cannot be deleted while downloading.....");
+            return false;
+        }
+        File cacheFile = DownloadExecutor.getCacheFile(m);
+        if (cacheFile.exists()) {
+            boolean delete = cacheFile.delete();
+            L.i(TAG, "cleanDownloadCache......success:" + delete);
+        }
+        return true;
     }
 
     public void release() {

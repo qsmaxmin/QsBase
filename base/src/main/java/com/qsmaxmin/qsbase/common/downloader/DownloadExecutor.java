@@ -44,23 +44,32 @@ class DownloadExecutor<M extends QsDownloadModel<K>, K> {
         });
     }
 
+    static File getCacheFile(QsDownloadModel model) {
+        return getCacheFile(new File(model.getFilePath()));
+    }
+
+    private static File getCacheFile(File targetFile) {
+        String name = targetFile.getName();
+        File parentFile = targetFile.getParentFile();
+        return new File(parentFile, name + "_temp");
+    }
+
     private void startInner(final Request.Builder builder) {
         postDownloadStart();
         if (L.isEnable()) L.i(TAG, "download started......id:" + model.getId() + ", time gone:" + getTimeGone());
 
         final File targetFile = new File(model.getFilePath());
-        String name = targetFile.getName();
-        File parentFile = targetFile.getParentFile();
-        File tempFile = new File(parentFile, name + "_temp");
-
         if (targetFile.exists()) {
             postDownloadComplete(targetFile);
         } else {
+            File parentFile = targetFile.getParentFile();
             if (!parentFile.exists() && !parentFile.mkdirs()) {
                 L.e(TAG, "create dir failed...dir:" + parentFile.getPath());
                 postDownloadFailed("create dir failed, dir:" + parentFile.getPath());
                 return;
             }
+
+            File tempFile = getCacheFile(targetFile);
             if (tempFile.exists() && tempFile.length() > 0) {
                 checkFileBeforeDownload(builder, tempFile);
             } else {
