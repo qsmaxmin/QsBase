@@ -1,6 +1,7 @@
 package com.qsmaxmin.qsbase.common.widget.dialog;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,13 +11,14 @@ import android.view.WindowManager;
 import com.qsmaxmin.annotation.QsNotProguard;
 import com.qsmaxmin.qsbase.R;
 import com.qsmaxmin.qsbase.common.log.L;
-import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.common.utils.ViewHelper;
 import com.qsmaxmin.qsbase.mvp.QsIView;
 import com.qsmaxmin.qsbase.mvvm.IView;
 import com.qsmaxmin.qsbase.plugin.bind.QsIBindBundle;
 import com.qsmaxmin.qsbase.plugin.bind.QsIBindView;
 import com.qsmaxmin.qsbase.plugin.event.QsIBindEvent;
+
+import java.lang.reflect.Field;
 
 import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
@@ -26,6 +28,7 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 /**
  * @CreateBy qsmaxmin
@@ -34,6 +37,7 @@ import androidx.fragment.app.FragmentManager;
  */
 public abstract class QsDialogFragment extends DialogFragment implements IView, QsIBindView, QsIBindBundle, QsIBindEvent, QsNotProguard {
     private SimpleClickListener listener;
+    private boolean             isShow;
 
     @Override public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,11 +69,6 @@ public abstract class QsDialogFragment extends DialogFragment implements IView, 
         bindViewByQsPlugin(customView);
         bindEventByQsPlugin();
         return customView;
-    }
-
-    @Override public void onDestroyView() {
-        super.onDestroyView();
-        unbindEventByQsPlugin();
     }
 
     @CallSuper @Override public void bindBundleByQsPlugin(Bundle bundle) {
@@ -109,6 +108,7 @@ public abstract class QsDialogFragment extends DialogFragment implements IView, 
         }
         onViewClick(view);
     }
+
 
     @Override public final void loading() {
         if (getActivity() instanceof IView) {
@@ -216,19 +216,11 @@ public abstract class QsDialogFragment extends DialogFragment implements IView, 
         return listener;
     }
 
-    public void show() {
-        show(QsHelper.getScreenHelper().currentActivity(), null);
-    }
-
-    public void show(Bundle bundle) {
-        show(QsHelper.getScreenHelper().currentActivity(), bundle);
-    }
-
-    public void show(FragmentActivity activity) {
+    public final void show(FragmentActivity activity) {
         show(activity, null);
     }
 
-    public void show(FragmentActivity activity, Bundle bundle) {
+    public final void show(FragmentActivity activity, Bundle bundle) {
         if (activity == null || activity.isFinishing()) {
             L.e(initTag(), "activity is null or activity is finished!");
             return;
@@ -236,60 +228,80 @@ public abstract class QsDialogFragment extends DialogFragment implements IView, 
         show(activity.getSupportFragmentManager(), bundle);
     }
 
-    public void show(Fragment fragment) {
+    public final void show(Fragment fragment) {
         show(fragment, null);
     }
 
-    public void show(Fragment fragment, Bundle bundle) {
+    public final void show(Fragment fragment, Bundle bundle) {
         show(fragment.getFragmentManager(), bundle);
     }
 
-    public void show(final FragmentManager manager, Bundle bundle) {
-        if (isAdded()) {
-            L.e(initTag(), "show......dialog is added");
+    public final void show(final FragmentManager manager, Bundle bundle) {
+        showInner(manager, bundle, getClass().getSimpleName());
+    }
+
+    @Override public final void show(@NonNull FragmentManager manager, @Nullable String tag) {
+        showInner(manager, null, tag);
+    }
+
+    private void showInner(FragmentManager manager, Bundle bundle, String tag) {
+        if (manager == null) {
+            L.e(initTag(), "show......fragmentManager is null");
             return;
         }
+        if (isShow || isAdded()) {
+            L.e(initTag(), "current dialog is showing...");
+            return;
+        }
+        isShow = true;
         if (bundle != null) setArguments(bundle);
-        if (QsHelper.isMainThread()) {
-            try {
-                show(manager, getClass().getSimpleName());
-            } catch (Exception ignored) {
-            }
 
-        } else {
-            QsHelper.post(new Runnable() {
-                @Override public void run() {
-                    try {
-                        show(manager, getClass().getSimpleName());
-                    } catch (Exception ignored) {
-                    }
-                }
-            });
+        setFiledValue("mDismissed", false);
+        setFiledValue("mShownByMe", true);
+        FragmentTransaction ft = manager.beginTransaction();
+        ft.add(this, tag);
+        ft.commitAllowingStateLoss();
+    }
+
+    private void setFiledValue(String fieldName, boolean value) {
+        try {
+            Field shown = DialogFragment.class.getDeclaredField(fieldName);
+            shown.setAccessible(true);
+            shown.set(this, value);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
     @Override public void dismiss() {
-        if (QsHelper.isMainThread()) {
-            dismissSuper();
-        } else {
-            QsHelper.post(new Runnable() {
-                @Override public void run() {
-                    dismissSuper();
-                }
-            });
-        }
+        isShow = false;
+        super.dismiss();
     }
 
     @Override public void dismissAllowingStateLoss() {
-        if (QsHelper.isMainThread()) {
-            dismissAllowingStateLossSuper();
-        } else {
-            QsHelper.post(new Runnable() {
-                @Override public void run() {
-                    dismissAllowingStateLossSuper();
-                }
-            });
-        }
+        isShow = false;
+        super.dismissAllowingStateLoss();
+    }
+
+    @Override public void onCancel(@NonNull DialogInterface dialog) {
+        isShow = false;
+        super.onCancel(dialog);
+    }
+
+    @Override public void onDestroyView() {
+        isShow = false;
+        super.onDestroyView();
+        unbindEventByQsPlugin();
+        L.i(initTag(), "onDestroyView....... set is showing:false");
+    }
+
+    @Override public void onDetach() {
+        isShow = false;
+        super.onDetach();
+    }
+
+    public final boolean isShowing() {
+        return isShow;
     }
 
     private void dismissAllowingStateLossSuper() {

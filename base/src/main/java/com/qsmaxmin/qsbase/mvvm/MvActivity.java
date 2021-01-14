@@ -286,21 +286,21 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
     }
 
     @Override public final void loading(String message, boolean cancelAble) {
-        if (mProgressDialog == null) mProgressDialog = getLoadingDialog();
-        if (mProgressDialog != null) {
+        if (mProgressDialog != null && mProgressDialog.isShowing()) {
             mProgressDialog.setMessage(message);
             mProgressDialog.setCancelable(cancelAble);
-            if (!mProgressDialog.isAdded() && !mProgressDialog.isShowing()) {
-                mProgressDialog.setIsShowing(true);
-                QsHelper.commitDialogFragment(getSupportFragmentManager(), mProgressDialog);
-            }
         } else {
-            L.e(initTag(), "you should override the method 'Application.getLoadingDialog() or this.getLoadingDialog()' and return a dialog when called the method : loading(...) ");
+            mProgressDialog = getLoadingDialog();
+            if (mProgressDialog != null) {
+                mProgressDialog.setMessage(message);
+                mProgressDialog.setCancelable(cancelAble);
+                mProgressDialog.show(this);
+            }
         }
     }
 
     @Override public void loadingClose() {
-        if (mProgressDialog != null && mProgressDialog.isAdded()) {
+        if (mProgressDialog != null) {
             mProgressDialog.dismissAllowingStateLoss();
         }
     }

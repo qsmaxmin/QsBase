@@ -289,32 +289,22 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
     }
 
     @Override public final void loading(String message, boolean cancelAble) {
-        if (mProgressDialog == null) mProgressDialog = getLoadingDialog();
-        if (mProgressDialog != null) {
+        if (mProgressDialog != null && mProgressDialog.isShowing()) {
             mProgressDialog.setMessage(message);
             mProgressDialog.setCancelable(cancelAble);
-            if (!mProgressDialog.isAdded() && !mProgressDialog.isShowing()) {
-                mProgressDialog.setIsShowing(true);
-                QsHelper.commitDialogFragment(getFragmentManager(), mProgressDialog);
-            }
         } else {
-            L.e(initTag(), "you should override the method 'Application.getLoadingDialog() or this.getLoadingDialog()' and return a dialog when called the method : loading(...) ");
+            mProgressDialog = getLoadingDialog();
+            if (mProgressDialog != null) {
+                mProgressDialog.setMessage(message);
+                mProgressDialog.setCancelable(cancelAble);
+                mProgressDialog.show(this);
+            }
         }
     }
 
     @Override public final void loadingClose() {
-        if (QsHelper.isMainThread()) {
-            if (mProgressDialog != null && mProgressDialog.isAdded()) {
-                mProgressDialog.dismissAllowingStateLoss();
-            }
-        } else {
-            post(new Runnable() {
-                @Override public void run() {
-                    if (mProgressDialog != null && mProgressDialog.isAdded()) {
-                        mProgressDialog.dismissAllowingStateLoss();
-                    }
-                }
-            });
+        if (mProgressDialog != null) {
+            mProgressDialog.dismissAllowingStateLoss();
         }
     }
 
