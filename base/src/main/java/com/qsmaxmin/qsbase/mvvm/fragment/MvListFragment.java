@@ -33,15 +33,15 @@ public abstract class MvListFragment<D> extends MvFragment implements MvIListVie
     private         View        headerView;
     private         View        footerView;
 
-    @Override public View onCreateContentView(LayoutInflater inflater, ViewGroup parent) {
+    @Override public View onCreateContentView(@NonNull LayoutInflater inflater, ViewGroup parent) {
         return inflater.inflate(R.layout.qs_listview, parent, false);
     }
 
-    @Override public View onCreateListHeaderView(LayoutInflater inflater) {
+    @Override public View onCreateListHeaderView(@NonNull LayoutInflater inflater) {
         return null;
     }
 
-    @Override public View onCreateListFooterView(LayoutInflater inflater) {
+    @Override public View onCreateListFooterView(@NonNull LayoutInflater inflater) {
         return null;
     }
 

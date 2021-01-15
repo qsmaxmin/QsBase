@@ -17,6 +17,7 @@ import com.qsmaxmin.qsbase.mvvm.adapter.MvTabAdapterItem;
 import com.qsmaxmin.qsbase.mvvm.adapter.MvTabFragmentPagerAdapter;
 import com.qsmaxmin.qsbase.mvvm.model.MvModelPager;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
@@ -32,7 +33,7 @@ public abstract class MvViewPagerActivity extends MvActivity implements MvIViewP
     private MvIPagerAdapter      adapter;
     private MvTabAdapter         tabAdapter;
 
-    @Override public View onCreateContentView(LayoutInflater inflater, ViewGroup parent) {
+    @Override public View onCreateContentView(@NonNull LayoutInflater inflater, ViewGroup parent) {
         return inflater.inflate(R.layout.qs_viewpager_bottom_tab, parent, false);
     }
 

@@ -12,6 +12,8 @@ import com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrUIHandler;
 import com.qsmaxmin.qsbase.common.widget.ptr.header.BeautyCircleRefreshHeader;
 
+import androidx.annotation.NonNull;
+
 /**
  * @CreateBy administrator
  * @Date 2020/9/9 11:14
@@ -20,7 +22,7 @@ import com.qsmaxmin.qsbase.common.widget.ptr.header.BeautyCircleRefreshHeader;
 public abstract class MvPullHeaderViewPagerActivity extends MvHeaderViewPagerActivity implements MvIPullToRefreshView {
     private PtrFrameLayout mPtrFrameLayout;
 
-    @Override public View onCreateContentView(LayoutInflater inflater, ViewGroup parent) {
+    @Override public View onCreateContentView(@NonNull LayoutInflater inflater, ViewGroup parent) {
         return inflater.inflate(R.layout.qs_pull_header_viewpager, parent, false);
     }
 

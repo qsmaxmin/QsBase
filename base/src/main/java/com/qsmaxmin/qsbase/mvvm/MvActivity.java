@@ -107,23 +107,23 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
         initData(savedInstanceState);
     }
 
-    @Override public View onCreateActionbarView(LayoutInflater inflater, ViewGroup parent) {
+    @Override public View onCreateActionbarView(@NonNull LayoutInflater inflater, ViewGroup parent) {
         return null;
     }
 
-    @Override public View onCreateLoadingView(LayoutInflater inflater, ViewGroup parent) {
+    @Override public View onCreateLoadingView(@NonNull LayoutInflater inflater, ViewGroup parent) {
         return inflater.inflate(QsHelper.getAppInterface().loadingLayoutId(), parent, false);
     }
 
-    @Override public View onCreateEmptyView(LayoutInflater inflater, ViewGroup parent) {
+    @Override public View onCreateEmptyView(@NonNull LayoutInflater inflater, ViewGroup parent) {
         return inflater.inflate(QsHelper.getAppInterface().emptyLayoutId(), parent, false);
     }
 
-    @Override public View onCreateErrorView(LayoutInflater inflater, ViewGroup parent) {
+    @Override public View onCreateErrorView(@NonNull LayoutInflater inflater, ViewGroup parent) {
         return inflater.inflate(QsHelper.getAppInterface().errorLayoutId(), parent, false);
     }
 
-    protected View initView(LayoutInflater inflater) {
+    protected View initView(@NonNull LayoutInflater inflater) {
         long s0 = 0;
         if (L.isEnable()) s0 = System.currentTimeMillis();
         View rootView = inflater.inflate(rootViewLayoutId(), null);

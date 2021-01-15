@@ -230,15 +230,15 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
         }
     }
 
-    @Override public View onCreateLoadingView(LayoutInflater inflater, ViewGroup parent) {
+    @Override public View onCreateLoadingView(@NonNull LayoutInflater inflater, ViewGroup parent) {
         return inflater.inflate(QsHelper.getAppInterface().loadingLayoutId(), parent, false);
     }
 
-    @Override public View onCreateEmptyView(LayoutInflater inflater, ViewGroup parent) {
+    @Override public View onCreateEmptyView(@NonNull LayoutInflater inflater, ViewGroup parent) {
         return inflater.inflate(QsHelper.getAppInterface().emptyLayoutId(), parent, false);
     }
 
-    @Override public View onCreateErrorView(LayoutInflater inflater, ViewGroup parent) {
+    @Override public View onCreateErrorView(@NonNull LayoutInflater inflater, ViewGroup parent) {
         return inflater.inflate(QsHelper.getAppInterface().errorLayoutId(), parent, false);
     }
 

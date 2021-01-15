@@ -13,6 +13,8 @@ import com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrUIHandler;
 import com.qsmaxmin.qsbase.common.widget.ptr.header.BeautyCircleRefreshHeader;
 
+import androidx.annotation.NonNull;
+
 /**
  * @CreateBy qsmaxmin
  * @Date 17/7/4
@@ -23,7 +25,7 @@ public abstract class MvPullActivity extends MvActivity implements MvIPullView {
     private PtrFrameLayout mPtrFrameLayout;
     private View           childView;
 
-    @Override public View onCreateContentView(LayoutInflater inflater, ViewGroup parent) {
+    @Override public View onCreateContentView(@NonNull LayoutInflater inflater, ViewGroup parent) {
         return inflater.inflate(R.layout.qs_pulll_view, parent, false);
     }
 
@@ -31,7 +33,7 @@ public abstract class MvPullActivity extends MvActivity implements MvIPullView {
         return new BeautyCircleRefreshHeader(getContext());
     }
 
-    @Override protected View initView(LayoutInflater inflater) {
+    @Override protected View initView(@NonNull LayoutInflater inflater) {
         View view = super.initView(inflater);
         initPtrFrameLayout(view);
         childView = onCreateChildView(inflater, mPtrFrameLayout);

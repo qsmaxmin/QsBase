@@ -31,7 +31,7 @@ public abstract class MvPullRecyclerFragment<D> extends MvRecyclerFragment<D> im
     private   PtrFrameLayout mPtrFrameLayout;
     protected LoadingFooter  mLoadingFooter;
 
-    @Override public View onCreateContentView(LayoutInflater inflater, ViewGroup parent) {
+    @Override public View onCreateContentView(@NonNull LayoutInflater inflater, ViewGroup parent) {
         if (canPullRefreshing()) {
             return inflater.inflate(R.layout.qs_pull_recyclerview, parent, false);
         }
@@ -39,7 +39,7 @@ public abstract class MvPullRecyclerFragment<D> extends MvRecyclerFragment<D> im
     }
 
     @SuppressLint("InflateParams")
-    @Override public View onCreateListFooterView(LayoutInflater inflater) {
+    @Override public View onCreateListFooterView(@NonNull LayoutInflater inflater) {
         return inflater.inflate(R.layout.qs_loading_footer, null);
     }
 

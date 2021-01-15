@@ -13,8 +13,7 @@ import com.qsmaxmin.qsbase.common.widget.dialog.QsProgressDialog;
 import com.qsmaxmin.qsbase.plugin.bind.QsIBindBundle;
 import com.qsmaxmin.qsbase.plugin.event.QsIBindEvent;
 
-import androidx.annotation.StringRes;
-import androidx.core.app.ActivityOptionsCompat;
+import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
@@ -37,13 +36,13 @@ public interface MvIView extends IView, QsIBindEvent, QsIBindBundle, QsNotProgua
 
     QsProgressDialog getLoadingDialog();
 
-    View onCreateLoadingView(LayoutInflater inflater, ViewGroup parent);
+    View onCreateLoadingView(@NonNull LayoutInflater inflater, ViewGroup parent);
 
-    View onCreateContentView(LayoutInflater inflater, ViewGroup parent);
+    View onCreateContentView(@NonNull LayoutInflater inflater, ViewGroup parent);
 
-    View onCreateEmptyView(LayoutInflater inflater, ViewGroup parent);
+    View onCreateEmptyView(@NonNull LayoutInflater inflater, ViewGroup parent);
 
-    View onCreateErrorView(LayoutInflater inflater, ViewGroup parent);
+    View onCreateErrorView(@NonNull LayoutInflater inflater, ViewGroup parent);
 
     void initData(Bundle savedInstanceState);
 

@@ -16,6 +16,8 @@ import com.qsmaxmin.qsbase.common.widget.ptr.header.BeautyCircleRefreshHeader;
 
 import java.util.List;
 
+import androidx.annotation.NonNull;
+
 /**
  * @CreateBy qsmaxmin
  * @Date 2020/4/9 16:21
@@ -26,7 +28,7 @@ public abstract class MvPullListActivity<D> extends MvListActivity<D> implements
     protected LoadingFooter  loadingFooter;
     private   boolean        canLoadingMore = true;
 
-    @Override public View onCreateContentView(LayoutInflater inflater, ViewGroup parent) {
+    @Override public View onCreateContentView(@NonNull LayoutInflater inflater, ViewGroup parent) {
         if (canPullRefreshing()) {
             return inflater.inflate(R.layout.qs_pull_listview, parent, false);
         }
@@ -34,7 +36,7 @@ public abstract class MvPullListActivity<D> extends MvListActivity<D> implements
     }
 
     @SuppressLint("InflateParams")
-    @Override public View onCreateListFooterView(LayoutInflater inflater) {
+    @Override public View onCreateListFooterView(@NonNull LayoutInflater inflater) {
         return inflater.inflate(R.layout.qs_loading_footer, null);
     }
 
@@ -42,7 +44,7 @@ public abstract class MvPullListActivity<D> extends MvListActivity<D> implements
         return new BeautyCircleRefreshHeader(getContext());
     }
 
-    @Override protected View initView(LayoutInflater inflater) {
+    @Override protected View initView(@NonNull LayoutInflater inflater) {
         View view = super.initView(inflater);
         if (canPullRefreshing()) {
             initPtrFrameLayout(view);

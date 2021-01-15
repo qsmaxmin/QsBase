@@ -8,6 +8,7 @@ import com.qsmaxmin.qsbase.R;
 import com.qsmaxmin.qsbase.common.widget.headerview.HeaderScrollView;
 import com.qsmaxmin.qsbase.common.widget.headerview.ScrollerProvider;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 /**
@@ -18,7 +19,7 @@ import androidx.fragment.app.Fragment;
 public abstract class MvHeaderViewPagerActivity extends MvViewPagerActivity implements MvIHeaderView {
     private HeaderScrollView headerScrollView;
 
-    @Override public View onCreateContentView(LayoutInflater inflater, ViewGroup parent) {
+    @Override public View onCreateContentView(@NonNull LayoutInflater inflater, ViewGroup parent) {
         return inflater.inflate(R.layout.qs_header_viewpager, parent, false);
     }
 

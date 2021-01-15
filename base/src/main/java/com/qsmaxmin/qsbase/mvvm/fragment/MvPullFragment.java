@@ -27,7 +27,7 @@ public abstract class MvPullFragment extends MvFragment implements MvIPullView {
     private PtrFrameLayout mPtrFrameLayout;
     private View           childView;
 
-    @Override public View onCreateContentView(LayoutInflater inflater, ViewGroup parent) {
+    @Override public View onCreateContentView(@NonNull LayoutInflater inflater, ViewGroup parent) {
         return inflater.inflate(R.layout.qs_pulll_view, parent, false);
     }
 
@@ -37,7 +37,7 @@ public abstract class MvPullFragment extends MvFragment implements MvIPullView {
 
     @Override protected View initView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container) {
         View view = super.initView(inflater, container);
-        initPtrFrameLayout(view, inflater);
+        initPtrFrameLayout(view);
         childView = onCreateChildView(inflater, mPtrFrameLayout);
         if (childView.getParent() == null) {
             mPtrFrameLayout.addView(childView);
@@ -45,7 +45,7 @@ public abstract class MvPullFragment extends MvFragment implements MvIPullView {
         return view;
     }
 
-    private void initPtrFrameLayout(View view, LayoutInflater inflater) {
+    private void initPtrFrameLayout(View view) {
         if (view instanceof PtrFrameLayout) {
             mPtrFrameLayout = (PtrFrameLayout) view;
         } else {
