@@ -30,7 +30,7 @@ public abstract class MvPullListFragment<D> extends MvListFragment<D> implements
     private   PtrFrameLayout mPtrFrameLayout;
     protected LoadingFooter  loadingFooter;
 
-    @Override public View onCreateContentView(@NonNull LayoutInflater inflater, ViewGroup parent) {
+    @Override public View onCreateContentView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
         if (canPullRefreshing()) {
             return inflater.inflate(R.layout.qs_pull_listview, parent, false);
         }

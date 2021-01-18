@@ -25,7 +25,7 @@ import androidx.annotation.Nullable;
 public abstract class MvPullHeaderViewpagerFragment extends MvHeaderViewpagerFragment implements MvIPullToRefreshView {
     private PtrFrameLayout mPtrFrameLayout;
 
-    @Override public View onCreateContentView(@NonNull LayoutInflater inflater, ViewGroup parent) {
+    @Override public View onCreateContentView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
         return inflater.inflate(R.layout.qs_pull_header_viewpager, parent, false);
     }
 

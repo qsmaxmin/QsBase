@@ -31,7 +31,7 @@ public abstract class MvPullRecyclerFragment<D> extends MvRecyclerFragment<D> im
     private   PtrFrameLayout mPtrFrameLayout;
     protected LoadingFooter  mLoadingFooter;
 
-    @Override public View onCreateContentView(@NonNull LayoutInflater inflater, ViewGroup parent) {
+    @Override public View onCreateContentView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
         if (canPullRefreshing()) {
             return inflater.inflate(R.layout.qs_pull_recyclerview, parent, false);
         }

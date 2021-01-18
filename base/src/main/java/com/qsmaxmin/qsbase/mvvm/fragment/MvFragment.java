@@ -11,7 +11,6 @@ import android.widget.ScrollView;
 import android.widget.ViewAnimator;
 
 import com.qsmaxmin.qsbase.R;
-import com.qsmaxmin.qsbase.common.exception.QsException;
 import com.qsmaxmin.qsbase.common.http.HttpHelper;
 import com.qsmaxmin.qsbase.common.http.NetworkErrorReceiver;
 import com.qsmaxmin.qsbase.common.log.L;
@@ -20,10 +19,8 @@ import com.qsmaxmin.qsbase.common.utils.ViewHelper;
 import com.qsmaxmin.qsbase.common.viewbind.OnActivityResultListener;
 import com.qsmaxmin.qsbase.common.widget.dialog.QsProgressDialog;
 import com.qsmaxmin.qsbase.common.widget.headerview.ScrollerProvider;
-import com.qsmaxmin.qsbase.common.widget.listview.LoadingFooter;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout;
 import com.qsmaxmin.qsbase.mvp.QsIActivity;
-import com.qsmaxmin.qsbase.mvp.QsIPullToRefreshView;
 import com.qsmaxmin.qsbase.plugin.threadpoll.QsThreadPollHelper;
 
 import java.util.HashSet;
@@ -230,15 +227,15 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
         }
     }
 
-    @Override public View onCreateLoadingView(@NonNull LayoutInflater inflater, ViewGroup parent) {
+    @Override public View onCreateLoadingView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
         return inflater.inflate(QsHelper.getAppInterface().loadingLayoutId(), parent, false);
     }
 
-    @Override public View onCreateEmptyView(@NonNull LayoutInflater inflater, ViewGroup parent) {
+    @Override public View onCreateEmptyView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
         return inflater.inflate(QsHelper.getAppInterface().emptyLayoutId(), parent, false);
     }
 
-    @Override public View onCreateErrorView(@NonNull LayoutInflater inflater, ViewGroup parent) {
+    @Override public View onCreateErrorView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
         return inflater.inflate(QsHelper.getAppInterface().errorLayoutId(), parent, false);
     }
 
@@ -589,11 +586,11 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
     }
 
     @Override @Nullable public final <T> T createHttpRequest(Class<T> clazz) {
-        return createHttpRequest(clazz, System.nanoTime(), this);
+        return createHttpRequest(clazz, System.nanoTime(), null);
     }
 
     @Override @Nullable public final <T> T createHttpRequest(Class<T> clazz, Object tag) {
-        return createHttpRequest(clazz, tag, this);
+        return createHttpRequest(clazz, tag, null);
     }
 
     @Override @Nullable public final <T> T createHttpRequest(Class<T> clazz, NetworkErrorReceiver receiver) {
@@ -621,20 +618,6 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
                 QsHelper.getHttpHelper().cancelRequest(requestTags);
                 requestTags.clear();
             }
-        }
-    }
-
-    @Override public void methodError(QsException e) {
-        if (isAdded() && !isDetached()) {
-            if (this instanceof QsIPullToRefreshView) {
-                QsIPullToRefreshView view = (QsIPullToRefreshView) this;
-                view.stopRefreshing();
-                view.setLoadingState(LoadingFooter.State.NetWorkError);
-            }
-            if (!isShowContentView()) {
-                showErrorView();
-            }
-            loadingClose();
         }
     }
 }

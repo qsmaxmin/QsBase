@@ -28,7 +28,7 @@ public abstract class MvPullListActivity<D> extends MvListActivity<D> implements
     protected LoadingFooter  loadingFooter;
     private   boolean        canLoadingMore = true;
 
-    @Override public View onCreateContentView(@NonNull LayoutInflater inflater, ViewGroup parent) {
+    @Override public View onCreateContentView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
         if (canPullRefreshing()) {
             return inflater.inflate(R.layout.qs_pull_listview, parent, false);
         }

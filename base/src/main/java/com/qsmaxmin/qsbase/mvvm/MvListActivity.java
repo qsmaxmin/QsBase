@@ -31,7 +31,7 @@ public abstract class MvListActivity<D> extends MvActivity implements MvIListVie
     private         View        headerView;
     private         View        footerView;
 
-    @Override public View onCreateContentView(@NonNull LayoutInflater inflater, ViewGroup parent) {
+    @Override public View onCreateContentView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
         return inflater.inflate(R.layout.qs_listview, parent, false);
     }
 

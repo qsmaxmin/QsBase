@@ -22,7 +22,7 @@ import androidx.annotation.NonNull;
 public abstract class MvPullHeaderViewPagerActivity extends MvHeaderViewPagerActivity implements MvIPullToRefreshView {
     private PtrFrameLayout mPtrFrameLayout;
 
-    @Override public View onCreateContentView(@NonNull LayoutInflater inflater, ViewGroup parent) {
+    @Override public View onCreateContentView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
         return inflater.inflate(R.layout.qs_pull_header_viewpager, parent, false);
     }
 
@@ -68,7 +68,7 @@ public abstract class MvPullHeaderViewPagerActivity extends MvHeaderViewPagerAct
         return mPtrFrameLayout;
     }
 
-    @Override protected View initView(LayoutInflater inflater) {
+    @Override protected View initView(@NonNull LayoutInflater inflater) {
         View view = super.initView(inflater);
         initPtrFrameLayout(view);
         return view;

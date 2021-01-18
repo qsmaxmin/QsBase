@@ -35,7 +35,7 @@ public abstract class MvRecyclerFragment<D> extends MvFragment implements MvIRec
     private       View                     headerView;
     private       View                     footerView;
 
-    @Override public View onCreateContentView(@NonNull LayoutInflater inflater, ViewGroup parent) {
+    @Override public View onCreateContentView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
         return inflater.inflate(R.layout.qs_recyclerview, parent, false);
     }
 

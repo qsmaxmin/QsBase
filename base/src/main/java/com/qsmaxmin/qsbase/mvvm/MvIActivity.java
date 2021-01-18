@@ -7,6 +7,8 @@ import android.view.ViewGroup;
 
 import com.qsmaxmin.qsbase.common.viewbind.OnKeyDownListener;
 
+import androidx.annotation.NonNull;
+
 /**
  * @CreateBy qsmaxmin
  * @Date 2017/6/21 15:00
@@ -21,11 +23,11 @@ public interface MvIActivity extends MvIView {
 
     boolean isTransparentNavigationBar();
 
-    boolean onKeyDown(KeyEvent event, int keyCode);
+    boolean onKeyDown(@NonNull KeyEvent event, int keyCode);
 
     void setOnKeyDownListener(OnKeyDownListener listener);
 
     void setActivityTitle(CharSequence title, int type);
 
-    View onCreateActionbarView(LayoutInflater inflater, ViewGroup parent);
+    View onCreateActionbarView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent);
 }

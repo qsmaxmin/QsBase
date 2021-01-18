@@ -12,7 +12,6 @@ import android.widget.ScrollView;
 import android.widget.ViewAnimator;
 
 import com.qsmaxmin.qsbase.R;
-import com.qsmaxmin.qsbase.common.exception.QsException;
 import com.qsmaxmin.qsbase.common.http.HttpHelper;
 import com.qsmaxmin.qsbase.common.http.NetworkErrorReceiver;
 import com.qsmaxmin.qsbase.common.log.L;
@@ -21,9 +20,7 @@ import com.qsmaxmin.qsbase.common.utils.ViewHelper;
 import com.qsmaxmin.qsbase.common.viewbind.OnActivityResultListener;
 import com.qsmaxmin.qsbase.common.viewbind.OnKeyDownListener;
 import com.qsmaxmin.qsbase.common.widget.dialog.QsProgressDialog;
-import com.qsmaxmin.qsbase.common.widget.listview.LoadingFooter;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout;
-import com.qsmaxmin.qsbase.mvp.QsIPullToRefreshView;
 import com.qsmaxmin.qsbase.plugin.permission.PermissionHelper;
 
 import java.util.HashSet;
@@ -107,19 +104,19 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
         initData(savedInstanceState);
     }
 
-    @Override public View onCreateActionbarView(@NonNull LayoutInflater inflater, ViewGroup parent) {
+    @Override public View onCreateActionbarView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
         return null;
     }
 
-    @Override public View onCreateLoadingView(@NonNull LayoutInflater inflater, ViewGroup parent) {
+    @Override public View onCreateLoadingView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
         return inflater.inflate(QsHelper.getAppInterface().loadingLayoutId(), parent, false);
     }
 
-    @Override public View onCreateEmptyView(@NonNull LayoutInflater inflater, ViewGroup parent) {
+    @Override public View onCreateEmptyView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
         return inflater.inflate(QsHelper.getAppInterface().emptyLayoutId(), parent, false);
     }
 
-    @Override public View onCreateErrorView(@NonNull LayoutInflater inflater, ViewGroup parent) {
+    @Override public View onCreateErrorView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
         return inflater.inflate(QsHelper.getAppInterface().errorLayoutId(), parent, false);
     }
 
@@ -543,11 +540,11 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
         return onKeyDown(event, keyCode);
     }
 
-    @Override public boolean onKeyDown(KeyEvent event, int keyCode) {
+    @Override public boolean onKeyDown(@NonNull KeyEvent event, int keyCode) {
         return super.onKeyDown(keyCode, event);
     }
 
-    @Override public void setOnKeyDownListener(OnKeyDownListener listener) {
+    @Override public final void setOnKeyDownListener(OnKeyDownListener listener) {
         this.onKeyDownListener = listener;
     }
 
@@ -585,11 +582,11 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
     }
 
     @Override @Nullable public final <T> T createHttpRequest(Class<T> clazz) {
-        return createHttpRequest(clazz, System.nanoTime(), this);
+        return createHttpRequest(clazz, System.nanoTime(), null);
     }
 
     @Override @Nullable public final <T> T createHttpRequest(Class<T> clazz, Object tag) {
-        return createHttpRequest(clazz, tag, this);
+        return createHttpRequest(clazz, tag, null);
     }
 
     @Override @Nullable public final <T> T createHttpRequest(Class<T> clazz, NetworkErrorReceiver receiver) {
@@ -617,20 +614,6 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
                 QsHelper.getHttpHelper().cancelRequest(requestTags);
                 requestTags.clear();
             }
-        }
-    }
-
-    @Override public void methodError(QsException e) {
-        if (!isFinishing()) {
-            if (this instanceof QsIPullToRefreshView) {
-                QsIPullToRefreshView view = (QsIPullToRefreshView) this;
-                view.stopRefreshing();
-                view.setLoadingState(LoadingFooter.State.NetWorkError);
-            }
-            if (!isShowContentView()) {
-                showErrorView();
-            }
-            loadingClose();
         }
     }
 }

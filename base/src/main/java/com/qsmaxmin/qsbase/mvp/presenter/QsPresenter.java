@@ -20,6 +20,7 @@ import java.util.HashSet;
 import androidx.annotation.ColorRes;
 import androidx.annotation.DimenRes;
 import androidx.annotation.DrawableRes;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.fragment.app.FragmentActivity;
@@ -149,7 +150,7 @@ public class QsPresenter<V extends QsIView> implements NetworkErrorReceiver, QsN
     /**
      * 当前Presenter请求网络出错时，都会回调该方法
      */
-    @Override public void methodError(QsException e) {
+    @Override public void methodError(@NonNull QsException e) {
         if (L.isEnable()) L.e(initTag(), "methodError..." + e.getMessage());
         resetViewState();
     }

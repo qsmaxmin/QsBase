@@ -33,11 +33,11 @@ public abstract class MvViewPagerActivity extends MvActivity implements MvIViewP
     private MvIPagerAdapter      adapter;
     private MvTabAdapter         tabAdapter;
 
-    @Override public View onCreateContentView(@NonNull LayoutInflater inflater, ViewGroup parent) {
+    @Override public View onCreateContentView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
         return inflater.inflate(R.layout.qs_viewpager_bottom_tab, parent, false);
     }
 
-    @Override protected View initView(LayoutInflater inflater) {
+    @Override protected View initView(@NonNull LayoutInflater inflater) {
         View view = super.initView(inflater);
         pager = view.findViewById(R.id.pager);
         tabs = view.findViewById(android.R.id.tabs);

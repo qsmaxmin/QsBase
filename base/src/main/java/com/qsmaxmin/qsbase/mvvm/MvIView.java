@@ -14,6 +14,7 @@ import com.qsmaxmin.qsbase.plugin.bind.QsIBindBundle;
 import com.qsmaxmin.qsbase.plugin.event.QsIBindEvent;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
@@ -22,7 +23,7 @@ import androidx.fragment.app.Fragment;
  * @Date 2020/12/8 14:42
  * @Description MVVM架构的View层基类
  */
-public interface MvIView extends IView, QsIBindEvent, QsIBindBundle, QsNotProguard, NetworkErrorReceiver {
+public interface MvIView extends IView, QsIBindEvent, QsIBindBundle, QsNotProguard {
     int VIEW_STATE_LOADING = 0;
     int VIEW_STATE_CONTENT = 1;
     int VIEW_STATE_EMPTY   = 2;
@@ -36,15 +37,15 @@ public interface MvIView extends IView, QsIBindEvent, QsIBindBundle, QsNotProgua
 
     QsProgressDialog getLoadingDialog();
 
-    View onCreateLoadingView(@NonNull LayoutInflater inflater, ViewGroup parent);
+    View onCreateLoadingView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent);
 
-    View onCreateContentView(@NonNull LayoutInflater inflater, ViewGroup parent);
+    View onCreateContentView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent);
 
-    View onCreateEmptyView(@NonNull LayoutInflater inflater, ViewGroup parent);
+    View onCreateEmptyView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent);
 
-    View onCreateErrorView(@NonNull LayoutInflater inflater, ViewGroup parent);
+    View onCreateErrorView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent);
 
-    void initData(Bundle savedInstanceState);
+    void initData(@Nullable Bundle savedInstanceState);
 
     boolean isOpenViewState();
 

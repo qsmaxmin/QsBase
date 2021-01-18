@@ -25,7 +25,7 @@ public abstract class MvPullActivity extends MvActivity implements MvIPullView {
     private PtrFrameLayout mPtrFrameLayout;
     private View           childView;
 
-    @Override public View onCreateContentView(@NonNull LayoutInflater inflater, ViewGroup parent) {
+    @Override public View onCreateContentView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
         return inflater.inflate(R.layout.qs_pulll_view, parent, false);
     }
 
