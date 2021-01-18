@@ -30,7 +30,7 @@ public abstract class QsListAdapterItem<D> implements QsIBindView, QsNotProguard
 
     public abstract int getItemLayout();
 
-    @CallSuper public void init(View contentView) {
+    @CallSuper public void init(@NonNull View contentView) {
         bindViewByQsPlugin(contentView);
     }
 
@@ -42,7 +42,7 @@ public abstract class QsListAdapterItem<D> implements QsIBindView, QsNotProguard
 
     public abstract void bindData(D data, int position, int count);
 
-    public void onViewClick(View view) {
+    public void onViewClick(@NonNull View view) {
     }
 
     public final void setViewLayer(QsIListView<D> viewLayer) {

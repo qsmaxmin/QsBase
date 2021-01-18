@@ -26,10 +26,10 @@ import androidx.fragment.app.FragmentActivity;
  */
 @SuppressWarnings("WeakerAccess")
 public abstract class QsRecycleAdapterItem<D> implements QsIBindView, QsNotProguard {
-    private View               mItemView;
-    private QsIRecyclerView<D> viewLayer;
+    private final View               mItemView;
+    private       QsIRecyclerView<D> viewLayer;
 
-    public QsRecycleAdapterItem(LayoutInflater inflater, ViewGroup parent) {
+    public QsRecycleAdapterItem(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
         mItemView = inflater.inflate(itemViewLayoutId(), parent, false);
         bindViewByQsPlugin(mItemView);
     }
@@ -52,7 +52,7 @@ public abstract class QsRecycleAdapterItem<D> implements QsIBindView, QsNotProgu
         return mItemView;
     }
 
-    public void onViewClick(View view) {
+    public void onViewClick(@NonNull View view) {
     }
 
     public final void setViewLayer(QsIRecyclerView<D> viewLayer) {

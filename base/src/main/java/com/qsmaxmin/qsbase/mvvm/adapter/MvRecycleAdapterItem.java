@@ -106,10 +106,10 @@ public abstract class MvRecycleAdapterItem<D> implements IView, QsNotProguard {
         }
     }
 
-    protected void onViewClick(View view) {
+    protected void onViewClick(@NonNull View view) {
     }
 
-    public MvRecycleAdapterItem(LayoutInflater inflater, ViewGroup parent) {
+    public MvRecycleAdapterItem(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
         itemView = onCreateItemView(inflater, parent);
     }
 

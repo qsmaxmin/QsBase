@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import com.qsmaxmin.qsbase.common.widget.viewpager.PagerSlidingTabStrip;
 import com.qsmaxmin.qsbase.common.widget.viewpager.QsViewPagerHelper;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentManager;
 
 /**
@@ -17,7 +18,7 @@ import androidx.fragment.app.FragmentManager;
 
 public class QsTabFragmentPagerAdapter extends QsFragmentPagerAdapter implements PagerSlidingTabStrip.CustomTabProvider {
 
-    public QsTabFragmentPagerAdapter(FragmentManager fm, QsViewPagerHelper helper) {
+    public QsTabFragmentPagerAdapter(@NonNull FragmentManager fm, @NonNull QsViewPagerHelper helper) {
         super(fm, helper);
     }
 

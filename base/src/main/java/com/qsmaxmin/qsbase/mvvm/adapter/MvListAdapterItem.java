@@ -103,14 +103,14 @@ public abstract class MvListAdapterItem<D> implements QsNotProguard, IView {
         }
     }
 
-    protected void onViewClick(View view) {
+    protected void onViewClick(@NonNull View view) {
     }
 
     protected String initTag() {
         return L.isEnable() ? getClass().getSimpleName() : "MvListAdapterItem";
     }
 
-    public abstract View onCreateItemView(LayoutInflater inflater, ViewGroup parent);
+    public abstract View onCreateItemView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent);
 
     public abstract void bindData(D data, int position, int count);
 

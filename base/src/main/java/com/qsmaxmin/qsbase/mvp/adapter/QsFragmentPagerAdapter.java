@@ -17,7 +17,7 @@ import androidx.viewpager.widget.PagerAdapter;
 public class QsFragmentPagerAdapter extends FragmentPagerAdapter implements QsIPagerAdapter {
     private final QsViewPagerHelper pagerHelper;
 
-    public QsFragmentPagerAdapter(FragmentManager fm, QsViewPagerHelper pagerHelper) {
+    public QsFragmentPagerAdapter(@NonNull FragmentManager fm, @NonNull QsViewPagerHelper pagerHelper) {
         super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         this.pagerHelper = pagerHelper;
     }

@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import com.qsmaxmin.qsbase.common.widget.viewpager.MvViewPagerHelper;
 import com.qsmaxmin.qsbase.common.widget.viewpager.PagerSlidingTabStrip;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentManager;
 
 /**
@@ -17,7 +18,7 @@ import androidx.fragment.app.FragmentManager;
 
 public class MvTabFragmentPagerAdapter extends MvFragmentPagerAdapter implements PagerSlidingTabStrip.CustomTabProvider {
 
-    public MvTabFragmentPagerAdapter(FragmentManager fm, MvViewPagerHelper helper) {
+    public MvTabFragmentPagerAdapter(@NonNull FragmentManager fm, @NonNull MvViewPagerHelper helper) {
         super(fm, helper);
     }
 
@@ -25,14 +26,14 @@ public class MvTabFragmentPagerAdapter extends MvFragmentPagerAdapter implements
         return 0;
     }
 
-    @Override public View getCustomTabView(LayoutInflater inflater, ViewGroup parent, int position) {
+    @Override public View getCustomTabView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent, int position) {
         if (getPagerHelper().getTabAdapter() != null) {
             return getPagerHelper().getTabAdapter().getTabItemView(inflater, parent, position);
         }
         return null;
     }
 
-    @Override public void initTabsItem(View view, int position) {
+    @Override public void initTabsItem(@NonNull View view, int position) {
         if (getPagerHelper().getTabAdapter() != null && position >= 0 && position < getCount()) {
             getPagerHelper().getTabAdapter().init(view, position);
         }

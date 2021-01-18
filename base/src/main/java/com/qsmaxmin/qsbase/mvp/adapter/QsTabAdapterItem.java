@@ -8,6 +8,8 @@ import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.mvp.model.QsModelPager;
 import com.qsmaxmin.qsbase.plugin.bind.QsIBindView;
 
+import androidx.annotation.NonNull;
+
 /**
  * @CreateBy qsmaxmin
  * @Date 2020/10/26 17:28
@@ -52,7 +54,7 @@ public abstract class QsTabAdapterItem implements QsIBindView, QsNotProguard {
         return modelPagers[index];
     }
 
-    protected void initView(View itemView) {
+    protected void initView(@NonNull View itemView) {
         //custom your logic
     }
 
@@ -66,7 +68,7 @@ public abstract class QsTabAdapterItem implements QsIBindView, QsNotProguard {
 
     public abstract int tabItemLayoutId();
 
-    public abstract void bindData(QsModelPager pagers, int position);
+    public abstract void bindData(@NonNull QsModelPager pagers, int position);
 
     public abstract void onPageSelectChanged(boolean selected);
 

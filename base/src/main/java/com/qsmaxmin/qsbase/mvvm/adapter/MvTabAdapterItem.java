@@ -55,7 +55,7 @@ public abstract class MvTabAdapterItem implements IView, QsNotProguard {
         return modelPagers[index];
     }
 
-    protected void initView(View itemView) {
+    protected void initView(@NonNull View itemView) {
         //custom your logic
     }
 
@@ -135,7 +135,7 @@ public abstract class MvTabAdapterItem implements IView, QsNotProguard {
     }
 
 
-    protected void onViewClick(View view) {
+    protected void onViewClick(@NonNull View view) {
     }
 
     @Override public final Context getContext() {
@@ -178,7 +178,7 @@ public abstract class MvTabAdapterItem implements IView, QsNotProguard {
         ViewHelper.intent2Activity(getActivity(), clazz, bundle, requestCode, optionsCompat, enterAnim, existAnim);
     }
 
-    public abstract View onCreateTabItemView(LayoutInflater inflater, ViewGroup parent);
+    public abstract View onCreateTabItemView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent);
 
     public abstract void bindData(MvModelPager pagers, int position);
 

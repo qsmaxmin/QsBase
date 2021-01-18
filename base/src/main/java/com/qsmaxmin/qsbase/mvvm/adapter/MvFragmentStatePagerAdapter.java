@@ -17,7 +17,7 @@ import androidx.viewpager.widget.PagerAdapter;
 public class MvFragmentStatePagerAdapter extends FragmentStatePagerAdapter implements MvIPagerAdapter {
     private final MvViewPagerHelper pagerHelper;
 
-    public MvFragmentStatePagerAdapter(FragmentManager fm, MvViewPagerHelper pagerHelper) {
+    public MvFragmentStatePagerAdapter(@NonNull FragmentManager fm, @NonNull MvViewPagerHelper pagerHelper) {
         super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         this.pagerHelper = pagerHelper;
     }

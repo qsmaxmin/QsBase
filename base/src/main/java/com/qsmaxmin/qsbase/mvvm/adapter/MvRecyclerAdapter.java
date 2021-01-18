@@ -5,9 +5,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 
-import com.qsmaxmin.qsbase.mvp.QsIRecyclerView;
-import com.qsmaxmin.qsbase.mvp.adapter.MyRecycleViewHolder;
-import com.qsmaxmin.qsbase.mvp.adapter.QsRecycleAdapterItem;
 import com.qsmaxmin.qsbase.mvvm.MvIRecyclerView;
 
 import java.util.List;
@@ -25,7 +22,7 @@ public class MvRecyclerAdapter<D> extends RecyclerView.Adapter<MvRecycleViewHold
     private final MvIRecyclerView<D> recyclerLayer;
     private final List<D>            mList;
 
-    public MvRecyclerAdapter(MvIRecyclerView<D> recyclerLayer, List<D> list, LayoutInflater inflater) {
+    public MvRecyclerAdapter(MvIRecyclerView<D> recyclerLayer, List<D> list, @NonNull LayoutInflater inflater) {
         this.recyclerLayer = recyclerLayer;
         this.mInflater = inflater;
         this.mList = list;
