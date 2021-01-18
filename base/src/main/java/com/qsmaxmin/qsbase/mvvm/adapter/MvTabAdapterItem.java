@@ -13,6 +13,7 @@ import com.qsmaxmin.qsbase.mvvm.IView;
 import com.qsmaxmin.qsbase.mvvm.MvIView;
 import com.qsmaxmin.qsbase.mvvm.model.MvModelPager;
 
+import androidx.annotation.NonNull;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.fragment.app.FragmentActivity;
 
@@ -62,11 +63,11 @@ public abstract class MvTabAdapterItem implements IView, QsNotProguard {
         return itemView;
     }
 
-    @Override public final void onViewClicked(View view) {
+    @Override public final void onViewClicked(@NonNull View view) {
         onViewClicked(view, 400);
     }
 
-    @Override public final void onViewClicked(View view, long interval) {
+    @Override public final void onViewClicked(@NonNull View view, long interval) {
         if (interval > 0) {
             if (ViewHelper.isFastClick(interval)) return;
         }

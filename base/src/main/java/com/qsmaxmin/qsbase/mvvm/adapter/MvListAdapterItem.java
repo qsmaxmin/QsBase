@@ -24,11 +24,11 @@ import androidx.fragment.app.FragmentActivity;
 public abstract class MvListAdapterItem<D> implements QsNotProguard, IView {
     private MvIListView<D> viewLayer;
 
-    @Override public final void onViewClicked(View view) {
+    @Override public final void onViewClicked(@NonNull View view) {
         onViewClicked(view, 400);
     }
 
-    @Override public final void onViewClicked(View view, long interval) {
+    @Override public final void onViewClicked(@NonNull View view, long interval) {
         if (interval > 0) {
             if (ViewHelper.isFastClick(interval)) return;
         }

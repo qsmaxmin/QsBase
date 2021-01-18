@@ -31,7 +31,7 @@ public interface MvIView extends IView, QsIBindEvent, QsIBindBundle, QsNotProgua
 
     String initTag();
 
-    void onViewClick(View view);
+    void onViewClick(@NonNull View view);
 
     int rootViewLayoutId();
 

@@ -15,6 +15,7 @@ import com.qsmaxmin.qsbase.plugin.presenter.QsIPresenter;
 
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.fragment.app.DialogFragment;
@@ -56,9 +57,9 @@ public interface QsIView<P> extends QsIBindView, QsIBindEvent, QsIBindBundle, Qs
 
     void onViewCreated(View view);
 
-    void initData(Bundle savedInstanceState);
+    void initData(@Nullable Bundle savedInstanceState);
 
-    void onViewClick(View view);
+    void onViewClick(@NonNull View view);
 
     P getPresenter();
 

@@ -210,7 +210,7 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         return null;
     }
 
-    @Override public void onViewClick(View view) {
+    @Override public void onViewClick(@NonNull View view) {
     }
 
     @Override public final Context getContext() {

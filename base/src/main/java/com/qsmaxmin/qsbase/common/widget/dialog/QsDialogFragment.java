@@ -98,11 +98,11 @@ public abstract class QsDialogFragment extends DialogFragment implements IView, 
         return L.isEnable() ? getClass().getSimpleName() : "QsDialogFragment";
     }
 
-    @Override public final void onViewClicked(View view) {
+    @Override public final void onViewClicked(@NonNull View view) {
         onViewClicked(view, 400);
     }
 
-    @Override public final void onViewClicked(View view, long interval) {
+    @Override public final void onViewClicked(@NonNull View view, long interval) {
         if (interval > 0) {
             if (ViewHelper.isFastClick(interval)) return;
         }

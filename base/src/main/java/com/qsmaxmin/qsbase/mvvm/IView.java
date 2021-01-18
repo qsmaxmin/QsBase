@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.fragment.app.FragmentActivity;
@@ -14,9 +15,9 @@ import androidx.fragment.app.FragmentActivity;
  * @Description view层超类
  */
 public interface IView {
-    void onViewClicked(View view);
+    void onViewClicked(@NonNull View view);
 
-    void onViewClicked(View view, long interval);
+    void onViewClicked(@NonNull View view, long interval);
 
     Context getContext();
 
