@@ -12,6 +12,8 @@ import com.qsmaxmin.qsbase.common.widget.ptr.PtrUIHandler;
 import com.qsmaxmin.qsbase.common.widget.ptr.header.BeautyCircleRefreshHeader;
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
 
+import androidx.annotation.NonNull;
+
 /**
  * @CreateBy administrator
  * @Date 2020/9/9 11:14
@@ -24,7 +26,7 @@ public abstract class QsPullHeaderViewPagerActivity<P extends QsPresenter> exten
         return R.layout.qs_pull_header_viewpager;
     }
 
-    @Override public PtrUIHandler getPtrUIHandlerView() {
+    @NonNull @Override public PtrUIHandler getPtrUIHandlerView() {
         return new BeautyCircleRefreshHeader(getContext());
     }
 

@@ -6,6 +6,8 @@ import com.qsmaxmin.qsbase.mvvm.adapter.MvTabAdapter;
 import com.qsmaxmin.qsbase.mvvm.adapter.MvTabAdapterItem;
 import com.qsmaxmin.qsbase.mvvm.model.MvModelPager;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
@@ -23,11 +25,11 @@ public interface MvIViewPager {
 
     void onPageScrolled(int position, float positionOffset, int positionOffsetPixels);
 
-    void initViewPager(MvModelPager[] modelPagers);
+    void initViewPager(@Nullable MvModelPager[] modelPagers);
 
-    void initViewPager(MvModelPager[] modelPagers, int offScreenPageLimit);
+    void initViewPager(@Nullable MvModelPager[] modelPagers, int offScreenPageLimit);
 
-    MvModelPager[] createModelPagers();
+    @Nullable MvModelPager[] createModelPagers();
 
     void setIndex(int index, boolean bool);
 
@@ -43,7 +45,7 @@ public interface MvIViewPager {
 
     MvTabAdapter getTabAdapter();
 
-    void initTab(PagerSlidingTabStrip tabStrip);
+    void initTab(@NonNull PagerSlidingTabStrip tabStrip);
 
     Fragment getCurrentFragment();
 }

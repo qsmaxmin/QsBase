@@ -4,6 +4,8 @@ import com.qsmaxmin.qsbase.common.widget.listview.LoadingFooter;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrUIHandler;
 
+import androidx.annotation.NonNull;
+
 /**
  * @CreateBy qsmaxmin
  * @Date 17/7/2  下午12:54
@@ -14,7 +16,7 @@ public interface MvIPullToRefreshView {
     byte LOAD_WHEN_SCROLL_TO_BOTTOM = 0;
     byte LOAD_WHEN_SECOND_TO_LAST   = 1;
 
-    PtrUIHandler getPtrUIHandlerView();
+    @NonNull PtrUIHandler getPtrUIHandlerView();
 
     void onRefresh();
 

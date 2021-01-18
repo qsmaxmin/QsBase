@@ -17,6 +17,8 @@ import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+
 /**
  * @CreateBy qsmaxmin
  * @Date 2020/4/9 15:06
@@ -81,7 +83,7 @@ public abstract class QsListActivity<P extends QsPresenter, D> extends QsActivit
         return rootView;
     }
 
-    @Override public final QsListAdapterItem<D> getListAdapterItemInner(int type) {
+    @NonNull @Override public final QsListAdapterItem<D> getListAdapterItemInner(int type) {
         QsListAdapterItem<D> adapterItem = getListAdapterItem(type);
         adapterItem.setViewLayer(this);
         return adapterItem;
@@ -212,11 +214,11 @@ public abstract class QsListActivity<P extends QsPresenter, D> extends QsActivit
         }
     }
 
-    @Override public final List<D> getData() {
+    @NonNull @Override public final List<D> getData() {
         return mList;
     }
 
-    @Override public final List<D> copyData() {
+    @NonNull @Override public final List<D> copyData() {
         ArrayList<D> list = new ArrayList<>();
         if (!mList.isEmpty()) list.addAll(mList);
         return list;

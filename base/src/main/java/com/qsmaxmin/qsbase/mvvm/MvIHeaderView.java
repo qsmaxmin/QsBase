@@ -8,6 +8,8 @@ import com.qsmaxmin.qsbase.common.widget.headerview.HeaderScrollListener;
 import com.qsmaxmin.qsbase.common.widget.headerview.HeaderScrollView;
 import com.qsmaxmin.qsbase.common.widget.headerview.ScrollerProvider;
 
+import androidx.annotation.NonNull;
+
 /**
  * @CreateBy qsmaxmin
  * @Date 2017/7/4 11:08
@@ -15,7 +17,7 @@ import com.qsmaxmin.qsbase.common.widget.headerview.ScrollerProvider;
  */
 
 public interface MvIHeaderView extends ScrollerProvider, HeaderScrollListener {
-    View onCreateHeaderView(LayoutInflater inflater, ViewGroup parent);
+    View onCreateHeaderView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent);
 
     HeaderScrollView getHeaderScrollView();
 }

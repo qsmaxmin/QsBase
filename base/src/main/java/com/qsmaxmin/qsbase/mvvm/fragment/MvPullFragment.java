@@ -31,7 +31,7 @@ public abstract class MvPullFragment extends MvFragment implements MvIPullView {
         return inflater.inflate(R.layout.qs_pulll_view, parent, false);
     }
 
-    @Override public PtrUIHandler getPtrUIHandlerView() {
+    @NonNull @Override public PtrUIHandler getPtrUIHandlerView() {
         return new BeautyCircleRefreshHeader(getContext());
     }
 

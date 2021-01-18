@@ -42,7 +42,7 @@ public abstract class MvPullListFragment<D> extends MvListFragment<D> implements
         return inflater.inflate(R.layout.qs_loading_footer, null);
     }
 
-    @Override public PtrUIHandler getPtrUIHandlerView() {
+    @NonNull @Override public PtrUIHandler getPtrUIHandlerView() {
         return new BeautyCircleRefreshHeader(getContext());
     }
 

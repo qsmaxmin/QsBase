@@ -18,6 +18,7 @@ import com.qsmaxmin.qsbase.mvvm.adapter.MvTabFragmentPagerAdapter;
 import com.qsmaxmin.qsbase.mvvm.model.MvModelPager;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
@@ -46,11 +47,11 @@ public abstract class MvViewPagerActivity extends MvActivity implements MvIViewP
         return view;
     }
 
-    @Override public void initViewPager(MvModelPager[] modelPagers) {
+    @Override public void initViewPager(@Nullable MvModelPager[] modelPagers) {
         initViewPager(modelPagers, getOffscreenPageLimit());
     }
 
-    @Override public void initViewPager(MvModelPager[] modelPagers, int offScreenPageLimit) {
+    @Override public void initViewPager(@Nullable MvModelPager[] modelPagers, int offScreenPageLimit) {
         if (modelPagers != null && modelPagers.length > 0) {
             MvViewPagerHelper pagerHelper = new MvViewPagerHelper(this, pager, modelPagers);
             MvTabAdapterItem firstTabItem = createTabAdapterItemInner(0);
@@ -67,7 +68,7 @@ public abstract class MvViewPagerActivity extends MvActivity implements MvIViewP
         }
     }
 
-    @Override public void initTab(PagerSlidingTabStrip tabStrip) {
+    @Override public void initTab(@NonNull PagerSlidingTabStrip tabStrip) {
         DisplayMetrics dm = getResources().getDisplayMetrics();
         tabStrip.setIndicatorWidth((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30, dm));
         tabStrip.setIndicatorCorner(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1.5f, dm));

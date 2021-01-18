@@ -15,6 +15,7 @@ import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
 import java.util.List;
 
 import androidx.annotation.CallSuper;
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 /**
@@ -35,7 +36,7 @@ public abstract class QsPullRecyclerActivity<P extends QsPresenter, D> extends Q
         return canPullRefreshing() ? R.layout.qs_pull_recyclerview : R.layout.qs_recyclerview;
     }
 
-    @Override public PtrUIHandler getPtrUIHandlerView() {
+    @NonNull @Override public PtrUIHandler getPtrUIHandlerView() {
         return new BeautyCircleRefreshHeader(getContext());
     }
 
@@ -126,7 +127,7 @@ public abstract class QsPullRecyclerActivity<P extends QsPresenter, D> extends Q
         }
     }
 
-    @CallSuper @Override public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+    @CallSuper @Override public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
         if (onLoadTriggerCondition() == LOAD_WHEN_SCROLL_TO_BOTTOM && newState == RecyclerView.SCROLL_STATE_IDLE && !canRecyclerScrollEnd()) {
             loadingMoreData();
         }

@@ -38,7 +38,7 @@ public abstract class QsPullListFragment<T extends QsPresenter, D> extends QsLis
         return R.layout.qs_loading_footer;
     }
 
-    @Override public PtrUIHandler getPtrUIHandlerView() {
+    @NonNull @Override public PtrUIHandler getPtrUIHandlerView() {
         return new BeautyCircleRefreshHeader(getContext());
     }
 

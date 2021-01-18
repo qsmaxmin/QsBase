@@ -6,6 +6,7 @@ import com.qsmaxmin.qsbase.mvp.adapter.QsTabAdapter;
 import com.qsmaxmin.qsbase.mvp.adapter.QsTabAdapterItem;
 import com.qsmaxmin.qsbase.mvp.model.QsModelPager;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
@@ -23,11 +24,11 @@ public interface QsIViewPager {
 
     void onPageScrolled(int position, float positionOffset, int positionOffsetPixels);
 
-    void initViewPager(QsModelPager[] modelPagers);
+    void initViewPager(@Nullable QsModelPager[] modelPagers);
 
-    void initViewPager(QsModelPager[] modelPagers, int offScreenPageLimit);
+    void initViewPager(@Nullable QsModelPager[] modelPagers, int offScreenPageLimit);
 
-    QsModelPager[] createModelPagers();
+    @Nullable QsModelPager[] createModelPagers();
 
     void setIndex(int index, boolean bool);
 

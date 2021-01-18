@@ -221,11 +221,11 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
         }
     }
 
-    @Override public final List<D> getData() {
+    @NonNull @Override public final List<D> getData() {
         return mList;
     }
 
-    @Override public final List<D> copyData() {
+    @NonNull @Override public final List<D> copyData() {
         ArrayList<D> list = new ArrayList<>();
         if (!mList.isEmpty()) list.addAll(mList);
         return list;
@@ -277,15 +277,15 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
         }
     }
 
-    @Override public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+    @Override public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
         //for custom logic
     }
 
-    @Override public void onScrollStateChanged(RecyclerView view, int newState) {
+    @Override public void onScrollStateChanged(@NonNull RecyclerView view, int newState) {
         //for custom logic
     }
 
-    @Override public final QsRecycleAdapterItem<D> getRecycleAdapterItemInner(LayoutInflater mInflater, ViewGroup parent, int type) {
+    @NonNull @Override public final QsRecycleAdapterItem<D> getRecycleAdapterItemInner(@NonNull LayoutInflater mInflater, @NonNull ViewGroup parent, int type) {
         QsRecycleAdapterItem<D> adapterItem = getRecycleAdapterItem(mInflater, parent, type);
         adapterItem.setViewLayer(this);
         return adapterItem;
@@ -303,7 +303,7 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
         //for custom logic
     }
 
-    @Override public RecyclerView.LayoutManager getLayoutManager() {
+    @NonNull @Override public RecyclerView.LayoutManager getLayoutManager() {
         return new LinearLayoutManager(getContext());
     }
 

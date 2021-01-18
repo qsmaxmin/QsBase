@@ -11,6 +11,7 @@ import com.qsmaxmin.qsbase.mvp.adapter.QsListAdapterItem;
 
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 
 /**
@@ -21,9 +22,9 @@ import androidx.fragment.app.FragmentActivity;
 
 public interface QsIListView<D> extends AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener, AbsListView.OnScrollListener {
 
-    QsListAdapterItem<D> getListAdapterItemInner(int type);
+    @NonNull QsListAdapterItem<D> getListAdapterItemInner(int type);
 
-    QsListAdapterItem<D> getListAdapterItem(int type);
+    @NonNull QsListAdapterItem<D> getListAdapterItem(int type);
 
     int getHeaderLayout();
 
@@ -55,9 +56,9 @@ public interface QsIListView<D> extends AdapterView.OnItemClickListener, Adapter
 
     void deleteAll();
 
-    List<D> getData();
+    @NonNull List<D> getData();
 
-    List<D> copyData();
+    @NonNull List<D> copyData();
 
     D getData(int position);
 

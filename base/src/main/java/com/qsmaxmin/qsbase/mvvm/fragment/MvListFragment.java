@@ -85,7 +85,7 @@ public abstract class MvListFragment<D> extends MvFragment implements MvIListVie
         return rootView;
     }
 
-    @Override public final MvListAdapterItem<D> getListAdapterItemInner(int type) {
+    @NonNull @Override public final MvListAdapterItem<D> getListAdapterItemInner(int type) {
         MvListAdapterItem<D> adapterItem = getListAdapterItem(type);
         adapterItem.setViewLayer(this);
         return adapterItem;
@@ -216,11 +216,11 @@ public abstract class MvListFragment<D> extends MvFragment implements MvIListVie
         }
     }
 
-    @Override public final List<D> getData() {
+    @NonNull @Override public final List<D> getData() {
         return mList;
     }
 
-    @Override public final List<D> copyData() {
+    @NonNull @Override public final List<D> copyData() {
         ArrayList<D> list = new ArrayList<>();
         if (!mList.isEmpty()) list.addAll(mList);
         return list;

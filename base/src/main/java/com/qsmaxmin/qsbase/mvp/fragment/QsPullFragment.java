@@ -32,7 +32,7 @@ public abstract class QsPullFragment<T extends QsPresenter> extends QsFragment<T
         return R.layout.qs_pulll_view;
     }
 
-    @Override public PtrUIHandler getPtrUIHandlerView() {
+    @NonNull @Override public PtrUIHandler getPtrUIHandlerView() {
         return new BeautyCircleRefreshHeader(getContext());
     }
 

@@ -12,6 +12,7 @@ import com.qsmaxmin.qsbase.mvvm.adapter.MvRecycleAdapterItem;
 
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -22,13 +23,13 @@ import androidx.recyclerview.widget.RecyclerView;
  */
 
 public interface MvIRecyclerView<D> extends AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
-    MvRecycleAdapterItem<D> getRecycleAdapterItemInner(LayoutInflater inflater, ViewGroup parent, int type);
+    MvRecycleAdapterItem<D> getRecycleAdapterItemInner(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent, int type);
 
-    MvRecycleAdapterItem<D> getRecycleAdapterItem(LayoutInflater inflater, ViewGroup parent, int type);
+    MvRecycleAdapterItem<D> getRecycleAdapterItem(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent, int type);
 
-    View onCreateListHeaderView(LayoutInflater inflater);
+    View onCreateListHeaderView(@NonNull LayoutInflater inflater);
 
-    View onCreateListFooterView(LayoutInflater inflater);
+    View onCreateListFooterView(@NonNull LayoutInflater inflater);
 
     View getHeaderView();
 
@@ -54,9 +55,9 @@ public interface MvIRecyclerView<D> extends AdapterView.OnItemClickListener, Ada
 
     void deleteAll();
 
-    List<D> getData();
+    @NonNull List<D> getData();
 
-    List<D> copyData();
+    @NonNull List<D> copyData();
 
     D getData(int position);
 
@@ -76,13 +77,13 @@ public interface MvIRecyclerView<D> extends AdapterView.OnItemClickListener, Ada
 
     void onAdapterGetView(int position, int totalCount);
 
-    void onScrollStateChanged(RecyclerView recyclerView, int newState);
+    void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState);
 
-    void onScrolled(RecyclerView recyclerView, int dx, int dy);
+    void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy);
 
     void onReceiveAdapterItemEvent(int eventType, D data, int position);
 
-    RecyclerView.LayoutManager getLayoutManager();
+    @NonNull RecyclerView.LayoutManager getLayoutManager();
 
     QsItemDecoration getItemDecoration();
 

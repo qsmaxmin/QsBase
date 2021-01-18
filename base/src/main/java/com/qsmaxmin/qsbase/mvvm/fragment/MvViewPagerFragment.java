@@ -53,11 +53,11 @@ public abstract class MvViewPagerFragment extends MvFragment implements MvIViewP
         initViewPager(createModelPagers());
     }
 
-    @Override public void initViewPager(MvModelPager[] modelPagers) {
+    @Override public void initViewPager(@Nullable MvModelPager[] modelPagers) {
         initViewPager(createModelPagers(), getOffscreenPageLimit());
     }
 
-    @Override public void initViewPager(MvModelPager[] modelPagers, int offScreenPageLimit) {
+    @Override public void initViewPager(@Nullable MvModelPager[] modelPagers, int offScreenPageLimit) {
         if (modelPagers != null && modelPagers.length > 0) {
             MvViewPagerHelper pagerHelper = new MvViewPagerHelper(this, pager, modelPagers);
             MvTabAdapterItem firstTabItem = createTabAdapterItemInner(0);
@@ -82,7 +82,7 @@ public abstract class MvViewPagerFragment extends MvFragment implements MvIViewP
         }
     }
 
-    @Override public void initTab(PagerSlidingTabStrip tabStrip) {
+    @Override public void initTab(@NonNull PagerSlidingTabStrip tabStrip) {
         DisplayMetrics dm = getResources().getDisplayMetrics();
         tabStrip.setIndicatorWidth((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30, dm));
         tabStrip.setIndicatorCorner(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1.5f, dm));

@@ -516,7 +516,7 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         return onKeyDown(event, keyCode);
     }
 
-    @Override public boolean onKeyDown(KeyEvent event, int keyCode) {
+    @Override public boolean onKeyDown(@NonNull KeyEvent event, int keyCode) {
         return super.onKeyDown(keyCode, event);
     }
 

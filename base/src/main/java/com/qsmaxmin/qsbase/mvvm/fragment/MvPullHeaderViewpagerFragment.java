@@ -29,7 +29,7 @@ public abstract class MvPullHeaderViewpagerFragment extends MvHeaderViewpagerFra
         return inflater.inflate(R.layout.qs_pull_header_viewpager, parent, false);
     }
 
-    @Override public PtrUIHandler getPtrUIHandlerView() {
+    @NonNull @Override public PtrUIHandler getPtrUIHandlerView() {
         return new BeautyCircleRefreshHeader(getContext());
     }
 

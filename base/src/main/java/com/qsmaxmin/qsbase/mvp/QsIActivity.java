@@ -5,6 +5,7 @@ import android.view.KeyEvent;
 import com.qsmaxmin.qsbase.common.viewbind.OnKeyDownListener;
 
 import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
 
 /**
  * @CreateBy qsmaxmin
@@ -22,7 +23,7 @@ public interface QsIActivity extends QsIView {
 
     boolean isTransparentNavigationBar();
 
-    boolean onKeyDown(KeyEvent event, int keyCode);
+    boolean onKeyDown(@NonNull KeyEvent event, int keyCode);
 
     void setOnKeyDownListener(OnKeyDownListener listener);
 

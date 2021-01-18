@@ -49,12 +49,12 @@ public abstract class MvTopBottomLoadListFragment<D> extends MvListFragment<D> i
     }
 
     @SuppressLint("InflateParams")
-    @Override public View onCreateListHeaderView(LayoutInflater inflater) {
+    @Override public View onCreateListHeaderView(@NonNull LayoutInflater inflater) {
         return inflater.inflate(R.layout.qs_loading_footer, null);
     }
 
     @SuppressLint("InflateParams")
-    @Override public View onCreateListFooterView(LayoutInflater inflater) {
+    @Override public View onCreateListFooterView(@NonNull LayoutInflater inflater) {
         return inflater.inflate(R.layout.qs_loading_footer, null);
     }
 

@@ -15,6 +15,8 @@ import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
 
 import java.util.List;
 
+import androidx.annotation.NonNull;
+
 /**
  * @CreateBy qsmaxmin
  * @Date 2020/4/9 16:21
@@ -33,7 +35,7 @@ public abstract class QsPullListActivity<P extends QsPresenter, D> extends QsLis
         return R.layout.qs_loading_footer;
     }
 
-    @Override public PtrUIHandler getPtrUIHandlerView() {
+    @NonNull @Override public PtrUIHandler getPtrUIHandlerView() {
         return new BeautyCircleRefreshHeader(getContext());
     }
 

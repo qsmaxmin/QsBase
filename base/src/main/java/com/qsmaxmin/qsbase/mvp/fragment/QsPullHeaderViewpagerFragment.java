@@ -30,7 +30,7 @@ public abstract class QsPullHeaderViewpagerFragment<P extends QsPresenter> exten
         return R.layout.qs_pull_header_viewpager;
     }
 
-    @Override public PtrUIHandler getPtrUIHandlerView() {
+    @NonNull @Override public PtrUIHandler getPtrUIHandlerView() {
         return new BeautyCircleRefreshHeader(getContext());
     }
 

@@ -12,6 +12,7 @@ import com.qsmaxmin.qsbase.mvvm.adapter.MvListAdapterItem;
 
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 
 /**
@@ -22,13 +23,13 @@ import androidx.fragment.app.FragmentActivity;
 
 public interface MvIListView<D> extends AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener, AbsListView.OnScrollListener {
 
-    MvListAdapterItem<D> getListAdapterItemInner(int type);
+    @NonNull MvListAdapterItem<D> getListAdapterItemInner(int type);
 
-    MvListAdapterItem<D> getListAdapterItem(int type);
+    @NonNull MvListAdapterItem<D> getListAdapterItem(int type);
 
-    View onCreateListHeaderView(LayoutInflater inflater);
+    View onCreateListHeaderView(@NonNull LayoutInflater inflater);
 
-    View onCreateListFooterView(LayoutInflater inflater);
+    View onCreateListFooterView(@NonNull LayoutInflater inflater);
 
     View getHeaderView();
 
@@ -56,9 +57,9 @@ public interface MvIListView<D> extends AdapterView.OnItemClickListener, Adapter
 
     void deleteAll();
 
-    List<D> getData();
+    @NonNull List<D> getData();
 
-    List<D> copyData();
+    @NonNull List<D> copyData();
 
     D getData(int position);
 
