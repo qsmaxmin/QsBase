@@ -103,9 +103,7 @@ public abstract class QsDialogFragment extends DialogFragment implements IView, 
     }
 
     @Override public final void onViewClicked(@NonNull View view, long interval) {
-        if (interval > 0) {
-            if (ViewHelper.isFastClick(interval)) return;
-        }
+        if (interval > 0 && ViewHelper.isFastClick(interval)) return;
         onViewClick(view);
     }
 
@@ -170,7 +168,7 @@ public abstract class QsDialogFragment extends DialogFragment implements IView, 
         return super.getContext();
     }
 
-    @Override public void activityFinish() {
+    @Override public final void activityFinish() {
         if (getActivity() instanceof IView) {
             ((IView) getActivity()).activityFinish();
         } else if (getActivity() instanceof QsIView) {
@@ -178,7 +176,7 @@ public abstract class QsDialogFragment extends DialogFragment implements IView, 
         }
     }
 
-    @Override public void activityFinish(int enterAnim, int exitAnim) {
+    @Override public final void activityFinish(int enterAnim, int exitAnim) {
         if (getActivity() instanceof IView) {
             ((IView) getActivity()).activityFinish(enterAnim, exitAnim);
         } else if (getActivity() instanceof QsIView) {
@@ -186,7 +184,7 @@ public abstract class QsDialogFragment extends DialogFragment implements IView, 
         }
     }
 
-    @Override public void activityFinish(boolean finishAfterTransition) {
+    @Override public final void activityFinish(boolean finishAfterTransition) {
         if (getActivity() instanceof IView) {
             ((IView) getActivity()).activityFinish(finishAfterTransition);
         } else if (getActivity() instanceof QsIView) {
@@ -207,12 +205,12 @@ public abstract class QsDialogFragment extends DialogFragment implements IView, 
 
     protected abstract void initData();
 
-    public QsDialogFragment setClickListener(SimpleClickListener listener) {
+    public final QsDialogFragment setClickListener(SimpleClickListener listener) {
         this.listener = listener;
         return this;
     }
 
-    protected SimpleClickListener getClickListener() {
+    protected final SimpleClickListener getClickListener() {
         return listener;
     }
 
@@ -275,12 +273,20 @@ public abstract class QsDialogFragment extends DialogFragment implements IView, 
 
     @Override public void dismiss() {
         isShow = false;
-        super.dismiss();
+        try {
+            super.dismiss();
+        } catch (Exception e) {
+            if (L.isEnable()) L.e(initTag(), e);
+        }
     }
 
     @Override public void dismissAllowingStateLoss() {
         isShow = false;
-        super.dismissAllowingStateLoss();
+        try {
+            super.dismissAllowingStateLoss();
+        } catch (Exception e) {
+            if (L.isEnable()) L.e(initTag(), e);
+        }
     }
 
     @Override public void onCancel(@NonNull DialogInterface dialog) {
@@ -302,22 +308,6 @@ public abstract class QsDialogFragment extends DialogFragment implements IView, 
 
     public final boolean isShowing() {
         return isShow;
-    }
-
-    private void dismissAllowingStateLossSuper() {
-        try {
-            super.dismissAllowingStateLoss();
-        } catch (Exception e) {
-            if (L.isEnable()) L.e(initTag(), e);
-        }
-    }
-
-    private void dismissSuper() {
-        try {
-            super.dismiss();
-        } catch (Exception e) {
-            if (L.isEnable()) L.e(initTag(), e);
-        }
     }
 
     @Override public final void intent2Activity(Class clazz) {
