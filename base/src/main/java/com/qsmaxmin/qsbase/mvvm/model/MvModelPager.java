@@ -13,5 +13,5 @@ public class MvModelPager {
     public Fragment fragment;//子Fragment
     public int      icon;//图标
     public int      iconDefault;//默认图标
-    public Object   tag;
+    public Object   obj;
 }
