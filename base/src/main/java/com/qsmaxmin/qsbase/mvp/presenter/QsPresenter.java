@@ -8,7 +8,7 @@ import com.qsmaxmin.qsbase.common.exception.QsException;
 import com.qsmaxmin.qsbase.common.http.HttpHelper;
 import com.qsmaxmin.qsbase.common.http.NetworkErrorReceiver;
 import com.qsmaxmin.qsbase.common.log.L;
-import com.qsmaxmin.qsbase.common.model.QsModel;
+import com.qsmaxmin.qsbase.common.model.QsIModel;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.common.widget.listview.LoadingFooter;
 import com.qsmaxmin.qsbase.common.widget.toast.QsToast;
@@ -113,11 +113,11 @@ public class QsPresenter<V extends QsIView> implements NetworkErrorReceiver, QsN
         }
     }
 
-    public boolean isSuccess(QsModel baseModel) {
+    public boolean isSuccess(QsIModel baseModel) {
         return isSuccess(baseModel, false);
     }
 
-    public boolean isSuccess(QsModel model, boolean shouldToast) {
+    public boolean isSuccess(QsIModel model, boolean shouldToast) {
         if (model != null && model.isResponseOk()) {
             return true;
         } else if (!isViewDetach()) {
@@ -132,7 +132,7 @@ public class QsPresenter<V extends QsIView> implements NetworkErrorReceiver, QsN
      *
      * @param model 分页数据持有
      */
-    public void paging(QsModel model) {
+    public void paging(QsIModel model) {
         if (model != null && !isViewDetach()) {
             QsIView qsIView = getView();
             if (qsIView instanceof QsIPullToRefreshView) {

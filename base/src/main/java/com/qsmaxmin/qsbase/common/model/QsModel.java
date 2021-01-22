@@ -1,23 +1,21 @@
 package com.qsmaxmin.qsbase.common.model;
 
-import com.qsmaxmin.annotation.QsNotProguard;
-
 /**
  * @CreateBy qsmaxmin
  * @Date 2017/6/29 14:44
- * @Description base model
+ * @Description model层超类的实现类
  */
 
-public class QsModel implements QsNotProguard {
-    public boolean isResponseOk() {
+public class QsModel implements QsIModel {
+    @Override public boolean isResponseOk() {
         return true;
     }
 
-    public boolean isLastPage() {
+    @Override public boolean isLastPage() {
         return false;
     }
 
-    public String getMessage() {
+    @Override public String getMessage() {
         return null;
     }
 }
