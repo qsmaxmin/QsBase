@@ -28,7 +28,7 @@ public abstract class MvTabAdapterItem implements IView, QsNotProguard {
     private       View           itemView;
     private       MvModelPager[] modelPagers;
 
-    protected String initTag() {
+    protected final String initTag() {
         return L.isEnable() ? getClass().getSimpleName() : "MvTabAdapterItem";
     }
 
@@ -43,7 +43,6 @@ public abstract class MvTabAdapterItem implements IView, QsNotProguard {
     public final void init(View itemView, MvModelPager[] modelPagers) {
         this.itemView = itemView;
         this.modelPagers = modelPagers;
-        initView(itemView);
         bindData(modelPagers[position], position);
     }
 
@@ -55,11 +54,7 @@ public abstract class MvTabAdapterItem implements IView, QsNotProguard {
         return modelPagers[index];
     }
 
-    protected void initView(@NonNull View itemView) {
-        //custom your logic
-    }
-
-    protected View getItemView() {
+    protected final View getItemView() {
         return itemView;
     }
 
@@ -134,10 +129,6 @@ public abstract class MvTabAdapterItem implements IView, QsNotProguard {
         }
     }
 
-
-    protected void onViewClick(@NonNull View view) {
-    }
-
     @Override public final Context getContext() {
         return itemView.getContext();
     }
@@ -178,11 +169,12 @@ public abstract class MvTabAdapterItem implements IView, QsNotProguard {
         ViewHelper.intent2Activity(getActivity(), clazz, bundle, requestCode, optionsCompat, enterAnim, existAnim);
     }
 
-    public abstract View onCreateTabItemView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent);
+    public final void setLayer(MvIView viewLayer) {
+        this.viewLayer = viewLayer;
+    }
 
-    public abstract void bindData(MvModelPager pagers, int position);
-
-    public abstract void onPageSelectChanged(boolean selected);
+    protected void onViewClick(@NonNull View view) {
+    }
 
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
     }
@@ -190,7 +182,9 @@ public abstract class MvTabAdapterItem implements IView, QsNotProguard {
     public void onPageScrollStateChanged(int state) {
     }
 
-    public void setLayer(MvIView viewLayer) {
-        this.viewLayer = viewLayer;
-    }
+    public abstract View onCreateTabItemView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent);
+
+    public abstract void bindData(MvModelPager pagers, int position);
+
+    public abstract void onPageSelectChanged(boolean selected);
 }
