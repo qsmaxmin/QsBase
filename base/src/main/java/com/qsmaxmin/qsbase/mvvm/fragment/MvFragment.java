@@ -62,9 +62,7 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
     }
 
     @Override public final void onViewClicked(@NonNull View view, long interval) {
-        if (interval > 0) {
-            if (ViewHelper.isFastClick(interval)) return;
-        }
+        if (interval > 0 && ViewHelper.isFastClick(interval)) return;
         onViewClick(view);
     }
 

@@ -63,9 +63,7 @@ public abstract class MvTabAdapterItem implements IView, QsNotProguard {
     }
 
     @Override public final void onViewClicked(@NonNull View view, long interval) {
-        if (interval > 0) {
-            if (ViewHelper.isFastClick(interval)) return;
-        }
+        if (interval > 0 && ViewHelper.isFastClick(interval)) return;
         onViewClick(view);
     }
 
