@@ -213,6 +213,15 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
     @Override public void onViewClick(@NonNull View view) {
     }
 
+    @Override public final void onViewClicked(@NonNull View view) {
+        onViewClicked(view, 400);
+    }
+
+    @Override public final void onViewClicked(@NonNull View view, long interval) {
+        if (interval > 0 && ViewHelper.isFastClick(interval)) return;
+        onViewClick(view);
+    }
+
     @Override public final Context getContext() {
         return this;
     }
@@ -423,6 +432,10 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
 
     @Override public final void intent2Activity(Class clazz, Bundle bundle) {
         intent2Activity(clazz, bundle, 0, null, 0, 0);
+    }
+
+    @Override public final void intent2Activity(Class clazz, Bundle bundle, int requestCode) {
+        intent2Activity(clazz, bundle, requestCode, null, 0, 0);
     }
 
     @Override public final void intent2Activity(Class clazz, Bundle bundle, int inAnimId, int outAnimId) {
