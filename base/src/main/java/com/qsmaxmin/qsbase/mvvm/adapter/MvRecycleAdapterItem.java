@@ -113,7 +113,7 @@ public abstract class MvRecycleAdapterItem<D> implements IView, QsNotProguard {
         itemView = onCreateItemView(inflater, parent);
     }
 
-    protected String initTag() {
+    protected final String initTag() {
         return L.isEnable() ? getClass().getSimpleName() : "MvRecycleAdapterItem";
     }
 
