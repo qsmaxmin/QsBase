@@ -24,7 +24,6 @@ import androidx.fragment.app.FragmentActivity;
  * @Date 16/8/5
  * @Description RecyclerView holder
  */
-@SuppressWarnings("WeakerAccess")
 public abstract class QsRecycleAdapterItem<D> implements QsIBindView, QsNotProguard, IView {
     private final View               mItemView;
     private       QsIRecyclerView<D> viewLayer;
