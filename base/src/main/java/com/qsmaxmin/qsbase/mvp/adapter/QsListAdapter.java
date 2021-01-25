@@ -56,7 +56,7 @@ public class QsListAdapter<D> extends BaseAdapter {
             } else {
                 item = listLayer.getListAdapterItemInner(0);
             }
-            LayoutInflater inflater = listLayer.getLayoutInflater();
+            LayoutInflater inflater = LayoutInflater.from(parent.getContext());
             convertView = item.onCreateItemView(inflater, parent);
             if (convertView == null) {
                 convertView = inflater.inflate(item.getItemLayout(), parent, false);

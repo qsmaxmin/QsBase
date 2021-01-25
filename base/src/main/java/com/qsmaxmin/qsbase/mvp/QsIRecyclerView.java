@@ -90,6 +90,4 @@ public interface QsIRecyclerView<D> extends AdapterView.OnItemClickListener, Ada
     Context getContext();
 
     FragmentActivity getActivity();
-
-    LayoutInflater getLayoutInflater();
 }

@@ -22,7 +22,6 @@ import androidx.fragment.app.FragmentActivity;
  * @Date 16/8/5
  * @Description RecyclerView holder
  */
-@SuppressWarnings({"SameParameterValue"})
 public abstract class MvRecycleAdapterItem<D> implements IView, QsNotProguard {
     private final View               itemView;
     private       MvIRecyclerView<D> viewLayer;
