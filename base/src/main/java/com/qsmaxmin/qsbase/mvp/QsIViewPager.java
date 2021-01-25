@@ -5,6 +5,7 @@ import com.qsmaxmin.qsbase.mvp.adapter.QsIPagerAdapter;
 import com.qsmaxmin.qsbase.mvp.adapter.QsTabAdapter;
 import com.qsmaxmin.qsbase.mvp.adapter.QsTabAdapterItem;
 import com.qsmaxmin.qsbase.mvp.model.QsModelPager;
+import com.qsmaxmin.qsbase.mvvm.adapter.MvTabAdapterItem;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -37,6 +38,8 @@ public interface QsIViewPager {
     ViewPager getViewPager();
 
     QsIPagerAdapter getViewPagerAdapter();
+
+    QsTabAdapterItem createTabAdapterItemInner(int position);
 
     QsTabAdapterItem createTabAdapterItem(int position);
 

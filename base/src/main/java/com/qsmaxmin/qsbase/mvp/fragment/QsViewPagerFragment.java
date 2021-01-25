@@ -61,7 +61,7 @@ public abstract class QsViewPagerFragment<P extends QsPresenter> extends QsFragm
     @Override public void initViewPager(QsModelPager[] modelPagers, int offScreenPageLimit) {
         if (modelPagers != null && modelPagers.length > 0) {
             QsViewPagerHelper pagerHelper = new QsViewPagerHelper(this, pager, modelPagers);
-            QsTabAdapterItem firstTabItem = createTabAdapterItem(0);
+            QsTabAdapterItem firstTabItem = createTabAdapterItemInner(0);
             if (firstTabItem != null) {
                 tabAdapter = new QsTabAdapter(this, modelPagers, firstTabItem);
                 adapter = createPagerAdapter(pagerHelper, true);
@@ -114,10 +114,15 @@ public abstract class QsViewPagerFragment<P extends QsPresenter> extends QsFragm
         }
     }
 
+    @Override public QsTabAdapterItem createTabAdapterItemInner(int position) {
+        QsTabAdapterItem item = createTabAdapterItem(position);
+        if (item != null) item.setLayer(this);
+        return item;
+    }
+
     @Override public QsTabAdapterItem createTabAdapterItem(int position) {
         return null;
     }
-
 
     @Override public final PagerSlidingTabStrip getTab() {
         return tabs;

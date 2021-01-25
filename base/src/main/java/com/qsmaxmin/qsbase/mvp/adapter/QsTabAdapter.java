@@ -1,6 +1,8 @@
 package com.qsmaxmin.qsbase.mvp.adapter;
 
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 
 import com.qsmaxmin.qsbase.mvp.QsIViewPager;
 import com.qsmaxmin.qsbase.mvp.model.QsModelPager;
@@ -21,7 +23,7 @@ public class QsTabAdapter {
         this.items = new ArrayList<>(modelPagers.length);
         items.add(firstTabItem);
         for (int i = 1; i < modelPagers.length; i++) {
-            QsTabAdapterItem tabAdapterItem = viewLayer.createTabAdapterItem(i);
+            QsTabAdapterItem tabAdapterItem = viewLayer.createTabAdapterItemInner(i);
             if (tabAdapterItem == null) {
                 throw new IllegalStateException(viewLayer.getClass().getName() + ".createTabAdapterItem() cannot return null!");
             }
@@ -31,6 +33,10 @@ public class QsTabAdapter {
 
     public final int tabItemLayoutId(int position) {
         return items.get(position).tabItemLayoutId();
+    }
+
+    public final View getTabItemView(LayoutInflater inflater, ViewGroup parent, int position) {
+        return items.get(position).onCreateTabItemView(inflater, parent);
     }
 
     public final QsModelPager[] getModelPagers() {

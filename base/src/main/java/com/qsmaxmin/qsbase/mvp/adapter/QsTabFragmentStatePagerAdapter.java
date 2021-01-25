@@ -30,6 +30,9 @@ public class QsTabFragmentStatePagerAdapter extends QsFragmentStatePagerAdapter 
     }
 
     @Override public View getCustomTabView(LayoutInflater inflater, ViewGroup parent, int position) {
+        if (getPagerHelper().getTabAdapter() != null) {
+            return getPagerHelper().getTabAdapter().getTabItemView(inflater, parent, position);
+        }
         return null;
     }
 

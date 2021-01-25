@@ -1,11 +1,11 @@
-package com.qsmaxmin.qsbase.mvp.adapter;
+package com.qsmaxmin.qsbase.mvvm.adapter;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.qsmaxmin.qsbase.common.widget.viewpager.MvViewPagerHelper;
 import com.qsmaxmin.qsbase.common.widget.viewpager.PagerSlidingTabStrip;
-import com.qsmaxmin.qsbase.common.widget.viewpager.QsViewPagerHelper;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentManager;
@@ -16,27 +16,24 @@ import androidx.fragment.app.FragmentManager;
  * @Description
  */
 
-public class QsTabFragmentPagerAdapter extends QsFragmentPagerAdapter implements PagerSlidingTabStrip.CustomTabProvider {
+public class MvTabFragmentStatePagerAdapter extends MvFragmentStatePagerAdapter implements PagerSlidingTabStrip.CustomTabProvider {
 
-    public QsTabFragmentPagerAdapter(@NonNull FragmentManager fm, @NonNull QsViewPagerHelper helper) {
+    public MvTabFragmentStatePagerAdapter(@NonNull FragmentManager fm, @NonNull MvViewPagerHelper helper) {
         super(fm, helper);
     }
 
-    @Override public int getCustomTabViewId(int position) {
-        if (getPagerHelper().getTabAdapter() != null) {
-            return getPagerHelper().getTabAdapter().tabItemLayoutId(position);
-        }
+    @Override public final int getCustomTabViewId(int position) {
         return 0;
     }
 
-    @Override public View getCustomTabView(LayoutInflater inflater, ViewGroup parent, int position) {
+    @Override public View getCustomTabView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent, int position) {
         if (getPagerHelper().getTabAdapter() != null) {
             return getPagerHelper().getTabAdapter().getTabItemView(inflater, parent, position);
         }
         return null;
     }
 
-    @Override public void initTabsItem(View view, int position) {
+    @Override public void initTabsItem(@NonNull View view, int position) {
         if (getPagerHelper().getTabAdapter() != null && position >= 0 && position < getCount()) {
             getPagerHelper().getTabAdapter().init(view, position);
         }

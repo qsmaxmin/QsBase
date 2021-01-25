@@ -52,7 +52,7 @@ public abstract class QsViewPagerActivity<P extends QsPresenter> extends QsActiv
     @Override public void initViewPager(QsModelPager[] modelPagers, int offScreenPageLimit) {
         if (modelPagers != null && modelPagers.length > 0) {
             QsViewPagerHelper pagerHelper = new QsViewPagerHelper(this, pager, modelPagers);
-            QsTabAdapterItem firstTabItem = createTabAdapterItem(0);
+            QsTabAdapterItem firstTabItem = createTabAdapterItemInner(0);
             if (firstTabItem != null) {
                 tabAdapter = new QsTabAdapter(this, modelPagers, firstTabItem);
                 adapter = createPagerAdapter(pagerHelper, true);
@@ -99,6 +99,12 @@ public abstract class QsViewPagerActivity<P extends QsPresenter> extends QsActiv
         } else {
             L.e(initTag(), "adapter is null.... override getModelPagers() return not null or call initViewPager() before !");
         }
+    }
+
+    @Override public final QsTabAdapterItem createTabAdapterItemInner(int position) {
+        QsTabAdapterItem item = createTabAdapterItem(position);
+        if (item != null) item.setLayer(this);
+        return item;
     }
 
     @Override public QsTabAdapterItem createTabAdapterItem(int position) {
