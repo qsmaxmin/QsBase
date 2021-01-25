@@ -61,12 +61,6 @@ public interface MvIView extends IView, QsIBindEvent, QsIBindBundle, QsNotProgua
 
     boolean isShowBackButtonInDefaultView();
 
-    void activityFinish();
-
-    void activityFinish(int enterAnim, int exitAnim);
-
-    void activityFinish(boolean finishAfterTransition);
-
     void showLoadingView();
 
     void showContentView();

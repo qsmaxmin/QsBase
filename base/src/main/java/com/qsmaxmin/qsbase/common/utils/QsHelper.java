@@ -222,19 +222,8 @@ public class QsHelper {
             if (activity == null) return;
             manager = activity.getSupportFragmentManager();
         }
-        if (isMainThread()) {
-            if (fragment != null && !fragment.isAdded()) {
-                manager.beginTransaction().add(fragment, fragment.getClass().getSimpleName()).commitAllowingStateLoss();
-            }
-        } else {
-            final FragmentManager finalManager = manager;
-            post(new Runnable() {
-                @Override public void run() {
-                    if (fragment != null && !fragment.isAdded()) {
-                        finalManager.beginTransaction().add(fragment, fragment.getClass().getSimpleName()).commitAllowingStateLoss();
-                    }
-                }
-            });
+        if (fragment != null && !fragment.isAdded()) {
+            manager.beginTransaction().add(fragment, fragment.getClass().getSimpleName()).commitAllowingStateLoss();
         }
     }
 
