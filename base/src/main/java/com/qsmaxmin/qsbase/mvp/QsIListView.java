@@ -1,6 +1,7 @@
 package com.qsmaxmin.qsbase.mvp;
 
 import android.content.Context;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
@@ -77,4 +78,6 @@ public interface QsIListView<D> extends AdapterView.OnItemClickListener, Adapter
     FragmentActivity getActivity();
 
     void onReceiveAdapterItemEvent(int eventType, D data, int position);
+
+    LayoutInflater getLayoutInflater();
 }

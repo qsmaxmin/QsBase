@@ -442,26 +442,7 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
     }
 
     @Override public final void intent2Activity(Class clazz, Bundle bundle, int requestCode, ActivityOptionsCompat optionsCompat, int inAnimId, int outAnimId) {
-        FragmentActivity activity = getActivity();
-        if (clazz != null && activity != null) {
-            Intent intent = new Intent();
-            intent.setClass(activity, clazz);
-            if (bundle != null) intent.putExtras(bundle);
-            if (optionsCompat == null) {
-                if (requestCode > 0) {
-                    startActivityForResult(intent, requestCode);
-                } else {
-                    startActivity(intent);
-                }
-                if (inAnimId != 0 || outAnimId != 0) activity.overridePendingTransition(inAnimId, outAnimId);
-            } else {
-                if (requestCode > 0) {
-                    ActivityCompat.startActivityForResult(activity, intent, requestCode, optionsCompat.toBundle());
-                } else {
-                    ActivityCompat.startActivity(activity, intent, optionsCompat.toBundle());
-                }
-            }
-        }
+        ViewHelper.intent2Activity(this, clazz, bundle, requestCode, optionsCompat, inAnimId, outAnimId);
     }
 
     @Override public final void commitFragment(Fragment fragment) {

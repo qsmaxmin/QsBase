@@ -56,7 +56,11 @@ public class QsListAdapter<D> extends BaseAdapter {
             } else {
                 item = listLayer.getListAdapterItemInner(0);
             }
-            convertView = LayoutInflater.from(parent.getContext()).inflate(item.getItemLayout(), parent, false);
+            LayoutInflater inflater = listLayer.getLayoutInflater();
+            convertView = item.onCreateItemView(inflater, parent);
+            if (convertView == null) {
+                convertView = inflater.inflate(item.getItemLayout(), parent, false);
+            }
             item.init(convertView);
             convertView.setTag(item);
         }
