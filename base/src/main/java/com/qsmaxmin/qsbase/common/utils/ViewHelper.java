@@ -148,19 +148,20 @@ public class ViewHelper {
 
 
     @SuppressWarnings("unchecked")
-    public static <T> T tryGetTargetView(Class<T> targetViewClass, View parentView) {
-        T targetView = null;
-        if (parentView.getClass() == targetViewClass) {
-            targetView = (T) parentView;
-        } else if (parentView instanceof ViewGroup) {
-            int childCount = ((ViewGroup) parentView).getChildCount();
-            for (int i = 0; i < childCount; i++) {
-                View childAt = ((ViewGroup) parentView).getChildAt(i);
-                targetView = tryGetTargetView(targetViewClass, childAt);
-                if (targetView != null) break;
+    public static <T> T tryGetTargetView(Class<T> targetViewClass, View view) {
+        if (targetViewClass.isAssignableFrom(view.getClass())) {
+            return (T) view;
+        } else if (view instanceof ViewGroup) {
+            ViewGroup viewGroup = (ViewGroup) view;
+            for (int i = 0, size = viewGroup.getChildCount(); i < size; i++) {
+                View childAt = viewGroup.getChildAt(i);
+                T targetView = tryGetTargetView(targetViewClass, childAt);
+                if (targetView != null) {
+                    return targetView;
+                }
             }
         }
-        return targetView;
+        return null;
     }
 
 
