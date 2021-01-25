@@ -12,7 +12,6 @@ import com.qsmaxmin.annotation.QsNotProguard;
 import com.qsmaxmin.qsbase.R;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.utils.ViewHelper;
-import com.qsmaxmin.qsbase.mvp.QsIView;
 import com.qsmaxmin.qsbase.mvvm.IView;
 import com.qsmaxmin.qsbase.plugin.bind.QsIBindBundle;
 import com.qsmaxmin.qsbase.plugin.bind.QsIBindView;
@@ -111,56 +110,42 @@ public abstract class QsDialogFragment extends DialogFragment implements IView, 
     @Override public final void loading() {
         if (getActivity() instanceof IView) {
             ((IView) getActivity()).loading();
-        } else if (getActivity() instanceof QsIView) {
-            ((QsIView) getActivity()).loading();
         }
     }
 
     @Override public final void loading(int resId) {
         if (getActivity() instanceof IView) {
             ((IView) getActivity()).loading(resId);
-        } else if (getActivity() instanceof QsIView) {
-            ((QsIView) getActivity()).loading(resId);
         }
     }
 
     @Override public final void loading(String message) {
         if (getActivity() instanceof IView) {
             ((IView) getActivity()).loading(message);
-        } else if (getActivity() instanceof QsIView) {
-            ((QsIView) getActivity()).loading(message);
         }
     }
 
     @Override public final void loading(boolean cancelAble) {
         if (getActivity() instanceof IView) {
             ((IView) getActivity()).loading(cancelAble);
-        } else if (getActivity() instanceof QsIView) {
-            ((QsIView) getActivity()).loading(cancelAble);
         }
     }
 
     @Override public final void loading(int resId, boolean cancelAble) {
         if (getActivity() instanceof IView) {
             ((IView) getActivity()).loading(resId, cancelAble);
-        } else if (getActivity() instanceof QsIView) {
-            ((QsIView) getActivity()).loading(resId, cancelAble);
         }
     }
 
     @Override public final void loading(String message, boolean cancelAble) {
         if (getActivity() instanceof IView) {
             ((IView) getActivity()).loading(message, cancelAble);
-        } else if (getActivity() instanceof QsIView) {
-            ((QsIView) getActivity()).loading(message, cancelAble);
         }
     }
 
     @Override public final void loadingClose() {
         if (getActivity() instanceof IView) {
             ((IView) getActivity()).loadingClose();
-        } else if (getActivity() instanceof QsIView) {
-            ((QsIView) getActivity()).loadingClose();
         }
     }
 
@@ -171,24 +156,18 @@ public abstract class QsDialogFragment extends DialogFragment implements IView, 
     @Override public final void activityFinish() {
         if (getActivity() instanceof IView) {
             ((IView) getActivity()).activityFinish();
-        } else if (getActivity() instanceof QsIView) {
-            ((QsIView) getActivity()).activityFinish();
         }
     }
 
     @Override public final void activityFinish(int enterAnim, int exitAnim) {
         if (getActivity() instanceof IView) {
             ((IView) getActivity()).activityFinish(enterAnim, exitAnim);
-        } else if (getActivity() instanceof QsIView) {
-            ((QsIView) getActivity()).activityFinish(enterAnim, exitAnim);
         }
     }
 
     @Override public final void activityFinish(boolean finishAfterTransition) {
         if (getActivity() instanceof IView) {
             ((IView) getActivity()).activityFinish(finishAfterTransition);
-        } else if (getActivity() instanceof QsIView) {
-            ((QsIView) getActivity()).activityFinish(finishAfterTransition);
         }
     }
 
