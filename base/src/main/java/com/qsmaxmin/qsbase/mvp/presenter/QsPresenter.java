@@ -21,7 +21,6 @@ import androidx.annotation.ColorRes;
 import androidx.annotation.DimenRes;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.fragment.app.FragmentActivity;
 
@@ -35,33 +34,31 @@ public class QsPresenter<V extends QsIView> implements NetworkErrorReceiver, QsN
     private       boolean         isAttach;
     private       V               mView;
 
-    protected String initTag() {
+    protected final String initTag() {
         return L.isEnable() ? getClass().getSimpleName() : "QsPresenter";
     }
 
-    @Nullable public Context getContext() {
-        if (!isViewDetach()) return mView.getContext();
-        return null;
+    @NonNull public final Context getContext() {
+        return mView.getContext();
     }
 
-    public void initPresenter(V view) {
+    public final void initPresenter(V view) {
         mView = view;
         isAttach = true;
     }
 
-    public final V getView() {
+    @NonNull public final V getView() {
         return mView;
     }
 
     public final void setDetach() {
         isAttach = false;
-        mView = null;
         cancelAllHttpRequest();
     }
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public final boolean isViewDetach() {
-        return !isAttach || mView == null;
+        return !isAttach;
     }
 
     /**
@@ -170,9 +167,8 @@ public class QsPresenter<V extends QsIView> implements NetworkErrorReceiver, QsN
         }
     }
 
-    @Nullable public final FragmentActivity getActivity() {
-        if (!isViewDetach()) return mView.getActivity();
-        return null;
+    @NonNull public final FragmentActivity getActivity() {
+        return mView.getActivity();
     }
 
     public final String getString(@StringRes int stringId) {
