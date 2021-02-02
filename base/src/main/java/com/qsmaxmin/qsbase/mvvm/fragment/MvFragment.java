@@ -274,7 +274,7 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
         progressView.show(getActivity());
     }
 
-    @Override public void loadingClose() {
+    @Override public final void loadingClose() {
         if (progressView != null) {
             progressView.hide(getActivity());
         }
