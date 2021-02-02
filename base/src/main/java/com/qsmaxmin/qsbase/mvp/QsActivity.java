@@ -381,7 +381,8 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         if (mViewAnimator != null) {
             int childCount = mViewAnimator.getChildCount();
             for (int index = 0; index < childCount; index++) {
-                if (state == (int) mViewAnimator.getChildAt(index).getTag(R.id.qs_view_state_key)) {
+                Object tag = mViewAnimator.getChildAt(index).getTag(R.id.qs_view_state_key);
+                if (tag != null && (int) tag == state) {
                     return index;
                 }
             }
