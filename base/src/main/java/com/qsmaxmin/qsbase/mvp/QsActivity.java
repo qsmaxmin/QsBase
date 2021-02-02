@@ -279,7 +279,7 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         //custom your logic
     }
 
-    @Override public QsProgressDialog getLoadingDialog() {
+    @NonNull @Override public QsProgressDialog getLoadingDialog() {
         return QsHelper.getAppInterface().getLoadingDialog();
     }
 

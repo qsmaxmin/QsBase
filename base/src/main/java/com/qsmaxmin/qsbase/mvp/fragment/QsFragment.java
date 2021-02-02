@@ -15,11 +15,11 @@ import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.common.utils.ViewHelper;
 import com.qsmaxmin.qsbase.common.viewbind.OnActivityResultListener;
+import com.qsmaxmin.qsbase.common.widget.dialog.ProgressView;
 import com.qsmaxmin.qsbase.common.widget.headerview.ScrollerProvider;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout;
 import com.qsmaxmin.qsbase.mvp.QsIActivity;
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
-import com.qsmaxmin.qsbase.mvvm.IView;
 import com.qsmaxmin.qsbase.plugin.threadpoll.QsThreadPollHelper;
 
 import androidx.activity.OnBackPressedCallback;
@@ -44,6 +44,7 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
     private   boolean                  hasInitData;
     protected ViewAnimator             mViewAnimator;
     private   OnActivityResultListener activityResultListener;
+    private   ProgressView             progressView;
 
     @Override public String initTag() {
         return L.isEnable() ? getClass().getSimpleName() : "QsFragment";
@@ -271,44 +272,38 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
     }
 
     @Override public final void loading() {
-        if (getActivity() instanceof IView) {
-            ((IView) getActivity()).loading();
-        }
-    }
-
-    @Override public final void loading(int resId) {
-        if (getActivity() instanceof IView) {
-            ((IView) getActivity()).loading(resId);
-        }
-    }
-
-    @Override public final void loading(String message) {
-        if (getActivity() instanceof IView) {
-            ((IView) getActivity()).loading(message);
-        }
+        loading(true);
     }
 
     @Override public final void loading(boolean cancelAble) {
-        if (getActivity() instanceof IView) {
-            ((IView) getActivity()).loading(cancelAble);
-        }
+        loading(getString(R.string.loading), cancelAble);
+    }
+
+    @Override public final void loading(String message) {
+        loading(message, true);
+    }
+
+    @Override public final void loading(int resId) {
+        loading(resId, true);
     }
 
     @Override public final void loading(int resId, boolean cancelAble) {
-        if (getActivity() instanceof IView) {
-            ((IView) getActivity()).loading(resId, cancelAble);
-        }
+        loading(QsHelper.getString(resId), cancelAble);
     }
 
     @Override public final void loading(String message, boolean cancelAble) {
-        if (getActivity() instanceof IView) {
-            ((IView) getActivity()).loading(message, cancelAble);
+        if (progressView == null) {
+            progressView = new ProgressView(getContext());
+            progressView.initView(getLoadingDialog());
         }
+        progressView.setMessage(message);
+        progressView.setCancelable(cancelAble);
+        progressView.show(getActivity());
     }
 
     @Override public final void loadingClose() {
-        if (getActivity() instanceof IView) {
-            ((IView) getActivity()).loadingClose();
+        if (progressView != null) {
+            progressView.hide(getActivity());
         }
     }
 

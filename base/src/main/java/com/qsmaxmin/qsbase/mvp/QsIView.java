@@ -123,4 +123,6 @@ public interface QsIView<P> extends QsIBindView, QsIBindEvent, QsIBindBundle, Qs
     int contentViewBackgroundColor();
 
     void onBackPressed();
+
+    @NonNull QsProgressDialog getLoadingDialog();
 }
