@@ -77,7 +77,7 @@ public class ProgressView extends FrameLayout {
     }
 
     public void show(final Activity activity) {
-        show(activity, 0);
+        show(activity, loadingDialog.getDelayedShowingTime());
     }
 
     public void show(final Activity activity, long delayed) {

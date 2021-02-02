@@ -22,4 +22,13 @@ public abstract class QsProgressDialog {
     public void onHidden() {
         //custom your logic
     }
+
+    /**
+     * 当调用show方法时View已经被添加到Activity
+     * 延迟一定ms后才让View显示出来
+     * 适合的场景，如调用show方法后立即调用hidden，此时loading窗一闪而过，而延迟300ms就不会出现这种情况
+     */
+    public long getDelayedShowingTime() {
+        return 300;
+    }
 }
