@@ -16,6 +16,7 @@ import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.common.utils.ViewHelper;
 import com.qsmaxmin.qsbase.common.viewbind.OnActivityResultListener;
 import com.qsmaxmin.qsbase.common.widget.dialog.ProgressView;
+import com.qsmaxmin.qsbase.common.widget.dialog.QsProgressDialog;
 import com.qsmaxmin.qsbase.common.widget.headerview.ScrollerProvider;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout;
 import com.qsmaxmin.qsbase.mvp.QsIActivity;
@@ -269,6 +270,10 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
     @Override public final void onViewClicked(@NonNull View view, long interval) {
         if (interval > 0 && ViewHelper.isFastClick(interval)) return;
         onViewClick(view);
+    }
+
+    @NonNull @Override public QsProgressDialog getLoadingDialog() {
+        return QsHelper.getAppInterface().getLoadingDialog();
     }
 
     @Override public final void loading() {
