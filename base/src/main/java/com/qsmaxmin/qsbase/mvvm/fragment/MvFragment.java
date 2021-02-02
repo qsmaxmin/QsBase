@@ -151,7 +151,9 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
             ViewGroup customView = rootView.findViewById(android.R.id.custom);
             View contentView = onCreateContentView(inflater, customView);
             if (contentView != null) {
-                if (contentViewBackgroundColor() != 0) contentView.setBackgroundColor(contentViewBackgroundColor());
+                if (contentViewBackgroundColor() != 0) {
+                    contentView.setBackgroundColor(contentViewBackgroundColor());
+                }
                 if (contentView.getParent() == null) {
                     customView.addView(contentView);
                 }
@@ -283,72 +285,80 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
     }
 
     @Override public final void showLoadingView() {
-        if (mViewAnimator != null && !isDetached()) {
-            if (L.isEnable()) L.i(initTag(), "showLoadingView.........");
-            setViewState(0);
+        if (mViewAnimator != null) {
+            if (L.isEnable()) L.i(initTag(), "showLoadingView.........childCount:" + mViewAnimator.getChildCount());
+            int index = findViewIndexByState(VIEW_STATE_LOADING);
+            if (index >= 0) setViewState(index);
         }
     }
 
     @Override public final void showContentView() {
-        if (mViewAnimator != null && !isDetached()) {
-            if (L.isEnable()) L.i(initTag(), "showContentView.........");
-            setViewState(1);
+        if (mViewAnimator != null) {
+            if (L.isEnable()) L.i(initTag(), "showContentView.........childCount:" + mViewAnimator.getChildCount());
+            int index = findViewIndexByState(VIEW_STATE_CONTENT);
+            if (index >= 0) setViewState(index);
         }
     }
 
     @Override public final void showEmptyView() {
-        if (mViewAnimator != null && !isDetached()) {
-            int childCount = mViewAnimator.getChildCount();
-            if (L.isEnable()) L.i(initTag(), "showEmptyView.........childCount:" + childCount);
-            for (int index = 0; index < childCount; index++) {
-                View childAt = mViewAnimator.getChildAt(index);
-                int stateValue = (int) childAt.getTag(R.id.qs_view_state_key);
-                if (stateValue == VIEW_STATE_EMPTY) {
-                    setViewState(index);
-                    return;
-                }
-            }
-            post(new Runnable() {
-                @Override public void run() {
-                    if (L.isEnable()) L.i(initTag(), "showEmptyView.........create empty view by 'onCreateEmptyView(...)' method~");
-                    View emptyView = onCreateEmptyView(getLayoutInflater(), mViewAnimator);
-                    emptyView.setTag(R.id.qs_view_state_key, VIEW_STATE_EMPTY);
-                    setDefaultViewClickListener(emptyView);
-                    if (emptyView.getParent() == null) {
-                        mViewAnimator.addView(emptyView);
+        if (mViewAnimator != null) {
+            if (L.isEnable()) L.i(initTag(), "showEmptyView.........childCount:" + mViewAnimator.getChildCount());
+            int index = findViewIndexByState(VIEW_STATE_EMPTY);
+            if (index >= 0) {
+                setViewState(index);
+            } else {
+                post(new Runnable() {
+                    @Override public void run() {
+                        if (L.isEnable()) L.i(initTag(), "showEmptyView.........create empty view by 'onCreateEmptyView(...)' method~");
+                        View emptyView = onCreateEmptyView(getLayoutInflater(), mViewAnimator);
+                        addToParent(emptyView, mViewAnimator, VIEW_STATE_EMPTY);
+                        setDefaultViewClickListener(emptyView);
+                        setViewState(mViewAnimator.getChildCount() - 1);
                     }
-                    setViewState(mViewAnimator.getChildCount() - 1);
-                }
-            });
+                });
+            }
         }
     }
 
     @Override public final void showErrorView() {
-        if (mViewAnimator != null && !isDetached()) {
-            int childCount = mViewAnimator.getChildCount();
-            if (L.isEnable()) L.i(initTag(), "showErrorView.........childCount:" + childCount);
-            for (int index = 0; index < childCount; index++) {
-                View childAt = mViewAnimator.getChildAt(index);
+        if (mViewAnimator != null) {
+            if (L.isEnable()) L.i(initTag(), "showErrorView.........childCount:" + mViewAnimator.getChildCount());
+            int index = findViewIndexByState(VIEW_STATE_ERROR);
+            if (index >= 0) {
+                setViewState(index);
+            } else {
+                post(new Runnable() {
+                    @Override public void run() {
+                        if (L.isEnable()) L.i(initTag(), "showErrorView.........create error view by 'onCreateErrorView(...)' method~");
+                        View errorView = onCreateErrorView(getLayoutInflater(), mViewAnimator);
+                        addToParent(errorView, mViewAnimator, VIEW_STATE_ERROR);
+                        setDefaultViewClickListener(errorView);
+                        setViewState(mViewAnimator.getChildCount() - 1);
+                    }
+                });
+            }
+        }
+    }
 
-                int stateValue = (int) childAt.getTag(R.id.qs_view_state_key);
-                if (stateValue == VIEW_STATE_ERROR) {
-                    setViewState(index);
-                    return;
+    private int findViewIndexByState(int state) {
+        if (mViewAnimator != null) {
+            int childCount = mViewAnimator.getChildCount();
+            for (int index = 0; index < childCount; index++) {
+                if (state == (int) mViewAnimator.getChildAt(index).getTag(R.id.qs_view_state_key)) {
+                    return index;
                 }
             }
-            post(new Runnable() {
-                @Override public void run() {
-                    if (L.isEnable()) L.i(initTag(), "showErrorView.........create error view by 'onCreateErrorView(...)' method~");
-                    View errorView = onCreateErrorView(getLayoutInflater(), mViewAnimator);
-                    errorView.setTag(R.id.qs_view_state_key, VIEW_STATE_ERROR);
-                    setDefaultViewClickListener(errorView);
-                    mViewAnimator.addView(errorView);
-                    if (errorView.getParent() == null) {
-                        mViewAnimator.addView(errorView);
-                    }
-                    setViewState(mViewAnimator.getChildCount() - 1);
-                }
-            });
+        }
+        return -1;
+    }
+
+    private void addToParent(@NonNull View view, @NonNull ViewGroup parent, int tag) {
+        if (view != parent) {
+            view.setTag(R.id.qs_view_state_key, tag);
+            parent.addView(view);
+        } else {
+            View current = parent.getChildAt(parent.getChildCount() - 1);
+            current.setTag(R.id.qs_view_state_key, tag);
         }
     }
 
