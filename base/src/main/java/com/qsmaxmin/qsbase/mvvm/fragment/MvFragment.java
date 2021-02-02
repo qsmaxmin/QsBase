@@ -352,7 +352,9 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
     private void addToParent(@NonNull View view, @NonNull ViewGroup parent, int tag) {
         if (view != parent) {
             view.setTag(R.id.qs_view_state_key, tag);
-            parent.addView(view);
+            if (view.getParent() == null) {
+                parent.addView(view);
+            }
         } else {
             View current = parent.getChildAt(parent.getChildCount() - 1);
             current.setTag(R.id.qs_view_state_key, tag);
