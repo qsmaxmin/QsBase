@@ -17,6 +17,7 @@ import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.common.utils.ViewHelper;
 import com.qsmaxmin.qsbase.common.viewbind.OnActivityResultListener;
 import com.qsmaxmin.qsbase.common.viewbind.OnKeyDownListener;
+import com.qsmaxmin.qsbase.common.widget.dialog.ProgressView;
 import com.qsmaxmin.qsbase.common.widget.dialog.QsProgressDialog;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout;
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
@@ -39,7 +40,7 @@ import androidx.fragment.app.FragmentActivity;
 public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity implements QsIActivity {
     private   View                     contentView;
     protected P                        presenter;
-    protected QsProgressDialog         mProgressDialog;
+    protected ProgressView             progressView;
     protected ViewAnimator             mViewAnimator;
     private   OnKeyDownListener        onKeyDownListener;
     private   OnActivityResultListener activityResultListener;
@@ -132,10 +133,6 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         if (presenter != null) {
             presenter.setDetach();
             presenter = null;
-        }
-        if (mProgressDialog != null) {
-            mProgressDialog.dismissAllowingStateLoss();
-            mProgressDialog = null;
         }
         onKeyDownListener = null;
         activityResultListener = null;
@@ -308,22 +305,18 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
     }
 
     @Override public final void loading(String message, boolean cancelAble) {
-        if (mProgressDialog != null && mProgressDialog.isShowing()) {
-            mProgressDialog.setMessage(message);
-            mProgressDialog.setCancelable(cancelAble);
-        } else {
-            mProgressDialog = getLoadingDialog();
-            if (mProgressDialog != null) {
-                mProgressDialog.setMessage(message);
-                mProgressDialog.setCancelable(cancelAble);
-                mProgressDialog.show(this);
-            }
+        if (progressView == null) {
+            progressView = new ProgressView(this);
+            progressView.initView(getLoadingDialog());
         }
+        progressView.setMessage(message);
+        progressView.setCancelable(cancelAble);
+        progressView.show(this);
     }
 
     @Override public final void loadingClose() {
-        if (mProgressDialog != null) {
-            mProgressDialog.dismissAllowingStateLoss();
+        if (progressView != null) {
+            progressView.hide(this);
         }
     }
 

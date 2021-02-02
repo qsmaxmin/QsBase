@@ -1,27 +1,25 @@
 package com.qsmaxmin.qsbase.common.widget.dialog;
 
-import android.view.Gravity;
-import android.view.WindowManager;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 /**
  * @CreateBy qsmaxmin
  * @Date 17/8/3  上午12:35
  * @Description
  */
-public abstract class QsProgressDialog extends QsDialogFragment {
-    private CharSequence mMessage;
+public abstract class QsProgressDialog {
 
-    public void setMessage(CharSequence sequence) {
-        this.mMessage = sequence;
+    public abstract View onCreateContentView(LayoutInflater inflater, ViewGroup parent);
+
+    public abstract void onSetMessage(CharSequence text);
+
+    public void onShowing() {
+        //custom your logic
     }
 
-    public CharSequence getMessage() {
-        return mMessage;
-    }
-
-    @Override protected void setAttribute(WindowManager.LayoutParams params) {
-        params.width = WindowManager.LayoutParams.WRAP_CONTENT;
-        params.height = WindowManager.LayoutParams.WRAP_CONTENT;
-        params.gravity = Gravity.CENTER;
+    public void onHidden() {
+        //custom your logic
     }
 }

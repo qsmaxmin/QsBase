@@ -19,6 +19,7 @@ import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.common.utils.ViewHelper;
 import com.qsmaxmin.qsbase.common.viewbind.OnActivityResultListener;
 import com.qsmaxmin.qsbase.common.viewbind.OnKeyDownListener;
+import com.qsmaxmin.qsbase.common.widget.dialog.ProgressView;
 import com.qsmaxmin.qsbase.common.widget.dialog.QsProgressDialog;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout;
 import com.qsmaxmin.qsbase.plugin.permission.PermissionHelper;
@@ -40,12 +41,12 @@ import androidx.fragment.app.FragmentActivity;
  * @Description
  */
 public abstract class MvActivity extends FragmentActivity implements MvIActivity {
-    private ViewAnimator             mViewAnimator;
-    private QsProgressDialog         mProgressDialog;
-    private OnActivityResultListener activityResultListener;
-    private OnKeyDownListener        onKeyDownListener;
-    private View                     rootView;
-    private HashSet<Object>          requestTags;
+    private   ViewAnimator             mViewAnimator;
+    protected ProgressView             progressView;
+    private   OnActivityResultListener activityResultListener;
+    private   OnKeyDownListener        onKeyDownListener;
+    private   View                     rootView;
+    private   HashSet<Object>          requestTags;
 
     @CallSuper @Override public void bindBundleByQsPlugin(Bundle bundle) {
     }
@@ -78,10 +79,6 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
 
     @CallSuper @Override protected void onDestroy() {
         super.onDestroy();
-        if (mProgressDialog != null) {
-            mProgressDialog.dismissAllowingStateLoss();
-            mProgressDialog = null;
-        }
         onKeyDownListener = null;
         activityResultListener = null;
         cancelAllHttpRequest();
@@ -281,22 +278,18 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
     }
 
     @Override public final void loading(String message, boolean cancelAble) {
-        if (mProgressDialog != null && mProgressDialog.isShowing()) {
-            mProgressDialog.setMessage(message);
-            mProgressDialog.setCancelable(cancelAble);
-        } else {
-            mProgressDialog = getLoadingDialog();
-            if (mProgressDialog != null) {
-                mProgressDialog.setMessage(message);
-                mProgressDialog.setCancelable(cancelAble);
-                mProgressDialog.show(this);
-            }
+        if (progressView == null) {
+            progressView = new ProgressView(this);
+            progressView.initView(getLoadingDialog());
         }
+        progressView.setMessage(message);
+        progressView.setCancelable(cancelAble);
+        progressView.show(this);
     }
 
     @Override public void loadingClose() {
-        if (mProgressDialog != null) {
-            mProgressDialog.dismissAllowingStateLoss();
+        if (progressView != null) {
+            progressView.hide(this);
         }
     }
 

@@ -1,13 +1,11 @@
 package com.qsmaxmin.qsbase.common.widget.dialog;
 
-import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.qsmaxmin.qsbase.R;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 /**
  * @CreateBy qsmaxmin
@@ -15,26 +13,15 @@ import androidx.annotation.Nullable;
  * @Description
  */
 public class DefaultProgressDialog extends QsProgressDialog {
+    private TextView tv_progress_msg;
 
-    @Override protected int layoutId() {
-        return R.layout.qs_default_progress_dialog;
+    @Override public View onCreateContentView(LayoutInflater inflater, ViewGroup parent) {
+        View view = inflater.inflate(R.layout.qs_default_progress_dialog, parent, true);
+        tv_progress_msg = view.findViewById(R.id.tv_progress_msg);
+        return view;
     }
 
-    @Override protected void initData() {
-    }
-
-    @Override public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        TextView tv_progress_msg = view.findViewById(R.id.tv_progress_msg);
-        tv_progress_msg.setText(getMessage());
-    }
-
-    @Override public void setMessage(CharSequence sequence) {
-        super.setMessage(sequence);
-        View view = getView();
-        if (view != null) {
-            TextView tv_progress_msg = view.findViewById(R.id.tv_progress_msg);
-            tv_progress_msg.setText(getMessage());
-        }
+    @Override public void onSetMessage(CharSequence text) {
+        tv_progress_msg.setText(text);
     }
 }

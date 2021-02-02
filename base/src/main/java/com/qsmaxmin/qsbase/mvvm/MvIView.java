@@ -35,8 +35,6 @@ public interface MvIView extends IView, QsIBindEvent, QsIBindBundle, QsNotProgua
 
     int rootViewLayoutId();
 
-    QsProgressDialog getLoadingDialog();
-
     View onCreateLoadingView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent);
 
     View onCreateContentView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent);

@@ -50,8 +50,6 @@ public interface QsIView<P> extends QsIBindView, QsIBindEvent, QsIBindBundle, Qs
 
     void onErrorViewCreated(@NonNull View errorView);
 
-    QsProgressDialog getLoadingDialog();
-
     void onViewCreated(View view);
 
     void initData(@Nullable Bundle savedInstanceState);

@@ -3,6 +3,7 @@ package com.qsmaxmin.qsbase.mvp;
 import android.view.KeyEvent;
 
 import com.qsmaxmin.qsbase.common.viewbind.OnKeyDownListener;
+import com.qsmaxmin.qsbase.common.widget.dialog.QsProgressDialog;
 
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
@@ -28,4 +29,6 @@ public interface QsIActivity extends QsIView {
     void setOnKeyDownListener(OnKeyDownListener listener);
 
     void setActivityTitle(CharSequence title, int type);
+
+    QsProgressDialog getLoadingDialog();
 }

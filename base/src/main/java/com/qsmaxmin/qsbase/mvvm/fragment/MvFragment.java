@@ -17,10 +17,10 @@ import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.common.utils.ViewHelper;
 import com.qsmaxmin.qsbase.common.viewbind.OnActivityResultListener;
-import com.qsmaxmin.qsbase.common.widget.dialog.QsProgressDialog;
 import com.qsmaxmin.qsbase.common.widget.headerview.ScrollerProvider;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout;
 import com.qsmaxmin.qsbase.mvp.QsIActivity;
+import com.qsmaxmin.qsbase.mvvm.IView;
 import com.qsmaxmin.qsbase.plugin.threadpoll.QsThreadPollHelper;
 
 import java.util.HashSet;
@@ -44,7 +44,6 @@ import androidx.fragment.app.FragmentTransaction;
  */
 public abstract class MvFragment extends Fragment implements MvIFragment, ScrollerProvider, View.OnTouchListener {
     private   boolean                  hasInitData;
-    protected QsProgressDialog         mProgressDialog;
     protected ViewAnimator             mViewAnimator;
     private   OnActivityResultListener activityResultListener;
     private   HashSet<Object>          requestTags;
@@ -112,10 +111,6 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
 
     @CallSuper @Override public void onDestroyView() {
         super.onDestroyView();
-        if (mProgressDialog != null) {
-            mProgressDialog.dismissAllowingStateLoss();
-            mProgressDialog = null;
-        }
         mViewAnimator = null;
         unbindEventByQsPlugin();
         cancelAllHttpRequest();
@@ -237,10 +232,6 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
         return inflater.inflate(QsHelper.getAppInterface().errorLayoutId(), parent, false);
     }
 
-    @Override public QsProgressDialog getLoadingDialog() {
-        return QsHelper.getAppInterface().getLoadingDialog();
-    }
-
     @Override public void onBackPressed() {
         FragmentManager manager = getFragmentManager();
         if (manager != null) {
@@ -250,42 +241,44 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
     }
 
     @Override public final void loading() {
-        loading(true);
-    }
-
-    @Override public final void loading(boolean cancelAble) {
-        loading(getString(R.string.loading), cancelAble);
-    }
-
-    @Override public final void loading(String message) {
-        loading(message, true);
+        if (getActivity() instanceof IView) {
+            ((IView) getActivity()).loading();
+        }
     }
 
     @Override public final void loading(int resId) {
-        loading(resId, true);
+        if (getActivity() instanceof IView) {
+            ((IView) getActivity()).loading(resId);
+        }
+    }
+
+    @Override public final void loading(String message) {
+        if (getActivity() instanceof IView) {
+            ((IView) getActivity()).loading(message);
+        }
+    }
+
+    @Override public final void loading(boolean cancelAble) {
+        if (getActivity() instanceof IView) {
+            ((IView) getActivity()).loading(cancelAble);
+        }
     }
 
     @Override public final void loading(int resId, boolean cancelAble) {
-        loading(QsHelper.getString(resId), cancelAble);
+        if (getActivity() instanceof IView) {
+            ((IView) getActivity()).loading(resId, cancelAble);
+        }
     }
 
     @Override public final void loading(String message, boolean cancelAble) {
-        if (mProgressDialog != null && mProgressDialog.isShowing()) {
-            mProgressDialog.setMessage(message);
-            mProgressDialog.setCancelable(cancelAble);
-        } else {
-            mProgressDialog = getLoadingDialog();
-            if (mProgressDialog != null) {
-                mProgressDialog.setMessage(message);
-                mProgressDialog.setCancelable(cancelAble);
-                mProgressDialog.show(this);
-            }
+        if (getActivity() instanceof IView) {
+            ((IView) getActivity()).loading(message, cancelAble);
         }
     }
 
     @Override public final void loadingClose() {
-        if (mProgressDialog != null) {
-            mProgressDialog.dismissAllowingStateLoss();
+        if (getActivity() instanceof IView) {
+            ((IView) getActivity()).loadingClose();
         }
     }
 
