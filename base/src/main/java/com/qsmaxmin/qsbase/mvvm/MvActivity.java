@@ -152,6 +152,7 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
                 long s1 = System.currentTimeMillis();
                 L.i(initTag(), "initView...view inflate complete(viewState is open), use time:" + (s1 - s0) + "ms");
             }
+
         } else {
             ViewGroup customView = rootView.findViewById(android.R.id.custom);
             View contentView = onCreateContentView(inflater, customView);

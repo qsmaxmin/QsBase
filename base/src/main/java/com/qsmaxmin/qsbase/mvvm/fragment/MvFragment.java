@@ -126,19 +126,15 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
 
             View loadingView = onCreateLoadingView(inflater, mViewAnimator);
             if (loadingView != null) {
-                loadingView.setTag(R.id.qs_view_state_key, VIEW_STATE_LOADING);
+                addToParent(loadingView, mViewAnimator, VIEW_STATE_LOADING);
                 setDefaultViewClickListener(loadingView);
-                if (loadingView.getParent() == null) {
-                    mViewAnimator.addView(loadingView);
-                }
             }
 
             View contentView = onCreateContentView(inflater, mViewAnimator);
             if (contentView != null) {
-                contentView.setTag(R.id.qs_view_state_key, VIEW_STATE_CONTENT);
-                if (contentViewBackgroundColor() != 0) contentView.setBackgroundColor(contentViewBackgroundColor());
-                if (contentView.getParent() == null) {
-                    mViewAnimator.addView(contentView);
+                addToParent(contentView, mViewAnimator, VIEW_STATE_CONTENT);
+                if (contentViewBackgroundColor() != 0) {
+                    contentView.setBackgroundColor(contentViewBackgroundColor());
                 }
             }
 
@@ -154,7 +150,7 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
                 if (contentViewBackgroundColor() != 0) {
                     contentView.setBackgroundColor(contentViewBackgroundColor());
                 }
-                if (contentView.getParent() == null) {
+                if (customView != contentView && contentView.getParent() == null) {
                     customView.addView(contentView);
                 }
             }
