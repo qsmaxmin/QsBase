@@ -109,8 +109,13 @@ public class HttpHelper {
         if (clazz != null && clazz.isInterface()) {
             HttpHandler handler = new HttpHandler(this, requestTag, receiver);
             return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class<?>[]{clazz}, handler);
+        } else {
+            if (clazz == null) {
+                throw new IllegalStateException("class is null...");
+            } else {
+                throw new IllegalStateException("class:" + clazz.getName() + ", is not Interface...");
+            }
         }
-        return null;
     }
 
     public Object startRequest(Method method, Object[] args, Object requestTag, NetworkErrorReceiver errorReceiver) {

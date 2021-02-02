@@ -583,19 +583,19 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
         }
     }
 
-    @Override @Nullable public final <T> T createHttpRequest(Class<T> clazz) {
+    @Override @NonNull public final <T> T createHttpRequest(Class<T> clazz) {
         return createHttpRequest(clazz, System.nanoTime(), null);
     }
 
-    @Override @Nullable public final <T> T createHttpRequest(Class<T> clazz, Object tag) {
+    @Override @NonNull public final <T> T createHttpRequest(Class<T> clazz, Object tag) {
         return createHttpRequest(clazz, tag, null);
     }
 
-    @Override @Nullable public final <T> T createHttpRequest(Class<T> clazz, NetworkErrorReceiver receiver) {
+    @Override @NonNull public final <T> T createHttpRequest(Class<T> clazz, NetworkErrorReceiver receiver) {
         return createHttpRequest(clazz, System.nanoTime(), receiver);
     }
 
-    @Override @Nullable public final <T> T createHttpRequest(Class<T> clazz, Object requestTag, NetworkErrorReceiver receiver) {
+    @Override @NonNull public final <T> T createHttpRequest(Class<T> clazz, Object requestTag, NetworkErrorReceiver receiver) {
         synchronized (this) {
             if (requestTags == null) requestTags = new HashSet<>();
             if (!requestTags.contains(requestTag)) {
