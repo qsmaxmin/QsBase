@@ -9,7 +9,6 @@ import android.view.animation.Animation;
 import com.qsmaxmin.annotation.QsNotProguard;
 import com.qsmaxmin.qsbase.common.http.NetworkErrorReceiver;
 import com.qsmaxmin.qsbase.common.viewbind.OnActivityResultListener;
-import com.qsmaxmin.qsbase.common.widget.dialog.QsProgressDialog;
 import com.qsmaxmin.qsbase.plugin.bind.QsIBindBundle;
 import com.qsmaxmin.qsbase.plugin.event.QsIBindEvent;
 
@@ -111,11 +110,11 @@ public interface MvIView extends IView, QsIBindEvent, QsIBindBundle, QsNotProgua
 
     void onBackPressed();
 
-    <T> T createHttpRequest(Class<T> clazz);
+    @NonNull <T> T createHttpRequest(Class<T> clazz);
 
-    <T> T createHttpRequest(Class<T> clazz, Object tag);
+    @NonNull <T> T createHttpRequest(Class<T> clazz, Object tag);
 
-    <T> T createHttpRequest(Class<T> clazz, NetworkErrorReceiver receiver);
+    @NonNull <T> T createHttpRequest(Class<T> clazz, NetworkErrorReceiver receiver);
 
-    <T> T createHttpRequest(Class<T> clazz, Object requestTag, NetworkErrorReceiver receiver);
+    @NonNull <T> T createHttpRequest(Class<T> clazz, Object requestTag, NetworkErrorReceiver receiver);
 }
