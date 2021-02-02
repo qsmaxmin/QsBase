@@ -126,13 +126,13 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
 
             View loadingView = onCreateLoadingView(inflater, mViewAnimator);
             if (loadingView != null) {
-                addToParent(loadingView, mViewAnimator, VIEW_STATE_LOADING);
+                ViewHelper.addToParent(loadingView, mViewAnimator, VIEW_STATE_LOADING);
                 setDefaultViewClickListener(loadingView);
             }
 
             View contentView = onCreateContentView(inflater, mViewAnimator);
             if (contentView != null) {
-                addToParent(contentView, mViewAnimator, VIEW_STATE_CONTENT);
+                ViewHelper.addToParent(contentView, mViewAnimator, VIEW_STATE_CONTENT);
                 if (contentViewBackgroundColor() != 0) {
                     contentView.setBackgroundColor(contentViewBackgroundColor());
                 }
@@ -283,7 +283,7 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
     @Override public final void showLoadingView() {
         if (mViewAnimator != null) {
             if (L.isEnable()) L.i(initTag(), "showLoadingView.........childCount:" + mViewAnimator.getChildCount());
-            int index = findViewIndexByState(VIEW_STATE_LOADING);
+            int index = ViewHelper.findViewIndexByState(mViewAnimator, VIEW_STATE_LOADING);
             if (index >= 0) setViewState(index);
         }
     }
@@ -291,7 +291,7 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
     @Override public final void showContentView() {
         if (mViewAnimator != null) {
             if (L.isEnable()) L.i(initTag(), "showContentView.........childCount:" + mViewAnimator.getChildCount());
-            int index = findViewIndexByState(VIEW_STATE_CONTENT);
+            int index = ViewHelper.findViewIndexByState(mViewAnimator, VIEW_STATE_CONTENT);
             if (index >= 0) setViewState(index);
         }
     }
@@ -299,7 +299,7 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
     @Override public final void showEmptyView() {
         if (mViewAnimator != null) {
             if (L.isEnable()) L.i(initTag(), "showEmptyView.........childCount:" + mViewAnimator.getChildCount());
-            int index = findViewIndexByState(VIEW_STATE_EMPTY);
+            int index = ViewHelper.findViewIndexByState(mViewAnimator, VIEW_STATE_EMPTY);
             if (index >= 0) {
                 setViewState(index);
             } else {
@@ -307,7 +307,7 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
                     @Override public void run() {
                         if (L.isEnable()) L.i(initTag(), "showEmptyView.........create empty view by 'onCreateEmptyView(...)' method~");
                         View emptyView = onCreateEmptyView(getLayoutInflater(), mViewAnimator);
-                        addToParent(emptyView, mViewAnimator, VIEW_STATE_EMPTY);
+                        ViewHelper.addToParent(emptyView, mViewAnimator, VIEW_STATE_EMPTY);
                         setDefaultViewClickListener(emptyView);
                         setViewState(mViewAnimator.getChildCount() - 1);
                     }
@@ -319,7 +319,7 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
     @Override public final void showErrorView() {
         if (mViewAnimator != null) {
             if (L.isEnable()) L.i(initTag(), "showErrorView.........childCount:" + mViewAnimator.getChildCount());
-            int index = findViewIndexByState(VIEW_STATE_ERROR);
+            int index = ViewHelper.findViewIndexByState(mViewAnimator, VIEW_STATE_ERROR);
             if (index >= 0) {
                 setViewState(index);
             } else {
@@ -327,37 +327,12 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
                     @Override public void run() {
                         if (L.isEnable()) L.i(initTag(), "showErrorView.........create error view by 'onCreateErrorView(...)' method~");
                         View errorView = onCreateErrorView(getLayoutInflater(), mViewAnimator);
-                        addToParent(errorView, mViewAnimator, VIEW_STATE_ERROR);
+                        ViewHelper.addToParent(errorView, mViewAnimator, VIEW_STATE_ERROR);
                         setDefaultViewClickListener(errorView);
                         setViewState(mViewAnimator.getChildCount() - 1);
                     }
                 });
             }
-        }
-    }
-
-    private int findViewIndexByState(int state) {
-        if (mViewAnimator != null) {
-            int childCount = mViewAnimator.getChildCount();
-            for (int index = 0; index < childCount; index++) {
-                Object tag = mViewAnimator.getChildAt(index).getTag(R.id.qs_view_state_key);
-                if (tag != null && (int) tag == state) {
-                    return index;
-                }
-            }
-        }
-        return -1;
-    }
-
-    private void addToParent(@NonNull View view, @NonNull ViewGroup parent, int tag) {
-        if (view != parent) {
-            view.setTag(R.id.qs_view_state_key, tag);
-            if (view.getParent() == null) {
-                parent.addView(view);
-            }
-        } else {
-            View current = parent.getChildAt(parent.getChildCount() - 1);
-            current.setTag(R.id.qs_view_state_key, tag);
         }
     }
 

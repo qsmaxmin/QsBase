@@ -17,6 +17,7 @@ import com.qsmaxmin.qsbase.R;
 import com.qsmaxmin.qsbase.mvp.QsIView;
 import com.qsmaxmin.qsbase.mvvm.MvIView;
 
+import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.fragment.app.Fragment;
@@ -212,6 +213,31 @@ public class ViewHelper {
                     iView.initData(null);
                 }
             });
+        }
+    }
+
+    public static int findViewIndexByState(ViewGroup parent, int state) {
+        if (parent != null) {
+            int childCount = parent.getChildCount();
+            for (int index = 0; index < childCount; index++) {
+                Object tag = parent.getChildAt(index).getTag(R.id.qs_view_state_key);
+                if (tag != null && (int) tag == state) {
+                    return index;
+                }
+            }
+        }
+        return -1;
+    }
+
+    public static void addToParent(@NonNull View view, @NonNull ViewGroup parent, int tag) {
+        if (view != parent) {
+            view.setTag(R.id.qs_view_state_key, tag);
+            if (view.getParent() == null) {
+                parent.addView(view);
+            }
+        } else {
+            View current = parent.getChildAt(parent.getChildCount() - 1);
+            current.setTag(R.id.qs_view_state_key, tag);
         }
     }
 }
