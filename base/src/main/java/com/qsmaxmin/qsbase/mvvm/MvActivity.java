@@ -247,8 +247,7 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
         }
     }
 
-
-    @Override public QsProgressDialog getLoadingDialog() {
+    @NonNull @Override public QsProgressDialog getLoadingDialog() {
         return QsHelper.getAppInterface().getLoadingDialog();
     }
 

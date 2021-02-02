@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.qsmaxmin.qsbase.common.viewbind.OnKeyDownListener;
-import com.qsmaxmin.qsbase.common.widget.dialog.QsProgressDialog;
 
 import androidx.annotation.NonNull;
 
@@ -31,6 +30,4 @@ public interface MvIActivity extends MvIView {
     void setActivityTitle(CharSequence title, int type);
 
     View onCreateActionbarView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent);
-
-    QsProgressDialog getLoadingDialog();
 }
