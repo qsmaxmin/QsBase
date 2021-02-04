@@ -78,23 +78,23 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
     }
 
     @Override public View onCreateActionbarView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
-        return inflater.inflate(actionbarLayoutId(), parent, true);
+        return actionbarLayoutId() == 0 ? null : inflater.inflate(actionbarLayoutId(), parent, true);
     }
 
     @Override public View onCreateLoadingView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
-        return inflater.inflate(loadingLayoutId(), parent, false);
+        return loadingLayoutId() == 0 ? null : inflater.inflate(loadingLayoutId(), parent, false);
     }
 
     @Override public View onCreateContentView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
-        return inflater.inflate(layoutId(), parent, false);
+        return layoutId() == 0 ? null : inflater.inflate(layoutId(), parent, false);
     }
 
     @Override public View onCreateEmptyView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
-        return inflater.inflate(emptyLayoutId(), parent, false);
+        return emptyLayoutId() == 0 ? null : inflater.inflate(emptyLayoutId(), parent, false);
     }
 
     @Override public View onCreateErrorView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
-        return inflater.inflate(errorLayoutId(), parent, false);
+        return errorLayoutId() == 0 ? null : inflater.inflate(errorLayoutId(), parent, false);
     }
 
     @CallSuper @Override protected void onCreate(Bundle savedInstanceState) {

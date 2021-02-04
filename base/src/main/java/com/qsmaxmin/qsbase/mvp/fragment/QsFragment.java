@@ -231,6 +231,10 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         return QsHelper.getAppInterface().loadingLayoutId();
     }
 
+    @Override public int layoutId() {
+        return 0;
+    }
+
     @Override public int emptyLayoutId() {
         return QsHelper.getAppInterface().emptyLayoutId();
     }
@@ -240,19 +244,19 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
     }
 
     @Override public View onCreateLoadingView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
-        return inflater.inflate(loadingLayoutId(), parent, false);
+        return loadingLayoutId() == 0 ? null : inflater.inflate(loadingLayoutId(), parent, false);
     }
 
     @Override public View onCreateContentView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
-        return inflater.inflate(layoutId(), parent, false);
+        return layoutId() == 0 ? null : inflater.inflate(layoutId(), parent, false);
     }
 
     @Override public View onCreateEmptyView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
-        return inflater.inflate(emptyLayoutId(), parent, false);
+        return emptyLayoutId() == 0 ? null : inflater.inflate(emptyLayoutId(), parent, false);
     }
 
     @Override public View onCreateErrorView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
-        return inflater.inflate(errorLayoutId(), parent, false);
+        return errorLayoutId() == 0 ? null : inflater.inflate(errorLayoutId(), parent, false);
     }
 
     @Override public void onBackPressed() {

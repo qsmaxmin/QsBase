@@ -57,11 +57,11 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
     }
 
     @Override public View onCreateListHeaderView(@NonNull LayoutInflater inflater) {
-        return getHeaderLayout() != 0 ? inflater.inflate(getHeaderLayout(), null) : null;
+        return getHeaderLayout() == 0 ? null : inflater.inflate(getHeaderLayout(), null);
     }
 
     @Override public View onCreateListFooterView(@NonNull LayoutInflater inflater) {
-        return getFooterLayout() != 0 ? inflater.inflate(getFooterLayout(), null) : null;
+        return getFooterLayout() == 0 ? null : inflater.inflate(getFooterLayout(), null);
     }
 
     @Override public HeaderFooterRecyclerView getRecyclerView() {
