@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.google.gson.Gson;
-import com.qsmaxmin.annotation.QsNotProguard;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
 
@@ -18,7 +17,7 @@ import java.util.Map;
  * It can store everything, and pay attention to confusion when storing objects.
  */
 @SuppressWarnings("rawtypes")
-public abstract class QsProperties implements QsIProperty, QsNotProguard {
+public abstract class QsProperties implements QsIProperty {
     private final Object            locker = new Object();
     private final SharedPreferences sp;
     private       Gson              gson;

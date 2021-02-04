@@ -1,5 +1,7 @@
 package com.qsmaxmin.qsbase.plugin.property;
 
+import com.qsmaxmin.annotation.QsNotProguard;
+
 import java.util.Map;
 
 /**
@@ -7,7 +9,7 @@ import java.util.Map;
  * @Date 2020/8/19 15:10
  * @Description for QsTransform
  */
-public interface QsIProperty {
+public interface QsIProperty extends QsNotProguard {
 
     /**
      * auto generate code by QsTransform

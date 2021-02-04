@@ -12,7 +12,7 @@ import java.util.List;
  */
 @SuppressWarnings("rawtypes")
 public class EventHelper {
-    private static HashMap<Class, HashSet<EventItem>> holder = new HashMap<>();
+    private static final HashMap<Class, HashSet<EventItem>> holder = new HashMap<>();
 
     public static void register(Object target, String[] methodNames, Class[] paramClasses) {
         if (target == null || methodNames == null || paramClasses == null
