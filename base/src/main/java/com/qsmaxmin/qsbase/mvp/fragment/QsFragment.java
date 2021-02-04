@@ -75,7 +75,6 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         View rootView = initView(inflater, container);
         bindViewByQsPlugin(rootView);
         rootView.setOnTouchListener(this);
-        onViewCreated(rootView);
         bindEventByQsPlugin();
         return rootView;
     }
@@ -110,10 +109,6 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         unbindEventByQsPlugin();
     }
 
-    @Override public void onViewCreated(View view) {
-        //custom your logic
-    }
-
     protected View initView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container) {
         long s0 = 0;
         if (L.isEnable()) s0 = System.nanoTime();
@@ -122,18 +117,18 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
             mViewAnimator = rootView.findViewById(R.id.qs_view_animator);
             ViewHelper.initViewAnimator(mViewAnimator, this);
 
-            if (loadingLayoutId() != 0) {
-                View loadingView = inflater.inflate(loadingLayoutId(), mViewAnimator, false);
-                ViewHelper.addToParent(loadingView, mViewAnimator, VIEW_STATE_LOADING);
-                setDefaultViewClickListener(loadingView);
-                onLoadingViewCreated(loadingView);
+            View loadingView = onCreateLoadingView(inflater, mViewAnimator);
+            if (loadingView != null) {
+                View view = ViewHelper.addToParent(loadingView, mViewAnimator, VIEW_STATE_LOADING);
+                setDefaultViewClickListener(view);
             }
 
-            if (layoutId() != 0) {
-                View contentView = inflater.inflate(layoutId(), mViewAnimator, false);
-                ViewHelper.addToParent(contentView, mViewAnimator, VIEW_STATE_CONTENT);
-                if (contentViewBackgroundColor() != 0) contentView.setBackgroundColor(contentViewBackgroundColor());
-                onContentViewCreated(contentView);
+            View contentView = onCreateContentView(inflater, mViewAnimator);
+            if (contentView != null) {
+                View view = ViewHelper.addToParent(contentView, mViewAnimator, VIEW_STATE_CONTENT);
+                if (contentViewBackgroundColor() != 0) {
+                    view.setBackgroundColor(contentViewBackgroundColor());
+                }
             }
 
             if (L.isEnable()) {
@@ -141,12 +136,17 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
                 L.i(initTag(), "initView...view inflate complete(viewState is open), use time:" + (s1 - s0) / 1000000f + "ms");
             }
 
-        } else if (layoutId() != 0) {
+        } else {
             ViewGroup customView = rootView.findViewById(android.R.id.custom);
-            View contentView = inflater.inflate(layoutId(), customView, false);
-            if (contentViewBackgroundColor() != 0) contentView.setBackgroundColor(contentViewBackgroundColor());
-            customView.addView(contentView);
-            onContentViewCreated(contentView);
+            View contentView = onCreateContentView(inflater, customView);
+            if (contentView != null) {
+                if (contentViewBackgroundColor() != 0) {
+                    contentView.setBackgroundColor(contentViewBackgroundColor());
+                }
+                if (customView != contentView && contentView.getParent() == null) {
+                    customView.addView(contentView);
+                }
+            }
 
             if (L.isEnable()) {
                 long s1 = System.nanoTime();
@@ -239,20 +239,20 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         return QsHelper.getAppInterface().errorLayoutId();
     }
 
-    @Override public void onLoadingViewCreated(@NonNull View loadingView) {
-        //custom your logic
+    @Override public View onCreateLoadingView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
+        return inflater.inflate(loadingLayoutId(), parent, false);
     }
 
-    @Override public void onContentViewCreated(@NonNull View contentView) {
-        //custom your logic
+    @Override public View onCreateContentView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
+        return inflater.inflate(layoutId(), parent, false);
     }
 
-    @Override public void onEmptyViewCreated(@NonNull View emptyView) {
-        //custom your logic
+    @Override public View onCreateEmptyView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
+        return inflater.inflate(emptyLayoutId(), parent, false);
     }
 
-    @Override public void onErrorViewCreated(@NonNull View errorView) {
-        //custom your logic
+    @Override public View onCreateErrorView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
+        return inflater.inflate(errorLayoutId(), parent, false);
     }
 
     @Override public void onBackPressed() {
@@ -331,18 +331,17 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
 
     @Override public final void showEmptyView() {
         if (mViewAnimator != null) {
-            if (L.isEnable()) L.i(initTag(), "showErrorView.........childCount:" + mViewAnimator.getChildCount());
+            if (L.isEnable()) L.i(initTag(), "showEmptyView.........childCount:" + mViewAnimator.getChildCount());
             int index = ViewHelper.findViewIndexByState(mViewAnimator, VIEW_STATE_EMPTY);
             if (index >= 0) {
                 setViewState(index);
             } else {
                 post(new Runnable() {
                     @Override public void run() {
-                        if (L.isEnable()) L.i(initTag(), "showEmptyView.........inflate emptyLayoutId()");
-                        View emptyView = getLayoutInflater().inflate(emptyLayoutId(), mViewAnimator, false);
-                        ViewHelper.addToParent(emptyView, mViewAnimator, VIEW_STATE_EMPTY);
-                        setDefaultViewClickListener(emptyView);
-                        onEmptyViewCreated(emptyView);
+                        if (L.isEnable()) L.i(initTag(), "showEmptyView.........create empty view by 'onCreateEmptyView(...)' method~");
+                        View emptyView = onCreateEmptyView(getLayoutInflater(), mViewAnimator);
+                        View view = ViewHelper.addToParent(emptyView, mViewAnimator, VIEW_STATE_EMPTY);
+                        setDefaultViewClickListener(view);
                         setViewState(mViewAnimator.getChildCount() - 1);
                     }
                 });
@@ -351,7 +350,7 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
     }
 
     @Override public final void showErrorView() {
-        if (isOpenViewState() && mViewAnimator != null) {
+        if (mViewAnimator != null) {
             if (L.isEnable()) L.i(initTag(), "showErrorView.........childCount:" + mViewAnimator.getChildCount());
             int index = ViewHelper.findViewIndexByState(mViewAnimator, VIEW_STATE_ERROR);
             if (index >= 0) {
@@ -359,11 +358,10 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
             } else {
                 post(new Runnable() {
                     @Override public void run() {
-                        if (L.isEnable()) L.i(initTag(), "showErrorView.........inflate errorLayoutId()");
-                        View errorView = getLayoutInflater().inflate(errorLayoutId(), mViewAnimator, false);
-                        ViewHelper.addToParent(errorView, mViewAnimator, VIEW_STATE_ERROR);
-                        setDefaultViewClickListener(errorView);
-                        onErrorViewCreated(errorView);
+                        if (L.isEnable()) L.i(initTag(), "showErrorView.........create error view by 'onCreateErrorView(...)' method~");
+                        View errorView = onCreateErrorView(getLayoutInflater(), mViewAnimator);
+                        View view = ViewHelper.addToParent(errorView, mViewAnimator, VIEW_STATE_ERROR);
+                        setDefaultViewClickListener(view);
                         setViewState(mViewAnimator.getChildCount() - 1);
                     }
                 });
@@ -386,7 +384,6 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
     @Override public boolean isShowErrorView() {
         return currentViewState() == VIEW_STATE_ERROR;
     }
-
 
     /**
      * return current showing view
@@ -440,7 +437,7 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         QsHelper.commitFragment(getChildFragmentManager(), android.R.id.custom, fragment, tag);
     }
 
-    @Override public void commitFragment(Fragment fragment, int enterAnim, int existAnim) {
+    @Override public final void commitFragment(Fragment fragment, int enterAnim, int existAnim) {
         QsHelper.commitFragment(getChildFragmentManager(), android.R.id.custom, fragment, fragment.getClass().getSimpleName(), enterAnim, existAnim);
     }
 
@@ -456,7 +453,7 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
         QsHelper.commitFragment(getChildFragmentManager(), layoutId, fragment, tag);
     }
 
-    @Override public void commitFragment(int layoutId, Fragment fragment, int enterAnim, int existAnim) {
+    @Override public final void commitFragment(int layoutId, Fragment fragment, int enterAnim, int existAnim) {
         QsHelper.commitFragment(getChildFragmentManager(), layoutId, fragment, fragment.getClass().getSimpleName(), enterAnim, existAnim);
     }
 

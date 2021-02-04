@@ -7,6 +7,7 @@ import android.widget.ScrollView;
 
 import com.qsmaxmin.qsbase.R;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
+import com.qsmaxmin.qsbase.common.utils.ViewHelper;
 import com.qsmaxmin.qsbase.common.widget.listview.LoadingFooter;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrDefaultHandler;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout;
@@ -36,16 +37,12 @@ public abstract class QsPullActivity<T extends QsPresenter> extends QsActivity<T
 
     @Override protected View initView(LayoutInflater inflater) {
         View view = super.initView(inflater);
-        if (canPullRefreshing()) {
-            initPtrFrameLayout(view);
-            if (viewLayoutId() != 0) {
-                childView = inflater.inflate(viewLayoutId(), mPtrFrameLayout, false);
-                mPtrFrameLayout.addView(childView);
-            }
-        } else {
-            childView = inflater.inflate(viewLayoutId(), (ViewGroup) view, false);
-            ((ViewGroup) view).addView(childView);
+        initPtrFrameLayout(view);
+        View cv = onCreateChildView(inflater, mPtrFrameLayout);
+        if (cv != null) {
+            childView = ViewHelper.addToParent(cv, mPtrFrameLayout);
         }
+        mPtrFrameLayout.setEnabled(canPullRefreshing());
         return view;
     }
 

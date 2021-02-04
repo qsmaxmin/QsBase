@@ -43,6 +43,14 @@ public abstract class QsListActivity<P extends QsPresenter, D> extends QsActivit
         return 0;
     }
 
+    @Override public View onCreateListHeaderView(@NonNull LayoutInflater inflater) {
+        return getHeaderLayout() != 0 ? inflater.inflate(getHeaderLayout(), null) : null;
+    }
+
+    @Override public View onCreateListFooterView(@NonNull LayoutInflater inflater) {
+        return getFooterLayout() != 0 ? inflater.inflate(getFooterLayout(), null) : null;
+    }
+
     @Override public final View getHeaderView() {
         return headerView;
     }
@@ -67,14 +75,17 @@ public abstract class QsListActivity<P extends QsPresenter, D> extends QsActivit
         View rootView = super.initView(inflater);
         mListView = rootView.findViewById(android.R.id.list);
         if (mListView == null) throw new RuntimeException("ListView is not exit or its id not 'android.R.id.list' in current layout!!");
-        if (getHeaderLayout() != 0) {
-            headerView = inflater.inflate(getHeaderLayout(), null);
+
+        headerView = onCreateListHeaderView(inflater);
+        if (headerView != null) {
             mListView.addHeaderView(headerView);
         }
-        if (getFooterLayout() != 0) {
-            footerView = inflater.inflate(getFooterLayout(), null);
+
+        footerView = onCreateListFooterView(inflater);
+        if (footerView != null) {
             mListView.addFooterView(footerView);
         }
+
         mListView.setOnItemClickListener(this);
         mListView.setOnItemLongClickListener(this);
         mListAdapter = new QsListAdapter<>(this, mList);

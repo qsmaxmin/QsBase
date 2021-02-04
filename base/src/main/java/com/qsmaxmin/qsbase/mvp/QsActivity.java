@@ -51,9 +51,9 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
 
     @Override public int rootViewLayoutId() {
         if (isOpenViewState()) {
-            return actionbarLayoutId() == 0 ? R.layout.qs_view_animator : R.layout.qs_view_animator_ab;
+            return R.layout.qs_view_animator_ab;
         } else {
-            return actionbarLayoutId() == 0 ? R.layout.qs_frame_layout : R.layout.qs_frame_layout_ab;
+            return R.layout.qs_frame_layout_ab;
         }
     }
 
@@ -77,6 +77,26 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         return QsHelper.getAppInterface().errorLayoutId();
     }
 
+    @Override public View onCreateActionbarView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
+        return inflater.inflate(actionbarLayoutId(), parent, true);
+    }
+
+    @Override public View onCreateLoadingView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
+        return inflater.inflate(loadingLayoutId(), parent, false);
+    }
+
+    @Override public View onCreateContentView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
+        return inflater.inflate(layoutId(), parent, false);
+    }
+
+    @Override public View onCreateEmptyView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
+        return inflater.inflate(emptyLayoutId(), parent, false);
+    }
+
+    @Override public View onCreateErrorView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
+        return inflater.inflate(errorLayoutId(), parent, false);
+    }
+
     @CallSuper @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         QsHelper.getScreenHelper().pushActivity(this);
@@ -86,14 +106,8 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         contentView = initView(getLayoutInflater());
         setContentView(contentView);
         bindViewByQsPlugin(contentView);
-        onViewCreated(contentView);
-
         bindEventByQsPlugin();
         initData(savedInstanceState);
-    }
-
-    @Override public void onViewCreated(View view) {
-        //custom your logic
     }
 
     @CallSuper @Override public void bindBundleByQsPlugin(Bundle bundle) {
@@ -150,44 +164,52 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         if (L.isEnable()) s0 = System.nanoTime();
         ViewGroup rootView = (ViewGroup) inflater.inflate(rootViewLayoutId(), null);
 
-        if (actionbarLayoutId() != 0) {
-            ViewGroup actionbarContainer = rootView.findViewById(R.id.qs_actionbar_parent);
-            inflater.inflate(actionbarLayoutId(), actionbarContainer, true);
+        ViewGroup actionbarContainer = rootView.findViewById(R.id.qs_actionbar_parent);
+        if (actionbarContainer != null) {
+            View actionbarView = onCreateActionbarView(inflater, actionbarContainer);
+            if (actionbarView != null && actionbarView.getParent() == null) {
+                actionbarContainer.addView(actionbarView);
+            }
         }
 
         if (isOpenViewState()) {
             mViewAnimator = rootView.findViewById(R.id.qs_view_animator);
             ViewHelper.initViewAnimator(mViewAnimator, this);
 
-            if (loadingLayoutId() != 0) {
-                View loadingView = inflater.inflate(loadingLayoutId(), mViewAnimator, false);
-                ViewHelper.addToParent(loadingView, mViewAnimator, VIEW_STATE_LOADING);
-                setDefaultViewClickListener(loadingView);
-                onLoadingViewCreated(loadingView);
+            View loadingView = onCreateLoadingView(inflater, mViewAnimator);
+            if (loadingView != null) {
+                View view = ViewHelper.addToParent(loadingView, mViewAnimator, VIEW_STATE_LOADING);
+                setDefaultViewClickListener(view);
             }
 
-            if (layoutId() != 0) {
-                View targetView = inflater.inflate(layoutId(), mViewAnimator, false);
-                ViewHelper.addToParent(targetView, mViewAnimator, VIEW_STATE_CONTENT);
-                if (contentViewBackgroundColor() != 0) targetView.setBackgroundColor(contentViewBackgroundColor());
-                onContentViewCreated(targetView);
+            View contentView = onCreateContentView(inflater, mViewAnimator);
+            if (contentView != null) {
+                View view = ViewHelper.addToParent(contentView, mViewAnimator, VIEW_STATE_CONTENT);
+                if (contentViewBackgroundColor() != 0) {
+                    view.setBackgroundColor(contentViewBackgroundColor());
+                }
             }
 
             if (L.isEnable()) {
-                long s1 = System.nanoTime();
-                L.i(initTag(), "initView...view inflate complete(viewState is open), use time:" + (s1 - s0) / 1000_000f + "ms");
+                long s1 = System.currentTimeMillis();
+                L.i(initTag(), "initView...view inflate complete(viewState is open), use time:" + (s1 - s0) + "ms");
             }
 
-        } else if (layoutId() != 0) {
+        } else {
             ViewGroup customView = rootView.findViewById(android.R.id.custom);
-            View targetView = inflater.inflate(layoutId(), customView, false);
-            if (contentViewBackgroundColor() != 0) targetView.setBackgroundColor(contentViewBackgroundColor());
-            customView.addView(targetView);
-            onContentViewCreated(targetView);
+            View contentView = onCreateContentView(inflater, customView);
+            if (contentView != null) {
+                if (contentViewBackgroundColor() != 0) {
+                    contentView.setBackgroundColor(contentViewBackgroundColor());
+                }
+                if (customView != contentView && contentView.getParent() == null) {
+                    customView.addView(contentView);
+                }
+            }
 
             if (L.isEnable()) {
-                long s1 = System.nanoTime();
-                L.i(initTag(), "initView...view inflate complete(viewState not open), use time:" + (s1 - s0) / 1000_000f + "ms");
+                long s1 = System.currentTimeMillis();
+                L.i(initTag(), "initView...view inflate complete(viewState not open), use time:" + (s1 - s0) + "ms");
             }
         }
         return rootView;
@@ -263,22 +285,6 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
         }
     }
 
-    @Override public void onLoadingViewCreated(@NonNull View loadingView) {
-        //custom your logic
-    }
-
-    @Override public void onContentViewCreated(@NonNull View contentView) {
-        //custom your logic
-    }
-
-    @Override public void onEmptyViewCreated(@NonNull View emptyView) {
-        //custom your logic
-    }
-
-    @Override public void onErrorViewCreated(@NonNull View errorView) {
-        //custom your logic
-    }
-
     @NonNull @Override public QsProgressDialog getLoadingDialog() {
         return QsHelper.getAppInterface().getLoadingDialog();
     }
@@ -337,18 +343,17 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
 
     @Override public final void showEmptyView() {
         if (mViewAnimator != null) {
-            if (L.isEnable()) L.i(initTag(), "showErrorView.........childCount:" + mViewAnimator.getChildCount());
+            if (L.isEnable()) L.i(initTag(), "showEmptyView.........childCount:" + mViewAnimator.getChildCount());
             int index = ViewHelper.findViewIndexByState(mViewAnimator, VIEW_STATE_EMPTY);
             if (index >= 0) {
                 setViewState(index);
             } else {
                 post(new Runnable() {
                     @Override public void run() {
-                        if (L.isEnable()) L.i(initTag(), "showEmptyView.........inflate emptyLayoutId()");
-                        View emptyView = getLayoutInflater().inflate(emptyLayoutId(), mViewAnimator, false);
-                        ViewHelper.addToParent(emptyView, mViewAnimator, VIEW_STATE_EMPTY);
-                        setDefaultViewClickListener(emptyView);
-                        onEmptyViewCreated(emptyView);
+                        if (L.isEnable()) L.i(initTag(), "showEmptyView.........create empty view by 'onCreateEmptyView(...)' method~");
+                        View emptyView = onCreateEmptyView(getLayoutInflater(), mViewAnimator);
+                        View view = ViewHelper.addToParent(emptyView, mViewAnimator, VIEW_STATE_EMPTY);
+                        setDefaultViewClickListener(view);
                         setViewState(mViewAnimator.getChildCount() - 1);
                     }
                 });
@@ -357,7 +362,7 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
     }
 
     @Override public final void showErrorView() {
-        if (isOpenViewState() && mViewAnimator != null) {
+        if (mViewAnimator != null) {
             if (L.isEnable()) L.i(initTag(), "showErrorView.........childCount:" + mViewAnimator.getChildCount());
             int index = ViewHelper.findViewIndexByState(mViewAnimator, VIEW_STATE_ERROR);
             if (index >= 0) {
@@ -365,11 +370,10 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
             } else {
                 post(new Runnable() {
                     @Override public void run() {
-                        if (L.isEnable()) L.i(initTag(), "showErrorView.........inflate errorLayoutId()");
-                        View errorView = getLayoutInflater().inflate(errorLayoutId(), mViewAnimator, false);
-                        ViewHelper.addToParent(errorView, mViewAnimator, VIEW_STATE_ERROR);
-                        setDefaultViewClickListener(errorView);
-                        onErrorViewCreated(errorView);
+                        if (L.isEnable()) L.i(initTag(), "showErrorView.........create error view by 'onCreateErrorView(...)' method~");
+                        View errorView = onCreateErrorView(getLayoutInflater(), mViewAnimator);
+                        View view = ViewHelper.addToParent(errorView, mViewAnimator, VIEW_STATE_ERROR);
+                        setDefaultViewClickListener(view);
                         setViewState(mViewAnimator.getChildCount() - 1);
                     }
                 });

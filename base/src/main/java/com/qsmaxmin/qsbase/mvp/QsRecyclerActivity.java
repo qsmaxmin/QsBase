@@ -46,6 +46,14 @@ public abstract class QsRecyclerActivity<P extends QsPresenter, D> extends QsAct
         return 0;
     }
 
+    @Override public View onCreateListHeaderView(@NonNull LayoutInflater inflater) {
+        return getHeaderLayout() != 0 ? inflater.inflate(getHeaderLayout(), null) : null;
+    }
+
+    @Override public View onCreateListFooterView(@NonNull LayoutInflater inflater) {
+        return getFooterLayout() != 0 ? inflater.inflate(getFooterLayout(), null) : null;
+    }
+
     @Override public final View getHeaderView() {
         return headerView;
     }
@@ -70,16 +78,19 @@ public abstract class QsRecyclerActivity<P extends QsPresenter, D> extends QsAct
     private void initRecycleView(LayoutInflater inflater, View rootView) {
         recyclerView = rootView.findViewById(android.R.id.list);
         if (recyclerView == null) throw new RuntimeException("HeaderFooterRecyclerView is not exit or its id not 'android.R.id.list' in current layout!!");
-        if (getHeaderLayout() != 0) {
-            headerView = inflater.inflate(getHeaderLayout(), null);
+
+        headerView = onCreateListHeaderView(inflater);
+        if (headerView != null) {
             recyclerView.addHeaderView(headerView);
             bindViewByQsPlugin(headerView);
         }
-        if (getFooterLayout() != 0) {
-            footerView = inflater.inflate(getFooterLayout(), null);
+
+        footerView = onCreateListFooterView(inflater);
+        if (footerView != null) {
             recyclerView.addFooterView(footerView);
             bindViewByQsPlugin(footerView);
         }
+
         RecyclerView.ItemDecoration itemDecoration = getItemDecoration();
         if (itemDecoration != null) {
             recyclerView.addItemDecoration(itemDecoration);

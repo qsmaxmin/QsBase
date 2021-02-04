@@ -1,8 +1,14 @@
 package com.qsmaxmin.qsbase.mvp;
 
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
 import com.qsmaxmin.qsbase.common.widget.headerview.HeaderScrollListener;
 import com.qsmaxmin.qsbase.common.widget.headerview.HeaderScrollView;
 import com.qsmaxmin.qsbase.common.widget.headerview.ScrollerProvider;
+
+import androidx.annotation.NonNull;
 
 /**
  * @CreateBy qsmaxmin
@@ -11,7 +17,7 @@ import com.qsmaxmin.qsbase.common.widget.headerview.ScrollerProvider;
  */
 
 public interface QsIHeaderView extends ScrollerProvider, HeaderScrollListener {
-    int getHeaderLayout();
+    View onCreateHeaderView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent);
 
     HeaderScrollView getHeaderScrollView();
 }

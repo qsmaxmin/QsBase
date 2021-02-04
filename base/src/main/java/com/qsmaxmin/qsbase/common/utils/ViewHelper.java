@@ -229,15 +229,33 @@ public class ViewHelper {
         return -1;
     }
 
-    public static void addToParent(@NonNull View view, @NonNull ViewGroup parent, int tag) {
+    /**
+     * 添加前检查view是否已经被添加到父控件
+     *
+     * @return 返回被添加的view
+     */
+    public static View addToParent(@NonNull View view, @NonNull ViewGroup parent, int tag) {
         if (view != parent) {
             view.setTag(R.id.qs_view_state_key, tag);
             if (view.getParent() == null) {
                 parent.addView(view);
             }
+            return view;
         } else {
             View current = parent.getChildAt(parent.getChildCount() - 1);
             current.setTag(R.id.qs_view_state_key, tag);
+            return current;
+        }
+    }
+
+    public static View addToParent(@NonNull View view, @NonNull ViewGroup parent) {
+        if (view != parent) {
+            if (view.getParent() == null) {
+                parent.addView(view);
+            }
+            return view;
+        } else {
+            return parent.getChildAt(parent.getChildCount() - 1);
         }
     }
 }

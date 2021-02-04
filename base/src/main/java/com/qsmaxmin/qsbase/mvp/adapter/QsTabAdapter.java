@@ -31,10 +31,6 @@ public class QsTabAdapter {
         }
     }
 
-    public final int tabItemLayoutId(int position) {
-        return items.get(position).tabItemLayoutId();
-    }
-
     public final View getTabItemView(LayoutInflater inflater, ViewGroup parent, int position) {
         return items.get(position).onCreateTabItemView(inflater, parent);
     }

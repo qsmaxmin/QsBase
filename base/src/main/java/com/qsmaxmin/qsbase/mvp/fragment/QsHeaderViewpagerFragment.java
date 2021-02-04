@@ -5,6 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.qsmaxmin.qsbase.R;
+import com.qsmaxmin.qsbase.common.utils.ViewHelper;
 import com.qsmaxmin.qsbase.common.widget.headerview.HeaderScrollView;
 import com.qsmaxmin.qsbase.common.widget.headerview.ScrollerProvider;
 import com.qsmaxmin.qsbase.mvp.QsIHeaderView;
@@ -27,10 +28,6 @@ public abstract class QsHeaderViewpagerFragment<P extends QsPresenter> extends Q
         return R.layout.qs_header_viewpager;
     }
 
-    @Override public int getHeaderLayout() {
-        return 0;
-    }
-
     @Override protected View initView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container) {
         View view = super.initView(inflater, container);
         if (view instanceof HeaderScrollView) {
@@ -40,9 +37,11 @@ public abstract class QsHeaderViewpagerFragment<P extends QsPresenter> extends Q
         }
         headerScrollView.registerScrollerProvider(this);
         headerScrollView.setOnScrollListener(this);
-        if (getHeaderLayout() != 0) {
-            ViewGroup headerContainer = view.findViewById(R.id.qs_header_container);
-            inflater.inflate(getHeaderLayout(), headerContainer, true);
+
+        ViewGroup headerContainer = view.findViewById(R.id.qs_header_container);
+        View headerView = onCreateHeaderView(inflater, headerContainer);
+        if (headerView != null) {
+            ViewHelper.addToParent(headerView, headerContainer);
         }
         return view;
     }

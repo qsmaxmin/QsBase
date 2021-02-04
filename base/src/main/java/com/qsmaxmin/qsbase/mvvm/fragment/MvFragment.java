@@ -128,15 +128,15 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
 
             View loadingView = onCreateLoadingView(inflater, mViewAnimator);
             if (loadingView != null) {
-                ViewHelper.addToParent(loadingView, mViewAnimator, VIEW_STATE_LOADING);
-                setDefaultViewClickListener(loadingView);
+                View view = ViewHelper.addToParent(loadingView, mViewAnimator, VIEW_STATE_LOADING);
+                setDefaultViewClickListener(view);
             }
 
             View contentView = onCreateContentView(inflater, mViewAnimator);
             if (contentView != null) {
-                ViewHelper.addToParent(contentView, mViewAnimator, VIEW_STATE_CONTENT);
+                View view = ViewHelper.addToParent(contentView, mViewAnimator, VIEW_STATE_CONTENT);
                 if (contentViewBackgroundColor() != 0) {
-                    contentView.setBackgroundColor(contentViewBackgroundColor());
+                    view.setBackgroundColor(contentViewBackgroundColor());
                 }
             }
 
@@ -307,8 +307,8 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
                     @Override public void run() {
                         if (L.isEnable()) L.i(initTag(), "showEmptyView.........create empty view by 'onCreateEmptyView(...)' method~");
                         View emptyView = onCreateEmptyView(getLayoutInflater(), mViewAnimator);
-                        ViewHelper.addToParent(emptyView, mViewAnimator, VIEW_STATE_EMPTY);
-                        setDefaultViewClickListener(emptyView);
+                        View view = ViewHelper.addToParent(emptyView, mViewAnimator, VIEW_STATE_EMPTY);
+                        setDefaultViewClickListener(view);
                         setViewState(mViewAnimator.getChildCount() - 1);
                     }
                 });
@@ -327,8 +327,8 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
                     @Override public void run() {
                         if (L.isEnable()) L.i(initTag(), "showErrorView.........create error view by 'onCreateErrorView(...)' method~");
                         View errorView = onCreateErrorView(getLayoutInflater(), mViewAnimator);
-                        ViewHelper.addToParent(errorView, mViewAnimator, VIEW_STATE_ERROR);
-                        setDefaultViewClickListener(errorView);
+                        View view = ViewHelper.addToParent(errorView, mViewAnimator, VIEW_STATE_ERROR);
+                        setDefaultViewClickListener(view);
                         setViewState(mViewAnimator.getChildCount() - 1);
                     }
                 });
@@ -450,9 +450,7 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
     }
 
     private void setDefaultViewClickListener(View view) {
-        if (view != null) {
-            ViewHelper.setDefaultViewClickListener(view, this);
-        }
+        ViewHelper.setDefaultViewClickListener(view, this);
     }
 
     @Override public void smoothScrollToTop(boolean autoRefresh) {

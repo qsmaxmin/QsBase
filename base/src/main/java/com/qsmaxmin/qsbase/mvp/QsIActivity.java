@@ -1,6 +1,9 @@
 package com.qsmaxmin.qsbase.mvp;
 
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import com.qsmaxmin.qsbase.common.viewbind.OnKeyDownListener;
 
@@ -16,6 +19,8 @@ import androidx.annotation.NonNull;
 public interface QsIActivity extends QsIView {
 
     @LayoutRes int actionbarLayoutId();
+
+    View onCreateActionbarView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent);
 
     boolean isBlackIconStatusBar();
 

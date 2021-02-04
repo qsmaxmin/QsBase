@@ -31,6 +31,10 @@ public interface QsIRecyclerView<D> extends AdapterView.OnItemClickListener, Ada
 
     int getFooterLayout();
 
+    View onCreateListHeaderView(@NonNull LayoutInflater inflater);
+
+    View onCreateListFooterView(@NonNull LayoutInflater inflater);
+
     View getHeaderView();
 
     View getFooterView();

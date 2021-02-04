@@ -22,10 +22,6 @@ public class MvTabFragmentStatePagerAdapter extends MvFragmentStatePagerAdapter 
         super(fm, helper);
     }
 
-    @Override public final int getCustomTabViewId(int position) {
-        return 0;
-    }
-
     @Override public View getCustomTabView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent, int position) {
         if (getPagerHelper().getTabAdapter() != null) {
             return getPagerHelper().getTabAdapter().getTabItemView(inflater, parent, position);

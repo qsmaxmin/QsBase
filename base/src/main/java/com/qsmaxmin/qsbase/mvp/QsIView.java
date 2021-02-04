@@ -1,7 +1,9 @@
 package com.qsmaxmin.qsbase.mvp;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 
 import com.qsmaxmin.annotation.QsNotProguard;
@@ -42,15 +44,13 @@ public interface QsIView<P> extends QsIBindView, QsIBindEvent, QsIBindBundle, Qs
 
     @LayoutRes int errorLayoutId();
 
-    void onLoadingViewCreated(@NonNull View loadingView);
+    View onCreateLoadingView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent);
 
-    void onContentViewCreated(@NonNull View contentView);
+    View onCreateContentView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent);
 
-    void onEmptyViewCreated(@NonNull View emptyView);
+    View onCreateEmptyView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent);
 
-    void onErrorViewCreated(@NonNull View errorView);
-
-    void onViewCreated(View view);
+    View onCreateErrorView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent);
 
     void initData(@Nullable Bundle savedInstanceState);
 

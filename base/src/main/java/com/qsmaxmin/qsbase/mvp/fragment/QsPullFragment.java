@@ -7,6 +7,7 @@ import android.widget.ScrollView;
 
 import com.qsmaxmin.qsbase.R;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
+import com.qsmaxmin.qsbase.common.utils.ViewHelper;
 import com.qsmaxmin.qsbase.common.widget.listview.LoadingFooter;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrDefaultHandler;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout;
@@ -38,11 +39,16 @@ public abstract class QsPullFragment<T extends QsPresenter> extends QsFragment<T
 
     @Override protected View initView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container) {
         View view = super.initView(inflater, container);
-        initPtrFrameLayout(view, inflater);
+        initPtrFrameLayout(view);
+        View cv = onCreateChildView(inflater, mPtrFrameLayout);
+        if (cv != null) {
+            childView = ViewHelper.addToParent(cv, mPtrFrameLayout);
+        }
+        mPtrFrameLayout.setEnabled(canPullRefreshing());
         return view;
     }
 
-    private void initPtrFrameLayout(View view, LayoutInflater inflater) {
+    private void initPtrFrameLayout(View view) {
         if (view instanceof PtrFrameLayout) {
             mPtrFrameLayout = (PtrFrameLayout) view;
         } else {
@@ -53,10 +59,6 @@ public abstract class QsPullFragment<T extends QsPresenter> extends QsFragment<T
         mPtrFrameLayout.setHeaderView((View) handlerView);
         mPtrFrameLayout.addPtrUIHandler(handlerView);
         mPtrFrameLayout.setPtrHandler(new PtrDefaultHandler(this));
-        if (viewLayoutId() != 0) {
-            childView = inflater.inflate(viewLayoutId(), mPtrFrameLayout, false);
-            mPtrFrameLayout.addView(childView);
-        }
     }
 
     /**

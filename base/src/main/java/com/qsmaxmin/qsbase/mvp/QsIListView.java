@@ -1,6 +1,7 @@
 package com.qsmaxmin.qsbase.mvp;
 
 import android.content.Context;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
@@ -29,6 +30,10 @@ public interface QsIListView<D> extends AdapterView.OnItemClickListener, Adapter
     int getHeaderLayout();
 
     int getFooterLayout();
+
+    View onCreateListHeaderView(@NonNull LayoutInflater inflater);
+
+    View onCreateListFooterView(@NonNull LayoutInflater inflater);
 
     View getHeaderView();
 
