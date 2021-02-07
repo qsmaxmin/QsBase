@@ -7,8 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.TextView;
 
+import com.qsmaxmin.qsbase.common.utils.ViewHelper;
 import com.qsmaxmin.qsbase.plugin.threadpoll.QsThreadPollHelper;
 
 import androidx.annotation.Nullable;
@@ -19,10 +19,10 @@ import androidx.annotation.Nullable;
  * @Description
  */
 public class ProgressView extends FrameLayout {
-    private TextView         tv_message;
     private boolean          cancelable;
     private boolean          shouldShowing;
-    private QsProgressDialog loadingDialog;
+    private QsProgressDialog progressDialog;
+    private Activity         activity;
 
     public ProgressView(Context context) {
         super(context);
@@ -45,31 +45,32 @@ public class ProgressView extends FrameLayout {
         setOnClickListener(new OnClickListener() {
             @Override public void onClick(View v) {
                 if (cancelable) {
-                    setVisibility(GONE);
+                    removeFromDecorView();
                 }
             }
         });
-        setVisibility(GONE);
     }
 
-    public void initView(QsProgressDialog loadingDialog) {
-        if (loadingDialog != null) {
-            this.loadingDialog = loadingDialog;
+    public void initView(QsProgressDialog progressDialog) {
+        if (progressDialog != null) {
+            this.progressDialog = progressDialog;
             LayoutInflater factory = LayoutInflater.from(getContext());
-            View view = loadingDialog.onCreateContentView(factory, this);
-            if (view != this && view.getParent() == null) {
-                addView(view);
-            }
+            View view = progressDialog.onCreateContentView(factory, this);
+            ViewHelper.addToParent(view, this);
         }
     }
 
     public void setMessage(final String message) {
-        if (loadingDialog == null) return;
-        post(new Runnable() {
-            @Override public void run() {
-                loadingDialog.onSetMessage(message);
-            }
-        });
+        if (progressDialog == null) return;
+        if (QsThreadPollHelper.isMainThread()) {
+            progressDialog.onSetMessage(message);
+        } else {
+            QsThreadPollHelper.post(new Runnable() {
+                @Override public void run() {
+                    progressDialog.onSetMessage(message);
+                }
+            });
+        }
     }
 
     public void setCancelable(boolean cancelAble) {
@@ -77,51 +78,67 @@ public class ProgressView extends FrameLayout {
     }
 
     public void show(final Activity activity) {
-        show(activity, loadingDialog.getDelayedShowingTime());
+        show(activity, progressDialog.getDelayedShowingTime());
     }
 
     public void show(final Activity activity, long delayed) {
-        if (loadingDialog == null) return;
-        shouldShowing = true;
-        postDelayed(new Runnable() {
-            @Override public void run() {
-                if (shouldShowing) {
-                    setVisibility(VISIBLE);
-                    addToDecorView(activity);
-                }
-            }
-        }, delayed);
-    }
-
-    public void hide(final Activity activity) {
-        if (loadingDialog == null) return;
-        shouldShowing = false;
-        if (QsThreadPollHelper.isMainThread()) {
-            setVisibility(GONE);
-            removeFromDecorView(activity);
-        } else {
-            post(new Runnable() {
+        if (progressDialog == null || activity == null || activity.isFinishing()) {
+            return;
+        }
+        this.shouldShowing = true;
+        this.activity = activity;
+        if (delayed > 0) {
+            QsThreadPollHelper.postDelayed(new Runnable() {
                 @Override public void run() {
-                    setVisibility(GONE);
-                    removeFromDecorView(activity);
+                    if (shouldShowing) {
+                        addToDecorView();
+                    }
+                }
+            }, delayed);
+        } else if (QsThreadPollHelper.isMainThread()) {
+            if (shouldShowing) {
+                addToDecorView();
+            }
+        } else {
+            QsThreadPollHelper.post(new Runnable() {
+                @Override public void run() {
+                    if (shouldShowing) {
+                        addToDecorView();
+                    }
                 }
             });
         }
     }
 
-    private void addToDecorView(Activity activity) {
-        if (getParent() == null) {
-            ViewGroup decorView = (ViewGroup) activity.getWindow().getDecorView();
-            decorView.addView(this);
-            loadingDialog.onShowing();
+    public void hide() {
+        if (!shouldShowing || progressDialog == null || activity == null || activity.isFinishing()) {
+            return;
+        }
+        shouldShowing = false;
+        if (QsThreadPollHelper.isMainThread()) {
+            removeFromDecorView();
+        } else {
+            post(new Runnable() {
+                @Override public void run() {
+                    removeFromDecorView();
+                }
+            });
         }
     }
 
-    private void removeFromDecorView(Activity activity) {
-        if (getParent() != null) {
+    private void addToDecorView() {
+        if (getParent() == null && activity != null && !activity.isFinishing()) {
+            ViewGroup decorView = (ViewGroup) activity.getWindow().getDecorView();
+            decorView.addView(this);
+            if (progressDialog != null) progressDialog.onShowing();
+        }
+    }
+
+    private void removeFromDecorView() {
+        if (getParent() != null && activity != null && !activity.isFinishing()) {
             ViewGroup decorView = (ViewGroup) activity.getWindow().getDecorView();
             decorView.removeView(this);
-            loadingDialog.onHidden();
+            if (progressDialog != null) progressDialog.onHidden();
         }
     }
 }

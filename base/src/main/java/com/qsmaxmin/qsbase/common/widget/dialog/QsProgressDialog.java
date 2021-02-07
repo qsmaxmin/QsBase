@@ -29,6 +29,6 @@ public abstract class QsProgressDialog {
      * 适合的场景，如调用show方法后立即调用hidden，此时loading窗一闪而过，而延迟300ms就不会出现这种情况
      */
     public long getDelayedShowingTime() {
-        return 300;
+        return 0;
     }
 }

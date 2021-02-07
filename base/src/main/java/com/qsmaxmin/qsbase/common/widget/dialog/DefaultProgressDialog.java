@@ -24,4 +24,16 @@ public class DefaultProgressDialog extends QsProgressDialog {
     @Override public void onSetMessage(CharSequence text) {
         tv_progress_msg.setText(text);
     }
+
+    @Override public long getDelayedShowingTime() {
+        return 300;
+    }
+
+    @Override public void onShowing() {
+        super.onShowing();
+    }
+
+    @Override public void onHidden() {
+        super.onHidden();
+    }
 }

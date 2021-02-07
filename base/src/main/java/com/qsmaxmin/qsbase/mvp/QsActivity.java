@@ -321,7 +321,7 @@ public abstract class QsActivity<P extends QsPresenter> extends FragmentActivity
 
     @Override public final void loadingClose() {
         if (progressView != null) {
-            progressView.hide(this);
+            progressView.hide();
         }
     }
 

@@ -283,7 +283,7 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
 
     @Override public final void loadingClose() {
         if (progressView != null) {
-            progressView.hide(this);
+            progressView.hide();
         }
     }
 

@@ -312,7 +312,7 @@ public abstract class QsFragment<P extends QsPresenter> extends Fragment impleme
 
     @Override public final void loadingClose() {
         if (progressView != null) {
-            progressView.hide(getActivity());
+            progressView.hide();
         }
     }
 
