@@ -79,11 +79,9 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
 
     @CallSuper @Override protected void onDestroy() {
         super.onDestroy();
-        onKeyDownListener = null;
-        activityResultListener = null;
+        unbindEventByQsPlugin();
         cancelAllHttpRequest();
 
-        unbindEventByQsPlugin();
         QsHelper.getAppInterface().onActivityDestroy(this);
         QsHelper.getScreenHelper().popActivity(this);
     }

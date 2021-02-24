@@ -113,7 +113,6 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
 
     @CallSuper @Override public void onDestroyView() {
         super.onDestroyView();
-        mViewAnimator = null;
         unbindEventByQsPlugin();
         cancelAllHttpRequest();
     }
