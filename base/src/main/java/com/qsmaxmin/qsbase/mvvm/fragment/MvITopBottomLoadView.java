@@ -10,6 +10,8 @@ import java.util.List;
  * @Description
  */
 public interface MvITopBottomLoadView<D> {
+    byte LOAD_WHEN_SCROLL_TO_BOTTOM = 0;
+    byte LOAD_WHEN_SECOND_TO_LAST   = 1;
 
     void onTopLoading();
 

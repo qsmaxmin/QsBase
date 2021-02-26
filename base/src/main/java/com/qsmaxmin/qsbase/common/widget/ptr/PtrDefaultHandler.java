@@ -2,19 +2,13 @@ package com.qsmaxmin.qsbase.common.widget.ptr;
 
 import android.view.View;
 
-import com.qsmaxmin.qsbase.mvp.QsIPullToRefreshView;
 import com.qsmaxmin.qsbase.mvvm.MvIPullToRefreshView;
 
 public class PtrDefaultHandler implements PtrHandler {
-    private QsIPullToRefreshView mvpRefreshView;
-    private MvIPullToRefreshView mvvmRefreshView;
-
-    public PtrDefaultHandler(QsIPullToRefreshView refreshView) {
-        this.mvpRefreshView = refreshView;
-    }
+    private final MvIPullToRefreshView refreshView;
 
     public PtrDefaultHandler(MvIPullToRefreshView refreshView) {
-        this.mvvmRefreshView = refreshView;
+        this.refreshView = refreshView;
     }
 
     @Override public boolean checkCanDoRefresh(PtrFrameLayout frame, View content, View header) {
@@ -22,10 +16,8 @@ public class PtrDefaultHandler implements PtrHandler {
     }
 
     @Override public void onRefreshBegin(PtrFrameLayout frame) {
-        if (mvvmRefreshView != null) {
-            mvvmRefreshView.onRefresh();
-        } else if (mvpRefreshView != null) {
-            mvpRefreshView.onRefresh();
+        if (refreshView != null) {
+            refreshView.onRefresh();
         }
     }
 }

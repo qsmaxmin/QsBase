@@ -11,6 +11,7 @@ import com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrUIHandler;
 import com.qsmaxmin.qsbase.common.widget.ptr.header.BeautyCircleRefreshHeader;
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
+import com.qsmaxmin.qsbase.mvvm.MvIPullToRefreshView;
 
 import java.util.List;
 
@@ -23,7 +24,7 @@ import androidx.recyclerview.widget.RecyclerView;
  * @Date 2020/4/9 16:21
  * @Description pull recycler activity
  */
-public abstract class QsPullRecyclerActivity<P extends QsPresenter, D> extends QsRecyclerActivity<P, D> implements QsIPullToRefreshView {
+public abstract class QsPullRecyclerActivity<P extends QsPresenter, D> extends QsRecyclerActivity<P, D> implements MvIPullToRefreshView {
     private   boolean        canLoadingMore = true;
     private   PtrFrameLayout mPtrFrameLayout;
     protected LoadingFooter  mLoadingFooter;

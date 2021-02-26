@@ -12,6 +12,7 @@ import com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrUIHandler;
 import com.qsmaxmin.qsbase.common.widget.ptr.header.BeautyCircleRefreshHeader;
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
+import com.qsmaxmin.qsbase.mvvm.MvIPullToRefreshView;
 
 import java.util.List;
 
@@ -22,7 +23,7 @@ import androidx.annotation.NonNull;
  * @Date 2020/4/9 16:21
  * @Description pull list activity
  */
-public abstract class QsPullListActivity<P extends QsPresenter, D> extends QsListActivity<P, D> implements QsIPullToRefreshView {
+public abstract class QsPullListActivity<P extends QsPresenter, D> extends QsListActivity<P, D> implements MvIPullToRefreshView {
     private   PtrFrameLayout mPtrFrameLayout;
     protected LoadingFooter  loadingFooter;
     private   boolean        canLoadingMore = true;

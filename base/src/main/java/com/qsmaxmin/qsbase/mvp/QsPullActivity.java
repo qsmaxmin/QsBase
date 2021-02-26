@@ -13,6 +13,7 @@ import com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrUIHandler;
 import com.qsmaxmin.qsbase.common.widget.ptr.header.BeautyCircleRefreshHeader;
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
+import com.qsmaxmin.qsbase.mvvm.MvIPullView;
 
 import androidx.annotation.NonNull;
 
@@ -22,7 +23,7 @@ import androidx.annotation.NonNull;
  * @Description
  */
 
-public abstract class QsPullActivity<T extends QsPresenter> extends QsActivity<T> implements QsIPullView {
+public abstract class QsPullActivity<T extends QsPresenter> extends QsActivity<T> implements MvIPullView {
     private PtrFrameLayout mPtrFrameLayout;
     private View           childView;
 

@@ -12,8 +12,8 @@ import com.qsmaxmin.qsbase.common.widget.ptr.PtrDefaultHandler;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrUIHandler;
 import com.qsmaxmin.qsbase.common.widget.ptr.header.BeautyCircleRefreshHeader;
-import com.qsmaxmin.qsbase.mvp.QsIPullToRefreshView;
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
+import com.qsmaxmin.qsbase.mvvm.MvIPullToRefreshView;
 
 import java.util.List;
 
@@ -25,7 +25,7 @@ import androidx.annotation.Nullable;
  * @Date 17/7/4  下午3:13
  * @Description
  */
-public abstract class QsPullListFragment<T extends QsPresenter, D> extends QsListFragment<T, D> implements QsIPullToRefreshView {
+public abstract class QsPullListFragment<T extends QsPresenter, D> extends QsListFragment<T, D> implements MvIPullToRefreshView {
     private   boolean        canLoadingMore = true;
     private   PtrFrameLayout mPtrFrameLayout;
     protected LoadingFooter  loadingFooter;

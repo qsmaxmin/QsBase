@@ -16,7 +16,7 @@ import androidx.fragment.app.Fragment;
  * @Date 2020/9/9 10:24
  * @Description
  */
-public abstract class MvHeaderViewPagerActivity extends MvViewPagerActivity implements MvIHeaderView {
+public abstract class MvHeaderViewPagerActivity extends MvViewPagerActivity implements MvIHeaderViewPager {
     private HeaderScrollView headerScrollView;
 
     @Override public View onCreateContentView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {

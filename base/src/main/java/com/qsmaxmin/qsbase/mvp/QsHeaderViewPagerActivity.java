@@ -9,6 +9,7 @@ import com.qsmaxmin.qsbase.common.utils.ViewHelper;
 import com.qsmaxmin.qsbase.common.widget.headerview.HeaderScrollView;
 import com.qsmaxmin.qsbase.common.widget.headerview.ScrollerProvider;
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
+import com.qsmaxmin.qsbase.mvvm.MvIHeaderViewPager;
 
 import androidx.fragment.app.Fragment;
 
@@ -17,7 +18,7 @@ import androidx.fragment.app.Fragment;
  * @Date 2020/9/9 10:24
  * @Description
  */
-public abstract class QsHeaderViewPagerActivity<P extends QsPresenter> extends QsViewPagerActivity<P> implements QsIHeaderView {
+public abstract class QsHeaderViewPagerActivity<P extends QsPresenter> extends QsViewPagerActivity<P> implements MvIHeaderViewPager {
     private HeaderScrollView headerScrollView;
 
     @Override public int layoutId() {

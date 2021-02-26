@@ -8,8 +8,8 @@ import com.qsmaxmin.qsbase.R;
 import com.qsmaxmin.qsbase.common.utils.ViewHelper;
 import com.qsmaxmin.qsbase.common.widget.headerview.HeaderScrollView;
 import com.qsmaxmin.qsbase.common.widget.headerview.ScrollerProvider;
-import com.qsmaxmin.qsbase.mvp.QsIHeaderView;
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
+import com.qsmaxmin.qsbase.mvvm.MvIHeaderViewPager;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,7 +21,7 @@ import androidx.fragment.app.Fragment;
  * @Description
  */
 
-public abstract class QsHeaderViewpagerFragment<P extends QsPresenter> extends QsViewPagerFragment<P> implements QsIHeaderView {
+public abstract class QsHeaderViewpagerFragment<P extends QsPresenter> extends QsViewPagerFragment<P> implements MvIHeaderViewPager {
     private HeaderScrollView headerScrollView;
 
     @Override public int layoutId() {

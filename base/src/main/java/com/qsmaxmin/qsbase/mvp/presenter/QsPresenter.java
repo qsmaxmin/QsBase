@@ -12,8 +12,8 @@ import com.qsmaxmin.qsbase.common.model.QsIModel;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.common.widget.listview.LoadingFooter;
 import com.qsmaxmin.qsbase.common.widget.toast.QsToast;
-import com.qsmaxmin.qsbase.mvp.QsIPullToRefreshView;
 import com.qsmaxmin.qsbase.mvp.QsIView;
+import com.qsmaxmin.qsbase.mvvm.MvIPullToRefreshView;
 
 import java.util.HashSet;
 
@@ -132,11 +132,11 @@ public class QsPresenter<V extends QsIView> implements NetworkErrorReceiver, QsN
     public void paging(QsIModel model) {
         if (model != null && !isViewDetach()) {
             QsIView qsIView = getView();
-            if (qsIView instanceof QsIPullToRefreshView) {
+            if (qsIView instanceof MvIPullToRefreshView) {
                 if (model.isLastPage()) {
-                    ((QsIPullToRefreshView) qsIView).setLoadingState(LoadingFooter.State.TheEnd);
+                    ((MvIPullToRefreshView) qsIView).setLoadingState(LoadingFooter.State.TheEnd);
                 } else {
-                    ((QsIPullToRefreshView) qsIView).setLoadingState(LoadingFooter.State.Normal);
+                    ((MvIPullToRefreshView) qsIView).setLoadingState(LoadingFooter.State.Normal);
                 }
             } else {
                 L.e(initTag(), "not QsPullListFragment or QsPullRecyclerFragment view, so invalid paging(...)");
@@ -155,8 +155,8 @@ public class QsPresenter<V extends QsIView> implements NetworkErrorReceiver, QsN
     private void resetViewState() {
         if (!isViewDetach()) {
             QsIView qsIview = getView();
-            if (qsIview instanceof QsIPullToRefreshView) {
-                QsIPullToRefreshView view = (QsIPullToRefreshView) qsIview;
+            if (qsIview instanceof MvIPullToRefreshView) {
+                MvIPullToRefreshView view = (MvIPullToRefreshView) qsIview;
                 view.stopRefreshing();
                 view.setLoadingState(LoadingFooter.State.NetWorkError);
             }

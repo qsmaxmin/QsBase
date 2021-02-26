@@ -10,6 +10,7 @@ import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.common.widget.listview.LoadingFooter;
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
+import com.qsmaxmin.qsbase.mvvm.fragment.MvITopBottomLoadView;
 
 import java.util.List;
 
@@ -21,16 +22,14 @@ import androidx.annotation.Nullable;
  * @Date 2019/3/21 13:55
  * @Description listView滑动到顶部和底部都能加载更多数据
  */
-public abstract class QsTopBottomLoadListFragment<P extends QsPresenter, D> extends QsListFragment<P, D> implements QsITopBottomLoadView<D> {
+public abstract class QsTopBottomLoadListFragment<P extends QsPresenter, D> extends QsListFragment<P, D> implements MvITopBottomLoadView<D> {
     private boolean       isTopLoadingOpen    = true;
     private boolean       isBottomLoadingOpen = true;
     private LoadingFooter topLoadingView;
     private LoadingFooter bottomLoadingView;
 
-
     @Override protected View initView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container) {
         View view = super.initView(inflater, container);
-
         View headerView = getHeaderView();
         if (headerView instanceof LoadingFooter) {
             this.topLoadingView = (LoadingFooter) headerView;

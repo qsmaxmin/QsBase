@@ -11,6 +11,7 @@ import com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrUIHandler;
 import com.qsmaxmin.qsbase.common.widget.ptr.header.BeautyCircleRefreshHeader;
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
+import com.qsmaxmin.qsbase.mvvm.MvIPullToRefreshView;
 
 import androidx.annotation.NonNull;
 
@@ -19,7 +20,7 @@ import androidx.annotation.NonNull;
  * @Date 2020/9/9 11:14
  * @Description
  */
-public abstract class QsPullHeaderViewPagerActivity<P extends QsPresenter> extends QsHeaderViewPagerActivity<P> implements QsIPullToRefreshView {
+public abstract class QsPullHeaderViewPagerActivity<P extends QsPresenter> extends QsHeaderViewPagerActivity<P> implements MvIPullToRefreshView {
     private PtrFrameLayout mPtrFrameLayout;
 
     @Override public int layoutId() {

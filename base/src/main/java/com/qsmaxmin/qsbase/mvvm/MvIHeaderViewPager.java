@@ -1,4 +1,4 @@
-package com.qsmaxmin.qsbase.mvp;
+package com.qsmaxmin.qsbase.mvvm;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,8 +15,7 @@ import androidx.annotation.NonNull;
  * @Date 2017/7/4 11:08
  * @Description header view
  */
-
-public interface QsIHeaderView extends ScrollerProvider, HeaderScrollListener {
+public interface MvIHeaderViewPager extends MvIViewPager, ScrollerProvider, HeaderScrollListener {
     View onCreateHeaderView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent);
 
     HeaderScrollView getHeaderScrollView();

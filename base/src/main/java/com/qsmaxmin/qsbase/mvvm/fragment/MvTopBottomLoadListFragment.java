@@ -22,12 +22,10 @@ import androidx.annotation.Nullable;
  * @Description listView滑动到顶部和底部都能加载更多数据
  */
 public abstract class MvTopBottomLoadListFragment<D> extends MvListFragment<D> implements MvITopBottomLoadView<D> {
-    public static final byte          LOAD_WHEN_SCROLL_TO_BOTTOM = 0;
-    public static final byte          LOAD_WHEN_SECOND_TO_LAST   = 1;
-    private             boolean       isTopLoadingOpen           = true;
-    private             boolean       isBottomLoadingOpen        = true;
-    private             LoadingFooter topLoadingView;
-    private             LoadingFooter bottomLoadingView;
+    private boolean       isTopLoadingOpen    = true;
+    private boolean       isBottomLoadingOpen = true;
+    private LoadingFooter topLoadingView;
+    private LoadingFooter bottomLoadingView;
 
     @Override protected View initView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container) {
         View view = super.initView(inflater, container);
