@@ -12,9 +12,9 @@ import com.qsmaxmin.qsbase.R;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.mvp.QsIListView;
-import com.qsmaxmin.qsbase.mvp.adapter.QsListAdapter;
 import com.qsmaxmin.qsbase.mvp.adapter.QsListAdapterItem;
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
+import com.qsmaxmin.qsbase.mvvm.adapter.MvListAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -91,7 +91,7 @@ public abstract class QsListFragment<P extends QsPresenter, D> extends QsFragmen
 
         mListView.setOnItemClickListener(this);
         mListView.setOnItemLongClickListener(this);
-        mListAdapter = new QsListAdapter<>(this, mList);
+        mListAdapter = new MvListAdapter<>(this, mList);
         mListView.setAdapter(mListAdapter);
         mListView.setOnScrollListener(this);
         return rootView;

@@ -57,6 +57,7 @@ public class MvListAdapter<D> extends BaseAdapter {
                 item = listLayer.getListAdapterItemInner(0);
             }
             convertView = item.onCreateItemView(LayoutInflater.from(parent.getContext()), parent);
+            item.init(convertView);
             convertView.setTag(item);
         } else {
             item = (MvListAdapterItem) convertView.getTag();
