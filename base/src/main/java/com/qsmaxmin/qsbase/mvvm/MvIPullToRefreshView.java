@@ -12,7 +12,7 @@ import androidx.annotation.NonNull;
  * @Description 可下拉刷新和上拉加载布局
  */
 
-public interface MvIPullToRefreshView {
+public interface MvIPullToRefreshView extends MvIView {
     byte LOAD_WHEN_SCROLL_TO_BOTTOM = 0;
     byte LOAD_WHEN_SECOND_TO_LAST   = 1;
 

@@ -1,16 +1,11 @@
 package com.qsmaxmin.qsbase.mvp.model;
 
-import androidx.fragment.app.Fragment;
+import com.qsmaxmin.qsbase.mvvm.model.MvModelPager;
 
 /**
  * @CreateBy qsmaxmin
  * @Date 2017/6/20 18:22
  * @Description
  */
-public class QsModelPager {
-    public int      position;//位置
-    public String   title;//标题
-    public Fragment fragment;//子Fragment
-    public int      icon;//图标
-    public int      iconDefault;//默认图标
+public class QsModelPager extends MvModelPager {
 }

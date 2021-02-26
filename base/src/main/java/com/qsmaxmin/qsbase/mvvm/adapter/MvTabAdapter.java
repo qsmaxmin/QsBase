@@ -32,7 +32,7 @@ public class MvTabAdapter {
     }
 
     public final View getTabItemView(LayoutInflater inflater, ViewGroup parent, int position) {
-        return items.get(position).onCreateTabItemView(inflater,  parent);
+        return items.get(position).onCreateTabItemView(inflater, parent);
     }
 
     public final MvModelPager[] getModelPagers() {
@@ -47,7 +47,7 @@ public class MvTabAdapter {
         return (index < 0 || index >= items.size()) ? null : items.get(index);
     }
 
-    final void init(View itemView, int position) {
+    public final void init(View itemView, int position) {
         MvTabAdapterItem adapterItem = getTabAdapterItem(position);
         if (adapterItem != null) adapterItem.init(itemView, getModelPagers());
     }

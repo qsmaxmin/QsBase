@@ -2,7 +2,6 @@ package com.qsmaxmin.qsbase.mvp;
 
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ScrollView;
 
 import com.qsmaxmin.qsbase.R;

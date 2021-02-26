@@ -8,17 +8,17 @@ import android.view.ViewGroup;
 
 import com.qsmaxmin.qsbase.R;
 import com.qsmaxmin.qsbase.common.log.L;
+import com.qsmaxmin.qsbase.common.widget.viewpager.MvViewPagerHelper;
 import com.qsmaxmin.qsbase.common.widget.viewpager.PagerSlidingTabStrip;
-import com.qsmaxmin.qsbase.common.widget.viewpager.QsViewPagerHelper;
 import com.qsmaxmin.qsbase.mvp.QsIView;
-import com.qsmaxmin.qsbase.mvp.QsIViewPager;
-import com.qsmaxmin.qsbase.mvp.adapter.QsFragmentPagerAdapter;
-import com.qsmaxmin.qsbase.mvp.adapter.QsIPagerAdapter;
-import com.qsmaxmin.qsbase.mvp.adapter.QsTabAdapter;
 import com.qsmaxmin.qsbase.mvp.adapter.QsTabAdapterItem;
-import com.qsmaxmin.qsbase.mvp.adapter.QsTabFragmentPagerAdapter;
-import com.qsmaxmin.qsbase.mvp.model.QsModelPager;
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
+import com.qsmaxmin.qsbase.mvvm.MvIViewPager;
+import com.qsmaxmin.qsbase.mvvm.adapter.MvFragmentPagerAdapter;
+import com.qsmaxmin.qsbase.mvvm.adapter.MvIPagerAdapter;
+import com.qsmaxmin.qsbase.mvvm.adapter.MvTabAdapter;
+import com.qsmaxmin.qsbase.mvvm.adapter.MvTabFragmentPagerAdapter;
+import com.qsmaxmin.qsbase.mvvm.model.MvModelPager;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -31,11 +31,11 @@ import androidx.viewpager.widget.ViewPager;
  * @Description
  */
 
-public abstract class QsViewPagerFragment<P extends QsPresenter> extends QsFragment<P> implements QsIViewPager {
+public abstract class QsViewPagerFragment<P extends QsPresenter> extends QsFragment<P> implements MvIViewPager {
     private ViewPager            pager;
     private PagerSlidingTabStrip tabs;
-    private QsIPagerAdapter      adapter;
-    private QsTabAdapter         tabAdapter;
+    private MvIPagerAdapter      adapter;
+    private MvTabAdapter         tabAdapter;
 
     @Override public int layoutId() {
         return R.layout.qs_viewpager_top_tab;
@@ -54,16 +54,16 @@ public abstract class QsViewPagerFragment<P extends QsPresenter> extends QsFragm
         initViewPager(createModelPagers());
     }
 
-    @Override public void initViewPager(QsModelPager[] modelPagers) {
+    @Override public void initViewPager(MvModelPager[] modelPagers) {
         initViewPager(createModelPagers(), getOffscreenPageLimit());
     }
 
-    @Override public void initViewPager(QsModelPager[] modelPagers, int offScreenPageLimit) {
+    @Override public void initViewPager(MvModelPager[] modelPagers, int offScreenPageLimit) {
         if (modelPagers != null && modelPagers.length > 0) {
-            QsViewPagerHelper pagerHelper = new QsViewPagerHelper(this, pager, modelPagers);
+            MvViewPagerHelper pagerHelper = new MvViewPagerHelper(this, pager, modelPagers);
             QsTabAdapterItem firstTabItem = createTabAdapterItemInner(0);
             if (firstTabItem != null) {
-                tabAdapter = new QsTabAdapter(this, modelPagers, firstTabItem);
+                tabAdapter = new MvTabAdapter(this, modelPagers, firstTabItem);
                 adapter = createPagerAdapter(pagerHelper, true);
             } else {
                 adapter = createPagerAdapter(pagerHelper, false);
@@ -75,15 +75,15 @@ public abstract class QsViewPagerFragment<P extends QsPresenter> extends QsFragm
         }
     }
 
-    protected QsIPagerAdapter createPagerAdapter(QsViewPagerHelper pagerHelper, boolean customTabView) {
+    protected MvIPagerAdapter createPagerAdapter(MvViewPagerHelper pagerHelper, boolean customTabView) {
         if (customTabView) {
-            return new QsTabFragmentPagerAdapter(getChildFragmentManager(), pagerHelper);
+            return new MvTabFragmentPagerAdapter(getChildFragmentManager(), pagerHelper);
         } else {
-            return new QsFragmentPagerAdapter(getChildFragmentManager(), pagerHelper);
+            return new MvFragmentPagerAdapter(getChildFragmentManager(), pagerHelper);
         }
     }
 
-    @Override public void initTab(PagerSlidingTabStrip tabStrip) {
+    @Override public void initTab(@NonNull PagerSlidingTabStrip tabStrip) {
         DisplayMetrics dm = getResources().getDisplayMetrics();
         tabStrip.setIndicatorWidth((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30, dm));
         tabStrip.setIndicatorCorner(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1.5f, dm));
@@ -132,11 +132,11 @@ public abstract class QsViewPagerFragment<P extends QsPresenter> extends QsFragm
         return pager;
     }
 
-    @Override public final QsIPagerAdapter getViewPagerAdapter() {
+    @Override public final MvIPagerAdapter getViewPagerAdapter() {
         return adapter;
     }
 
-    @Override public final QsTabAdapter getTabAdapter() {
+    @Override public final MvTabAdapter getTabAdapter() {
         return tabAdapter;
     }
 

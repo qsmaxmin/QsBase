@@ -28,7 +28,7 @@ public abstract class MvTabAdapterItem implements IView, QsNotProguard {
     private       View           itemView;
     private       MvModelPager[] modelPagers;
 
-    protected final String initTag() {
+    @NonNull protected final String initTag() {
         return L.isEnable() ? getClass().getSimpleName() : "MvTabAdapterItem";
     }
 
@@ -40,7 +40,7 @@ public abstract class MvTabAdapterItem implements IView, QsNotProguard {
         return position;
     }
 
-    public final void init(View itemView, MvModelPager[] modelPagers) {
+    public void init(View itemView, @NonNull MvModelPager[] modelPagers) {
         this.itemView = itemView;
         this.modelPagers = modelPagers;
         bindData(modelPagers[position], position);
@@ -58,6 +58,10 @@ public abstract class MvTabAdapterItem implements IView, QsNotProguard {
         return itemView;
     }
 
+    public final void setLayer(MvIView viewLayer) {
+        this.viewLayer = viewLayer;
+    }
+
     @Override public final void onViewClicked(@NonNull View view) {
         onViewClicked(view, 400);
     }
@@ -65,110 +69,6 @@ public abstract class MvTabAdapterItem implements IView, QsNotProguard {
     @Override public final void onViewClicked(@NonNull View view, long interval) {
         if (interval > 0 && ViewHelper.isFastClick(interval)) return;
         onViewClick(view);
-    }
-
-    @Override public final void loading() {
-        if (getActivity() instanceof IView) {
-            ((IView) getActivity()).loading();
-        }
-    }
-
-    @Override public final void loading(int resId) {
-        if (getActivity() instanceof IView) {
-            ((IView) getActivity()).loading(resId);
-        }
-    }
-
-    @Override public final void loading(String message) {
-        if (getActivity() instanceof IView) {
-            ((IView) getActivity()).loading(message);
-        }
-    }
-
-    @Override public final void loading(boolean cancelAble) {
-        if (getActivity() instanceof IView) {
-            ((IView) getActivity()).loading(cancelAble);
-        }
-    }
-
-    @Override public final void loading(int resId, boolean cancelAble) {
-        if (getActivity() instanceof IView) {
-            ((IView) getActivity()).loading(resId, cancelAble);
-        }
-    }
-
-    @Override public final void loading(String message, boolean cancelAble) {
-        if (getActivity() instanceof IView) {
-            ((IView) getActivity()).loading(message, cancelAble);
-        }
-    }
-
-    @Override public final void loadingClose() {
-        if (getActivity() instanceof IView) {
-            ((IView) getActivity()).loadingClose();
-        }
-    }
-
-    @Override public final void activityFinish() {
-        if (getActivity() instanceof IView) {
-            ((IView) getActivity()).activityFinish();
-        }
-    }
-
-    @Override public final void activityFinish(int enterAnim, int exitAnim) {
-        if (getActivity() instanceof IView) {
-            ((IView) getActivity()).activityFinish(enterAnim, exitAnim);
-        }
-    }
-
-    @Override public final void activityFinish(boolean finishAfterTransition) {
-        if (getActivity() instanceof IView) {
-            ((IView) getActivity()).activityFinish(finishAfterTransition);
-        }
-    }
-
-    @Override public final Context getContext() {
-        return itemView.getContext();
-    }
-
-    @Override public final FragmentActivity getActivity() {
-        return viewLayer.getActivity();
-    }
-
-    @Override public final void intent2Activity(Class clazz) {
-        intent2Activity(clazz, null, 0, null, 0, 0);
-    }
-
-    @Override public final void intent2Activity(Class clazz, int requestCode) {
-        intent2Activity(clazz, null, requestCode, null, 0, 0);
-    }
-
-    @Override public final void intent2Activity(Class clazz, Bundle bundle) {
-        intent2Activity(clazz, bundle, 0, null, 0, 0);
-    }
-
-    @Override public final void intent2Activity(Class clazz, Bundle bundle, int requestCode) {
-        intent2Activity(clazz, bundle, requestCode, null, 0, 0);
-    }
-
-    @Override public final void intent2Activity(Class clazz, Bundle bundle, int inAnimId, int outAnimId) {
-        intent2Activity(clazz, bundle, 0, null, inAnimId, outAnimId);
-    }
-
-    @Override public final void intent2Activity(Class clazz, Bundle bundle, ActivityOptionsCompat optionsCompat) {
-        intent2Activity(clazz, bundle, 0, optionsCompat, 0, 0);
-    }
-
-    @Override public final void intent2Activity(Class clazz, Bundle bundle, int requestCode, ActivityOptionsCompat optionsCompat) {
-        intent2Activity(clazz, bundle, requestCode, optionsCompat, 0, 0);
-    }
-
-    @Override public final void intent2Activity(Class clazz, Bundle bundle, int requestCode, ActivityOptionsCompat optionsCompat, int enterAnim, int existAnim) {
-        ViewHelper.intent2Activity(getActivity(), clazz, bundle, requestCode, optionsCompat, enterAnim, existAnim);
-    }
-
-    public final void setLayer(MvIView viewLayer) {
-        this.viewLayer = viewLayer;
     }
 
     protected void onViewClick(@NonNull View view) {
@@ -182,7 +82,88 @@ public abstract class MvTabAdapterItem implements IView, QsNotProguard {
 
     public abstract View onCreateTabItemView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent);
 
-    public abstract void bindData(MvModelPager pagers, int position);
+    public abstract void bindData(@NonNull MvModelPager pagers, int position);
 
     public abstract void onPageSelectChanged(boolean selected);
+
+    @Override public final Context getContext() {
+        return viewLayer.getContext();
+    }
+
+    @Override public final FragmentActivity getActivity() {
+        return viewLayer.getActivity();
+    }
+
+    @Override public final void loading() {
+        viewLayer.loading();
+    }
+
+    @Override public final void loading(int resId) {
+        viewLayer.loading(resId);
+    }
+
+    @Override public final void loading(String message) {
+        viewLayer.loading(message);
+    }
+
+    @Override public final void loading(boolean cancelAble) {
+        viewLayer.loading(cancelAble);
+    }
+
+    @Override public final void loading(int resId, boolean cancelAble) {
+        viewLayer.loading(resId, cancelAble);
+    }
+
+    @Override public final void loading(String message, boolean cancelAble) {
+        viewLayer.loading(message, cancelAble);
+    }
+
+    @Override public final void loadingClose() {
+        viewLayer.loadingClose();
+    }
+
+    @Override public final void activityFinish() {
+        viewLayer.activityFinish();
+    }
+
+    @Override public final void activityFinish(int enterAnim, int exitAnim) {
+        viewLayer.activityFinish(enterAnim, exitAnim);
+    }
+
+    @Override public final void activityFinish(boolean finishAfterTransition) {
+        viewLayer.activityFinish(finishAfterTransition);
+    }
+
+    @Override public final void intent2Activity(Class clazz) {
+        viewLayer.intent2Activity(clazz);
+    }
+
+    @Override public final void intent2Activity(Class clazz, int requestCode) {
+        viewLayer.intent2Activity(clazz, requestCode);
+    }
+
+    @Override public final void intent2Activity(Class clazz, Bundle bundle) {
+        viewLayer.intent2Activity(clazz, bundle);
+    }
+
+    @Override public final void intent2Activity(Class clazz, Bundle bundle, int requestCode) {
+        viewLayer.intent2Activity(clazz, bundle, requestCode);
+    }
+
+    @Override public final void intent2Activity(Class clazz, Bundle bundle, int inAnimId, int outAnimId) {
+        viewLayer.intent2Activity(clazz, bundle, inAnimId, outAnimId);
+    }
+
+    @Override public final void intent2Activity(Class clazz, Bundle bundle, ActivityOptionsCompat optionsCompat) {
+        viewLayer.intent2Activity(clazz, bundle, optionsCompat);
+    }
+
+    @Override public final void intent2Activity(Class clazz, Bundle bundle, int requestCode, ActivityOptionsCompat optionsCompat) {
+        viewLayer.intent2Activity(clazz, bundle, requestCode, optionsCompat);
+    }
+
+    @Override public final void intent2Activity(Class clazz, Bundle bundle, int requestCode, ActivityOptionsCompat optionsCompat, int enterAnim, int existAnim) {
+        viewLayer.intent2Activity(clazz, bundle, requestCode, optionsCompat, enterAnim, existAnim);
+    }
+
 }

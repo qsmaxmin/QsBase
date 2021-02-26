@@ -17,7 +17,7 @@ import androidx.viewpager.widget.ViewPager;
  * @Description
  */
 
-public interface MvIViewPager {
+public interface MvIViewPager extends MvIView {
 
     void onPageScrollStateChanged(int state);
 
