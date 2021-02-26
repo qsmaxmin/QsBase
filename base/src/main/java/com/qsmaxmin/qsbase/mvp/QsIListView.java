@@ -9,6 +9,7 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 
 import com.qsmaxmin.qsbase.mvp.adapter.QsListAdapterItem;
+import com.qsmaxmin.qsbase.mvvm.MvIListView;
 
 import java.util.List;
 
@@ -21,7 +22,7 @@ import androidx.fragment.app.FragmentActivity;
  * @Description list视图超类
  */
 
-public interface QsIListView<D> extends AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener, AbsListView.OnScrollListener {
+public interface QsIListView<D> extends MvIListView<D>, AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener, AbsListView.OnScrollListener {
 
     @NonNull QsListAdapterItem<D> getListAdapterItemInner(int type);
 
@@ -30,56 +31,4 @@ public interface QsIListView<D> extends AdapterView.OnItemClickListener, Adapter
     int getHeaderLayout();
 
     int getFooterLayout();
-
-    View onCreateListHeaderView(@NonNull LayoutInflater inflater);
-
-    View onCreateListFooterView(@NonNull LayoutInflater inflater);
-
-    View getHeaderView();
-
-    View getFooterView();
-
-    ListView getListView();
-
-    int getViewTypeCount();
-
-    int getItemViewType(int position);
-
-    void setData(List<D> list);
-
-    void setData(List<D> list, boolean showEmptyView);
-
-    void addData(List<D> list);
-
-    void addData(List<D> list, int position);
-
-    void addData(D d);
-
-    void delete(int position);
-
-    void delete(D d);
-
-    void deleteAll();
-
-    @NonNull List<D> getData();
-
-    @NonNull List<D> copyData();
-
-    D getData(int position);
-
-    void updateAdapter(boolean showEmptyView);
-
-    BaseAdapter getAdapter();
-
-    boolean canListScrollUp();
-
-    boolean canListScrollDown();
-
-    void onAdapterGetView(int position, int totalCount);
-
-    Context getContext();
-
-    FragmentActivity getActivity();
-
-    void onReceiveAdapterItemEvent(int eventType, D data, int position);
 }

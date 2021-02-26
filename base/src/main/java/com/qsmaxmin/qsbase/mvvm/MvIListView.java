@@ -21,7 +21,7 @@ import androidx.fragment.app.FragmentActivity;
  * @Description list视图超类
  */
 
-public interface MvIListView<D> extends AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener, AbsListView.OnScrollListener {
+public interface MvIListView<D> extends MvIView, AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener, AbsListView.OnScrollListener {
 
     @NonNull MvListAdapterItem<D> getListAdapterItemInner(int type);
 

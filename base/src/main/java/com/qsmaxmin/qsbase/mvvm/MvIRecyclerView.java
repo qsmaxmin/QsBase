@@ -1,6 +1,5 @@
 package com.qsmaxmin.qsbase.mvvm;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +12,6 @@ import com.qsmaxmin.qsbase.mvvm.adapter.MvRecycleAdapterItem;
 import java.util.List;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 /**
@@ -21,8 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
  * @Date 17/7/2  上午10:58
  * @Description
  */
-
-public interface MvIRecyclerView<D> extends AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
+public interface MvIRecyclerView<D> extends MvIView, AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
     MvRecycleAdapterItem<D> getRecycleAdapterItemInner(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent, int type);
 
     MvRecycleAdapterItem<D> getRecycleAdapterItem(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent, int type);
@@ -86,8 +83,4 @@ public interface MvIRecyclerView<D> extends AdapterView.OnItemClickListener, Ada
     @NonNull RecyclerView.LayoutManager getLayoutManager();
 
     QsItemDecoration getItemDecoration();
-
-    Context getContext();
-
-    FragmentActivity getActivity();
 }

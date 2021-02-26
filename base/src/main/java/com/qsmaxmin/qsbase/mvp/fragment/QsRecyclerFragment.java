@@ -12,8 +12,8 @@ import com.qsmaxmin.qsbase.common.widget.recyclerview.HeaderFooterRecyclerView;
 import com.qsmaxmin.qsbase.common.widget.recyclerview.QsItemDecoration;
 import com.qsmaxmin.qsbase.mvp.QsIRecyclerView;
 import com.qsmaxmin.qsbase.mvp.adapter.QsRecycleAdapterItem;
-import com.qsmaxmin.qsbase.mvp.adapter.QsRecyclerAdapter;
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
+import com.qsmaxmin.qsbase.mvvm.adapter.MvRecyclerAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -108,7 +108,7 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends QsFra
         });
         recyclerView.setLayoutManager(getLayoutManager());
 
-        recyclerViewAdapter = new QsRecyclerAdapter<>(this, mList, inflater);
+        recyclerViewAdapter = new MvRecyclerAdapter<>(this, mList, inflater);
         recyclerView.setAdapter(recyclerViewAdapter);
     }
 

@@ -12,11 +12,6 @@ import androidx.annotation.LayoutRes;
  * @Description MVP架构，View层基类
  */
 public interface QsIView<P> extends MvIView, QsIBindView, QsIPresenter {
-    int VIEW_STATE_LOADING = 0;
-    int VIEW_STATE_CONTENT = 1;
-    int VIEW_STATE_EMPTY   = 2;
-    int VIEW_STATE_ERROR   = 3;
-
     @LayoutRes int layoutId();
 
     @LayoutRes int emptyLayoutId();
