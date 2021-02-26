@@ -30,15 +30,12 @@ public abstract class QsListAdapterItem<D> implements QsIBindView, QsNotProguard
         return L.isEnable() ? getClass().getSimpleName() : "QsListAdapterItem";
     }
 
-    /**
-     * @see #onCreateItemView(LayoutInflater, ViewGroup)
-     */
-    public int getItemLayout() {
+    protected int getItemLayout() {
         return 0;
     }
 
     public View onCreateItemView(@NonNull LayoutInflater inflater, ViewGroup parent) {
-        return inflater.inflate(getItemLayout(), parent, false);
+        return getItemLayout() == 0 ? null : inflater.inflate(getItemLayout(), parent, false);
     }
 
     @CallSuper public void init(@NonNull View contentView) {

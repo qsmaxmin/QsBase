@@ -47,8 +47,8 @@ public abstract class QsRecycleAdapterItem<D> implements QsIBindView, QsNotProgu
         return 0;
     }
 
-    public View onCreateItemView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
-        return inflater.inflate(itemViewLayoutId(), parent, false);
+    protected View onCreateItemView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
+        return itemViewLayoutId() == 0 ? null : inflater.inflate(itemViewLayoutId(), parent, false);
     }
 
     protected abstract void onBindItemData(D data, int position, int totalCount);
