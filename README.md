@@ -244,3 +244,6 @@ MVP(或MVVM)架构+AOP面向切面编程，摒弃反射、代理等操作，稳�
           public *;
         }
         -dontwarn com.bumptech.glide.load.resource.bitmap.VideoDecoder
+
+
+![项目结构](https://github.com/qsmaxmin/QsBase/blob/master/项目结构图.jpg)
