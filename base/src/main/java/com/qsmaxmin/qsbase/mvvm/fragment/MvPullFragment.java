@@ -27,8 +27,8 @@ public abstract class MvPullFragment extends MvFragment implements MvIPullView {
     private PtrFrameLayout mPtrFrameLayout;
     private View           childView;
 
-    @Override public View onCreateContentView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
-        return inflater.inflate(R.layout.qs_pulll_view, parent, false);
+    @Override public int layoutId() {
+        return R.layout.qs_pulll_view;
     }
 
     @NonNull @Override public PtrUIHandler getPtrUIHandlerView() {

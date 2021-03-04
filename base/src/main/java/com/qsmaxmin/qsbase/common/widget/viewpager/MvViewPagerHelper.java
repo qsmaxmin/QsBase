@@ -1,8 +1,8 @@
 package com.qsmaxmin.qsbase.common.widget.viewpager;
 
-import com.qsmaxmin.qsbase.mvp.fragment.QsIFragment;
 import com.qsmaxmin.qsbase.mvvm.MvIViewPager;
 import com.qsmaxmin.qsbase.mvvm.adapter.MvTabAdapter;
+import com.qsmaxmin.qsbase.mvvm.fragment.MvIFragment;
 import com.qsmaxmin.qsbase.mvvm.model.MvModelPager;
 
 import androidx.fragment.app.Fragment;
@@ -69,14 +69,14 @@ public class MvViewPagerHelper {
         @Override public void onPageSelected(int position) {
             for (int i = 0; i < viewPagerData.length; i++) {
                 MvModelPager qsModelPager = viewPagerData[i];
-                if (qsModelPager.fragment instanceof QsIFragment) {
-                    ((QsIFragment) qsModelPager.fragment).onFragmentSelectedInViewPager(position == i, position, viewPagerData.length);
+                if (qsModelPager.fragment instanceof MvIFragment) {
+                    ((MvIFragment) qsModelPager.fragment).onFragmentSelectedInViewPager(position == i, position, viewPagerData.length);
                 }
             }
 
             if (position < viewPagerData.length && viewPagerData[position].fragment.isAdded()) {
-                if (viewPagerData[position].fragment instanceof QsIFragment) {
-                    ((QsIFragment) viewPagerData[position].fragment).initDataWhenDelay(); // 调用延迟加载
+                if (viewPagerData[position].fragment instanceof MvIFragment) {
+                    ((MvIFragment) viewPagerData[position].fragment).initDataWhenDelay(); // 调用延迟加载
                 }
             }
 

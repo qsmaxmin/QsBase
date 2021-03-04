@@ -1,9 +1,7 @@
 package com.qsmaxmin.qsbase.mvvm;
 
-import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 
 import com.qsmaxmin.qsbase.R;
 import com.qsmaxmin.qsbase.common.log.L;
@@ -29,16 +27,12 @@ public abstract class MvPullRecyclerActivity<D> extends MvRecyclerActivity<D> im
     private   PtrFrameLayout mPtrFrameLayout;
     protected LoadingFooter  mLoadingFooter;
 
-    @Override public View onCreateContentView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
-        if (canPullRefreshing()) {
-            return inflater.inflate(R.layout.qs_pull_recyclerview, parent, false);
-        }
-        return super.onCreateContentView(inflater, parent);
+    @Override public int layoutId() {
+        return canPullRefreshing() ? R.layout.qs_pull_recyclerview : super.layoutId();
     }
 
-    @SuppressLint("InflateParams")
-    @Override public View onCreateListFooterView(@NonNull LayoutInflater inflater) {
-        return inflater.inflate(R.layout.qs_loading_footer, null);
+    @Override public int getFooterLayout() {
+        return R.layout.qs_loading_footer;
     }
 
     @NonNull @Override public PtrUIHandler getPtrUIHandlerView() {

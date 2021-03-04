@@ -35,6 +35,14 @@ public interface MvIView extends IView, QsIBindEvent, QsIBindBundle, QsNotProgua
 
     int rootViewLayoutId();
 
+    int layoutId();
+
+    int loadingLayoutId();
+
+    int emptyLayoutId();
+
+    int errorLayoutId();
+
     View onCreateLoadingView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent);
 
     View onCreateContentView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent);
@@ -42,6 +50,8 @@ public interface MvIView extends IView, QsIBindEvent, QsIBindBundle, QsNotProgua
     View onCreateEmptyView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent);
 
     View onCreateErrorView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent);
+
+    void onViewCreated(@NonNull View rootView);
 
     void initData(@Nullable Bundle savedInstanceState);
 

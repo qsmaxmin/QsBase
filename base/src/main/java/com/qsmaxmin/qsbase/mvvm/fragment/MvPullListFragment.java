@@ -1,6 +1,5 @@
 package com.qsmaxmin.qsbase.mvvm.fragment;
 
-import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,16 +29,12 @@ public abstract class MvPullListFragment<D> extends MvListFragment<D> implements
     private   PtrFrameLayout mPtrFrameLayout;
     protected LoadingFooter  loadingFooter;
 
-    @Override public View onCreateContentView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
-        if (canPullRefreshing()) {
-            return inflater.inflate(R.layout.qs_pull_listview, parent, false);
-        }
-        return super.onCreateContentView(inflater, parent);
+    @Override public int layoutId() {
+        return canPullRefreshing() ? R.layout.qs_pull_listview : super.layoutId();
     }
 
-    @SuppressLint("InflateParams")
-    @Override public View onCreateListFooterView(@NonNull LayoutInflater inflater) {
-        return inflater.inflate(R.layout.qs_loading_footer, null);
+    @Override public int getFooterLayout() {
+        return R.layout.qs_loading_footer;
     }
 
     @NonNull @Override public PtrUIHandler getPtrUIHandlerView() {

@@ -33,16 +33,24 @@ public abstract class MvRecyclerActivity<D> extends MvActivity implements MvIRec
     private       View                     headerView;
     private       View                     footerView;
 
-    @Override public View onCreateContentView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
-        return inflater.inflate(R.layout.qs_recyclerview, parent, false);
+    @Override public int layoutId() {
+        return R.layout.qs_recyclerview;
+    }
+
+    @Override public int getHeaderLayout() {
+        return 0;
+    }
+
+    @Override public int getFooterLayout() {
+        return 0;
     }
 
     @Override public View onCreateListHeaderView(@NonNull LayoutInflater inflater) {
-        return null;
+        return getHeaderLayout() == 0 ? null : inflater.inflate(getHeaderLayout(), null);
     }
 
     @Override public View onCreateListFooterView(@NonNull LayoutInflater inflater) {
-        return null;
+        return getFooterLayout() == 0 ? null : inflater.inflate(getFooterLayout(), null);
     }
 
     @Override public final View getHeaderView() {

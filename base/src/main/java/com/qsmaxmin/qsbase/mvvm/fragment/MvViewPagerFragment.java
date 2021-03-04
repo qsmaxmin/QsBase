@@ -36,8 +36,8 @@ public abstract class MvViewPagerFragment extends MvFragment implements MvIViewP
     private MvIPagerAdapter      adapter;
     private MvTabAdapter         tabAdapter;
 
-    @Override public View onCreateContentView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
-        return inflater.inflate(R.layout.qs_viewpager_top_tab, parent, false);
+    @Override public int layoutId() {
+        return R.layout.qs_viewpager_top_tab;
     }
 
     @Override protected View initView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container) {

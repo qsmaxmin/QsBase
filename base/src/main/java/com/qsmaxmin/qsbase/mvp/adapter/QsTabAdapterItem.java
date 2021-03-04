@@ -27,16 +27,16 @@ public abstract class QsTabAdapterItem extends MvTabAdapterItem implements QsIBi
     @Override public void bindViewByQsPlugin(View view) {
     }
 
-    public void init(View itemView, @NonNull MvModelPager[] modelPagers) {
+    @Override public void init(View itemView, @NonNull MvModelPager[] modelPagers) {
         bindViewByQsPlugin(itemView);
         super.init(itemView, modelPagers);
     }
 
-    public int tabItemLayoutId() {
-        return 0;
+    @Override public View onCreateTabItemView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
+        return tabItemLayoutId() == 0 ? null : inflater.inflate(tabItemLayoutId(), parent, false);
     }
 
-    public View onCreateTabItemView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
-        return tabItemLayoutId() == 0 ? null : inflater.inflate(tabItemLayoutId(), parent, false);
+    protected int tabItemLayoutId() {
+        return 0;
     }
 }

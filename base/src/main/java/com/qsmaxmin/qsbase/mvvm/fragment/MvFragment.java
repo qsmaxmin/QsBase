@@ -21,7 +21,7 @@ import com.qsmaxmin.qsbase.common.widget.dialog.ProgressView;
 import com.qsmaxmin.qsbase.common.widget.dialog.QsProgressDialog;
 import com.qsmaxmin.qsbase.common.widget.headerview.ScrollerProvider;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout;
-import com.qsmaxmin.qsbase.mvp.QsIActivity;
+import com.qsmaxmin.qsbase.mvvm.MvIActivity;
 import com.qsmaxmin.qsbase.plugin.threadpoll.QsThreadPollHelper;
 
 import java.util.HashSet;
@@ -58,6 +58,41 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
         return isOpenViewState() ? R.layout.qs_view_animator : R.layout.qs_frame_layout;
     }
 
+    public int layoutId() {
+        return 0;
+    }
+
+    public int loadingLayoutId() {
+        return QsHelper.getAppInterface().loadingLayoutId();
+    }
+
+    public int emptyLayoutId() {
+        return QsHelper.getAppInterface().emptyLayoutId();
+    }
+
+    public int errorLayoutId() {
+        return QsHelper.getAppInterface().errorLayoutId();
+    }
+
+    @Override public View onCreateLoadingView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
+        return loadingLayoutId() == 0 ? null : inflater.inflate(loadingLayoutId(), parent, false);
+    }
+
+    @Override public View onCreateContentView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
+        return layoutId() == 0 ? null : inflater.inflate(layoutId(), parent, false);
+    }
+
+    @Override public View onCreateEmptyView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
+        return emptyLayoutId() == 0 ? null : inflater.inflate(emptyLayoutId(), parent, false);
+    }
+
+    @Override public View onCreateErrorView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
+        return errorLayoutId() == 0 ? null : inflater.inflate(errorLayoutId(), parent, false);
+    }
+
+    @Override public void onViewCreated(@NonNull View rootView) {
+    }
+
     @Override public final void onViewClicked(@NonNull View view) {
         onViewClicked(view, 400);
     }
@@ -90,6 +125,7 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
         bindBundleByQsPlugin(getArguments());
         View rootView = initView(inflater, container);
         rootView.setOnTouchListener(this);
+        onViewCreated(rootView);
         bindEventByQsPlugin();
         return rootView;
     }
@@ -199,17 +235,17 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
         return false;
     }
 
-    @Override public void activityFinish() {
+    @Override public final void activityFinish() {
         activityFinish(false);
     }
 
-    @Override public void activityFinish(int enterAnim, int exitAnim) {
+    @Override public final void activityFinish(int enterAnim, int exitAnim) {
         activityFinish();
         FragmentActivity activity = getActivity();
         if (activity != null) activity.overridePendingTransition(enterAnim, exitAnim);
     }
 
-    @Override public void activityFinish(boolean finishAfterTransition) {
+    @Override public final void activityFinish(boolean finishAfterTransition) {
         FragmentActivity activity = getActivity();
         if (activity == null) return;
         if (finishAfterTransition) {
@@ -217,18 +253,6 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
         } else {
             activity.finish();
         }
-    }
-
-    @Override public View onCreateLoadingView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
-        return inflater.inflate(QsHelper.getAppInterface().loadingLayoutId(), parent, false);
-    }
-
-    @Override public View onCreateEmptyView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
-        return inflater.inflate(QsHelper.getAppInterface().emptyLayoutId(), parent, false);
-    }
-
-    @Override public View onCreateErrorView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
-        return inflater.inflate(QsHelper.getAppInterface().errorLayoutId(), parent, false);
     }
 
     @Override public void onBackPressed() {
@@ -335,19 +359,19 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
         }
     }
 
-    @Override public boolean isShowLoadingView() {
+    @Override public final boolean isShowLoadingView() {
         return currentViewState() == VIEW_STATE_LOADING;
     }
 
-    @Override public boolean isShowContentView() {
+    @Override public final boolean isShowContentView() {
         return mViewAnimator == null || currentViewState() == VIEW_STATE_CONTENT;
     }
 
-    @Override public boolean isShowEmptyView() {
+    @Override public final boolean isShowEmptyView() {
         return currentViewState() == VIEW_STATE_EMPTY;
     }
 
-    @Override public boolean isShowErrorView() {
+    @Override public final boolean isShowErrorView() {
         return currentViewState() == VIEW_STATE_ERROR;
     }
 
@@ -404,7 +428,7 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
         QsHelper.commitFragment(getChildFragmentManager(), android.R.id.custom, fragment, tag);
     }
 
-    @Override public void commitFragment(Fragment fragment, int enterAnim, int existAnim) {
+    @Override public final void commitFragment(Fragment fragment, int enterAnim, int existAnim) {
         QsHelper.commitFragment(getChildFragmentManager(), android.R.id.custom, fragment, fragment.getClass().getSimpleName(), enterAnim, existAnim);
     }
 
@@ -420,7 +444,7 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
         QsHelper.commitFragment(getChildFragmentManager(), layoutId, fragment, tag);
     }
 
-    @Override public void commitFragment(int layoutId, Fragment fragment, int enterAnim, int existAnim) {
+    @Override public final void commitFragment(int layoutId, Fragment fragment, int enterAnim, int existAnim) {
         QsHelper.commitFragment(getChildFragmentManager(), layoutId, fragment, fragment.getClass().getSimpleName(), enterAnim, existAnim);
     }
 
@@ -544,13 +568,13 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
 
     @Override public void setActivityTitle(final CharSequence title, final int type) {
         final FragmentActivity activity = getActivity();
-        if (activity instanceof QsIActivity) {
+        if (activity instanceof MvIActivity) {
             if (QsThreadPollHelper.isMainThread()) {
-                ((QsIActivity) activity).setActivityTitle(title, type);
+                ((MvIActivity) activity).setActivityTitle(title, type);
             } else {
                 post(new Runnable() {
                     @Override public void run() {
-                        ((QsIActivity) activity).setActivityTitle(title, type);
+                        ((MvIActivity) activity).setActivityTitle(title, type);
                     }
                 });
             }
@@ -584,7 +608,7 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
     /**
      * 取消由当前Fragment发起的http请求
      */
-    protected final void cancelAllHttpRequest() {
+    private final void cancelAllHttpRequest() {
         if (requestTags != null) {
             synchronized (this) {
                 QsHelper.getHttpHelper().cancelRequest(requestTags);

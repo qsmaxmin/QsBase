@@ -1,21 +1,14 @@
 package com.qsmaxmin.qsbase.mvp.fragment;
 
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 
-import com.qsmaxmin.qsbase.R;
-import com.qsmaxmin.qsbase.common.utils.QsHelper;
-import com.qsmaxmin.qsbase.common.widget.listview.LoadingFooter;
-import com.qsmaxmin.qsbase.common.widget.ptr.PtrDefaultHandler;
-import com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout;
-import com.qsmaxmin.qsbase.common.widget.ptr.PtrUIHandler;
-import com.qsmaxmin.qsbase.common.widget.ptr.header.BeautyCircleRefreshHeader;
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
-import com.qsmaxmin.qsbase.mvvm.MvIPullToRefreshView;
+import com.qsmaxmin.qsbase.mvvm.fragment.MvPullHeaderViewpagerFragment;
+import com.qsmaxmin.qsbase.plugin.bind.QsIBindView;
+import com.qsmaxmin.qsbase.plugin.presenter.QsIPresenter;
 
+import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 /**
  * @CreateBy qsmaxmin
@@ -23,104 +16,31 @@ import androidx.annotation.Nullable;
  * @Description
  */
 
-public abstract class QsPullHeaderViewpagerFragment<P extends QsPresenter> extends QsHeaderViewpagerFragment<P> implements MvIPullToRefreshView {
-    private PtrFrameLayout mPtrFrameLayout;
+public abstract class QsPullHeaderViewpagerFragment<P extends QsPresenter> extends MvPullHeaderViewpagerFragment implements QsIBindView, QsIPresenter {
+    private P presenter;
 
-    @Override public int layoutId() {
-        return R.layout.qs_pull_header_viewpager;
+    @Override public void onViewCreated(@NonNull View rootView) {
+        bindViewByQsPlugin(rootView);
     }
 
-    @NonNull @Override public PtrUIHandler getPtrUIHandlerView() {
-        return new BeautyCircleRefreshHeader(getContext());
+    @CallSuper @Override public void bindViewByQsPlugin(View view) {
     }
 
-    @Override public void startRefreshing() {
-        if (mPtrFrameLayout == null) return;
-        if (QsHelper.isMainThread()) {
-            mPtrFrameLayout.autoRefresh();
-        } else {
-            mPtrFrameLayout.post(new Runnable() {
-                @Override public void run() {
-                    mPtrFrameLayout.autoRefresh();
-                }
-            });
-        }
-    }
-
-    @Override public void stopRefreshing() {
-        if (mPtrFrameLayout == null) return;
-        if (QsHelper.isMainThread()) {
-            mPtrFrameLayout.refreshComplete();
-        } else {
-            mPtrFrameLayout.post(new Runnable() {
-                @Override public void run() {
-                    mPtrFrameLayout.refreshComplete();
-                }
-            });
-        }
-    }
-
-    @Override public void openPullRefreshing() {
-        mPtrFrameLayout.setEnabled(true);
-    }
-
-    @Override public void closePullRefreshing() {
-        mPtrFrameLayout.setEnabled(false);
-    }
-
-    @Override public PtrFrameLayout getPtrFrameLayout() {
-        return mPtrFrameLayout;
-    }
-
-    @Override protected View initView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container) {
-        View view = super.initView(inflater, container);
-        initPtrFrameLayout(view);
-        return view;
-    }
-
-    private void initPtrFrameLayout(View view) {
-        if (view instanceof PtrFrameLayout) {
-            mPtrFrameLayout = (PtrFrameLayout) view;
-        } else {
-            mPtrFrameLayout = view.findViewById(R.id.swipe_container);
-        }
-        if (mPtrFrameLayout == null) throw new IllegalStateException("PtrFrameLayout is not exist or its id not 'R.id.swipe_container' in current layout!!");
-        PtrUIHandler handlerView = getPtrUIHandlerView();
-        mPtrFrameLayout.setHeaderView((View) handlerView);
-        mPtrFrameLayout.addPtrUIHandler(handlerView);
-        mPtrFrameLayout.setPtrHandler(new PtrDefaultHandler(this));
-    }
-
-    @Override public boolean canPullRefreshing() {
-        return mPtrFrameLayout.isEnabled();
-    }
-
-    @Override public final void onLoad() {
-        // do nothing
-    }
-
-    @Override public boolean canPullLoading() {
-        return false;
-    }
-
-    @Override public final void setLoadingState(LoadingFooter.State state) {
-        // do nothing
-    }
-
-    @Override public LoadingFooter.State getLoadingState() {
+    @Override public Object createPresenter() {
         return null;
     }
 
-    @Override public final void openPullLoading() {
-        // do nothing
+    @CallSuper @Override public void onDestroyView() {
+        super.onDestroyView();
+        if (presenter != null) presenter.setDetach();
     }
 
-    @Override public final void closePullLoading() {
-        // do nothing
-    }
-
-    @Override public void smoothScrollToTop(boolean autoRefresh) {
-        super.smoothScrollToTop(autoRefresh);
-        if (autoRefresh) startRefreshing();
+    @SuppressWarnings("unchecked")
+    public final P getPresenter() {
+        if (presenter == null) {
+            presenter = (P) createPresenter();
+            presenter.initPresenter(this);
+        }
+        return presenter;
     }
 }

@@ -59,12 +59,7 @@ public abstract class QsDialogFragment extends DialogFragment implements IView, 
             getDialog().setCanceledOnTouchOutside(true);
             getDialog().setCancelable(true);
         }
-        View customView;
-        if (layoutId() != 0) {
-            customView = inflater.inflate(layoutId(), container, false);
-        } else {
-            customView = onCreateContentView(inflater, container);
-        }
+        View customView = onCreateContentView(inflater, container);
         bindViewByQsPlugin(customView);
         bindEventByQsPlugin();
         return customView;
@@ -105,7 +100,6 @@ public abstract class QsDialogFragment extends DialogFragment implements IView, 
         if (interval > 0 && ViewHelper.isFastClick(interval)) return;
         onViewClick(view);
     }
-
 
     @Override public final void loading() {
         if (getActivity() instanceof IView) {
@@ -179,7 +173,7 @@ public abstract class QsDialogFragment extends DialogFragment implements IView, 
     }
 
     protected View onCreateContentView(LayoutInflater inflater, ViewGroup parent) {
-        return null;
+        return layoutId() == 0 ? null : inflater.inflate(layoutId(), parent, false);
     }
 
     protected abstract void initData();

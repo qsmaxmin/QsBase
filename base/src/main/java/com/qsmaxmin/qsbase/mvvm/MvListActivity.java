@@ -2,7 +2,6 @@ package com.qsmaxmin.qsbase.mvvm;
 
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
@@ -31,16 +30,24 @@ public abstract class MvListActivity<D> extends MvActivity implements MvIListVie
     private         View        headerView;
     private         View        footerView;
 
-    @Override public View onCreateContentView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
-        return inflater.inflate(R.layout.qs_listview, parent, false);
+    @Override public int layoutId() {
+        return R.layout.qs_listview;
+    }
+
+    @Override public int getHeaderLayout() {
+        return 0;
+    }
+
+    @Override public int getFooterLayout() {
+        return 0;
     }
 
     @Override public View onCreateListHeaderView(@NonNull LayoutInflater inflater) {
-        return null;
+        return getHeaderLayout() == 0 ? null : inflater.inflate(getHeaderLayout(), null);
     }
 
     @Override public View onCreateListFooterView(@NonNull LayoutInflater inflater) {
-        return null;
+        return getFooterLayout() == 0 ? null : inflater.inflate(getFooterLayout(), null);
     }
 
     @Override public final View getHeaderView() {
@@ -85,7 +92,7 @@ public abstract class MvListActivity<D> extends MvActivity implements MvIListVie
         return rootView;
     }
 
-    @NonNull @Override public final MvListAdapterItem<D> getListAdapterItemInner(int type) {
+    @NonNull @Override public MvListAdapterItem<D> getListAdapterItemInner(int type) {
         MvListAdapterItem<D> adapterItem = getListAdapterItem(type);
         adapterItem.setViewLayer(this);
         return adapterItem;

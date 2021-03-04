@@ -2,7 +2,6 @@ package com.qsmaxmin.qsbase.mvvm;
 
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 
 import com.qsmaxmin.qsbase.R;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
@@ -22,8 +21,8 @@ import androidx.annotation.NonNull;
 public abstract class MvPullHeaderViewPagerActivity extends MvHeaderViewPagerActivity implements MvIPullToRefreshView {
     private PtrFrameLayout mPtrFrameLayout;
 
-    @Override public View onCreateContentView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
-        return inflater.inflate(R.layout.qs_pull_header_viewpager, parent, false);
+    @Override public int layoutId() {
+        return R.layout.qs_pull_header_viewpager;
     }
 
     @NonNull @Override public PtrUIHandler getPtrUIHandlerView() {

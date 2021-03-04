@@ -4,7 +4,6 @@ import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 
 import com.qsmaxmin.qsbase.R;
 import com.qsmaxmin.qsbase.common.log.L;
@@ -34,8 +33,8 @@ public abstract class MvViewPagerActivity extends MvActivity implements MvIViewP
     private MvIPagerAdapter      adapter;
     private MvTabAdapter         tabAdapter;
 
-    @Override public View onCreateContentView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
-        return inflater.inflate(R.layout.qs_viewpager_bottom_tab, parent, false);
+    @Override public int layoutId() {
+        return R.layout.qs_viewpager_bottom_tab;
     }
 
     @Override protected View initView(@NonNull LayoutInflater inflater) {

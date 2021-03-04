@@ -27,6 +27,10 @@ public interface MvIListView<D> extends MvIView, AdapterView.OnItemClickListener
 
     @NonNull MvListAdapterItem<D> getListAdapterItem(int type);
 
+    int getHeaderLayout();
+
+    int getFooterLayout();
+
     View onCreateListHeaderView(@NonNull LayoutInflater inflater);
 
     View onCreateListFooterView(@NonNull LayoutInflater inflater);

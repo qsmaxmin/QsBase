@@ -2,7 +2,6 @@ package com.qsmaxmin.qsbase.mvvm;
 
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ScrollView;
 
 import com.qsmaxmin.qsbase.R;
@@ -25,8 +24,8 @@ public abstract class MvPullActivity extends MvActivity implements MvIPullView {
     private PtrFrameLayout mPtrFrameLayout;
     private View           childView;
 
-    @Override public View onCreateContentView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
-        return inflater.inflate(R.layout.qs_pulll_view, parent, false);
+    @Override public int layoutId() {
+        return R.layout.qs_pulll_view;
     }
 
     @NonNull @Override public PtrUIHandler getPtrUIHandlerView() {

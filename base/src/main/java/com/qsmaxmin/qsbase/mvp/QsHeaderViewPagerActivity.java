@@ -1,67 +1,45 @@
 package com.qsmaxmin.qsbase.mvp;
 
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 
-import com.qsmaxmin.qsbase.R;
-import com.qsmaxmin.qsbase.common.utils.ViewHelper;
-import com.qsmaxmin.qsbase.common.widget.headerview.HeaderScrollView;
-import com.qsmaxmin.qsbase.common.widget.headerview.ScrollerProvider;
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
-import com.qsmaxmin.qsbase.mvvm.MvIHeaderViewPager;
+import com.qsmaxmin.qsbase.mvvm.MvHeaderViewPagerActivity;
+import com.qsmaxmin.qsbase.plugin.bind.QsIBindView;
+import com.qsmaxmin.qsbase.plugin.presenter.QsIPresenter;
 
-import androidx.fragment.app.Fragment;
+import androidx.annotation.CallSuper;
+import androidx.annotation.NonNull;
 
 /**
  * @CreateBy administrator
  * @Date 2020/9/9 10:24
  * @Description
  */
-public abstract class QsHeaderViewPagerActivity<P extends QsPresenter> extends QsViewPagerActivity<P> implements MvIHeaderViewPager {
-    private HeaderScrollView headerScrollView;
+public abstract class QsHeaderViewPagerActivity<P extends QsPresenter> extends MvHeaderViewPagerActivity implements QsIBindView, QsIPresenter {
+    private P presenter;
 
-    @Override public int layoutId() {
-        return R.layout.qs_header_viewpager;
+    @CallSuper @Override public void onViewCreated(@NonNull View rootView) {
+        bindViewByQsPlugin(rootView);
     }
 
-    @Override protected View initView(LayoutInflater inflater) {
-        View view = super.initView(inflater);
-        if (view instanceof HeaderScrollView) {
-            headerScrollView = (HeaderScrollView) view;
-        } else {
-            headerScrollView = view.findViewById(R.id.qs_header_scroll_view);
-        }
-        if (headerScrollView == null) throw new IllegalStateException("HeaderScrollView is not exist or its id not 'R.id.qs_header_scroll_view' in current layout!!");
-        headerScrollView.registerScrollerProvider(this);
-        headerScrollView.setOnScrollListener(this);
-
-        ViewGroup headerContainer = view.findViewById(R.id.qs_header_container);
-        View headerView = onCreateHeaderView(inflater, headerContainer);
-        if (headerView != null) {
-            ViewHelper.addToParent(headerView, headerContainer);
-        }
-        return view;
+    @CallSuper @Override public void bindViewByQsPlugin(View view) {
     }
 
-    @Override public HeaderScrollView getHeaderScrollView() {
-        return headerScrollView;
-    }
-
-    @Override public void onHeaderScroll(int currentY, int maxY) {
-        //custom your logic
-    }
-
-    @Override public View getScrollableView() {
-        Fragment fragment = getCurrentFragment();
-        if (fragment instanceof ScrollerProvider) {
-            return ((ScrollerProvider) fragment).getScrollableView();
-        }
+    @Override public Object createPresenter() {
         return null;
     }
 
-    @Override public void smoothScrollToTop(boolean autoRefresh) {
-        super.smoothScrollToTop(autoRefresh);
-        headerScrollView.smoothScrollToTop();
+    @CallSuper @Override protected void onDestroy() {
+        super.onDestroy();
+        if (presenter != null) presenter.setDetach();
+    }
+
+    @SuppressWarnings("unchecked")
+    protected final P getPresenter() {
+        if (presenter == null) {
+            presenter = (P) createPresenter();
+            presenter.initPresenter(this);
+        }
+        return presenter;
     }
 }

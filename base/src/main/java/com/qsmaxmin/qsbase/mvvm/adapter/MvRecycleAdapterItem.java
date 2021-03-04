@@ -35,7 +35,7 @@ public abstract class MvRecycleAdapterItem<D> implements IView {
 
     protected abstract View onCreateItemView(LayoutInflater inflater, ViewGroup parent);
 
-    public abstract void onBindItemData(D data, int position, int totalCount);
+    protected abstract void onBindItemData(D data, int position, int totalCount);
 
     public final View getItemView() {
         return itemView;

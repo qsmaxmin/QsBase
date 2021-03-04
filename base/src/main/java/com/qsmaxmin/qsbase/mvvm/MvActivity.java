@@ -94,25 +94,52 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
         initStatusBar();
         rootView = initView(getLayoutInflater());
         setContentView(rootView);
-
+        onViewCreated(rootView);
         bindEventByQsPlugin();
         initData(savedInstanceState);
     }
 
+    @Override public int actionbarLayoutId() {
+        return 0;
+    }
+
+    public int layoutId() {
+        return 0;
+    }
+
+    public int loadingLayoutId() {
+        return QsHelper.getAppInterface().loadingLayoutId();
+    }
+
+    public int emptyLayoutId() {
+        return QsHelper.getAppInterface().emptyLayoutId();
+    }
+
+    public int errorLayoutId() {
+        return QsHelper.getAppInterface().errorLayoutId();
+    }
+
     @Override public View onCreateActionbarView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
-        return null;
+        return actionbarLayoutId() == 0 ? null : inflater.inflate(actionbarLayoutId(), parent, true);
     }
 
     @Override public View onCreateLoadingView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
-        return inflater.inflate(QsHelper.getAppInterface().loadingLayoutId(), parent, false);
+        return loadingLayoutId() == 0 ? null : inflater.inflate(loadingLayoutId(), parent, false);
+    }
+
+    @Override public View onCreateContentView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
+        return layoutId() == 0 ? null : inflater.inflate(layoutId(), parent, false);
     }
 
     @Override public View onCreateEmptyView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
-        return inflater.inflate(QsHelper.getAppInterface().emptyLayoutId(), parent, false);
+        return emptyLayoutId() == 0 ? null : inflater.inflate(emptyLayoutId(), parent, false);
     }
 
     @Override public View onCreateErrorView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
-        return inflater.inflate(QsHelper.getAppInterface().errorLayoutId(), parent, false);
+        return errorLayoutId() == 0 ? null : inflater.inflate(errorLayoutId(), parent, false);
+    }
+
+    @Override public void onViewCreated(@NonNull View rootView) {
     }
 
     protected View initView(@NonNull LayoutInflater inflater) {
@@ -228,16 +255,16 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
         return false;
     }
 
-    @Override public void activityFinish() {
+    @Override public final void activityFinish() {
         activityFinish(false);
     }
 
-    @Override public void activityFinish(int enterAnim, int exitAnim) {
+    @Override public final void activityFinish(int enterAnim, int exitAnim) {
         activityFinish();
         overridePendingTransition(enterAnim, exitAnim);
     }
 
-    @Override public void activityFinish(boolean finishAfterTransition) {
+    @Override public final void activityFinish(boolean finishAfterTransition) {
         if (finishAfterTransition) {
             ActivityCompat.finishAfterTransition(this);
         } else {
@@ -341,23 +368,23 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
         }
     }
 
-    @Override public boolean isShowLoadingView() {
+    @Override public final boolean isShowLoadingView() {
         return currentViewState() == VIEW_STATE_LOADING;
     }
 
-    @Override public boolean isShowContentView() {
+    @Override public final boolean isShowContentView() {
         return mViewAnimator == null || currentViewState() == VIEW_STATE_CONTENT;
     }
 
-    @Override public boolean isShowEmptyView() {
+    @Override public final boolean isShowEmptyView() {
         return currentViewState() == VIEW_STATE_EMPTY;
     }
 
-    @Override public boolean isShowErrorView() {
+    @Override public final boolean isShowErrorView() {
         return currentViewState() == VIEW_STATE_ERROR;
     }
 
-    @Override public int currentViewState() {
+    @Override public final int currentViewState() {
         if (isOpenViewState() && mViewAnimator != null) {
             int displayedIndex = mViewAnimator.getDisplayedChild();
             View childView = mViewAnimator.getChildAt(displayedIndex);
@@ -443,9 +470,7 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
     }
 
     @Override public final void postDelayed(Runnable action, long delayed) {
-        if (!isFinishing()) {
-            QsHelper.postDelayed(action, delayed);
-        }
+        QsHelper.postDelayed(action, delayed);
     }
 
     @Override public final void runOnHttpThread(Runnable action) {
@@ -482,7 +507,7 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
         }
     }
 
-    @Override public void setOnActivityResultListener(OnActivityResultListener listener) {
+    @Override public final void setOnActivityResultListener(OnActivityResultListener listener) {
         this.activityResultListener = listener;
     }
 
@@ -534,7 +559,7 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
         ViewHelper.setDefaultViewClickListener(view, this);
     }
 
-    protected void setViewState(final int index) {
+    private void setViewState(final int index) {
         if (mViewAnimator != null) {
             if (QsHelper.isMainThread()) {
                 if (mViewAnimator.getDisplayedChild() != index) {

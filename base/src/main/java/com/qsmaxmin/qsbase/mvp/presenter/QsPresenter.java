@@ -12,8 +12,8 @@ import com.qsmaxmin.qsbase.common.model.QsIModel;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.common.widget.listview.LoadingFooter;
 import com.qsmaxmin.qsbase.common.widget.toast.QsToast;
-import com.qsmaxmin.qsbase.mvp.QsIView;
 import com.qsmaxmin.qsbase.mvvm.MvIPullToRefreshView;
+import com.qsmaxmin.qsbase.mvvm.MvIView;
 
 import java.util.HashSet;
 
@@ -29,7 +29,7 @@ import androidx.fragment.app.FragmentActivity;
  * @Date 2017/6/21 16:27
  * @Description base presenter
  */
-public class QsPresenter<V extends QsIView> implements NetworkErrorReceiver, QsNotProguard {
+public class QsPresenter<V extends MvIView> implements NetworkErrorReceiver, QsNotProguard {
     private final HashSet<Object> tagList = new HashSet<>();
     private       boolean         isAttach;
     private       V               mView;
@@ -131,12 +131,12 @@ public class QsPresenter<V extends QsIView> implements NetworkErrorReceiver, QsN
      */
     public void paging(QsIModel model) {
         if (model != null && !isViewDetach()) {
-            QsIView qsIView = getView();
-            if (qsIView instanceof MvIPullToRefreshView) {
+            V view = getView();
+            if (view instanceof MvIPullToRefreshView) {
                 if (model.isLastPage()) {
-                    ((MvIPullToRefreshView) qsIView).setLoadingState(LoadingFooter.State.TheEnd);
+                    ((MvIPullToRefreshView) view).setLoadingState(LoadingFooter.State.TheEnd);
                 } else {
-                    ((MvIPullToRefreshView) qsIView).setLoadingState(LoadingFooter.State.Normal);
+                    ((MvIPullToRefreshView) view).setLoadingState(LoadingFooter.State.Normal);
                 }
             } else {
                 L.e(initTag(), "not QsPullListFragment or QsPullRecyclerFragment view, so invalid paging(...)");
@@ -154,16 +154,16 @@ public class QsPresenter<V extends QsIView> implements NetworkErrorReceiver, QsN
 
     private void resetViewState() {
         if (!isViewDetach()) {
-            QsIView qsIview = getView();
-            if (qsIview instanceof MvIPullToRefreshView) {
-                MvIPullToRefreshView view = (MvIPullToRefreshView) qsIview;
-                view.stopRefreshing();
-                view.setLoadingState(LoadingFooter.State.NetWorkError);
+            V view = getView();
+            if (view instanceof MvIPullToRefreshView) {
+                MvIPullToRefreshView refreshView = (MvIPullToRefreshView) view;
+                refreshView.stopRefreshing();
+                refreshView.setLoadingState(LoadingFooter.State.NetWorkError);
             }
-            if (!qsIview.isShowContentView()) {
-                qsIview.showErrorView();
+            if (!view.isShowContentView()) {
+                view.showErrorView();
             }
-            qsIview.loadingClose();
+            view.loadingClose();
         }
     }
 

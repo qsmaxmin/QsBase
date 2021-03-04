@@ -24,6 +24,10 @@ public interface MvIRecyclerView<D> extends MvIView, AdapterView.OnItemClickList
 
     MvRecycleAdapterItem<D> getRecycleAdapterItem(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent, int type);
 
+    int getHeaderLayout();
+
+    int getFooterLayout();
+
     View onCreateListHeaderView(@NonNull LayoutInflater inflater);
 
     View onCreateListFooterView(@NonNull LayoutInflater inflater);

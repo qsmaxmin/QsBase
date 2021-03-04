@@ -1,6 +1,5 @@
 package com.qsmaxmin.qsbase.mvvm.fragment;
 
-import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +26,14 @@ public abstract class MvTopBottomLoadListFragment<D> extends MvListFragment<D> i
     private LoadingFooter topLoadingView;
     private LoadingFooter bottomLoadingView;
 
+    @Override public int getHeaderLayout() {
+        return R.layout.qs_loading_footer;
+    }
+
+    @Override public int getFooterLayout() {
+        return R.layout.qs_loading_footer;
+    }
+
     @Override protected View initView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container) {
         View view = super.initView(inflater, container);
         View headerView = getHeaderView();
@@ -46,23 +53,12 @@ public abstract class MvTopBottomLoadListFragment<D> extends MvListFragment<D> i
         return view;
     }
 
-    @SuppressLint("InflateParams")
-    @Override public View onCreateListHeaderView(@NonNull LayoutInflater inflater) {
-        return inflater.inflate(R.layout.qs_loading_footer, null);
-    }
-
-    @SuppressLint("InflateParams")
-    @Override public View onCreateListFooterView(@NonNull LayoutInflater inflater) {
-        return inflater.inflate(R.layout.qs_loading_footer, null);
-    }
-
     @Override public void onScrollStateChanged(AbsListView view, int scrollState) {
         super.onScrollStateChanged(view, scrollState);
         if (onLoadTriggerCondition() == LOAD_WHEN_SCROLL_TO_BOTTOM && scrollState == SCROLL_STATE_IDLE) {
             if (isTopLoadingOpen && !canListScrollDown()) {
                 loadingTopData();
             }
-
             if (isBottomLoadingOpen && !canListScrollUp()) {
                 loadingBottomData();
             }

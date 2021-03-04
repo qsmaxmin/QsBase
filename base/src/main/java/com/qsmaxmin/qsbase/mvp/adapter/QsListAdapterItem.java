@@ -17,14 +17,6 @@ import androidx.annotation.NonNull;
  */
 public abstract class QsListAdapterItem<D> extends MvListAdapterItem<D> implements QsIBindView {
 
-    protected int getItemLayout() {
-        return 0;
-    }
-
-    public View onCreateItemView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
-        return getItemLayout() == 0 ? null : inflater.inflate(getItemLayout(), parent, false);
-    }
-
     @CallSuper public void init(@NonNull View contentView) {
         bindViewByQsPlugin(contentView);
     }
@@ -35,4 +27,11 @@ public abstract class QsListAdapterItem<D> extends MvListAdapterItem<D> implemen
     @CallSuper @Override public void bindViewByQsPlugin(View view) {
     }
 
+    protected int getItemLayout() {
+        return 0;
+    }
+
+    @Override public View onCreateItemView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
+        return getItemLayout() == 0 ? null : inflater.inflate(getItemLayout(), parent, false);
+    }
 }

@@ -14,7 +14,6 @@ import android.view.animation.Animation;
 import android.widget.ViewAnimator;
 
 import com.qsmaxmin.qsbase.R;
-import com.qsmaxmin.qsbase.mvp.QsIView;
 import com.qsmaxmin.qsbase.mvvm.MvIView;
 
 import androidx.annotation.NonNull;
@@ -76,11 +75,6 @@ public class ViewHelper {
     }
 
     public static void initViewAnimator(ViewAnimator animator, MvIView iView) {
-        initViewAnimator(iView.getContext(), animator, iView.viewStateInAnimation(), iView.viewStateOutAnimation(),
-                iView.viewStateInAnimationId(), iView.viewStateOutAnimationId(), iView.viewStateAnimateFirstView());
-    }
-
-    public static void initViewAnimator(ViewAnimator animator, QsIView iView) {
         initViewAnimator(iView.getContext(), animator, iView.viewStateInAnimation(), iView.viewStateOutAnimation(),
                 iView.viewStateInAnimationId(), iView.viewStateOutAnimationId(), iView.viewStateAnimateFirstView());
     }
@@ -167,31 +161,6 @@ public class ViewHelper {
 
 
     public static void setDefaultViewClickListener(View view, final MvIView iView) {
-        if (view != null && iView != null) {
-            View backView = view.findViewById(R.id.qs_back_in_default_view);
-            if (backView != null) {
-                if (iView.isShowBackButtonInDefaultView()) {
-                    backView.setVisibility(View.VISIBLE);
-                    backView.setOnClickListener(new View.OnClickListener() {
-                        @Override public void onClick(View v) {
-                            iView.onBackPressed();
-                        }
-                    });
-                } else {
-                    backView.setVisibility(View.GONE);
-                }
-            }
-            View reloadView = view.findViewById(R.id.qs_reload_in_default_view);
-            if (reloadView != null) reloadView.setOnClickListener(new View.OnClickListener() {
-                @Override public void onClick(View v) {
-                    iView.showLoadingView();
-                    iView.initData(null);
-                }
-            });
-        }
-    }
-
-    public static void setDefaultViewClickListener(View view, final QsIView iView) {
         if (view != null && iView != null) {
             View backView = view.findViewById(R.id.qs_back_in_default_view);
             if (backView != null) {

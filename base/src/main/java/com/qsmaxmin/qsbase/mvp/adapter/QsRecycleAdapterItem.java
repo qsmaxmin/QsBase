@@ -28,11 +28,11 @@ public abstract class QsRecycleAdapterItem<D> extends MvRecycleAdapterItem<D> im
     @CallSuper @Override public void bindViewByQsPlugin(View view) {
     }
 
-    protected int itemViewLayoutId() {
-        return 0;
+    @Override protected View onCreateItemView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
+        return itemViewLayoutId() == 0 ? null : inflater.inflate(itemViewLayoutId(), parent, false);
     }
 
-    protected View onCreateItemView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
-        return itemViewLayoutId() == 0 ? null : inflater.inflate(itemViewLayoutId(), parent, false);
+    protected int itemViewLayoutId() {
+        return 0;
     }
 }

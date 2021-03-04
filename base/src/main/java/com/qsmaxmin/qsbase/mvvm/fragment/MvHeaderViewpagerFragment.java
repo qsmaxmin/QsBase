@@ -22,8 +22,8 @@ import androidx.fragment.app.Fragment;
 public abstract class MvHeaderViewpagerFragment extends MvViewPagerFragment implements MvIHeaderViewPager {
     private HeaderScrollView headerScrollView;
 
-    @Override public View onCreateContentView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
-        return inflater.inflate(R.layout.qs_header_viewpager, parent, false);
+    @Override public int layoutId() {
+        return R.layout.qs_header_viewpager;
     }
 
     @Override protected View initView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container) {
