@@ -19,6 +19,8 @@ public abstract class QsPullRecyclerFragment<P extends QsPresenter, D> extends M
     private P presenter;
 
     @Override public void onViewCreated(@NonNull View rootView) {
+        if (getHeaderView() != null) bindViewByQsPlugin(getHeaderView());
+        if (getFooterView() != null) bindViewByQsPlugin(getFooterView());
         bindViewByQsPlugin(rootView);
     }
 
