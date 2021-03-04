@@ -19,6 +19,8 @@ public abstract class QsRecyclerActivity<P extends QsPresenter, D> extends MvRec
     private P presenter;
 
     @CallSuper @Override public void onViewCreated(@NonNull View rootView) {
+        if (getHeaderView() != null) bindViewByQsPlugin(getHeaderView());
+        if (getFooterView() != null) bindViewByQsPlugin(getFooterView());
         bindViewByQsPlugin(rootView);
     }
 
