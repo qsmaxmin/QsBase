@@ -5,6 +5,7 @@ import android.os.Looper;
 
 import com.qsmaxmin.qsbase.QsConstants;
 
+import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadFactory;
@@ -25,6 +26,7 @@ public class QsThreadPollHelper {
     private        ThreadPoolExecutor workThreadPoll;
     private        ThreadPoolExecutor httpThreadPoll;
     private        ThreadPoolExecutor singleThreadPoll;
+    private        ThreadPoolExecutor lIFOThreadPoll;
 
     private QsThreadPollHelper() {
         handler = new Handler(Looper.getMainLooper());
@@ -55,6 +57,10 @@ public class QsThreadPollHelper {
 
     public static boolean isSingleThread() {
         return QsConstants.NAME_SINGLE_THREAD.equals(Thread.currentThread().getName());
+    }
+
+    public static boolean isLIFOThread() {
+        return QsConstants.NAME_LIFO_THREAD.equals(Thread.currentThread().getName());
     }
 
     public static void post(Runnable action) {
@@ -109,6 +115,18 @@ public class QsThreadPollHelper {
         }
     }
 
+    public static void runOnLIFOThread(final Runnable action) {
+        if (action instanceof SafeRunnable) {
+            getLIFOThreadPoll().execute(action);
+        } else {
+            getLIFOThreadPoll().execute(new SafeRunnable() {
+                @Override protected void safeRun() {
+                    action.run();
+                }
+            });
+        }
+    }
+
     public static ThreadPoolExecutor getWorkThreadPoll() {
         if (getInstance().workThreadPoll == null) {
             synchronized (QsThreadPollHelper.class) {
@@ -135,6 +153,15 @@ public class QsThreadPollHelper {
             }
         }
         return getInstance().singleThreadPoll;
+    }
+
+    private static Executor getLIFOThreadPoll() {
+        if (getInstance().lIFOThreadPoll == null) {
+            synchronized (QsThreadPollHelper.class) {
+                if (getInstance().lIFOThreadPoll == null) getInstance().lIFOThreadPoll = createLIFOThreadPool();
+            }
+        }
+        return getInstance().lIFOThreadPoll;
     }
 
     public static void release() {
@@ -169,6 +196,11 @@ public class QsThreadPollHelper {
     private static ThreadPoolExecutor createWorkThreadPool() {
         return new ThreadPoolExecutor(10, 10, 0L, TimeUnit.MILLISECONDS,
                 new LinkedBlockingQueue<Runnable>(), generateThread(QsConstants.NAME_WORK_THREAD));
+    }
+
+    private static ThreadPoolExecutor createLIFOThreadPool() {
+        return new ThreadPoolExecutor(15, 15, 0L, TimeUnit.MILLISECONDS,
+                new LIFOLinkedBlockingDeque<Runnable>(), generateThread(QsConstants.NAME_LIFO_THREAD));
     }
 
     private static ThreadFactory generateThread(final String name) {
