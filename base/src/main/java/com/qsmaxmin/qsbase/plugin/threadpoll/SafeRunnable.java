@@ -16,7 +16,7 @@ public abstract class SafeRunnable implements Runnable {
         try {
             safeRun();
         } catch (Exception e) {
-            if (L.isEnable()) e.printStackTrace();
+            if (L.isEnable()) L.e("SafeRunnable", e);
             onError(e);
         }
     }
