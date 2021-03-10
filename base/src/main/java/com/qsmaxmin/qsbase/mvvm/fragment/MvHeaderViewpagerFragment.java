@@ -40,7 +40,7 @@ public abstract class MvHeaderViewpagerFragment extends MvViewPagerFragment impl
         headerScrollView.setOnScrollListener(this);
         ViewGroup headerContainer = view.findViewById(R.id.qs_header_container);
         View headerView = onCreateHeaderView(inflater, headerContainer);
-        if (headerView.getParent() == null) {
+        if (headerView != null && headerView.getParent() == null) {
             headerContainer.addView(headerView);
         }
         return view;
