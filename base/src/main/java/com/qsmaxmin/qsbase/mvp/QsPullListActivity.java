@@ -31,7 +31,7 @@ public abstract class QsPullListActivity<P extends QsPresenter, D> extends MvPul
 
     @CallSuper @Override protected void onDestroy() {
         super.onDestroy();
-        if (presenter != null) presenter.setDetach();
+        if (presenter != null) presenter.onViewDestroy();
     }
 
     @SuppressWarnings("unchecked")

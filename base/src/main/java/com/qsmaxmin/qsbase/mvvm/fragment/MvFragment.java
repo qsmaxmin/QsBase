@@ -49,6 +49,7 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
     private   OnActivityResultListener activityResultListener;
     private   HashSet<Object>          requestTags;
     private   ProgressView             progressView;
+    private   boolean                  isDestroyed;
 
     @Override public String initTag() {
         return L.isEnable() ? getClass().getSimpleName() : "QsFragment";
@@ -108,6 +109,8 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
 
     @Override public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        isDestroyed = false;
+        bindBundleByQsPlugin(getArguments());
         if (interceptBackPressed()) {
             requireActivity().getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
                 @Override public void handleOnBackPressed() {
@@ -122,7 +125,6 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
 
     @Override @Nullable @CallSuper
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        bindBundleByQsPlugin(getArguments());
         View rootView = initView(inflater, container);
         rootView.setOnTouchListener(this);
         onViewCreated(rootView);
@@ -147,8 +149,9 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
         }
     }
 
-    @CallSuper @Override public void onDestroyView() {
-        super.onDestroyView();
+    @CallSuper @Override public void onDestroy() {
+        super.onDestroy();
+        isDestroyed = true;
         unbindEventByQsPlugin();
         cancelAllHttpRequest();
     }
@@ -608,12 +611,16 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
     /**
      * 取消由当前Fragment发起的http请求
      */
-    private final void cancelAllHttpRequest() {
+    private void cancelAllHttpRequest() {
         if (requestTags != null) {
             synchronized (this) {
                 QsHelper.getHttpHelper().cancelRequest(requestTags);
                 requestTags.clear();
             }
         }
+    }
+
+    @Override public boolean isViewDestroyed() {
+        return isDestroyed;
     }
 }

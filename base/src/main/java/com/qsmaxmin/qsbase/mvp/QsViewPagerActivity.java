@@ -32,7 +32,7 @@ public abstract class QsViewPagerActivity<P extends QsPresenter> extends MvViewP
 
     @CallSuper @Override protected void onDestroy() {
         super.onDestroy();
-        if (presenter != null) presenter.setDetach();
+        if (presenter != null) presenter.onViewDestroy();
     }
 
     @SuppressWarnings("unchecked")

@@ -130,4 +130,6 @@ public interface MvIView extends IView, QsIBindEvent, QsIBindBundle, QsNotProgua
     @NonNull <T> T createHttpRequest(Class<T> clazz, Object requestTag, NetworkErrorReceiver receiver);
 
     @NonNull QsProgressDialog getLoadingDialog();
+
+    boolean isViewDestroyed();
 }

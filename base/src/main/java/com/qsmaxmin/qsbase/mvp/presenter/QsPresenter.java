@@ -17,6 +17,7 @@ import com.qsmaxmin.qsbase.mvvm.MvIView;
 
 import java.util.HashSet;
 
+import androidx.annotation.CallSuper;
 import androidx.annotation.ColorRes;
 import androidx.annotation.DimenRes;
 import androidx.annotation.DrawableRes;
@@ -31,34 +32,38 @@ import androidx.fragment.app.FragmentActivity;
  */
 public class QsPresenter<V extends MvIView> implements NetworkErrorReceiver, QsNotProguard {
     private final HashSet<Object> tagList = new HashSet<>();
-    private       boolean         isAttach;
     private       V               mView;
 
     protected final String initTag() {
         return L.isEnable() ? getClass().getSimpleName() : "QsPresenter";
     }
 
-    @NonNull public final Context getContext() {
+    public final Context getContext() {
         return mView.getContext();
     }
 
-    public final void initPresenter(V view) {
+    public final FragmentActivity getActivity() {
+        return mView.getActivity();
+    }
+
+    @CallSuper public void initPresenter(V view) {
         mView = view;
-        isAttach = true;
+    }
+
+    @CallSuper public void onViewDestroy() {
+        cancelAllHttpRequest();
     }
 
     @NonNull public final V getView() {
         return mView;
     }
 
-    public final void setDetach() {
-        isAttach = false;
-        cancelAllHttpRequest();
+    public final boolean isViewDetach() {
+        return mView.isViewDestroyed();
     }
 
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    public final boolean isViewDetach() {
-        return !isAttach;
+    public final boolean isViewAttach() {
+        return !mView.isViewDestroyed();
     }
 
     /**
@@ -117,7 +122,7 @@ public class QsPresenter<V extends MvIView> implements NetworkErrorReceiver, QsN
     public boolean isSuccess(QsIModel model, boolean shouldToast) {
         if (model != null && model.isResponseOk()) {
             return true;
-        } else if (!isViewDetach()) {
+        } else if (isViewAttach()) {
             resetViewState();
             if (model != null && shouldToast) QsToast.show(model.getMessage());
         }
@@ -130,7 +135,7 @@ public class QsPresenter<V extends MvIView> implements NetworkErrorReceiver, QsN
      * @param model 分页数据持有
      */
     public void paging(QsIModel model) {
-        if (model != null && !isViewDetach()) {
+        if (model != null && isViewAttach()) {
             V view = getView();
             if (view instanceof MvIPullToRefreshView) {
                 if (model.isLastPage()) {
@@ -153,22 +158,17 @@ public class QsPresenter<V extends MvIView> implements NetworkErrorReceiver, QsN
     }
 
     private void resetViewState() {
-        if (!isViewDetach()) {
-            V view = getView();
-            if (view instanceof MvIPullToRefreshView) {
-                MvIPullToRefreshView refreshView = (MvIPullToRefreshView) view;
-                refreshView.stopRefreshing();
-                refreshView.setLoadingState(LoadingFooter.State.NetWorkError);
-            }
-            if (!view.isShowContentView()) {
-                view.showErrorView();
-            }
-            view.loadingClose();
+        if (isViewDetach()) return;
+        V view = getView();
+        if (view instanceof MvIPullToRefreshView) {
+            MvIPullToRefreshView refreshView = (MvIPullToRefreshView) view;
+            refreshView.stopRefreshing();
+            refreshView.setLoadingState(LoadingFooter.State.NetWorkError);
         }
-    }
-
-    @NonNull public final FragmentActivity getActivity() {
-        return mView.getActivity();
+        if (!view.isShowContentView()) {
+            view.showErrorView();
+        }
+        view.loadingClose();
     }
 
     public final String getString(@StringRes int stringId) {

@@ -29,9 +29,9 @@ public abstract class QsFragment<P extends QsPresenter> extends MvFragment imple
         return null;
     }
 
-    @CallSuper @Override public void onDestroyView() {
-        super.onDestroyView();
-        if (presenter != null) presenter.setDetach();
+    @CallSuper @Override public void onDestroy() {
+        super.onDestroy();
+        if (presenter != null) presenter.onViewDestroy();
     }
 
     @SuppressWarnings("unchecked")

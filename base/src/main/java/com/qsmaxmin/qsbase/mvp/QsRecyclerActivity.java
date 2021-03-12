@@ -33,7 +33,7 @@ public abstract class QsRecyclerActivity<P extends QsPresenter, D> extends MvRec
 
     @CallSuper @Override protected void onDestroy() {
         super.onDestroy();
-        if (presenter != null) presenter.setDetach();
+        if (presenter != null) presenter.onViewDestroy();
     }
 
     @SuppressWarnings("unchecked")

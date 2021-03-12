@@ -47,6 +47,7 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
     private   OnKeyDownListener        onKeyDownListener;
     private   View                     rootView;
     private   HashSet<Object>          requestTags;
+    private   boolean                  isDestroyed;
 
     @CallSuper @Override public void bindBundleByQsPlugin(Bundle bundle) {
     }
@@ -79,6 +80,7 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
 
     @CallSuper @Override protected void onDestroy() {
         super.onDestroy();
+        isDestroyed = true;
         unbindEventByQsPlugin();
         cancelAllHttpRequest();
 
@@ -88,6 +90,7 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
 
     @CallSuper @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        isDestroyed = true;
         QsHelper.getScreenHelper().pushActivity(this);
         QsHelper.getAppInterface().onActivityCreate(this);
         bindBundleByQsPlugin(getIntent().getExtras());
@@ -617,5 +620,9 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
                 requestTags.clear();
             }
         }
+    }
+
+    @Override public boolean isViewDestroyed() {
+        return isDestroyed;
     }
 }

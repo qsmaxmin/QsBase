@@ -31,7 +31,7 @@ public abstract class QsPullHeaderViewPagerActivity<P extends QsPresenter> exten
 
     @CallSuper @Override protected void onDestroy() {
         super.onDestroy();
-        if (presenter != null) presenter.setDetach();
+        if (presenter != null) presenter.onViewDestroy();
     }
 
     @SuppressWarnings("unchecked")

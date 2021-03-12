@@ -31,7 +31,7 @@ public abstract class QsActivity<P extends QsPresenter> extends MvActivity imple
 
     @CallSuper @Override protected void onDestroy() {
         super.onDestroy();
-        if (presenter != null) presenter.setDetach();
+        if (presenter != null) presenter.onViewDestroy();
     }
 
     @SuppressWarnings("unchecked")

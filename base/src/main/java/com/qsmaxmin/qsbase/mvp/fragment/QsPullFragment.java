@@ -30,9 +30,9 @@ public abstract class QsPullFragment<P extends QsPresenter> extends MvPullFragme
         return null;
     }
 
-    @CallSuper @Override public void onDestroyView() {
-        super.onDestroyView();
-        if (presenter != null) presenter.setDetach();
+    @CallSuper @Override public void onDestroy() {
+        super.onDestroy();
+        if (presenter != null) presenter.onViewDestroy();
     }
 
     @SuppressWarnings("unchecked")
