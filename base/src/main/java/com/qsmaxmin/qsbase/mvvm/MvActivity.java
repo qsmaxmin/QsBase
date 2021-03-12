@@ -134,6 +134,10 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
         return QsHelper.getAppInterface().errorLayoutId();
     }
 
+    @Override public View onCreateRootView(@NonNull LayoutInflater inflater, @Nullable ViewGroup parent) {
+        return inflater.inflate(rootViewLayoutId(), parent, false);
+    }
+
     @Override public View onCreateActionbarView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
         return actionbarLayoutId() == 0 ? null : inflater.inflate(actionbarLayoutId(), parent, true);
     }
@@ -160,7 +164,7 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
     protected View initView(@NonNull LayoutInflater inflater) {
         long s0 = 0;
         if (L.isEnable()) s0 = System.currentTimeMillis();
-        View rootView = inflater.inflate(rootViewLayoutId(), null);
+        View rootView = onCreateRootView(inflater, null);
 
         ViewGroup actionbarContainer = rootView.findViewById(R.id.qs_actionbar_parent);
         if (actionbarContainer != null) {
