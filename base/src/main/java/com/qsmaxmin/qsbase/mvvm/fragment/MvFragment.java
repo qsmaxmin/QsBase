@@ -620,7 +620,7 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
         }
     }
 
-    @Override public boolean isViewDestroyed() {
+    @Override public final boolean isViewDestroyed() {
         return isDestroyed;
     }
 }

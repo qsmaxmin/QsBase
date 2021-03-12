@@ -622,7 +622,7 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
         }
     }
 
-    @Override public boolean isViewDestroyed() {
+    @Override public final boolean isViewDestroyed() {
         return isDestroyed;
     }
 }
