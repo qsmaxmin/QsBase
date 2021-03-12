@@ -108,9 +108,9 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
 
     @Override public int rootViewLayoutId() {
         if (isOpenViewState()) {
-            return R.layout.qs_view_animator_ab;
+            return R.layout.qs_activity_animator;
         } else {
-            return R.layout.qs_frame_layout_ab;
+            return R.layout.qs_activity;
         }
     }
 
@@ -198,7 +198,7 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
             }
 
         } else {
-            ViewGroup customView = rootView.findViewById(android.R.id.custom);
+            ViewGroup customView = rootView.findViewById(R.id.qs_default_container_for_activity);
             View contentView = onCreateContentView(inflater, customView);
             if (contentView != null) {
                 if (contentViewBackgroundColor() != 0) {
@@ -433,19 +433,19 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
     }
 
     @Override public final void commitFragment(Fragment fragment) {
-        QsHelper.commitFragment(getSupportFragmentManager(), android.R.id.custom, fragment);
+        QsHelper.commitFragment(getSupportFragmentManager(), R.id.qs_default_container_for_activity, fragment);
     }
 
     @Override public final void commitFragment(Fragment fragment, String tag) {
-        QsHelper.commitFragment(getSupportFragmentManager(), android.R.id.custom, fragment, tag);
+        QsHelper.commitFragment(getSupportFragmentManager(), R.id.qs_default_container_for_activity, fragment, tag);
     }
 
     @Override public final void commitFragment(Fragment fragment, int enterAnim, int existAnim) {
-        QsHelper.commitFragment(getSupportFragmentManager(), android.R.id.custom, fragment, fragment.getClass().getSimpleName(), enterAnim, existAnim);
+        QsHelper.commitFragment(getSupportFragmentManager(), R.id.qs_default_container_for_activity, fragment, fragment.getClass().getSimpleName(), enterAnim, existAnim);
     }
 
     @Override public final void commitFragment(Fragment fragment, String tag, int enterAnim, int existAnim) {
-        QsHelper.commitFragment(getSupportFragmentManager(), android.R.id.custom, fragment, tag, enterAnim, existAnim);
+        QsHelper.commitFragment(getSupportFragmentManager(), R.id.qs_default_container_for_activity, fragment, tag, enterAnim, existAnim);
     }
 
     @Override public final void commitFragment(int layoutId, Fragment fragment) {

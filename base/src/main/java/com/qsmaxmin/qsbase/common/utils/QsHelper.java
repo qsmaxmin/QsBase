@@ -185,22 +185,10 @@ public class QsHelper {
 
     public static void commitFragment(final FragmentManager manager, final int layoutId, final Fragment fragment, final String tag, final int enterAnim, final int existAnim) {
         if (manager == null || layoutId == 0 || fragment == null) return;
-        if (isMainThread()) {
-            if (!fragment.isAdded()) {
-                FragmentTransaction ft = manager.beginTransaction();
-                if (enterAnim != 0 || existAnim != 0) ft.setCustomAnimations(enterAnim, existAnim);
-                ft.add(layoutId, fragment, tag).commitNowAllowingStateLoss();
-            }
-        } else {
-            post(new Runnable() {
-                @Override public void run() {
-                    if (!fragment.isAdded()) {
-                        FragmentTransaction ft = manager.beginTransaction();
-                        if (enterAnim != 0 || existAnim != 0) ft.setCustomAnimations(enterAnim, existAnim);
-                        ft.add(layoutId, fragment, tag).commitNowAllowingStateLoss();
-                    }
-                }
-            });
+        if (!fragment.isAdded()) {
+            FragmentTransaction ft = manager.beginTransaction();
+            if (enterAnim != 0 || existAnim != 0) ft.setCustomAnimations(enterAnim, existAnim);
+            ft.add(layoutId, fragment, tag).commitNowAllowingStateLoss();
         }
     }
 

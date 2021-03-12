@@ -12,14 +12,9 @@
 
     <!--内容布局-->
     <FrameLayout
-        android:id="@android:id/custom"
+        android:id="@id/qs_default_container_for_fragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <ViewAnimator
-            android:id="@id/qs_view_animator"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </FrameLayout>
+        android:layout_height="match_parent" />
 
 </LinearLayout>
+

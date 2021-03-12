@@ -12,8 +12,8 @@
 
     <!--内容布局-->
     <FrameLayout
-        android:id="@android:id/custom"
+        android:id="@id/qs_default_container_for_activity"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" />
 
 </LinearLayout>

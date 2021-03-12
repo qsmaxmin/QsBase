@@ -57,9 +57,9 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
 
     @Override public int rootViewLayoutId() {
         if (isOpenViewState()) {
-            return R.layout.qs_view_animator_ab;
+            return R.layout.qs_fragment_animator;
         } else {
-            return R.layout.qs_frame_layout_ab;
+            return R.layout.qs_fragment;
         }
     }
 
@@ -209,7 +209,7 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
             }
 
         } else {
-            ViewGroup customView = rootView.findViewById(android.R.id.custom);
+            ViewGroup customView = rootView.findViewById(R.id.qs_default_container_for_fragment);
             View contentView = onCreateContentView(inflater, customView);
             if (contentView != null) {
                 if (contentViewBackgroundColor() != 0) {
@@ -449,19 +449,19 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
     }
 
     @Override public final void commitFragment(Fragment fragment) {
-        QsHelper.commitFragment(getChildFragmentManager(), android.R.id.custom, fragment);
+        QsHelper.commitFragment(getChildFragmentManager(), R.id.qs_default_container_for_fragment, fragment);
     }
 
     @Override public final void commitFragment(Fragment fragment, String tag) {
-        QsHelper.commitFragment(getChildFragmentManager(), android.R.id.custom, fragment, tag);
+        QsHelper.commitFragment(getChildFragmentManager(), R.id.qs_default_container_for_fragment, fragment, tag);
     }
 
     @Override public final void commitFragment(Fragment fragment, int enterAnim, int existAnim) {
-        QsHelper.commitFragment(getChildFragmentManager(), android.R.id.custom, fragment, fragment.getClass().getSimpleName(), enterAnim, existAnim);
+        QsHelper.commitFragment(getChildFragmentManager(), R.id.qs_default_container_for_fragment, fragment, fragment.getClass().getSimpleName(), enterAnim, existAnim);
     }
 
     @Override public final void commitFragment(Fragment fragment, String tag, int enterAnim, int existAnim) {
-        QsHelper.commitFragment(getChildFragmentManager(), android.R.id.custom, fragment, tag, enterAnim, existAnim);
+        QsHelper.commitFragment(getChildFragmentManager(), R.id.qs_default_container_for_fragment, fragment, tag, enterAnim, existAnim);
     }
 
     @Override public final void commitFragment(int layoutId, Fragment fragment) {
