@@ -48,19 +48,16 @@ public class PtrFrameLayout extends ViewGroup {
     private              int                mHeaderHeight;
     private              boolean            mDisableWhenHorizontalMove   = true;
     private              int                mFlag                        = 0x00;
-
     // disable when detect moving horizontally
-    private boolean mPreventForHorizontal;
-
-    private MotionEvent      mLastMoveEvent;
-    private int              mHeaderOffsetY;
-    private PtrUIHandlerHook mRefreshCompleteHook;
-
-    private int          mLoadingMinTime              = 500;
-    private long         mLoadingStartTime            = 0;
-    private PtrIndicator mPtrIndicator;
-    private boolean      mHasSendCancelEvent          = false;
-    private Runnable     mPerformRefreshCompleteDelay = new Runnable() {
+    private              boolean            mPreventForHorizontal;
+    private              MotionEvent        mLastMoveEvent;
+    private              int                mHeaderOffsetY;
+    private              PtrUIHandlerHook   mRefreshCompleteHook;
+    private              int                mLoadingMinTime              = 500;
+    private              long               mLoadingStartTime            = 0;
+    private              PtrIndicator       mPtrIndicator;
+    private              boolean            mHasSendCancelEvent          = false;
+    private final        Runnable           mPerformRefreshCompleteDelay = new Runnable() {
         @Override public void run() {
             performRefreshComplete();
         }
