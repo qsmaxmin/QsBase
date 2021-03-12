@@ -532,7 +532,13 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
     }
 
     @Override public final boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (onKeyDownListener != null && onKeyDownListener.onKeyDown(keyCode, event)) return true;
+        if (onKeyDownListener != null && onKeyDownListener.onKeyDown(keyCode, event)) {
+            return true;
+        }
+        if (keyCode == KeyEvent.KEYCODE_BACK && getOnBackPressedDispatcher().hasEnabledCallbacks()) {
+            getOnBackPressedDispatcher().onBackPressed();
+            return true;
+        }
         return onKeyDown(event, keyCode);
     }
 
