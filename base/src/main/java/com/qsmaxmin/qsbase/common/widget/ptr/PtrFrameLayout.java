@@ -232,12 +232,10 @@ public class PtrFrameLayout extends ViewGroup {
                         sendCancelEvent();
                         return true;
                     }
-                    return dispatchTouchEventSupper(e);
-                } else {
-                    return dispatchTouchEventSupper(e);
                 }
+                return dispatchTouchEventSupper(e);
+
             case MotionEvent.ACTION_POINTER_DOWN:
-                break;
             case MotionEvent.ACTION_POINTER_UP:
                 break;
 
@@ -341,7 +339,7 @@ public class PtrFrameLayout extends ViewGroup {
     protected void onPositionChange(boolean isInTouching, byte status, PtrIndicator mPtrIndicator) {
     }
 
-    @SuppressWarnings("unused") public int getHeaderHeight() {
+    public int getHeaderHeight() {
         return mHeaderHeight;
     }
 
@@ -432,16 +430,14 @@ public class PtrFrameLayout extends ViewGroup {
     /**
      * If at the top and not in loading, reset
      */
-    private boolean tryToNotifyReset() {
+    private void tryToNotifyReset() {
         if ((mStatus == PTR_STATUS_COMPLETE || mStatus == PTR_STATUS_PREPARE) && mPtrIndicator.isInStartPosition()) {
             if (mPtrUIHandlerHolder.hasHandler()) {
                 mPtrUIHandlerHolder.onUIReset(this);
             }
             mStatus = PTR_STATUS_INIT;
             clearFlag();
-            return true;
         }
-        return false;
     }
 
     protected void onPtrScrollAbort() {
@@ -493,7 +489,9 @@ public class PtrFrameLayout extends ViewGroup {
 
     /**
      * Do real refresh work. If there is a hook, execute the hook first.
-     * After hook operation is done, {@link #notifyUIRefreshComplete} will be call in resume action to ignore hook.
+     * After hook operation is done,
+     *
+     * @see #notifyUIRefreshComplete will be call in resume action to ignore hook.
      */
     private void notifyUIRefreshComplete(boolean ignoreHook) {
         if (mPtrIndicator.hasLeftStartPosition() && !ignoreHook && mRefreshCompleteHook != null) {
@@ -597,7 +595,7 @@ public class PtrFrameLayout extends ViewGroup {
     @Deprecated public void setInterceptEventWhileWorking(boolean yes) {
     }
 
-    @SuppressWarnings({"unused"}) public View getContentView() {
+    public View getContentView() {
         return mContent;
     }
 
@@ -609,7 +607,7 @@ public class PtrFrameLayout extends ViewGroup {
         PtrUIHandlerHolder.addHandler(mPtrUIHandlerHolder, ptrUIHandler);
     }
 
-    @SuppressWarnings({"unused"}) public void removePtrUIHandler(PtrUIHandler ptrUIHandler) {
+    public void removePtrUIHandler(PtrUIHandler ptrUIHandler) {
         mPtrUIHandlerHolder = PtrUIHandlerHolder.removeHandler(mPtrUIHandlerHolder, ptrUIHandler);
     }
 
@@ -620,7 +618,7 @@ public class PtrFrameLayout extends ViewGroup {
         mPtrIndicator = slider;
     }
 
-    @SuppressWarnings({"unused"}) public float getResistance() {
+    public float getResistance() {
         return mPtrIndicator.getResistance();
     }
 
@@ -628,7 +626,7 @@ public class PtrFrameLayout extends ViewGroup {
         mPtrIndicator.setResistance(resistance);
     }
 
-    @SuppressWarnings({"unused"}) public float getDurationToClose() {
+    public float getDurationToClose() {
         return mDurationToClose;
     }
 
@@ -755,7 +753,7 @@ public class PtrFrameLayout extends ViewGroup {
             super(width, height);
         }
 
-        @SuppressWarnings({"unused"}) public LayoutParams(MarginLayoutParams source) {
+        public LayoutParams(MarginLayoutParams source) {
             super(source);
         }
 
@@ -768,8 +766,6 @@ public class PtrFrameLayout extends ViewGroup {
         private int      mLastFlingY;
         private Scroller mScroller;
         private boolean  mIsRunning = false;
-        private int      mStart;
-        private int      mTo;
 
         ScrollChecker() {
             mScroller = new Scroller(getContext());
@@ -824,8 +820,7 @@ public class PtrFrameLayout extends ViewGroup {
             if (mPtrIndicator.isAlreadyHere(to)) {
                 return;
             }
-            mStart = mPtrIndicator.getCurrentPosY();
-            mTo = to;
+            int mStart = mPtrIndicator.getCurrentPosY();
             int distance = to - mStart;
             removeCallbacks(this);
             mLastFlingY = 0;
