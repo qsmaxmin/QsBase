@@ -102,23 +102,35 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
         initData(savedInstanceState);
     }
 
+    @Override public final String initTag() {
+        return L.isEnable() ? getClass().getSimpleName() : "MvActivity";
+    }
+
+    @Override public int rootViewLayoutId() {
+        if (isOpenViewState()) {
+            return R.layout.qs_view_animator_ab;
+        } else {
+            return R.layout.qs_frame_layout_ab;
+        }
+    }
+
     @Override public int actionbarLayoutId() {
         return 0;
     }
 
-    public int layoutId() {
+    @Override public int layoutId() {
         return 0;
     }
 
-    public int loadingLayoutId() {
+    @Override public int loadingLayoutId() {
         return QsHelper.getAppInterface().loadingLayoutId();
     }
 
-    public int emptyLayoutId() {
+    @Override public int emptyLayoutId() {
         return QsHelper.getAppInterface().emptyLayoutId();
     }
 
-    public int errorLayoutId() {
+    @Override public int errorLayoutId() {
         return QsHelper.getAppInterface().errorLayoutId();
     }
 
@@ -199,18 +211,6 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
             }
         }
         return rootView;
-    }
-
-    @Override public String initTag() {
-        return L.isEnable() ? getClass().getSimpleName() : "MvActivity";
-    }
-
-    @Override public int rootViewLayoutId() {
-        if (isOpenViewState()) {
-            return R.layout.qs_view_animator_ab;
-        } else {
-            return R.layout.qs_frame_layout_ab;
-        }
     }
 
     @Override public final void onViewClicked(@NonNull View view) {

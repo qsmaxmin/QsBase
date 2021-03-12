@@ -69,11 +69,11 @@ public class QsPresenter<V extends MvIView> implements NetworkErrorReceiver, QsN
     /**
      * 发起http请求
      */
-    protected final <T> T createHttpRequest(Class<T> clazz) {
+    @NonNull protected final <T> T createHttpRequest(Class<T> clazz) {
         return createHttpRequest(clazz, System.nanoTime());
     }
 
-    protected final <T> T createHttpRequest(Class<T> clazz, Object requestTag) {
+    @NonNull protected final <T> T createHttpRequest(Class<T> clazz, Object requestTag) {
         synchronized (tagList) {
             if (!tagList.contains(requestTag)) {
                 tagList.add(requestTag);

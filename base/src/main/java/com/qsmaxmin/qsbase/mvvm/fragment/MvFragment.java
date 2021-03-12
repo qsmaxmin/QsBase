@@ -51,28 +51,40 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
     private   ProgressView             progressView;
     private   boolean                  isDestroyed;
 
-    @Override public String initTag() {
+    @Override public final String initTag() {
         return L.isEnable() ? getClass().getSimpleName() : "QsFragment";
     }
 
     @Override public int rootViewLayoutId() {
-        return isOpenViewState() ? R.layout.qs_view_animator : R.layout.qs_frame_layout;
+        if (isOpenViewState()) {
+            return R.layout.qs_view_animator_ab;
+        } else {
+            return R.layout.qs_frame_layout_ab;
+        }
     }
 
-    public int layoutId() {
+    @Override public int actionbarLayoutId() {
         return 0;
     }
 
-    public int loadingLayoutId() {
+    @Override public int layoutId() {
+        return 0;
+    }
+
+    @Override public int loadingLayoutId() {
         return QsHelper.getAppInterface().loadingLayoutId();
     }
 
-    public int emptyLayoutId() {
+    @Override public int emptyLayoutId() {
         return QsHelper.getAppInterface().emptyLayoutId();
     }
 
-    public int errorLayoutId() {
+    @Override public int errorLayoutId() {
         return QsHelper.getAppInterface().errorLayoutId();
+    }
+
+    @Override public View onCreateActionbarView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
+        return actionbarLayoutId() == 0 ? null : inflater.inflate(actionbarLayoutId(), parent, true);
     }
 
     @Override public View onCreateLoadingView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
@@ -160,6 +172,15 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
         long s0 = 0;
         if (L.isEnable()) s0 = System.nanoTime();
         View rootView = inflater.inflate(rootViewLayoutId(), container, false);
+
+        ViewGroup actionbarContainer = rootView.findViewById(R.id.qs_actionbar_parent);
+        if (actionbarContainer != null) {
+            View actionbarView = onCreateActionbarView(inflater, actionbarContainer);
+            if (actionbarView != null && actionbarView.getParent() == null) {
+                actionbarContainer.addView(actionbarView);
+            }
+        }
+
         if (isOpenViewState()) {
             mViewAnimator = rootView.findViewById(R.id.qs_view_animator);
             ViewHelper.initViewAnimator(mViewAnimator, this);
@@ -203,9 +224,9 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
         return rootView;
     }
 
-    @Override public void initDataWhenDelay() {
+    @Override public final void initDataWhenDelay() {
         if (!hasInitData && isDelayData()) {
-            initData(getArguments());
+            initData(null);
             hasInitData = true;
         }
     }
@@ -565,11 +586,11 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
         return 0;
     }
 
-    @Override public void setActivityTitle(CharSequence title) {
+    @Override public final void setActivityTitle(CharSequence title) {
         setActivityTitle(title, 0);
     }
 
-    @Override public void setActivityTitle(final CharSequence title, final int type) {
+    @Override public final void setActivityTitle(final CharSequence title, final int type) {
         final FragmentActivity activity = getActivity();
         if (activity instanceof MvIActivity) {
             if (QsThreadPollHelper.isMainThread()) {

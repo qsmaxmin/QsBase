@@ -28,8 +28,4 @@ public interface MvIActivity extends MvIView {
     void setOnKeyDownListener(OnKeyDownListener listener);
 
     void setActivityTitle(CharSequence title, int type);
-
-    int actionbarLayoutId();
-
-    View onCreateActionbarView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent);
 }

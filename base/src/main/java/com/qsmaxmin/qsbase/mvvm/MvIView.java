@@ -35,6 +35,8 @@ public interface MvIView extends IView, QsIBindEvent, QsIBindBundle, QsNotProgua
 
     int rootViewLayoutId();
 
+    int actionbarLayoutId();
+
     int layoutId();
 
     int loadingLayoutId();
@@ -42,6 +44,8 @@ public interface MvIView extends IView, QsIBindEvent, QsIBindBundle, QsNotProgua
     int emptyLayoutId();
 
     int errorLayoutId();
+
+    View onCreateActionbarView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent);
 
     View onCreateLoadingView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent);
 
