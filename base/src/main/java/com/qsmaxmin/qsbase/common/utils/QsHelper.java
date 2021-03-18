@@ -193,7 +193,7 @@ public class QsHelper {
     }
 
     /**
-     * @see #commitDialogFragment(FragmentManager, DialogFragment)
+     * @see com.qsmaxmin.qsbase.common.widget.dialog.QsDialogFragment#show(FragmentActivity)
      * @deprecated
      */
     public static void commitDialogFragment(DialogFragment fragment) {
