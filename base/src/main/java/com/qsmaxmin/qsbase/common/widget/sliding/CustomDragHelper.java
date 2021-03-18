@@ -3,7 +3,6 @@ package com.qsmaxmin.qsbase.common.widget.sliding;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.core.view.ViewCompat;
@@ -56,20 +55,20 @@ class CustomDragHelper extends ViewDragHelper.Callback {
     }
 
     @Override public int clampViewPositionHorizontal(@NonNull View child, int left, int dx) {
-        FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) child.getLayoutParams();
+        int leftMargin = getViewLeftMargin(child);
         int newLeft;
-
         if (isLayoutRtlSupport()) {
-            int startBound = getPaddingLeft() + lp.leftMargin;
+            int startBound = getPaddingLeft() + leftMargin;
             int endBound = getRange();
             newLeft = left < endBound ? endBound : (Math.min(left, startBound));
         } else {
-            int startBound = getPaddingLeft() + lp.leftMargin;
+            int startBound = getPaddingLeft() + leftMargin;
             int endBound = getRange();
             newLeft = Math.min(Math.max(left, startBound), endBound);
         }
         return newLeft;
     }
+
 
     @Override public void onViewPositionChanged(@NonNull View changedView, int left, int top, int dx, int dy) {
         if (getChildCount() > 1) {
@@ -81,22 +80,22 @@ class CustomDragHelper extends ViewDragHelper.Callback {
                 }
             }
         }
-        FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) changedView.getLayoutParams();
+        int leftMargin = getViewLeftMargin(changedView);
         int range = getRange();
-        slidingRatio = (left - getPaddingLeft() - lp.leftMargin) / (float) range;
+        slidingRatio = (left - getPaddingLeft() - leftMargin) / (float) range;
         if (listener != null) listener.onSliding(slidingRatio);
         if (isReleased) {
-            if (left == getPaddingLeft() + lp.leftMargin) {
+            if (left == getPaddingLeft() + leftMargin) {
                 if (listener != null) listener.onClose();
-            } else if (left == getPaddingLeft() + lp.leftMargin + range) {
+            } else if (left == getPaddingLeft() + leftMargin + range) {
                 if (listener != null) listener.onOpen();
             }
         }
     }
 
     @Override public void onViewReleased(@NonNull View releasedChild, float xVel, float yVel) {
-        FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) releasedChild.getLayoutParams();
-        int left = getPaddingLeft() + lp.leftMargin;
+        int leftMargin = getViewLeftMargin(releasedChild);
+        int left = getPaddingLeft() + leftMargin;
         if (isLayoutRtlSupport()) {
             if (xVel < 0.0F || (xVel == 0.0F && slidingRatio > 0.5F)) {
                 left += getRange();
@@ -109,6 +108,14 @@ class CustomDragHelper extends ViewDragHelper.Callback {
         isReleased = true;
         dragHelper.settleCapturedViewAt(left, releasedChild.getTop());
         parentView.invalidate();
+    }
+
+    private int getViewLeftMargin(@NonNull View child) {
+        ViewGroup.LayoutParams lp = child.getLayoutParams();
+        if (lp instanceof ViewGroup.MarginLayoutParams) {
+            return ((ViewGroup.MarginLayoutParams) lp).leftMargin;
+        }
+        return 0;
     }
 
     private int getWidth() {
