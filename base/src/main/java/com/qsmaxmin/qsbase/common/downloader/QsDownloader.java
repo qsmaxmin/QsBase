@@ -188,7 +188,7 @@ public final class QsDownloader<M extends QsDownloadModel<K>, K> {
 
     public final void cancelDownload(M m) {
         synchronized (executorMap) {
-            DownloadExecutor executor = executorMap.remove(m.getId());
+            DownloadExecutor executor = executorMap.get(m.getId());
             if (executor != null) {
                 executor.cancel();
             }
