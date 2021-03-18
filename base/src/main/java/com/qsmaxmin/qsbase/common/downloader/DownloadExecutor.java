@@ -1,7 +1,6 @@
 package com.qsmaxmin.qsbase.common.downloader;
 
 import com.qsmaxmin.qsbase.common.log.L;
-import com.qsmaxmin.qsbase.common.utils.QsHelper;
 
 import java.io.Closeable;
 import java.io.File;
@@ -10,9 +9,6 @@ import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.util.Set;
 
-import androidx.annotation.NonNull;
-import okhttp3.Call;
-import okhttp3.Callback;
 import okhttp3.Headers;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -27,179 +23,126 @@ class DownloadExecutor<M extends QsDownloadModel<K>, K> {
     private final String             TAG;
     private final QsDownloader<M, K> downloader;
     private final M                  model;
-    private       long               initTime;
+    private final long               initTime;
+    private final File               tempFile;
+    private final File               targetFile;
+    private       boolean            canceled;
 
     DownloadExecutor(QsDownloader<M, K> downloader, M model, String tag) {
+        this.initTime = System.currentTimeMillis();
         this.downloader = downloader;
         this.model = model;
         this.TAG = tag;
+        this.targetFile = new File(model.getFilePath());
+        this.tempFile = getTempFile(model);
     }
 
-    void start(final Request.Builder builder) {
-        initTime = System.currentTimeMillis();
-        QsHelper.executeInWorkThread(new Runnable() {
-            @Override public void run() {
-                startInner(builder);
-            }
-        });
-    }
-
-    static File getCacheFile(QsDownloadModel model) {
-        return getCacheFile(new File(model.getFilePath()));
-    }
-
-    private static File getCacheFile(File targetFile) {
-        String name = targetFile.getName();
-        File parentFile = targetFile.getParentFile();
-        return new File(parentFile, name + "_temp");
-    }
-
-    private void startInner(final Request.Builder builder) {
-        postDownloadStart();
+    void start(final Request.Builder builder) throws Exception {
+        checkCancel();
         if (L.isEnable()) L.i(TAG, "download started......id:" + model.getId() + ", time gone:" + getTimeGone());
 
-        final File targetFile = new File(model.getFilePath());
-        if (targetFile.exists()) {
-            postDownloadComplete(targetFile);
-        } else {
+        if (downloader.isForceDownload() || !targetFile.exists()) {
             File parentFile = targetFile.getParentFile();
             if (!parentFile.exists() && !parentFile.mkdirs()) {
-                L.e(TAG, "create dir failed...dir:" + parentFile.getPath());
-                postDownloadFailed("create dir failed, dir:" + parentFile.getPath());
-                return;
+                throw new Exception("create dir failed...dir:" + parentFile.getPath());
             }
 
-            File tempFile = getCacheFile(targetFile);
             if (downloader.isSupportBreakPointTransmission() && tempFile.exists() && tempFile.length() > 0) {
-                checkFileBeforeDownload(builder, tempFile);
+                checkFileBeforeDownload(builder);
             } else {
-                startDownload(builder.build(), tempFile, 0);
+                startDownload(builder.build(), 0);
             }
         }
     }
 
-    private void checkFileBeforeDownload(final Request.Builder builder, final File tempFile) {
-        L.i(TAG, "old file exists....size:" + tempFile.length() + ", path:" + tempFile.getPath());
-        downloader.getClient().newCall(builder.build()).enqueue(new Callback() {
-            @Override public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                postDownloadFailed(e.getMessage());
-                e.printStackTrace();
+    private void checkFileBeforeDownload(Request.Builder builder) throws Exception {
+        L.i(TAG, "checkFileBeforeDownload...old file exists, size:" + tempFile.length() + ", path:" + tempFile.getPath());
+        Response response = downloader.getClient().newCall(builder.build()).execute();
+        checkCancel();
+        if (response == null) {
+            throw new Exception("response is null !!");
+        }
+        try {
+            if (!response.isSuccessful()) {
+                throw new Exception("onResponse failed, response code=" + response.code());
             }
-
-            @Override public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                try {
-                    if (response.isSuccessful()) {
-                        ResponseBody body = response.body();
-                        if (body == null || body.contentLength() == 0) {
-                            L.e(TAG, "download failed, body is empty!");
-                            postDownloadFailed("download failed, body is empty!");
-                            return;
-                        }
-                        long existsLength = tempFile.length();
-                        if (existsLength < body.contentLength()) {
-                            Request request = builder.header("RANGE", "bytes=" + existsLength + "-").build();
-                            startDownload(request, tempFile, existsLength);
-                        } else if (existsLength == body.contentLength()) {
-                            if (L.isEnable()) L.i(TAG, "need not download file, exists file length matched contentLength, id:" + model.getId());
-                            postDownloading(existsLength, existsLength);
-                            postDownloadComplete(tempFile);
-                        }
-                    } else {
-                        L.e(TAG, "onResponse failed, response code=" + response.code());
-                        postDownloadFailed("onResponse failed, response code=" + response.code());
-                    }
-                } catch (Exception e) {
-                    postDownloadFailed(e.getMessage());
-                    e.printStackTrace();
-                } finally {
-                    close(response);
-                }
+            ResponseBody body = response.body();
+            if (body == null || body.contentLength() <= 0) {
+                throw new Exception(" body is empty!");
             }
-        });
+            long existsLength = tempFile.length();
+            if (existsLength < body.contentLength()) {
+                Request request = builder.header("RANGE", "bytes=" + existsLength + "-").build();
+                startDownload(request, existsLength);
+            } else if (existsLength == body.contentLength()) {
+                if (L.isEnable()) L.i(TAG, "need not download file, exists file length matched contentLength, id:" + model.getId());
+                model.update(existsLength, existsLength);
+                callbackDownloading(existsLength, existsLength);
+            }
+        } finally {
+            close(response);
+        }
     }
 
-    private void startDownload(Request request, final File tempFile, final long rangStartPoint) {
-        downloader.getClient().newCall(request).enqueue(new Callback() {
-            @Override public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                postDownloadFailed(e.getMessage());
-                e.printStackTrace();
+    private void startDownload(Request request, long rangStartPoint) throws Exception {
+        Response response = downloader.getClient().newCall(request).execute();
+        checkCancel();
+        if (response == null) {
+            throw new Exception("response is null !!");
+        }
+
+        if (L.isEnable() && downloader.isPrintResponseHeader()) {
+            printResponseHeader(response);
+        }
+        RandomAccessFile accessFile = null;
+        try {
+            if (!response.isSuccessful()) {
+                throw new Exception("onResponse failed, response code=" + response.code());
+            }
+            ResponseBody body = response.body();
+            if (body == null || body.contentLength() <= 0) {
+                throw new Exception(" body is empty!");
             }
 
-            @Override public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                if (L.isEnable()) printResponseHeader(response);
-                RandomAccessFile accessFile = null;
-                boolean downloadSuccess = false;
-                try {
-                    if (response.isSuccessful()) {
-                        if (L.isEnable()) L.i(TAG, "response OK.......id:" + model.getId() + ", time gone:" + getTimeGone());
-                        ResponseBody body = response.body();
+            long contentLength = body.contentLength();
+            long startPoint = rangStartPoint;
+            if (startPoint > 0 && response.code() != 206) {
+                startPoint = 0;
+                if (L.isEnable()) L.e(TAG, "server not support resume from break point");
+            }
+            long totalLength = startPoint + contentLength;
+            accessFile = new RandomAccessFile(tempFile, "rwd");
+            accessFile.seek(startPoint);
+            if (startPoint > 0) {
+                model.update(startPoint, totalLength);
+                callbackDownloading(startPoint, totalLength);
+            }
+            InputStream is = body.byteStream();
+            byte[] buff = new byte[1024 * 10];
+            int len;
+            long progress;
+            long tempLength = startPoint;
+            long lastProgress = 0;
 
-                        if (body != null) {
-                            long contentLength = body.contentLength();
-                            long startPoint = rangStartPoint;
-                            if (startPoint > 0 && response.code() != 206) {
-                                startPoint = 0;
-                                if (L.isEnable()) L.e(TAG, "server not support resume from break point");
-                            }
-
-                            if (contentLength > 0) {
-                                long totalLength = startPoint + contentLength;
-                                accessFile = new RandomAccessFile(tempFile, "rwd");
-                                accessFile.seek(startPoint);
-                                if (startPoint > 0) {
-                                    postDownloading(startPoint, totalLength);
-                                }
-                                InputStream is = body.byteStream();
-                                byte[] buff = new byte[1024 * 10];
-                                int len;
-                                long progress;
-                                long tempLength = startPoint;
-                                long lastProgress = 0;
-
-                                long callbackSize = 100 * 1024;
-                                long callbackCount = totalLength / callbackSize;
-                                callbackCount = callbackCount < 30 ? 30 : (callbackCount > 100 ? 100 : callbackCount);
-
-                                while ((len = is.read(buff)) != -1) {
-                                    accessFile.write(buff, 0, len);
-                                    tempLength += len;
-                                    progress = tempLength * callbackCount / totalLength;
-                                    if (progress != lastProgress) {
-                                        lastProgress = progress;
-                                        postDownloading(tempLength, totalLength);
-                                    }
-                                }
-                                if (tempLength == totalLength) {
-                                    if (L.isEnable()) L.i(TAG, "download success, id:" + model.getId() + ", time gone:" + getTimeGone());
-                                    downloadSuccess = true;
-                                } else {
-                                    if (L.isEnable()) L.e(TAG, "download failed, content length not matched, wanted:" + totalLength + ", but:" + tempLength);
-                                    postDownloadFailed("content length not matched, wanted:" + totalLength + ", but:" + tempLength);
-                                }
-                            } else {
-                                L.e(TAG, "download failed, content length is 0");
-                                postDownloadFailed("download failed, content length is 0");
-                            }
-                        } else {
-                            L.e(TAG, "download failed, response body is null");
-                            postDownloadFailed("download failed, response body is null");
-                        }
-                    } else {
-                        L.e(TAG, "download failed, response code=" + response.code());
-                        postDownloadFailed("download failed, response code:" + response.code());
-                    }
-                } catch (Exception e) {
-                    postDownloadFailed(e.getMessage());
-                    e.printStackTrace();
-                } finally {
-                    close(response);
-                    close(accessFile);
-                    if (downloadSuccess) {
-                        postDownloadComplete(tempFile);
-                    }
+            while ((len = is.read(buff)) != -1) {
+                accessFile.write(buff, 0, len);
+                tempLength += len;
+                model.update(tempLength, totalLength);
+                progress = model.getDownloadProgress();
+                if (progress != lastProgress) {
+                    lastProgress = progress;
+                    callbackDownloading(tempLength, totalLength);
                 }
             }
-        });
+            if (tempLength != totalLength) {
+                throw new Exception("download failed, content length not matched, wanted:" + totalLength + ", but:" + tempLength);
+            } else {
+                renameFile(tempFile, targetFile);
+            }
+        } finally {
+            close(response);
+            close(accessFile);
+        }
     }
 
     private void printResponseHeader(Response response) {
@@ -215,36 +158,17 @@ class DownloadExecutor<M extends QsDownloadModel<K>, K> {
         L.i(TAG, sb.toString());
     }
 
-    private void postDownloadStart() {
-        downloader.postDownloadStart(model);
-    }
-
-    private void postDownloading(long size, long totalSize) {
+    private void callbackDownloading(long size, long totalSize) {
         downloader.postDownloading(model, size, totalSize);
     }
 
-    private void postDownloadFailed(String msg) {
-        downloader.removeExecutorFromTask(model);
-        downloader.postDownloadFailed(model, msg);
-    }
-
-    private void postDownloadComplete(File tempFile) {
-        downloader.removeExecutorFromTask(model);
-
-        if (!tempFile.getAbsolutePath().equals(model.getFilePath())) {
-            File targetFile = new File(model.getFilePath());
-            if (targetFile.exists()) {
-                boolean delete = targetFile.delete();
-                L.i(TAG, "delete old file(success:" + delete + "):" + targetFile.getAbsolutePath());
-            }
-            boolean success = tempFile.renameTo(targetFile);
-            if (success) {
-                downloader.postDownloadComplete(model);
-            } else {
-                downloader.postDownloadFailed(model, "tempFile(" + tempFile.getAbsolutePath() + ") rename to file(" + model.getFilePath() + ") failed....");
-            }
-        } else {
-            downloader.postDownloadComplete(model);
+    private void renameFile(File tempFile, File targetFile) throws Exception {
+        if (targetFile.exists()) {
+            boolean delete = targetFile.delete();
+            L.i(TAG, "delete old file(success:" + delete + "):" + targetFile.getAbsolutePath());
+        }
+        if (!tempFile.renameTo(targetFile)) {
+            throw new Exception("tempFile(" + tempFile.getAbsolutePath() + ") rename to file(" + model.getFilePath() + ") failed....");
         }
     }
 
@@ -258,7 +182,44 @@ class DownloadExecutor<M extends QsDownloadModel<K>, K> {
         }
     }
 
+    private void checkCancel() throws Exception {
+        if (canceled) throw new Exception("current task is canceled....");
+    }
+
     private String getTimeGone() {
         return (System.currentTimeMillis() - initTime) + "ms";
     }
+
+    static File getTempFile(QsDownloadModel model) {
+        return new File(model.getFilePath() + "_temp");
+    }
+
+    void cancel() {
+        this.canceled = true;
+    }
+
+    final void applyWait() throws Exception {
+        synchronized (this) {
+            wait();
+        }
+    }
+
+    final void applyNotify() throws Exception {
+        synchronized (this) {
+            notifyAll();
+        }
+    }
+
+    M getModel() {
+        return model;
+    }
+
+    File getTempFile() {
+        return tempFile;
+    }
+
+    File getTargetFile() {
+        return targetFile;
+    }
 }
+

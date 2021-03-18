@@ -5,12 +5,14 @@ import android.text.TextUtils;
 
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.plugin.threadpoll.QsThreadPollHelper;
+import com.qsmaxmin.qsbase.plugin.threadpoll.SafeRunnable;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import okhttp3.Call;
 import okhttp3.Dispatcher;
 import okhttp3.OkHttpClient;
@@ -21,63 +23,157 @@ import okhttp3.Request;
  * @Date 2020-03-17  15:25
  * @Description
  */
-@SuppressWarnings("rawtypes")
-public class QsDownloader<M extends QsDownloadModel<K>, K> {
+public final class QsDownloader<M extends QsDownloadModel<K>, K> {
     private final String                       TAG;
-    private final HashMap<K, DownloadExecutor> executorMap                   = new HashMap<>();
-    private final List<DownloadListener<M>>    globeListeners                = new ArrayList<>();
+    private final HashMap<K, DownloadExecutor> executorMap;
+    private final List<DownloadListener<M>>    globeListeners;
     private final OkHttpClient                 httpClient;
     private final Class                        httpTag;
-    private       boolean                      supportBreakPointTransmission = true;
+    private       boolean                      supportBreakPointTransmission;
+    private       boolean                      forceDownload;
+    private       boolean                      printResponseHeader;
 
     QsDownloader(OkHttpClient client, Class<M> tag) {
         this.httpClient = client;
         this.httpTag = tag;
         this.TAG = "QsDownloader-" + httpTag.getSimpleName();
+        this.supportBreakPointTransmission = true;
+        this.executorMap = new HashMap<>();
+        this.globeListeners = new ArrayList<>();
     }
 
     /**
      * 设置是否开启断点续传功能，默认开启
      */
-    public void setSupportBreakPointTransmission(boolean supportBreakPointTransmission) {
+    public final void setSupportBreakPointTransmission(boolean supportBreakPointTransmission) {
         this.supportBreakPointTransmission = supportBreakPointTransmission;
     }
 
-    public boolean isSupportBreakPointTransmission() {
+    public final boolean isSupportBreakPointTransmission() {
         return supportBreakPointTransmission;
     }
 
-    public void startDownload(final M model) {
+    public final void setForceDownload(boolean forceDownload) {
+        this.forceDownload = forceDownload;
+    }
+
+    public final boolean isForceDownload() {
+        return forceDownload;
+    }
+
+    public final void sePrintResponseHeader(boolean printResponseHeader) {
+        this.printResponseHeader = printResponseHeader;
+    }
+
+    public final boolean isPrintResponseHeader() {
+        return printResponseHeader;
+    }
+
+    /**
+     * 异步执行下载动作
+     *
+     * @see #enqueueDownload(QsDownloadModel)
+     */
+    public final void startDownload(final M model) {
+        enqueueDownload(model);
+    }
+
+    /**
+     * 异步执行下载动作
+     */
+    public final void enqueueDownload(final M model) {
+        final Request.Builder builder;
+        try {
+            builder = getBuilder(model);
+        } catch (Exception e) {
+            postDownloadFailed(model, e.getMessage());
+            L.e(TAG, e);
+            return;
+        }
+        postDownloadStart(model);
+        final DownloadExecutor<M, K> executor;
+        synchronized (executorMap) {
+            if (executorMap.get(model.getId()) == null) {
+                executor = new DownloadExecutor<>(this, model, TAG);
+                executorMap.put(model.getId(), executor);
+            } else {
+                return;
+            }
+        }
+        QsThreadPollHelper.runOnHttpThread(new SafeRunnable() {
+            @Override protected void safeRun() {
+                try {
+                    executor.start(builder);
+                    postDownloadComplete(model);
+                } catch (Exception e) {
+                    postDownloadFailed(model, e.getMessage());
+                    L.e(TAG, e);
+                } finally {
+                    removeExecutorFromTask(model);
+                }
+            }
+        });
+    }
+
+    /**
+     * 同步执行下载动作
+     */
+    @SuppressWarnings("unchecked")
+    public void executeDownload(final M model) throws Exception {
+        if (QsThreadPollHelper.isMainThread()) {
+            throw new Exception("cannot execute method:startDownloadSync() in MAIN Thread!!!");
+        }
+        boolean shouldWait = false;
+        DownloadExecutor executor;
+        synchronized (executorMap) {
+            executor = executorMap.get(model.getId());
+            if (executor == null) {
+                executor = new DownloadExecutor<>(this, model, TAG);
+                executorMap.put(model.getId(), executor);
+            } else {
+                shouldWait = true;
+            }
+        }
+
+        if (shouldWait) {
+            if (L.isEnable()) L.i(TAG, "executeDownload....相同的任务正在下载中，将当前线程置为等待中状态.........");
+            M downloadingModel = (M) executor.getModel();
+            postDownloading(downloadingModel, downloadingModel.getDownloadedLength(), model.getTotalLength());
+            executor.applyWait();
+            if (L.isEnable()) L.i(TAG, "executeDownload....该任务在其它线程执行完毕，唤醒当前线程.........");
+            if (!executor.getTargetFile().exists()) {
+                throw new Exception("download file failed in other thread !!");
+            }
+        } else {
+            try {
+                postDownloadStart(model);
+                Request.Builder builder = getBuilder(model);
+                executor.start(builder);
+                postDownloadComplete(model);
+            } catch (Exception e) {
+                postDownloadFailed(model, e.getMessage());
+                L.e(TAG, e);
+            } finally {
+                executor.applyNotify();
+                removeExecutorFromTask(model);
+            }
+        }
+    }
+
+
+    @NonNull private Request.Builder getBuilder(M model) throws Exception {
         if (model == null) {
-            if (L.isEnable()) L.e(TAG, "startDownload...param error");
-            return;
+            throw new Exception("startDownload...param error");
         }
-
         if (model.getId() == null) {
-            if (L.isEnable()) L.e(TAG, "startDownload..." + model.getClass().getSimpleName() + ".getId() return null");
-            return;
+            throw new Exception("startDownload..." + model.getClass().getSimpleName() + ".getId() return empty");
         }
-
         if (TextUtils.isEmpty(model.getFilePath())) {
-            if (L.isEnable()) L.e(TAG, "startDownload..." + model.getClass().getSimpleName() + ".getFilePath() return empty");
-            return;
+            throw new Exception("startDownload..." + model.getClass().getSimpleName() + ".getFilePath() return empty");
         }
-
         Request.Builder builder = model.getRequest();
-        if (builder == null) {
-            if (L.isEnable()) L.e(TAG, "startDownload..." + model.getClass().getSimpleName() + ".getRequest() return null");
-            return;
-        }
-
-        if (isDownloading(model)) {
-            if (L.isEnable()) L.e(TAG, "startDownload...do not download again，id:" + model.getId());
-            return;
-        }
-        DownloadExecutor<M, K> executor = new DownloadExecutor<>(this, model, TAG);
-        executorMap.put(model.getId(), executor);
-
         builder.tag(httpTag);
-        executor.start(builder);
+        return builder;
     }
 
     public boolean isDownloading(M m) {
@@ -96,10 +192,9 @@ public class QsDownloader<M extends QsDownloadModel<K>, K> {
             if (L.isEnable()) L.e(TAG, "cleanDownloadCache failed, The cache cannot be deleted while downloading.....");
             return false;
         }
-        File cacheFile = DownloadExecutor.getCacheFile(m);
+        File cacheFile = DownloadExecutor.getTempFile(m);
         if (cacheFile.exists()) {
-            boolean delete = cacheFile.delete();
-            L.i(TAG, "cleanDownloadCache......success:" + delete);
+            return cacheFile.delete();
         }
         return true;
     }
@@ -137,8 +232,10 @@ public class QsDownloader<M extends QsDownloadModel<K>, K> {
         return httpClient;
     }
 
-    void removeExecutorFromTask(M model) {
-        executorMap.remove(model.getId());
+    private void removeExecutorFromTask(M model) {
+        synchronized (executorMap) {
+            executorMap.remove(model.getId());
+        }
     }
 
     public void registerGlobalDownloadListener(DownloadListener<M> listener) {
@@ -269,4 +366,5 @@ public class QsDownloader<M extends QsDownloadModel<K>, K> {
             return null;
         }
     }
+
 }
