@@ -35,7 +35,6 @@ public class LoadingFooter extends FrameLayout {
     }
 
     public void init() {
-        inflate(getContext(), R.layout.qs_layout_footer_main, this);
         setState(State.Normal);
     }
 
