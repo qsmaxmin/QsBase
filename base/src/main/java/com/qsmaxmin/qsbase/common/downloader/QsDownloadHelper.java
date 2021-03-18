@@ -35,21 +35,25 @@ public class QsDownloadHelper {
         QsDownloader<M, K> downloader = instance.downloaderHolder.get(clazz);
         if (downloader == null) {
             synchronized (instance.downloaderHolder) {
-                downloader = new QsDownloader<>(instance.httpClient, clazz);
-                instance.downloaderHolder.put(clazz, downloader);
-            }
-            if (L.isEnable()) {
-                String name = downloader.getClass().getSimpleName();
-                String className = clazz.getSimpleName();
-                int size = instance.downloaderHolder.size();
-                L.i("QsDownloadHelper", "getDownloader(no cached)....clazz:" + className + ", downloader:" + name + ", cache size:" + size);
+                downloader = instance.downloaderHolder.get(clazz);
+                if (downloader == null) {
+                    downloader = new QsDownloader<>(instance.httpClient, clazz);
+                    instance.downloaderHolder.put(clazz, downloader);
+                    if (L.isEnable()) {
+                        L.i("QsDownloadHelper", "getDownloader(no cached)....clazz:" + clazz.getSimpleName()
+                                + ", downloader:" + downloader.getClass().getSimpleName() + ", cache size:" + instance.downloaderHolder.size());
+                    }
+                } else {
+                    if (L.isEnable()) {
+                        L.i("QsDownloadHelper", "getDownloader(cached)....clazz:" + clazz.getSimpleName()
+                                + ", downloader:" + downloader.getClass().getSimpleName() + ", cache size:" + instance.downloaderHolder.size());
+                    }
+                }
             }
         } else {
             if (L.isEnable()) {
-                String name = downloader.getClass().getSimpleName();
-                String className = clazz.getSimpleName();
-                int size = instance.downloaderHolder.size();
-                L.i("QsDownloadHelper", "getDownloader(cached)....clazz:" + className + ", downloader:" + name + ", cache size:" + size);
+                L.i("QsDownloadHelper", "getDownloader(cached)....clazz:" + clazz.getSimpleName()
+                        + ", downloader:" + downloader.getClass().getSimpleName() + ", cache size:" + instance.downloaderHolder.size());
             }
         }
         return downloader;
