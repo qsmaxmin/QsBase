@@ -194,15 +194,21 @@ class DownloadExecutor<M extends QsDownloadModel<K>, K> {
         this.canceled = true;
     }
 
-    final void applyWait() throws Exception {
-        synchronized (this) {
-            wait();
+    final void applyWait() {
+        try {
+            synchronized (this) {
+                wait();
+            }
+        } catch (Exception ignored) {
         }
     }
 
-    final void applyNotify() throws Exception {
-        synchronized (this) {
-            notifyAll();
+    final void applyNotify() {
+        try {
+            synchronized (this) {
+                notifyAll();
+            }
+        } catch (Exception ignored) {
         }
     }
 

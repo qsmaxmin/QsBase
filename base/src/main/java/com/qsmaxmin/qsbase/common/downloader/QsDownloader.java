@@ -112,6 +112,7 @@ public final class QsDownloader<M extends QsDownloadModel<K>, K> {
                     postDownloadFailed(model, e.getMessage());
                     L.e(TAG, e);
                 } finally {
+                    executor.applyNotify();
                     removeExecutorFromTask(model);
                 }
             }
