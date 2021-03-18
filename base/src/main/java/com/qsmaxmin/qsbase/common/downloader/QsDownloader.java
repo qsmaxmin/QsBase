@@ -26,15 +26,13 @@ public final class QsDownloader<M extends QsDownloadModel<K>, K> {
     private final HashMap<K, DownloadExecutor> executorMap;
     private final List<DownloadListener<M>>    globeListeners;
     private final OkHttpClient                 httpClient;
-    private final Class                        httpTag;
     private       boolean                      supportBreakPointTransmission;
     private       boolean                      forceDownload;
     private       boolean                      printResponseHeader;
 
     QsDownloader(OkHttpClient client, Class<M> tag) {
         this.httpClient = client;
-        this.httpTag = tag;
-        this.TAG = "QsDownloader-" + httpTag.getSimpleName();
+        this.TAG = "QsDownloader-" + tag.getSimpleName();
         this.supportBreakPointTransmission = true;
         this.executorMap = new HashMap<>();
         this.globeListeners = new ArrayList<>();
