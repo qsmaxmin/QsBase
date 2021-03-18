@@ -13,8 +13,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import androidx.annotation.NonNull;
-import okhttp3.Call;
-import okhttp3.Dispatcher;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 
@@ -53,6 +51,10 @@ public final class QsDownloader<M extends QsDownloadModel<K>, K> {
         return supportBreakPointTransmission;
     }
 
+    /**
+     * 是否强制下载
+     * 强制下载会忽略本地已存在的文件
+     */
     public final void setForceDownload(boolean forceDownload) {
         this.forceDownload = forceDownload;
     }
@@ -61,6 +63,9 @@ public final class QsDownloader<M extends QsDownloadModel<K>, K> {
         return forceDownload;
     }
 
+    /**
+     * 是否打印响应头信息
+     */
     public final void sePrintResponseHeader(boolean printResponseHeader) {
         this.printResponseHeader = printResponseHeader;
     }
@@ -119,7 +124,7 @@ public final class QsDownloader<M extends QsDownloadModel<K>, K> {
      * 同步执行下载动作
      */
     @SuppressWarnings("unchecked")
-    public void executeDownload(final M model) throws Exception {
+    public final void executeDownload(final M model) throws Exception {
         if (QsThreadPollHelper.isMainThread()) {
             throw new Exception("cannot execute method:startDownloadSync() in MAIN Thread!!!");
         }
@@ -171,64 +176,59 @@ public final class QsDownloader<M extends QsDownloadModel<K>, K> {
         if (TextUtils.isEmpty(model.getFilePath())) {
             throw new Exception("startDownload..." + model.getClass().getSimpleName() + ".getFilePath() return empty");
         }
-        Request.Builder builder = model.getRequest();
-        builder.tag(httpTag);
-        return builder;
+        return model.getRequest();
     }
 
-    public boolean isDownloading(M m) {
+    public final boolean isDownloading(M m) {
         return executorMap.get(m.getId()) != null;
     }
 
-    public boolean isDownloading(K k) {
+    public final boolean isDownloading(K k) {
         return executorMap.get(k) != null;
+    }
+
+    public final void cancelDownload(M m) {
+        synchronized (executorMap) {
+            DownloadExecutor executor = executorMap.get(m.getId());
+            if (executor != null) {
+                executor.cancel();
+            }
+        }
     }
 
     /**
      * 清除指定下载文件的缓存
      */
-    public boolean cleanDownloadCache(M m) {
+    public final boolean cleanDownloadCache(M m) {
         if (isDownloading(m)) {
             if (L.isEnable()) L.e(TAG, "cleanDownloadCache failed, The cache cannot be deleted while downloading.....");
             return false;
         }
-        File cacheFile = DownloadExecutor.getTempFile(m);
+        File cacheFile = new File(m.getTempFilePath());
         if (cacheFile.exists()) {
             return cacheFile.delete();
         }
         return true;
     }
 
-    public void release() {
+    public final void release() {
         if (L.isEnable()) L.i(TAG, "release........");
-        try {
-            executorMap.clear();
-            globeListeners.clear();
-            Dispatcher dispatcher = getClient().dispatcher();
-            List<Call> runningCalls = dispatcher.runningCalls();
-            for (Call call : runningCalls) {
-                if (call.request().tag() == httpTag) {
-                    call.cancel();
-                    if (L.isEnable()) {
-                        L.i(TAG, "cancel runningCalls.....tag:" + httpTag);
-                    }
+        if (executorMap.size() > 0) {
+            synchronized (executorMap) {
+                for (DownloadExecutor executor : executorMap.values()) {
+                    executor.cancel();
                 }
+                executorMap.clear();
             }
-            List<Call> queuedCalls = dispatcher.queuedCalls();
-            for (Call call : queuedCalls) {
-                if (httpTag == call.request().tag()) {
-                    if (L.isEnable()) {
-                        L.i(TAG, "cancel queuedCalls.....tag:" + httpTag);
-                    }
-                    call.cancel();
-                }
+        }
+        if (globeListeners.size() > 0) {
+            synchronized (globeListeners) {
+                globeListeners.clear();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 
-    OkHttpClient getClient() {
+    final OkHttpClient getClient() {
         return httpClient;
     }
 
@@ -238,7 +238,7 @@ public final class QsDownloader<M extends QsDownloadModel<K>, K> {
         }
     }
 
-    public void registerGlobalDownloadListener(DownloadListener<M> listener) {
+    public final void registerGlobalDownloadListener(DownloadListener<M> listener) {
         if (listener != null) {
             synchronized (globeListeners) {
                 if (!globeListeners.contains(listener)) {
@@ -248,13 +248,13 @@ public final class QsDownloader<M extends QsDownloadModel<K>, K> {
         }
     }
 
-    public void removeGlobalDownloadListener(DownloadListener<M> listener) {
+    public final void removeGlobalDownloadListener(DownloadListener<M> listener) {
         synchronized (globeListeners) {
             globeListeners.remove(listener);
         }
     }
 
-    void postDownloadStart(final M model) {
+    private void postDownloadStart(final M model) {
         if (isMainThread()) {
             callbackDownloadStart(model);
         } else {
@@ -266,7 +266,7 @@ public final class QsDownloader<M extends QsDownloadModel<K>, K> {
         }
     }
 
-    void postDownloading(final M model, final long size, final long totalSize) {
+    final void postDownloading(final M model, final long size, final long totalSize) {
         if (isMainThread()) {
             callbackDownloading(model, size, totalSize);
         } else {
@@ -278,7 +278,7 @@ public final class QsDownloader<M extends QsDownloadModel<K>, K> {
         }
     }
 
-    void postDownloadComplete(final M model) {
+    private void postDownloadComplete(final M model) {
         if (isMainThread()) {
             callbackDownloadComplete(model);
         } else {
@@ -290,7 +290,7 @@ public final class QsDownloader<M extends QsDownloadModel<K>, K> {
         }
     }
 
-    void postDownloadFailed(final M model, final String msg) {
+    private void postDownloadFailed(final M model, final String msg) {
         if (isMainThread()) {
             callbackDownloadFailed(model, msg);
         } else {

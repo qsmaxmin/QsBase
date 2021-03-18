@@ -34,7 +34,7 @@ class DownloadExecutor<M extends QsDownloadModel<K>, K> {
         this.model = model;
         this.TAG = tag;
         this.targetFile = new File(model.getFilePath());
-        this.tempFile = getTempFile(model);
+        this.tempFile = new File(model.getTempFilePath());
     }
 
     void start(final Request.Builder builder) throws Exception {
@@ -190,11 +190,7 @@ class DownloadExecutor<M extends QsDownloadModel<K>, K> {
         return (System.currentTimeMillis() - initTime) + "ms";
     }
 
-    static File getTempFile(QsDownloadModel model) {
-        return new File(model.getFilePath() + "_temp");
-    }
-
-    void cancel() {
+    final void cancel() {
         this.canceled = true;
     }
 
@@ -210,15 +206,15 @@ class DownloadExecutor<M extends QsDownloadModel<K>, K> {
         }
     }
 
-    M getModel() {
+    final M getModel() {
         return model;
     }
 
-    File getTempFile() {
+    final File getTempFile() {
         return tempFile;
     }
 
-    File getTargetFile() {
+    final File getTargetFile() {
         return targetFile;
     }
 }
