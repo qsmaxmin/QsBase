@@ -22,6 +22,8 @@ import com.qsmaxmin.qsbase.common.viewbind.OnKeyDownListener;
 import com.qsmaxmin.qsbase.common.widget.dialog.ProgressView;
 import com.qsmaxmin.qsbase.common.widget.dialog.QsProgressDialog;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout;
+import com.qsmaxmin.qsbase.common.widget.sliding.ISlidingViewGroup;
+import com.qsmaxmin.qsbase.common.widget.sliding.SlidingListenerAdapter;
 import com.qsmaxmin.qsbase.plugin.permission.PermissionHelper;
 
 import java.util.HashSet;
@@ -48,6 +50,7 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
     private   View                     rootView;
     private   HashSet<Object>          requestTags;
     private   boolean                  isDestroyed;
+    private   ISlidingViewGroup        slidingView;
 
     @CallSuper @Override public void bindBundleByQsPlugin(Bundle bundle) {
     }
@@ -107,10 +110,10 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
     }
 
     @Override public int rootViewLayoutId() {
-        if (isOpenViewState()) {
-            return R.layout.qs_activity_animator;
+        if (isOpenSlidingToClose()) {
+            return isOpenViewState() ? R.layout.qs_activity_sliding_animator : R.layout.qs_activity_sliding;
         } else {
-            return R.layout.qs_activity;
+            return isOpenViewState() ? R.layout.qs_activity_animator : R.layout.qs_activity;
         }
     }
 
@@ -165,6 +168,21 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
         long s0 = 0;
         if (L.isEnable()) s0 = System.currentTimeMillis();
         View rootView = onCreateRootView(inflater, null);
+
+        if (isOpenSlidingToClose()) {
+            if (rootView instanceof ISlidingViewGroup) {
+                slidingView = (ISlidingViewGroup) rootView;
+            } else {
+                slidingView = rootView.findViewById(R.id.qs_sliding_view);
+            }
+            if (slidingView != null) {
+                slidingView.setSlidingListener(new SlidingListenerAdapter() {
+                    @Override public void onOpen() {
+                        activityFinish();
+                    }
+                });
+            }
+        }
 
         ViewGroup actionbarContainer = rootView.findViewById(R.id.qs_actionbar_parent);
         if (actionbarContainer != null) {
@@ -628,5 +646,28 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
 
     @Override public final boolean isViewDestroyed() {
         return isDestroyed;
+    }
+
+    /**
+     * 是否打开滑动关闭Activity功能
+     * 注意当前页面手势冲突
+     *
+     * @see ISlidingViewGroup
+     * @see #rootViewLayoutId()
+     */
+    @Override public boolean isOpenSlidingToClose() {
+        return false;
+    }
+
+    /**
+     * @see ISlidingViewGroup
+     * 是否允许滑动关闭Activity
+     */
+    @Override public final void setAllowSlidingToClose(boolean allow) {
+        if (slidingView != null) slidingView.setCanSliding(allow);
+    }
+
+    @Override public final boolean isAllowSlidingToClose() {
+        return slidingView != null && slidingView.isCanSliding();
     }
 }

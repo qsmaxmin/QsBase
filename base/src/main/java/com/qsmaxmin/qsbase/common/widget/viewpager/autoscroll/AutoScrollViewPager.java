@@ -253,7 +253,7 @@ public final class AutoScrollViewPager extends QsViewPager {
     }
 
     private static class MyHandler extends Handler {
-        private AutoScrollViewPager reference;
+        private final AutoScrollViewPager reference;
 
         MyHandler(AutoScrollViewPager viewPager) {
             reference = viewPager;

@@ -1,9 +1,6 @@
 package com.qsmaxmin.qsbase.mvvm;
 
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.qsmaxmin.qsbase.common.viewbind.OnKeyDownListener;
 
@@ -28,4 +25,10 @@ public interface MvIActivity extends MvIView {
     void setOnKeyDownListener(OnKeyDownListener listener);
 
     void setActivityTitle(CharSequence title, int type);
+
+    boolean isOpenSlidingToClose();
+
+    void setAllowSlidingToClose(boolean allow);
+
+    boolean isAllowSlidingToClose();
 }

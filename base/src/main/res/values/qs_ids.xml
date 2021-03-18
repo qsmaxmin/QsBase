@@ -12,4 +12,5 @@
     <item name="qs_view_state_key" type="id" />
 
     <item name="qs_banner_image" type="id" />
+    <item name="qs_sliding_view" type="id" />
 </resources>

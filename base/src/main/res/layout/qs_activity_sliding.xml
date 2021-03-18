@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.qsmaxmin.qsbase.common.widget.sliding.SlidingLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/qs_sliding_view"
+    android:orientation="vertical">
+
+    <!--actionbar-->
+    <FrameLayout
+        android:id="@id/qs_actionbar_parent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <!--内容布局-->
+    <FrameLayout
+        android:id="@id/qs_default_container_for_activity"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</com.qsmaxmin.qsbase.common.widget.sliding.SlidingLinearLayout>

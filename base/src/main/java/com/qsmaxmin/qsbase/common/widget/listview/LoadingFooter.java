@@ -63,12 +63,27 @@ public class LoadingFooter extends FrameLayout {
         }
     }
 
+
+    private View showView(View view, int layoutId) {
+        if (view == null) {
+            view = inflate(getContext(), layoutId, null);
+            addView(view);
+        } else {
+            view.setVisibility(VISIBLE);
+        }
+        return view;
+    }
+
+    private void hideView(View view) {
+        if (view != null) view.setVisibility(GONE);
+    }
+
     private void setViewState(State status) {
         switch (status) {
             case Normal:
-                if (mTheEndView != null) mTheEndView.setVisibility(GONE);
-                if (mNetworkErrorView != null) mNetworkErrorView.setVisibility(GONE);
-                if (mLoadingView != null) mLoadingView.setVisibility(GONE);
+                hideView(mTheEndView);
+                hideView(mNetworkErrorView);
+                hideView(mLoadingView);
                 if (mNormalView != null) {
                     mNormalView.setVisibility(VISIBLE);
                 } else {
