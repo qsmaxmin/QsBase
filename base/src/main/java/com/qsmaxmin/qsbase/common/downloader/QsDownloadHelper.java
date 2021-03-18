@@ -67,8 +67,7 @@ public class QsDownloadHelper {
             if (L.isEnable()) L.i("QsDownloadHelper", "release........");
             if (!helper.downloaderHolder.isEmpty()) {
                 synchronized (helper.downloaderHolder) {
-                    for (Class clazz : helper.downloaderHolder.keySet()) {
-                        QsDownloader downloader = helper.downloaderHolder.get(clazz);
+                    for (QsDownloader downloader : helper.downloaderHolder.values()) {
                         if (downloader != null) downloader.release();
                     }
                     helper.downloaderHolder.clear();
@@ -80,11 +79,11 @@ public class QsDownloadHelper {
     }
 
     public static <M extends QsDownloadModel> void release(Class<M> clazz) {
-        Object object = getInstance().downloaderHolder.get(clazz);
-        if (object != null) {
-            QsDownloader downloader = (QsDownloader) object;
-            downloader.release();
+        synchronized (getInstance().downloaderHolder) {
+            QsDownloader downloader = getInstance().downloaderHolder.remove(clazz);
+            if (downloader != null) {
+                downloader.release();
+            }
         }
     }
-
 }
