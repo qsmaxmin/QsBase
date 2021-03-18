@@ -31,23 +31,24 @@ public class QsDownloadHelper {
     @SuppressWarnings({"unchecked"})
     public static <M extends QsDownloadModel<K>, K> QsDownloader<M, K> getDownloader(Class<M> clazz) {
         if (clazz == null) return null;
-        QsDownloader<M, K> downloader = getInstance().downloaderHolder.get(clazz);
+        QsDownloadHelper instance = getInstance();
+        QsDownloader<M, K> downloader = instance.downloaderHolder.get(clazz);
         if (downloader == null) {
-            synchronized (getInstance().downloaderHolder) {
-                downloader = new QsDownloader<>(getInstance().httpClient, clazz);
-                getInstance().downloaderHolder.put(clazz, downloader);
+            synchronized (instance.downloaderHolder) {
+                downloader = new QsDownloader<>(instance.httpClient, clazz);
+                instance.downloaderHolder.put(clazz, downloader);
             }
             if (L.isEnable()) {
                 String name = downloader.getClass().getSimpleName();
                 String className = clazz.getSimpleName();
-                int size = getInstance().downloaderHolder.size();
+                int size = instance.downloaderHolder.size();
                 L.i("QsDownloadHelper", "getDownloader(no cached)....clazz:" + className + ", downloader:" + name + ", cache size:" + size);
             }
         } else {
             if (L.isEnable()) {
                 String name = downloader.getClass().getSimpleName();
                 String className = clazz.getSimpleName();
-                int size = getInstance().downloaderHolder.size();
+                int size = instance.downloaderHolder.size();
                 L.i("QsDownloadHelper", "getDownloader(cached)....clazz:" + className + ", downloader:" + name + ", cache size:" + size);
             }
         }
