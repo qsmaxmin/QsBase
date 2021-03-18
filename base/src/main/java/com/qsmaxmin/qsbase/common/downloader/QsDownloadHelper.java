@@ -39,22 +39,16 @@ public class QsDownloadHelper {
                 if (downloader == null) {
                     downloader = new QsDownloader<>(instance.httpClient, clazz);
                     instance.downloaderHolder.put(clazz, downloader);
-                    if (L.isEnable()) {
-                        L.i("QsDownloadHelper", "getDownloader(no cached)....clazz:" + clazz.getSimpleName()
-                                + ", downloader:" + downloader.getClass().getSimpleName() + ", cache size:" + instance.downloaderHolder.size());
-                    }
+                    if (L.isEnable()) L.i("QsDownloadHelper", "getDownloader(no cached)....clazz:" + clazz.getSimpleName()
+                            + ", downloader:" + downloader.getClass().getSimpleName() + ", cache size:" + instance.downloaderHolder.size());
                 } else {
-                    if (L.isEnable()) {
-                        L.i("QsDownloadHelper", "getDownloader(cached)....clazz:" + clazz.getSimpleName()
-                                + ", downloader:" + downloader.getClass().getSimpleName() + ", cache size:" + instance.downloaderHolder.size());
-                    }
+                    if (L.isEnable()) L.i("QsDownloadHelper", "getDownloader(cached)....clazz:" + clazz.getSimpleName()
+                            + ", downloader:" + downloader.getClass().getSimpleName() + ", cache size:" + instance.downloaderHolder.size());
                 }
             }
         } else {
-            if (L.isEnable()) {
-                L.i("QsDownloadHelper", "getDownloader(cached)....clazz:" + clazz.getSimpleName()
-                        + ", downloader:" + downloader.getClass().getSimpleName() + ", cache size:" + instance.downloaderHolder.size());
-            }
+            if (L.isEnable()) L.i("QsDownloadHelper", "getDownloader(cached)....clazz:" + clazz.getSimpleName()
+                    + ", downloader:" + downloader.getClass().getSimpleName() + ", cache size:" + instance.downloaderHolder.size());
         }
         return downloader;
     }
