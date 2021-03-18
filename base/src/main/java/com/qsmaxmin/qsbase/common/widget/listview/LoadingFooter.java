@@ -2,6 +2,7 @@ package com.qsmaxmin.qsbase.common.widget.listview;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
 
@@ -12,12 +13,13 @@ import com.qsmaxmin.qsbase.common.log.L;
  * ListView/GridView/RecyclerView 分页加载时使用到的FooterView
  */
 public class LoadingFooter extends FrameLayout {
-    private static final String TAG = "LoadingFooter";
-    private              State  mState;
-    private              View   mNormalView;
-    private              View   mLoadingView;
-    private              View   mNetworkErrorView;
-    private              View   mTheEndView;
+    private static final String         TAG = "LoadingFooter";
+    private              State          mState;
+    private              View           mNormalView;
+    private              View           mLoadingView;
+    private              View           mNetworkErrorView;
+    private              View           mTheEndView;
+    private              LayoutInflater inflater;
 
     public LoadingFooter(Context context) {
         super(context);
@@ -36,6 +38,7 @@ public class LoadingFooter extends FrameLayout {
 
     public void init() {
         setState(State.Normal);
+        inflater = LayoutInflater.from(getContext());
     }
 
     @Override protected void onAttachedToWindow() {
@@ -74,7 +77,7 @@ public class LoadingFooter extends FrameLayout {
     private View showView(View view, boolean show, int layoutId) {
         if (show) {
             if (view == null) {
-                view = inflate(getContext(), layoutId, null);
+                view = inflater.inflate(layoutId, this, false);
                 addView(view);
             } else {
                 view.setVisibility(VISIBLE);
