@@ -3,7 +3,6 @@ package com.qsmaxmin.qsbase.common.widget.listview;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
-import android.view.ViewStub;
 import android.widget.FrameLayout;
 
 import com.qsmaxmin.qsbase.R;
@@ -63,73 +62,30 @@ public class LoadingFooter extends FrameLayout {
         }
     }
 
+    private void setViewState(State status) {
+        mLoadingView = showView(mLoadingView, status == State.Loading, R.layout.qs_layout_footer_loading);
 
-    private View showView(View view, int layoutId) {
-        if (view == null) {
-            view = inflate(getContext(), layoutId, null);
-            addView(view);
+        mNormalView = showView(mNormalView, status == State.Normal, R.layout.qs_layout_footer_init);
+
+        mTheEndView = showView(mTheEndView, status == State.TheEnd, R.layout.qs_layout_footer_end);
+
+        mNetworkErrorView = showView(mNetworkErrorView, status == State.NetWorkError, R.layout.qs_layout_footer_error);
+    }
+
+    private View showView(View view, boolean show, int layoutId) {
+        if (show) {
+            if (view == null) {
+                view = inflate(getContext(), layoutId, null);
+                addView(view);
+            } else {
+                view.setVisibility(VISIBLE);
+            }
         } else {
-            view.setVisibility(VISIBLE);
+            if (view != null) {
+                view.setVisibility(GONE);
+            }
         }
         return view;
-    }
-
-    private void hideView(View view) {
-        if (view != null) view.setVisibility(GONE);
-    }
-
-    private void setViewState(State status) {
-        switch (status) {
-            case Normal:
-                hideView(mTheEndView);
-                hideView(mNetworkErrorView);
-                hideView(mLoadingView);
-                if (mNormalView != null) {
-                    mNormalView.setVisibility(VISIBLE);
-                } else {
-                    ViewStub viewStub = findViewById(R.id.normal_viewstub);
-                    mNormalView = viewStub.inflate();
-                }
-                break;
-
-            case Loading:
-                if (mTheEndView != null) mTheEndView.setVisibility(GONE);
-                if (mNetworkErrorView != null) mNetworkErrorView.setVisibility(GONE);
-                if (mNormalView != null) mNormalView.setVisibility(GONE);
-                if (mLoadingView != null) {
-                    mLoadingView.setVisibility(VISIBLE);
-                } else {
-                    ViewStub viewStub = findViewById(R.id.loading_viewstub);
-                    mLoadingView = viewStub.inflate();
-                }
-                break;
-
-            case TheEnd:
-                if (mLoadingView != null) mLoadingView.setVisibility(GONE);
-                if (mNetworkErrorView != null) mNetworkErrorView.setVisibility(GONE);
-                if (mNormalView != null) mNormalView.setVisibility(GONE);
-                if (mTheEndView != null) {
-                    mTheEndView.setVisibility(VISIBLE);
-                } else {
-                    ViewStub viewStub = findViewById(R.id.end_viewstub);
-                    mTheEndView = viewStub.inflate();
-                }
-                break;
-
-            case NetWorkError:
-                if (mLoadingView != null) mLoadingView.setVisibility(GONE);
-                if (mTheEndView != null) mTheEndView.setVisibility(GONE);
-                if (mNormalView != null) mNormalView.setVisibility(GONE);
-                if (mNetworkErrorView != null) {
-                    mNetworkErrorView.setVisibility(VISIBLE);
-                } else {
-                    ViewStub viewStub = findViewById(R.id.network_error_viewstub);
-                    mNetworkErrorView = viewStub.inflate();
-                }
-                break;
-            default:
-                break;
-        }
     }
 
     public enum State {
