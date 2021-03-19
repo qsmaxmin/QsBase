@@ -84,6 +84,7 @@ public final class QsDownloader<M extends QsDownloadModel<K>, K> {
     /**
      * 异步执行下载动作
      */
+    @SuppressWarnings("unchecked")
     public final void enqueueDownload(final M model) {
         final Request.Builder builder;
         try {
@@ -96,10 +97,15 @@ public final class QsDownloader<M extends QsDownloadModel<K>, K> {
         postDownloadStart(model);
         final DownloadExecutor<M, K> executor;
         synchronized (executorMap) {
-            if (executorMap.get(model.getId()) == null) {
+            DownloadExecutor existsExecutor = executorMap.get(model.getId());
+            if (existsExecutor == null) {
                 executor = new DownloadExecutor<>(this, model, TAG);
                 executorMap.put(model.getId(), executor);
             } else {
+                if (!existsExecutor.isDownloadSuccess()) {
+                    M m = (M) existsExecutor.getModel();
+                    callbackDownloading(m, m.getDownloadedLength(), m.getTotalLength());
+                }
                 return;
             }
         }
@@ -127,7 +133,7 @@ public final class QsDownloader<M extends QsDownloadModel<K>, K> {
         if (QsThreadPollHelper.isMainThread()) {
             throw new Exception("cannot execute method:startDownloadSync() in MAIN Thread!!!");
         }
-        boolean shouldWait = false;
+        boolean isTaskExecuting = false;
         DownloadExecutor executor;
         synchronized (executorMap) {
             executor = executorMap.get(model.getId());
@@ -135,29 +141,23 @@ public final class QsDownloader<M extends QsDownloadModel<K>, K> {
                 executor = new DownloadExecutor<>(this, model, TAG);
                 executorMap.put(model.getId(), executor);
             } else {
-                shouldWait = true;
+                isTaskExecuting = true;
             }
         }
 
-        if (shouldWait) {
-            if (executor.isDownloadSuccess()) {
-                postDownloadComplete((M) executor.getModel());
-            } else {
-                M downloadingModel = (M) executor.getModel();
-                postDownloading(downloadingModel, downloadingModel.getDownloadedLength(), model.getTotalLength());
+        if (isTaskExecuting) {
+            if (!executor.isDownloadSuccess()) {
+                M m = (M) executor.getModel();
+                postDownloading(m, m.getDownloadedLength(), model.getTotalLength());
 
                 if (L.isEnable()) L.i(TAG, "executeDownload....相同的任务正在下载中，将当前线程置为等待中状态.........");
                 executor.applyWait();
                 if (L.isEnable()) L.i(TAG, "executeDownload....该任务在其它线程执行完毕，唤醒当前线程.........");
 
-                if (executor.isDownloadSuccess()) {
-                    postDownloadComplete(downloadingModel);
-                } else {
-                    postDownloadFailed(downloadingModel, "download file failed in other thread !!");
+                if (!executor.isDownloadSuccess()) {
                     throw new Exception("download file failed in other thread !!");
                 }
             }
-
         } else {
             try {
                 postDownloadStart(model);
