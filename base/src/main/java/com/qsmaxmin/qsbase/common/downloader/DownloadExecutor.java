@@ -27,6 +27,7 @@ class DownloadExecutor<M extends QsDownloadModel<K>, K> {
     private final File               tempFile;
     private final File               targetFile;
     private       boolean            canceled;
+    private       boolean            isDownloadSuccess;
 
     DownloadExecutor(QsDownloader<M, K> downloader, M model, String tag) {
         this.initTime = System.currentTimeMillis();
@@ -53,15 +54,13 @@ class DownloadExecutor<M extends QsDownloadModel<K>, K> {
                 startDownload(builder.build(), 0);
             }
         }
+        isDownloadSuccess = true;
     }
 
     private void checkFileBeforeDownload(Request.Builder builder) throws Exception {
         L.i(TAG, "checkFileBeforeDownload...old file exists, size:" + tempFile.length() + ", path:" + tempFile.getPath());
         Response response = downloader.getClient().newCall(builder.build()).execute();
         checkCancel();
-        if (response == null) {
-            throw new Exception("response is null !!");
-        }
         try {
             if (!response.isSuccessful()) {
                 throw new Exception("onResponse failed, response code=" + response.code());
@@ -87,9 +86,6 @@ class DownloadExecutor<M extends QsDownloadModel<K>, K> {
     private void startDownload(Request request, long rangStartPoint) throws Exception {
         Response response = downloader.getClient().newCall(request).execute();
         checkCancel();
-        if (response == null) {
-            throw new Exception("response is null !!");
-        }
 
         if (L.isEnable() && downloader.isPrintResponseHeader()) {
             printResponseHeader(response);
@@ -188,6 +184,10 @@ class DownloadExecutor<M extends QsDownloadModel<K>, K> {
 
     private String getTimeGone() {
         return (System.currentTimeMillis() - initTime) + "ms";
+    }
+
+    boolean isDownloadSuccess() {
+        return isDownloadSuccess;
     }
 
     final void cancel() {

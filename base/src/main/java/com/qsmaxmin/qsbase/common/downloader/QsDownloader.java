@@ -140,14 +140,24 @@ public final class QsDownloader<M extends QsDownloadModel<K>, K> {
         }
 
         if (shouldWait) {
-            if (L.isEnable()) L.i(TAG, "executeDownload....相同的任务正在下载中，将当前线程置为等待中状态.........");
-            M downloadingModel = (M) executor.getModel();
-            postDownloading(downloadingModel, downloadingModel.getDownloadedLength(), model.getTotalLength());
-            executor.applyWait();
-            if (L.isEnable()) L.i(TAG, "executeDownload....该任务在其它线程执行完毕，唤醒当前线程.........");
-            if (!executor.getTargetFile().exists()) {
-                throw new Exception("download file failed in other thread !!");
+            if (executor.isDownloadSuccess()) {
+                postDownloadComplete((M) executor.getModel());
+            } else {
+                M downloadingModel = (M) executor.getModel();
+                postDownloading(downloadingModel, downloadingModel.getDownloadedLength(), model.getTotalLength());
+
+                if (L.isEnable()) L.i(TAG, "executeDownload....相同的任务正在下载中，将当前线程置为等待中状态.........");
+                executor.applyWait();
+                if (L.isEnable()) L.i(TAG, "executeDownload....该任务在其它线程执行完毕，唤醒当前线程.........");
+
+                if (executor.isDownloadSuccess()) {
+                    postDownloadComplete(downloadingModel);
+                } else {
+                    postDownloadFailed(downloadingModel, "download file failed in other thread !!");
+                    throw new Exception("download file failed in other thread !!");
+                }
             }
+
         } else {
             try {
                 postDownloadStart(model);
@@ -156,10 +166,10 @@ public final class QsDownloader<M extends QsDownloadModel<K>, K> {
                 postDownloadComplete(model);
             } catch (Exception e) {
                 postDownloadFailed(model, e.getMessage());
-                L.e(TAG, e);
+                throw e;
             } finally {
-                executor.applyNotify();
                 removeExecutorFromTask(model);
+                executor.applyNotify();
             }
         }
     }
