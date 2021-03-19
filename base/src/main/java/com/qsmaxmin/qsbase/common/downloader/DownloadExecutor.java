@@ -44,8 +44,9 @@ class DownloadExecutor<M extends QsDownloadModel<K>, K> {
 
         if (downloader.isForceDownload() || !targetFile.exists()) {
             File parentFile = targetFile.getParentFile();
-            if (!parentFile.exists() && !parentFile.mkdirs()) {
-                throw new Exception("create dir failed...dir:" + parentFile.getPath());
+            if (!parentFile.exists()) {
+                boolean success = parentFile.mkdirs();
+                if (L.isEnable()) L.i("DownloadExecutor", "start.........crate dir(" + success + "):" + parentFile.getAbsolutePath());
             }
 
             if (downloader.isSupportBreakPointTransmission() && tempFile.exists() && tempFile.length() > 0) {
