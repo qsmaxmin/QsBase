@@ -94,7 +94,7 @@ public final class QsDownloader<M extends QsDownloadModel<K>, K> {
             L.e(TAG, e);
             return;
         }
-        postDownloadStart(model);
+
         DownloadExecutor<M, K> executor;
         boolean isTaskExecuting = false;
         synchronized (executorMap) {
@@ -112,6 +112,7 @@ public final class QsDownloader<M extends QsDownloadModel<K>, K> {
                 postDownloading(m, m.getDownloadedLength(), m.getTotalLength());
             }
         } else {
+            postDownloadStart(model);
             final DownloadExecutor<M, K> finalExecutor = executor;
             QsThreadPollHelper.runOnHttpThread(new SafeRunnable() {
                 @Override protected void safeRun() {
