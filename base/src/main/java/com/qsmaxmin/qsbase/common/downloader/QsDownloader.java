@@ -95,34 +95,39 @@ public final class QsDownloader<M extends QsDownloadModel<K>, K> {
             return;
         }
         postDownloadStart(model);
-        final DownloadExecutor<M, K> executor;
+        DownloadExecutor<M, K> executor;
+        boolean isTaskExecuting = false;
         synchronized (executorMap) {
-            DownloadExecutor existsExecutor = executorMap.get(model.getId());
-            if (existsExecutor == null) {
+            executor = executorMap.get(model.getId());
+            if (executor == null) {
                 executor = new DownloadExecutor<>(this, model, TAG);
                 executorMap.put(model.getId(), executor);
             } else {
-                if (!existsExecutor.isDownloadSuccess()) {
-                    M m = (M) existsExecutor.getModel();
-                    callbackDownloading(m, m.getDownloadedLength(), m.getTotalLength());
-                }
-                return;
+                isTaskExecuting = true;
             }
         }
-        QsThreadPollHelper.runOnHttpThread(new SafeRunnable() {
-            @Override protected void safeRun() {
-                try {
-                    executor.start(builder);
-                    postDownloadComplete(model);
-                } catch (Exception e) {
-                    postDownloadFailed(model, e.getMessage());
-                    L.e(TAG, e);
-                } finally {
-                    removeExecutorFromTask(model);
-                    executor.applyNotify();
-                }
+        if (isTaskExecuting) {
+            if (!executor.isDownloadSuccess()) {
+                M m = (M) executor.getModel();
+                callbackDownloading(m, m.getDownloadedLength(), m.getTotalLength());
             }
-        });
+        } else {
+            final DownloadExecutor<M, K> finalExecutor = executor;
+            QsThreadPollHelper.runOnHttpThread(new SafeRunnable() {
+                @Override protected void safeRun() {
+                    try {
+                        finalExecutor.start(builder);
+                        postDownloadComplete(model);
+                    } catch (Exception e) {
+                        postDownloadFailed(model, e.getMessage());
+                        L.e(TAG, e);
+                    } finally {
+                        removeExecutorFromTask(model);
+                        finalExecutor.applyNotify();
+                    }
+                }
+            });
+        }
     }
 
     /**
