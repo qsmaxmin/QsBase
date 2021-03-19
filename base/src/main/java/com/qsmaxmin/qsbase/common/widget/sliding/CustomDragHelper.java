@@ -1,5 +1,7 @@
 package com.qsmaxmin.qsbase.common.widget.sliding;
 
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,12 +18,16 @@ import androidx.customview.widget.ViewDragHelper;
 class CustomDragHelper extends ViewDragHelper.Callback {
     private final ViewGroup       parentView;
     private final ViewDragHelper  dragHelper;
-    private       boolean         isReleased;
+    private final Drawable        bgDrawable;
+    private       boolean         isDragIng;
     private       float           slidingRatio;
     private       SlidingListener listener;
+    private       boolean         canSliding;
 
     CustomDragHelper(ViewGroup parent) {
         this.parentView = parent;
+        bgDrawable = new ColorDrawable(0x88000000);
+        parent.setBackgroundDrawable(bgDrawable);
         this.dragHelper = ViewDragHelper.create(parent, 1f, this);
     }
 
@@ -37,7 +43,36 @@ class CustomDragHelper extends ViewDragHelper.Callback {
         return dragHelper.continueSettling(true);
     }
 
-    public void setSlidingListener(SlidingListener listener) {
+    boolean isDragIng() {
+        return isDragIng;
+    }
+
+    boolean onViewLayout() {
+        if (isDragIng()) {
+            int childCount = getChildCount();
+            for (int i = 0; i < childCount; i++) {
+                View childAt = getChildAt(i);
+                if (childAt != null && childAt.getVisibility() != View.GONE) {
+                    childAt.layout(childAt.getLeft(), childAt.getTop(), childAt.getRight(), childAt.getBottom());
+                }
+            }
+            return false;
+        }
+        return true;
+    }
+
+    void setCanSliding(boolean canSliding) {
+        this.canSliding = canSliding;
+        if (!canSliding) {
+            dragHelper.cancel();
+        }
+    }
+
+    boolean isCanSliding() {
+        return canSliding;
+    }
+
+    void setSlidingListener(SlidingListener listener) {
         this.listener = listener;
     }
 
@@ -46,7 +81,7 @@ class CustomDragHelper extends ViewDragHelper.Callback {
     }
 
     @Override public boolean tryCaptureView(@NonNull View child, int pointerId) {
-        isReleased = false;
+        isDragIng = true;
         return true;
     }
 
@@ -83,12 +118,12 @@ class CustomDragHelper extends ViewDragHelper.Callback {
         int leftMargin = getViewLeftMargin(changedView);
         int range = getRange();
         slidingRatio = (left - getPaddingLeft() - leftMargin) / (float) range;
-        if (listener != null) listener.onSliding(slidingRatio);
-        if (isReleased) {
+        callbackSliding(slidingRatio);
+        if (!isDragIng) {
             if (left == getPaddingLeft() + leftMargin) {
-                if (listener != null) listener.onClose();
+                callbackClose();
             } else if (left == getPaddingLeft() + leftMargin + range) {
-                if (listener != null) listener.onOpen();
+                callbackOpen();
             }
         }
     }
@@ -105,9 +140,23 @@ class CustomDragHelper extends ViewDragHelper.Callback {
                 left += getRange();
             }
         }
-        isReleased = true;
+        isDragIng = false;
         dragHelper.settleCapturedViewAt(left, releasedChild.getTop());
         parentView.invalidate();
+    }
+
+    private void callbackSliding(float ratio) {
+        int alpha = (int) ((1f - ratio) * 255);
+        bgDrawable.setAlpha(alpha);
+        if (listener != null) listener.onSliding(ratio);
+    }
+
+    private void callbackOpen() {
+        if (listener != null) listener.onOpen();
+    }
+
+    private void callbackClose() {
+        if (listener != null) listener.onClose();
     }
 
     private int getViewLeftMargin(@NonNull View child) {

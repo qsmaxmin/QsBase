@@ -2,7 +2,6 @@ package com.qsmaxmin.qsbase.common.widget.sliding;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.drawable.ColorDrawable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.widget.FrameLayout;
@@ -17,10 +16,7 @@ import androidx.core.view.ViewCompat;
  * @Description
  */
 public class SlidingFrameLayout extends FrameLayout implements ISlidingViewGroup {
-    private boolean          canSliding;
-    private ColorDrawable    bgDrawable;
-    private CustomDragHelper dragHelper;
-    private SlidingListener  slidingListener;
+    private CustomDragHelper drag;
 
     public SlidingFrameLayout(@NonNull Context context) {
         super(context);
@@ -38,48 +34,29 @@ public class SlidingFrameLayout extends FrameLayout implements ISlidingViewGroup
     }
 
     private void init() {
-        canSliding = true;
-        bgDrawable = new ColorDrawable(0x88000000);
-        setBackgroundDrawable(bgDrawable);
-
-        dragHelper = new CustomDragHelper(this);
-        dragHelper.setSlidingListener(new SlidingListener() {
-            @Override public void onOpen() {
-                if (slidingListener != null) slidingListener.onOpen();
-            }
-
-            @Override public void onClose() {
-                if (slidingListener != null) slidingListener.onClose();
-            }
-
-            @Override public void onSliding(float ratio) {
-                int alpha = (int) ((1f - ratio) * 255);
-                bgDrawable.setAlpha(alpha);
-                if (slidingListener != null) slidingListener.onSliding(ratio);
-            }
-        });
+        drag = new CustomDragHelper(this);
     }
 
     @Override public void setCanSliding(boolean canSliding) {
-        this.canSliding = canSliding;
+        drag.setCanSliding(canSliding);
     }
 
     @Override public boolean isCanSliding() {
-        return canSliding;
+        return drag.isCanSliding();
     }
 
     @Override public void setSlidingListener(SlidingListener listener) {
-        this.slidingListener = listener;
+        this.drag.setSlidingListener(listener);
     }
 
     @Override public boolean onInterceptTouchEvent(MotionEvent ev) {
-        return canSliding ? dragHelper.shouldInterceptTouchEvent(ev) : super.onInterceptTouchEvent(ev);
+        return isCanSliding() ? drag.shouldInterceptTouchEvent(ev) : super.onInterceptTouchEvent(ev);
     }
 
     @SuppressLint("ClickableViewAccessibility")
     @Override public boolean onTouchEvent(MotionEvent ev) {
-        if (canSliding) {
-            dragHelper.onTouchEvent(ev);
+        if (isCanSliding()) {
+            drag.onTouchEvent(ev);
             return true;
         } else {
             return super.onTouchEvent(ev);
@@ -87,8 +64,14 @@ public class SlidingFrameLayout extends FrameLayout implements ISlidingViewGroup
     }
 
     @Override public void computeScroll() {
-        if (dragHelper.continueSettling()) {
+        if (drag.continueSettling()) {
             ViewCompat.postInvalidateOnAnimation(this);
+        }
+    }
+
+    @Override protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        if (!isCanSliding() || drag.onViewLayout()) {
+            super.onLayout(changed, l, t, r, b);
         }
     }
 }
