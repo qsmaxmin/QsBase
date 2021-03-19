@@ -15,7 +15,7 @@ import androidx.customview.widget.ViewDragHelper;
  * @Date 2021/3/16 17:45
  * @Description
  */
-class CustomDragHelper extends ViewDragHelper.Callback {
+public class CustomDragHelper extends ViewDragHelper.Callback {
     private final ViewGroup       parentView;
     private final ViewDragHelper  dragHelper;
     private final Drawable        bgDrawable;
@@ -24,7 +24,7 @@ class CustomDragHelper extends ViewDragHelper.Callback {
     private       SlidingListener listener;
     private       boolean         canSliding;
 
-    CustomDragHelper(ViewGroup parent) {
+    public CustomDragHelper(ViewGroup parent) {
         this.parentView = parent;
         this.dragHelper = ViewDragHelper.create(parent, 1f, this);
         this.bgDrawable = new ColorDrawable(0x88000000);
@@ -32,23 +32,19 @@ class CustomDragHelper extends ViewDragHelper.Callback {
         parent.setBackgroundDrawable(bgDrawable);
     }
 
-    void onTouchEvent(MotionEvent ev) {
+    public void onTouchEvent(MotionEvent ev) {
         dragHelper.processTouchEvent(ev);
     }
 
-    boolean shouldInterceptTouchEvent(MotionEvent ev) {
+    public boolean shouldInterceptTouchEvent(MotionEvent ev) {
         return dragHelper.shouldInterceptTouchEvent(ev);
     }
 
-    boolean continueSettling() {
+    public boolean continueSettling() {
         return dragHelper.continueSettling(true);
     }
 
-    boolean isDragIng() {
-        return isDragIng;
-    }
-
-    boolean onViewLayout() {
+    public boolean onViewLayout() {
         if (isDragIng()) {
             int childCount = getChildCount();
             for (int i = 0; i < childCount; i++) {
@@ -62,19 +58,23 @@ class CustomDragHelper extends ViewDragHelper.Callback {
         return true;
     }
 
-    void setCanSliding(boolean canSliding) {
+    public void setCanSliding(boolean canSliding) {
         this.canSliding = canSliding;
         if (!canSliding) {
             dragHelper.cancel();
         }
     }
 
-    boolean isCanSliding() {
+    public boolean isCanSliding() {
         return canSliding;
     }
 
-    void setSlidingListener(SlidingListener listener) {
+    public void setSlidingListener(SlidingListener listener) {
         this.listener = listener;
+    }
+
+    public boolean isDragIng() {
+        return isDragIng;
     }
 
     @Override public int getViewHorizontalDragRange(@NonNull View child) {
