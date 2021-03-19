@@ -6,6 +6,7 @@ import android.os.Message;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewParent;
 import android.view.animation.Interpolator;
 
 import com.qsmaxmin.qsbase.common.log.L;
@@ -183,12 +184,12 @@ public final class AutoScrollViewPager extends QsViewPager {
             int pageCount = adapter == null ? 0 : adapter.getCount();
             if ((currentItem == 0 && downX <= touchX) || (currentItem == pageCount - 1 && downX >= touchX)) {
                 if (slideBorderMode == SLIDE_BORDER_MODE_TO_PARENT) {
-                    getParent().requestDisallowInterceptTouchEvent(false);
+                    requestParentDisallowInterceptTouchEvent(false);
                 } else {
                     if (pageCount > 1) {
                         setCurrentItem(pageCount - currentItem - 1, true);
                     }
-                    getParent().requestDisallowInterceptTouchEvent(true);
+                    requestParentDisallowInterceptTouchEvent(true);
                 }
             }
         }
@@ -214,7 +215,7 @@ public final class AutoScrollViewPager extends QsViewPager {
                 lastX = curX;
                 lastY = curY;
                 if (distanceX * mFactor > distanceY) {
-                    if (getParent() != null) getParent().requestDisallowInterceptTouchEvent(true);
+                    requestParentDisallowInterceptTouchEvent(true);
                     setBeingDragged();
                     L.i(initTag(), "parseInterceptTouchEvent.........setBeingDragged");
                 }
@@ -228,6 +229,13 @@ public final class AutoScrollViewPager extends QsViewPager {
                 break;
         }
         return super.onInterceptTouchEvent(ev);
+    }
+
+    private void requestParentDisallowInterceptTouchEvent(boolean disallowIntercept) {
+        final ViewParent parent = getParent();
+        if (parent != null) {
+            parent.requestDisallowInterceptTouchEvent(disallowIntercept);
+        }
     }
 
     private void setBeingDragged() {

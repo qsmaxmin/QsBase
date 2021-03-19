@@ -22,8 +22,13 @@ public class QsViewPager extends ViewPager {
         super(context, attrs);
     }
 
-    @Override public boolean onInterceptTouchEvent(MotionEvent arg0) {
-        return canScroll && super.onInterceptTouchEvent(arg0);
+    @Override public boolean onInterceptTouchEvent(MotionEvent ev) {
+        if (ev.getAction() == MotionEvent.ACTION_DOWN && getParent() != null && getAdapter() != null) {
+            int count = getAdapter().getCount();
+            int currentItem = getCurrentItem();
+            getParent().requestDisallowInterceptTouchEvent(currentItem != 0 && currentItem != count);
+        }
+        return canScroll && super.onInterceptTouchEvent(ev);
     }
 
     public void setCanScroll(boolean canScroll) {

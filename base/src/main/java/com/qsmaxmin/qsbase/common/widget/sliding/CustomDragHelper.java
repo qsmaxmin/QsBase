@@ -15,14 +15,14 @@ import androidx.customview.widget.ViewDragHelper;
  * @Date 2021/3/16 17:45
  * @Description
  */
-public class CustomDragHelper extends ViewDragHelper.Callback {
+public final class CustomDragHelper extends ViewDragHelper.Callback {
     private final ViewGroup       parentView;
     private final ViewDragHelper  dragHelper;
     private final Drawable        bgDrawable;
-    private       boolean         isDragIng;
-    private       float           slidingRatio;
     private       SlidingListener listener;
     private       boolean         canSliding;
+    private       boolean         isDragIng;
+    private       float           slidingRatio;
 
     public CustomDragHelper(ViewGroup parent) {
         this.parentView = parent;
@@ -32,20 +32,25 @@ public class CustomDragHelper extends ViewDragHelper.Callback {
         parent.setBackgroundDrawable(bgDrawable);
     }
 
-    public void onTouchEvent(MotionEvent ev) {
-        dragHelper.processTouchEvent(ev);
+    public final boolean onTouchEvent(MotionEvent ev) {
+        if (canSliding) {
+            dragHelper.processTouchEvent(ev);
+        }
+        return canSliding;
     }
 
-    public boolean shouldInterceptTouchEvent(MotionEvent ev) {
-        return dragHelper.shouldInterceptTouchEvent(ev);
+    public final boolean onInterceptTouchEvent(MotionEvent ev) {
+        return canSliding && dragHelper.shouldInterceptTouchEvent(ev);
     }
 
-    public boolean continueSettling() {
-        return dragHelper.continueSettling(true);
+    public final void computeScroll() {
+        if (dragHelper.continueSettling(true)) {
+            ViewCompat.postInvalidateOnAnimation(parentView);
+        }
     }
 
-    public boolean onViewLayout() {
-        if (isDragIng()) {
+    public final boolean onViewLayout() {
+        if (canSliding && isDragIng) {
             int childCount = getChildCount();
             for (int i = 0; i < childCount; i++) {
                 View childAt = getChildAt(i);
@@ -58,22 +63,22 @@ public class CustomDragHelper extends ViewDragHelper.Callback {
         return true;
     }
 
-    public void setCanSliding(boolean canSliding) {
+    public final void setCanSliding(boolean canSliding) {
         this.canSliding = canSliding;
         if (!canSliding) {
             dragHelper.cancel();
         }
     }
 
-    public boolean isCanSliding() {
+    public final boolean isCanSliding() {
         return canSliding;
     }
 
-    public void setSlidingListener(SlidingListener listener) {
+    public final void setSlidingListener(SlidingListener listener) {
         this.listener = listener;
     }
 
-    public boolean isDragIng() {
+    public final boolean isDragIng() {
         return isDragIng;
     }
 
@@ -130,20 +135,26 @@ public class CustomDragHelper extends ViewDragHelper.Callback {
     }
 
     @Override public void onViewReleased(@NonNull View releasedChild, float xVel, float yVel) {
-        int leftMargin = getViewLeftMargin(releasedChild);
-        int left = getPaddingLeft() + leftMargin;
+        int left = getPaddingLeft() + getViewLeftMargin(releasedChild);
         if (isLayoutRtlSupport()) {
-            if (xVel < 0.0F || (xVel == 0.0F && slidingRatio > 0.5F)) {
+            if ((xVel < 0.0F && -xVel > Math.abs(yVel)) || (xVel == 0.0F && slidingRatio > 0.5F)) {
                 left += getRange();
             }
         } else {
-            if (xVel > 0.0F || (xVel == 0.0F && slidingRatio > 0.5F)) {
+            if ((xVel > 0.0F && xVel > Math.abs(yVel)) || (xVel == 0.0F && slidingRatio > 0.5F)) {
                 left += getRange();
             }
         }
         isDragIng = false;
-        dragHelper.settleCapturedViewAt(left, releasedChild.getTop());
-        parentView.invalidate();
+        if (dragHelper.settleCapturedViewAt(left, releasedChild.getTop())) {
+            parentView.invalidate();
+        } else {
+            if (releasedChild.getLeft() == left) {
+                callbackClose();
+            } else {
+                callbackOpen();
+            }
+        }
     }
 
     private void callbackSliding(float ratio) {

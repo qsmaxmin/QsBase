@@ -8,7 +8,6 @@ import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.view.ViewCompat;
 
 /**
  * @CreateBy qsmaxmin
@@ -50,28 +49,19 @@ public class SlidingFrameLayout extends FrameLayout implements ISlidingViewGroup
     }
 
     @Override public boolean onInterceptTouchEvent(MotionEvent ev) {
-        return isCanSliding() ? drag.shouldInterceptTouchEvent(ev) : super.onInterceptTouchEvent(ev);
+        return drag.onInterceptTouchEvent(ev) || super.onInterceptTouchEvent(ev);
     }
 
     @SuppressLint("ClickableViewAccessibility")
     @Override public boolean onTouchEvent(MotionEvent ev) {
-        if (isCanSliding()) {
-            drag.onTouchEvent(ev);
-            return true;
-        } else {
-            return super.onTouchEvent(ev);
-        }
+        return drag.onTouchEvent(ev) || super.onTouchEvent(ev);
     }
 
     @Override public void computeScroll() {
-        if (drag.continueSettling()) {
-            ViewCompat.postInvalidateOnAnimation(this);
-        }
+        drag.computeScroll();
     }
 
     @Override protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        if (!isCanSliding() || drag.onViewLayout()) {
-            super.onLayout(changed, l, t, r, b);
-        }
+        if (drag.onViewLayout()) super.onLayout(changed, l, t, r, b);
     }
 }
