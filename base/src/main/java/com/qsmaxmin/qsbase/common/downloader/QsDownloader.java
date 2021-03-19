@@ -109,7 +109,7 @@ public final class QsDownloader<M extends QsDownloadModel<K>, K> {
         if (isTaskExecuting) {
             if (!executor.isDownloadSuccess()) {
                 M m = (M) executor.getModel();
-                callbackDownloading(m, m.getDownloadedLength(), m.getTotalLength());
+                postDownloading(m, m.getDownloadedLength(), m.getTotalLength());
             }
         } else {
             final DownloadExecutor<M, K> finalExecutor = executor;
