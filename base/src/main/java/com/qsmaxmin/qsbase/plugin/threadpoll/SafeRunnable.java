@@ -15,15 +15,15 @@ public abstract class SafeRunnable implements Runnable {
     @Override public void run() {
         try {
             safeRun();
-        } catch (Exception e) {
-            if (L.isEnable()) L.e("SafeRunnable", e);
-            onError(e);
+        } catch (Throwable t) {
+            onError(t);
         }
     }
 
     protected abstract void safeRun();
 
-    protected void onError(Exception e) {
+    protected void onError(Throwable t) {
+        if (L.isEnable()) L.e("SafeRunnable", t);
         //custom your logic
     }
 }
