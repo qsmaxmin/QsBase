@@ -26,9 +26,10 @@ class CustomDragHelper extends ViewDragHelper.Callback {
 
     CustomDragHelper(ViewGroup parent) {
         this.parentView = parent;
-        bgDrawable = new ColorDrawable(0x88000000);
-        parent.setBackgroundDrawable(bgDrawable);
         this.dragHelper = ViewDragHelper.create(parent, 1f, this);
+        this.bgDrawable = new ColorDrawable(0x88000000);
+        this.canSliding = true;
+        parent.setBackgroundDrawable(bgDrawable);
     }
 
     void onTouchEvent(MotionEvent ev) {
