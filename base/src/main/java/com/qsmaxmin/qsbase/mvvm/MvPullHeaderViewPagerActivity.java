@@ -14,7 +14,7 @@ import com.qsmaxmin.qsbase.common.widget.ptr.header.BeautyCircleRefreshHeader;
 import androidx.annotation.NonNull;
 
 /**
- * @CreateBy administrator
+ * @CreateBy qsmaxmin
  * @Date 2020/9/9 11:14
  * @Description
  */

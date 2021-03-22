@@ -5,7 +5,7 @@ import com.qsmaxmin.annotation.QsNotProguard;
 import java.util.Map;
 
 /**
- * @CreateBy administrator
+ * @CreateBy qsmaxmin
  * @Date 2020/8/19 15:10
  * @Description for QsTransform
  */
