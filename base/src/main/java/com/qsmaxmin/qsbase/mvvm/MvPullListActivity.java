@@ -38,7 +38,7 @@ public abstract class MvPullListActivity<D> extends MvListActivity<D> implements
         return new BeautyCircleRefreshHeader(getContext());
     }
 
-    @Override protected View initView(@NonNull LayoutInflater inflater) {
+    @NonNull @Override protected View initView(@NonNull LayoutInflater inflater) {
         View view = super.initView(inflater);
         if (canPullRefreshing()) {
             initPtrFrameLayout(view);

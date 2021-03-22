@@ -37,7 +37,7 @@ public abstract class MvViewPagerActivity extends MvActivity implements MvIViewP
         return R.layout.qs_viewpager_bottom_tab;
     }
 
-    @Override protected View initView(@NonNull LayoutInflater inflater) {
+    @NonNull @Override protected View initView(@NonNull LayoutInflater inflater) {
         View view = super.initView(inflater);
         pager = view.findViewById(R.id.pager);
         tabs = view.findViewById(android.R.id.tabs);

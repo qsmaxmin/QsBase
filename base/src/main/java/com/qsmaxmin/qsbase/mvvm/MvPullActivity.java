@@ -32,7 +32,7 @@ public abstract class MvPullActivity extends MvActivity implements MvIPullView {
         return new BeautyCircleRefreshHeader(getContext());
     }
 
-    @Override protected View initView(@NonNull LayoutInflater inflater) {
+    @NonNull @Override protected View initView(@NonNull LayoutInflater inflater) {
         View view = super.initView(inflater);
         initPtrFrameLayout(view);
         childView = onCreateChildView(inflater, mPtrFrameLayout);

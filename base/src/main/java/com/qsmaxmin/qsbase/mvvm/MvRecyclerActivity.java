@@ -65,7 +65,7 @@ public abstract class MvRecyclerActivity<D> extends MvActivity implements MvIRec
         return recyclerView;
     }
 
-    @Override protected View initView(@NonNull LayoutInflater inflater) {
+    @NonNull @Override protected View initView(@NonNull LayoutInflater inflater) {
         View rootView = super.initView(inflater);
         initRecycleView(getLayoutInflater(), rootView);
         return rootView;

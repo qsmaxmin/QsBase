@@ -67,7 +67,7 @@ public abstract class MvPullHeaderViewPagerActivity extends MvHeaderViewPagerAct
         return mPtrFrameLayout;
     }
 
-    @Override protected View initView(@NonNull LayoutInflater inflater) {
+    @NonNull @Override protected View initView(@NonNull LayoutInflater inflater) {
         View view = super.initView(inflater);
         initPtrFrameLayout(view);
         return view;

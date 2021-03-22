@@ -70,7 +70,7 @@ public abstract class MvListActivity<D> extends MvActivity implements MvIListVie
         return 0;
     }
 
-    @Override protected View initView(@NonNull LayoutInflater inflater) {
+    @NonNull @Override protected View initView(@NonNull LayoutInflater inflater) {
         View rootView = super.initView(inflater);
         mListView = rootView.findViewById(android.R.id.list);
         if (mListView == null) throw new RuntimeException("ListView is not exit or its id not 'android.R.id.list' in current layout!!");

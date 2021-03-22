@@ -23,7 +23,7 @@ public abstract class MvHeaderViewPagerActivity extends MvViewPagerActivity impl
         return R.layout.qs_header_viewpager;
     }
 
-    @Override protected View initView(@NonNull LayoutInflater inflater) {
+    @NonNull @Override protected View initView(@NonNull LayoutInflater inflater) {
         View view = super.initView(inflater);
         if (view instanceof HeaderScrollView) {
             headerScrollView = (HeaderScrollView) view;

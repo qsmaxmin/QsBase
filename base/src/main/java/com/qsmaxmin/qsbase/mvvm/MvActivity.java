@@ -164,7 +164,7 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
     @Override public void onViewCreated(@NonNull View rootView) {
     }
 
-    protected View initView(@NonNull LayoutInflater inflater) {
+    @NonNull protected View initView(@NonNull LayoutInflater inflater) {
         long s0 = 0;
         if (L.isEnable()) s0 = System.currentTimeMillis();
         View rootView = onCreateRootView(inflater, null);

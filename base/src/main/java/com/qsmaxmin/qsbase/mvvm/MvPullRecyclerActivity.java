@@ -39,7 +39,7 @@ public abstract class MvPullRecyclerActivity<D> extends MvRecyclerActivity<D> im
         return new BeautyCircleRefreshHeader(getContext());
     }
 
-    @Override protected View initView(@NonNull LayoutInflater inflater) {
+    @NonNull @Override protected View initView(@NonNull LayoutInflater inflater) {
         View view = super.initView(inflater);
         if (canPullRefreshing()) {
             initPtrFrameLayout(view);
