@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import com.google.gson.Gson;
 import com.qsmaxmin.qsbase.common.aspect.Body;
 import com.qsmaxmin.qsbase.common.aspect.DELETE;
+import com.qsmaxmin.qsbase.common.aspect.FieldMap;
 import com.qsmaxmin.qsbase.common.aspect.FormBody;
 import com.qsmaxmin.qsbase.common.aspect.FormParam;
 import com.qsmaxmin.qsbase.common.aspect.GET;
@@ -42,7 +43,7 @@ import okhttp3.RequestBody;
  * @Date 2020/7/17 11:52
  * @Description
  */
-public class HttpRequest {
+public final class HttpRequest {
     private final Method   method;
     private final Object[] args;
     private final Object   requestTag;
@@ -54,8 +55,9 @@ public class HttpRequest {
     private       String   path;
     private       String   requestType;
 
-    private HashMap<String, Object> formMap;
+    private HashMap<String, Object> filedMap;
     private HashMap<String, String> queryMap;
+    private String                  requestBodyMimeType;
     private Object                  requestBody;
     private String                  url;
     private Headers.Builder         headerBuilder;
@@ -70,24 +72,151 @@ public class HttpRequest {
     }
 
     Request createRequest(QsHttpCallback callback) throws Exception {
+        processMethodAnnotation();
+        processParamsAnnotation();
+
+        if (callback != null) callback.processParams(this);
+        if (TextUtils.isEmpty(terminal)) {
+            throw new Exception("url terminal error... method:" + methodName + ", terminal is null...");
+        }
+
+        StringBuilder urlBuilder = new StringBuilder(terminal);
+        urlBuilder.append(path);
+
+        if (queryMap != null && !queryMap.isEmpty()) {
+            appendQueryParams(urlBuilder);
+        }
+        url = urlBuilder.toString();
+        if (L.isEnable()) {
+            L.i("HttpRequest", "start request....method:" + method.getName() + ", url:" + url);
+        }
+
+        Request.Builder builder = new Request.Builder();
+        if (headerBuilder != null) builder.headers(headerBuilder.build());
+        if (requestTag != null) builder.tag(requestTag);
+        return builder.url(url).method(requestType, createRequestBody()).build();
+    }
+
+    private RequestBody createRequestBody() {
+        if (shouldProcessBody()) {
+            if (requestBody != null) {
+                return createRequestBodyByObject(requestBodyMimeType, requestBody);
+            } else if (filedMap != null) {
+                return createRequestBodyByForm(filedMap);
+            }
+        }
+        return null;
+    }
+
+    private void appendQueryParams(StringBuilder urlBuilder) {
+        int i = 0;
+        Uri uri = Uri.parse(urlBuilder.toString());
+        String uriQuery = uri.getQuery();
+        boolean shouldAdd = TextUtils.isEmpty(uriQuery) && urlBuilder.charAt(urlBuilder.length() - 1) != '?';
+        for (String key : queryMap.keySet()) {
+            String value = queryMap.get(key);
+            urlBuilder.append((i == 0 && shouldAdd) ? '?' : '&').append(key).append('=').append(value);
+            i++;
+        }
+    }
+
+    private void processParamsAnnotation() throws Exception {
+        List<Object> pathReplaceList = null;
+
+        if (args != null && args.length > 0) {
+            Annotation[][] paramsAnnTotal = method.getParameterAnnotations();
+            if (paramsAnnTotal.length != args.length) {
+                throw new Exception("params error method:" + methodName + " params have to have one annotation, such as @Query @Path");
+            }
+            Annotation[] paramsAnn = new Annotation[paramsAnnTotal.length];
+            for (int i = 0; i < paramsAnnTotal.length; i++) {
+                Annotation[] annotations = paramsAnnTotal[i];
+                if (annotations.length != 1) {
+                    throw new Exception("params error method:" + methodName + " params have to have one annotation, but there is more than one !");
+                } else {
+                    paramsAnn[i] = annotations[0];
+                }
+            }
+
+            for (int i = 0; i < paramsAnn.length; i++) {
+                Annotation annotation = paramsAnn[i];
+                if (annotation instanceof com.qsmaxmin.qsbase.common.aspect.Field || annotation instanceof FormParam) {
+                    Object arg = args[i];
+                    if (arg != null) {
+                        if (annotation instanceof FormParam) {
+                            getFiledMap().put(((FormParam) annotation).value(), arg);
+                        } else {
+                            getFiledMap().put(((com.qsmaxmin.qsbase.common.aspect.Field) annotation).value(), arg);
+                        }
+                    }
+
+                } else if (annotation instanceof Query) {
+                    Object arg = args[i];
+                    String key = ((Query) annotation).value();
+                    getQueryMap().put(key, arg == null ? "" : String.valueOf(arg));
+
+                } else if (annotation instanceof FieldMap) {
+                    if (!(args[i] instanceof Map)) {
+                        throw new Exception("param error....@FieldMap only support Map field");
+                    }
+                    Map map = (Map) args[i];
+                    for (Object k : map.keySet()) {
+                        getFiledMap().put(String.valueOf(k), map.get(k));
+                    }
+
+                } else if (annotation instanceof FormBody) {
+                    if (args[i] != null) {
+                        parseFormBody(getFiledMap(), args[i]);
+                    }
+
+                } else if (annotation instanceof Body) {
+                    requestBody = args[i];
+                    requestBodyMimeType = ((Body) annotation).mimeType();
+                    if (TextUtils.isEmpty(requestBodyMimeType)) {
+                        throw new Exception("param error...  method:" + methodName + "  the annotation @Body must have mimeType value");
+                    }
+
+                } else if (annotation instanceof Path) {
+                    if (pathReplaceList == null) pathReplaceList = new ArrayList<>();
+                    pathReplaceList.add(args[i]);
+                }
+            }
+        }
+
+        if (pathReplaceList != null) {
+            path = String.format(path, pathReplaceList.toArray());
+        }
+    }
+
+    /**
+     * 处理Method注解
+     */
+    private void processMethodAnnotation() throws Exception {
         Annotation[] methodAnn = method.getAnnotations();
         if (methodAnn.length == 0) {
             throw new Exception("Annotation error... the method:" + methodName + " must have one annotation at least!! @GET @POST or @PUT...");
         }
-
+        String[] headerArrays = null;
         Annotation pathAnnotation = null;
         for (Annotation annotation : methodAnn) {
             if (annotation instanceof TERMINAL) {
                 terminal = ((TERMINAL) annotation).value();
             } else if (annotation instanceof RequestStyle) {
                 requestStyle = ((RequestStyle) annotation).value();
+            } else if (annotation instanceof com.qsmaxmin.qsbase.common.aspect.Headers) {
+                headerArrays = ((com.qsmaxmin.qsbase.common.aspect.Headers) annotation).value();
             } else {
                 pathAnnotation = annotation;
             }
         }
-
         if (pathAnnotation == null) {
             throw new Exception("Annotation error... the method:" + methodName + " must has an annotation,such as:@PUT @POST or @GET...");
+        }
+        if (headerArrays != null && headerArrays.length > 0) {
+            headerBuilder = new Headers.Builder();
+            for (String header : headerArrays) {
+                headerBuilder.add(header);
+            }
         }
 
         if (pathAnnotation instanceof POST) {
@@ -112,201 +241,145 @@ public class HttpRequest {
             throw new Exception("Annotation error... the method:" + methodName + " must has an annotation, such as:@PUT @POST or @GET...");
         }
 
-        String mimeType = "application/json; charset=UTF-8";
-        List<Object> pathReplaceList = null;
-
-        if (args != null && args.length > 0) {
-            Annotation[][] paramsAnnTotal = method.getParameterAnnotations();
-            if (paramsAnnTotal.length != args.length) {
-                throw new Exception("params error method:" + methodName + " params have to have one annotation, such as @Query @Path");
-            }
-            Annotation[] paramsAnn = new Annotation[paramsAnnTotal.length];
-            for (int i = 0; i < paramsAnnTotal.length; i++) {
-                Annotation[] annotations = paramsAnnTotal[i];
-                if (annotations.length != 1) {
-                    throw new Exception("params error method:" + methodName + " params have to have one annotation, but there is more than one !");
-                } else {
-                    paramsAnn[i] = annotations[0];
-                }
-            }
-
-            for (int i = 0; i < paramsAnn.length; i++) {
-                Annotation annotation = paramsAnn[i];
-                if (annotation instanceof Body) {
-                    requestBody = args[i];
-                    mimeType = ((Body) annotation).mimeType();
-                    if (TextUtils.isEmpty(mimeType)) {
-                        throw new Exception("request body exception...  method:" + methodName + "  the annotation @Body not have mimeType value");
-                    }
-                    break;
-                } else if (annotation instanceof Query) {
-                    Object arg = args[i];
-                    String key = ((Query) annotation).value();
-                    if (queryMap == null) queryMap = new HashMap<>();
-                    queryMap.put(key, arg == null ? "" : String.valueOf(arg));
-                } else if (annotation instanceof FormBody) {
-                    Object formBody = args[i];
-                    if (formBody != null) {
-                        if (formMap == null) formMap = new HashMap<>();
-                        parseFormBody(formMap, formBody);
-                    }
-                } else if (annotation instanceof FormParam) {
-                    Object arg = args[i];
-                    if (arg != null) {
-                        if (formMap == null) formMap = new HashMap<>();
-                        String key = ((FormParam) annotation).value();
-                        formMap.put(key, arg);
-                    }
-                } else if (annotation instanceof Path) {
-                    if (pathReplaceList == null) pathReplaceList = new ArrayList<>();
-                    pathReplaceList.add(args[i]);
-                }
-            }
-        }
-
-        if (callback != null) callback.processParams(this);
-
-        if (TextUtils.isEmpty(terminal)) {
-            throw new Exception("url terminal error... method:" + methodName + ", terminal is null...");
-        }
         if (TextUtils.isEmpty(path)) {
-            throw new Exception("url path error... method:" + methodName + ", path is null...");
+            throw new Exception("url path error, method:" + methodName + ", path is null...");
         }
-
-        if (pathReplaceList != null) {
-            path = String.format(path, pathReplaceList.toArray());
-        }
-        StringBuilder urlBuilder = new StringBuilder(terminal);
-        urlBuilder.append(path);
-
-        if (queryMap != null && !queryMap.isEmpty()) {
-            int i = 0;
-            Uri uri = Uri.parse(urlBuilder.toString());
-            String uriQuery = uri.getQuery();
-            boolean shouldAdd = TextUtils.isEmpty(uriQuery) && urlBuilder.charAt(urlBuilder.length() - 1) != '?';
-            for (String key : queryMap.keySet()) {
-                String value = queryMap.get(key);
-                urlBuilder.append((i == 0 && shouldAdd) ? '?' : '&').append(key).append('=').append(value);
-                i++;
-            }
-        }
-        url = urlBuilder.toString();
-        if (L.isEnable()) {
-            L.i("HttpRequest", "start request....method:" + method.getName() + ", url:" + url);
-        }
-
-        RequestBody httpRequestBody = null;
-        if (shouldProcessBody()) {
-            if (requestBody != null) {
-                httpRequestBody = createRequestBodyByObject(mimeType, requestBody);
-            } else if (formMap != null) {
-                httpRequestBody = createRequestBodyByForm(formMap);
-            }
-        }
-
-        Request.Builder builder = new Request.Builder();
-        if (headerBuilder != null) builder.headers(headerBuilder.build());
-        if (requestTag != null) builder.tag(requestTag);
-        return builder.url(url).method(requestType, httpRequestBody).build();
     }
 
     private boolean shouldProcessBody() {
         return !"GET".equals(requestType) && !"HEAD".equals(requestType);
     }
 
-    @NonNull public Method getMethod() {
+    @NonNull public final Method getMethod() {
         return method;
     }
 
-    @NonNull public Class<?> getReturnType() {
+    @NonNull public final Class<?> getReturnType() {
         return returnType;
     }
 
-    public Object[] getArgs() {
+    public final Object[] getArgs() {
         return args;
     }
 
-    public Object getRequestTag() {
+    public final Object getRequestTag() {
         return requestTag;
     }
 
-    public void setTerminal(String terminal) {
+    public final void setTerminal(String terminal) {
         this.terminal = terminal;
     }
 
-    public String getTerminal() {
+    public final String getTerminal() {
         return terminal;
     }
 
-    public int getRequestStyle() {
+    public final int getRequestStyle() {
         return requestStyle;
     }
 
-    @NonNull public String getPath() {
+    @NonNull public final String getPath() {
         return path;
     }
 
-    @NonNull public String getMethodName() {
+    @NonNull public final String getMethodName() {
         return methodName;
     }
 
-    @NonNull public String getRequestType() {
+    @NonNull public final String getRequestType() {
         return requestType;
     }
 
-    @NonNull public HashMap<String, String> getQueryMap() {
+    @NonNull public final HashMap<String, String> getQueryMap() {
         if (queryMap == null) queryMap = new HashMap<>();
         return queryMap;
     }
 
-    public void setQueryMap(HashMap<String, String> queryMap) {
+    public final void setQueryMap(HashMap<String, String> queryMap) {
         this.queryMap = queryMap;
     }
 
-    public void addQueryParam(String key, String value) {
+    /**
+     * @see #addQuery(String, String)
+     * @deprecated
+     */
+    public final void addQueryParam(String key, String value) {
+        addQuery(key, value);
+    }
+
+    public final void addQuery(String key, String value) {
         if (!TextUtils.isEmpty(key)) {
             HashMap<String, String> map = this.queryMap;
             map.put(key, value == null ? "" : value);
         }
     }
 
-    @NonNull public HashMap<String, Object> getFormMap() {
-        if (formMap == null) formMap = new HashMap<>();
-        return formMap;
+    /**
+     * @see #getFiledMap()
+     * @deprecated
+     */
+    @NonNull public final HashMap<String, Object> getFormMap() {
+        return getFiledMap();
     }
 
-    public void setFormMap(HashMap<String, Object> formMap) {
-        this.formMap = formMap;
+    /**
+     * @see #setFiledMap(HashMap)
+     * @deprecated
+     */
+    public final void setFormMap(HashMap<String, Object> formMap) {
+        setFiledMap(formMap);
     }
 
-    public void addFormParam(String key, Object value) {
+    /**
+     * @see #addFiled(String, Object)
+     * @deprecated
+     */
+    public final void addFormParam(String key, Object value) {
+        addFiled(key, value);
+    }
+
+    public final void setFiledMap(HashMap<String, Object> formMap) {
+        this.filedMap = formMap;
+    }
+
+    @NonNull public final HashMap<String, Object> getFiledMap() {
+        if (filedMap == null) filedMap = new HashMap<>();
+        return filedMap;
+    }
+
+    public final void addFiled(String key, Object value) {
         if (!TextUtils.isEmpty(key)) {
-            HashMap<String, Object> map = this.formMap;
+            HashMap<String, Object> map = getFiledMap();
             map.put(key, value == null ? "" : value);
         }
     }
 
-    public Object getRequestBody() {
+    public final Object getField(String key) {
+        HashMap<String, Object> map = getFiledMap();
+        return map.get(key);
+    }
+
+    public final Object getRequestBody() {
         return requestBody;
     }
 
-    public void setRequestBody(Object requestBody) {
+    public final void setRequestBody(Object requestBody) {
         this.requestBody = requestBody;
     }
 
-    public void addHeader(String key, String value) {
+    public final void addHeader(@NonNull String key, @NonNull String value) {
         if (!TextUtils.isEmpty(key) && !TextUtils.isEmpty(value)) {
-            if (headerBuilder == null) headerBuilder = new Headers.Builder();
-            headerBuilder.add(key, value);
+            Headers.Builder header = getHeader();
+            header.add(key, value);
         }
     }
 
-    @NonNull public Headers.Builder getHeader() {
+    @NonNull public final Headers.Builder getHeader() {
         if (headerBuilder == null) headerBuilder = new Headers.Builder();
         return headerBuilder;
     }
 
-    String getUrl() {
+    final String getUrl() {
         return url;
     }
 
@@ -356,7 +429,7 @@ public class HttpRequest {
         }
     }
 
-    private RequestBody createRequestBodyByForm(HashMap<String, Object> formMap) {
+    private RequestBody createRequestBodyByForm(@NonNull HashMap<String, Object> formMap) {
         boolean isArrString = true;
         for (String key : formMap.keySet()) {
             Object obj = formMap.get(key);

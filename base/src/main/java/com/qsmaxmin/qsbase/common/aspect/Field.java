@@ -9,12 +9,14 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * @CreateBy qsmaxmin
- * @Date 2017/6/29 15:12
- * @Description form param, same as{@link Field}
+ * @Date 2021/3/22 13:12
+ * @Description form param, same as{@link FormParam}
  */
 @Documented
 @Target(PARAMETER)
 @Retention(RUNTIME)
-public @interface FormParam {
+public @interface Field {
     String value();
 }
+
+

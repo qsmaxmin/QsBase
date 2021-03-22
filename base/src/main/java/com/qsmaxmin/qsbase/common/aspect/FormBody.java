@@ -10,7 +10,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 /**
  * @CreateBy qsmaxmin
  * @Date 2017/6/29 15:12
- * @Description form body
+ * @Description form body，支持Map，一级Json字符串，一级Model实体对象
  */
 @Documented
 @Target(PARAMETER)
