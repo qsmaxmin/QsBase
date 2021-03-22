@@ -45,7 +45,7 @@ public abstract class QsDownloadModel<K> {
     }
 
     public final int getDownloadProgress() {
-        return (int) ((float) downloadedLength / totalLength * 100);
+        return totalLength == 0 ? 0 : (int) ((float) downloadedLength / totalLength * 100);
     }
 
     public final String getTempFilePath() {
