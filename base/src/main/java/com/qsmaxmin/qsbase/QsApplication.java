@@ -68,6 +68,6 @@ public abstract class QsApplication extends Application implements QsIApplicatio
         return null;
     }
 
-    public void onCommonLoadImage(ImageHelper.Builder builder) {
+    @Override public void onCommonLoadImage(ImageHelper.Builder builder) {
     }
 }
