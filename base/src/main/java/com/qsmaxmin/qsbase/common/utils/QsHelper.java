@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.Environment;
 
 import com.qsmaxmin.qsbase.QsIApplication;
+import com.qsmaxmin.qsbase.common.downloader.QsDownloadHelper;
 import com.qsmaxmin.qsbase.common.http.HttpHelper;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.plugin.event.EventHelper;
@@ -265,5 +266,6 @@ public class QsHelper {
         QsThreadPollHelper.release();
         PermissionHelper.release();
         HttpHelper.release();
+        QsDownloadHelper.releaseAll();
     }
 }

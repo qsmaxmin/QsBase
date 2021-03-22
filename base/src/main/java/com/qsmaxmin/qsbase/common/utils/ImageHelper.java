@@ -110,21 +110,21 @@ public class ImageHelper {
     }
 
     public static class Builder {
-        private boolean                 enableHolder = true;
-        private RequestManager          manager;
-        private Object                  mObject;
-        private Drawable                placeholderDrawable;
-        private Drawable                errorDrawable;
-        private int                     scaleType;
-        private int[]                   mCorners;
-        private int                     mWidth;
-        private int                     mHeight;
-        private boolean                 noMemoryCache;
-        private DiskCacheStrategy       diskCacheStrategy;
-        private BitmapTransformation    mTransformation;
-        private boolean                 mIsCircleCrop;
-        private HashMap<String, String> headers;
-        private String                  mCacheKey;
+        private final RequestManager          manager;
+        private       boolean                 enableHolder = true;
+        private       Object                  mObject;
+        private       Drawable                placeholderDrawable;
+        private       Drawable                errorDrawable;
+        private       int                     scaleType;
+        private       int[]                   mCorners;
+        private       int                     mWidth;
+        private       int                     mHeight;
+        private       boolean                 noMemoryCache;
+        private       DiskCacheStrategy       diskCacheStrategy;
+        private       BitmapTransformation    mTransformation;
+        private       boolean                 mIsCircleCrop;
+        private       HashMap<String, String> headers;
+        private       String                  mCacheKey;
 
         public Object getLoadObject() {
             return mObject;
