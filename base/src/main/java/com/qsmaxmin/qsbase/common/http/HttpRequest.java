@@ -11,6 +11,7 @@ import com.qsmaxmin.qsbase.common.aspect.FormBody;
 import com.qsmaxmin.qsbase.common.aspect.FormParam;
 import com.qsmaxmin.qsbase.common.aspect.GET;
 import com.qsmaxmin.qsbase.common.aspect.HEAD;
+import com.qsmaxmin.qsbase.common.aspect.Header;
 import com.qsmaxmin.qsbase.common.aspect.PATCH;
 import com.qsmaxmin.qsbase.common.aspect.POST;
 import com.qsmaxmin.qsbase.common.aspect.PUT;
@@ -169,6 +170,12 @@ public final class HttpRequest {
                         parseFormBody(getFiledMap(), args[i]);
                     }
 
+                } else if (annotation instanceof Header) {
+                    if (args[i] != null) {
+                        String headerKey = ((Header) annotation).value();
+                        getHeader().add(headerKey, String.valueOf(args[i]));
+                    }
+
                 } else if (annotation instanceof Body) {
                     requestBody = args[i];
                     requestBodyMimeType = ((Body) annotation).mimeType();
@@ -213,9 +220,8 @@ public final class HttpRequest {
             throw new Exception("Annotation error... the method:" + methodName + " must has an annotation,such as:@PUT @POST or @GET...");
         }
         if (headerArrays != null && headerArrays.length > 0) {
-            headerBuilder = new Headers.Builder();
             for (String header : headerArrays) {
-                headerBuilder.add(header);
+                getHeader().add(header);
             }
         }
 
