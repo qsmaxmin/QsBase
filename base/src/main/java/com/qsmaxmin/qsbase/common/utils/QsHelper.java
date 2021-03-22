@@ -60,16 +60,16 @@ public class QsHelper {
         }
     }
 
-    public static Application getApplication() {
-        return getInstance().mApplication.getApplication();
-    }
-
     public static QsIApplication getAppInterface() {
         return getInstance().mApplication;
     }
 
+    public static Application getApplication() {
+        return getAppInterface().getApplication();
+    }
+
     public static boolean isLogOpen() {
-        return getInstance().mApplication.isLogOpen();
+        return getAppInterface().isLogOpen();
     }
 
     public static ImageHelper.Builder getImageHelper() {
@@ -98,6 +98,10 @@ public class QsHelper {
 
     public static void executeInSingleThread(Runnable r) {
         QsThreadPollHelper.runOnSingleThread(r);
+    }
+
+    public static void executeInLIFOThread(Runnable r) {
+        QsThreadPollHelper.runOnLIFOThread(r);
     }
 
     public static ScreenHelper getScreenHelper() {
