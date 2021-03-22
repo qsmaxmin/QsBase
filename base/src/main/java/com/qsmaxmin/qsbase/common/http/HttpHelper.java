@@ -3,7 +3,6 @@ package com.qsmaxmin.qsbase.common.http;
 import android.text.TextUtils;
 
 import com.google.gson.Gson;
-import com.qsmaxmin.qsbase.common.exception.QsException;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.proxy.HttpHandler;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
@@ -118,21 +117,11 @@ public class HttpHelper {
         }
     }
 
-    public Object startRequest(Method method, Object[] args, Object requestTag, NetworkErrorReceiver errorReceiver) {
-        try {
-            if (!QsHelper.isNetworkAvailable()) {
-                if (errorReceiver != null) errorReceiver.methodError(new QsException(requestTag, "network disable"));
-                return null;
-            }
-            HttpRequest httpRequest = new HttpRequest(method, args, requestTag, gson);
-            Request request = httpRequest.createRequest(callback);
-            Call call = client.newCall(request);
-            return createResult(httpRequest, call.execute());
-        } catch (Exception e) {
-            if (errorReceiver != null) errorReceiver.methodError(new QsException(requestTag, e));
-            if (L.isEnable()) L.e(TAG, e.getMessage(), e);
-            return null;
-        }
+    public Object startRequest(Method method, Object[] args, Object requestTag) throws Exception {
+        HttpRequest httpRequest = new HttpRequest(method, args, requestTag, gson);
+        Request request = httpRequest.createRequest(callback);
+        Call call = client.newCall(request);
+        return createResult(httpRequest, call.execute());
     }
 
     public void cancelRequest(Object requestTag) {
