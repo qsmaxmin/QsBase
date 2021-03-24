@@ -480,7 +480,7 @@ class DownloadExecutor<M extends QsDownloadModel<T>, T> {
     private int calculateThreadCount(long contentLength) {
         if (contentLength < 5_120_000) return 1;
         int count = (int) (contentLength / 5_120_000);
-        return Math.min(count, 5);
+        return Math.min(count, MAX_THREAD_COUNT);
     }
 
     private boolean isBigFile(long contentLength) {
