@@ -24,7 +24,7 @@ import okhttp3.ResponseBody;
  * @Description
  */
 class DownloadExecutor<M extends QsDownloadModel<T>, T> {
-    private static final int                MAX_THREAD_COUNT = 10;
+    private static final int                MAX_THREAD_COUNT = 5;
     private final        String             TAG;
     private final        QsDownloader<M, T> qsDownloader;
     private final        M                  m;
