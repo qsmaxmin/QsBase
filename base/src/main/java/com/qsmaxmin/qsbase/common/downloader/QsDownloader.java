@@ -26,43 +26,17 @@ public final class QsDownloader<M extends QsDownloadModel<K>, K> {
     private final HashMap<K, DownloadExecutor> executorMap;
     private final List<DownloadListener<M>>    globeListeners;
     private final OkHttpClient                 httpClient;
-    private       boolean                      supportBreakPointTransmission;
-    private       boolean                      forceDownload;
     private       boolean                      printResponseHeader;
 
     QsDownloader(OkHttpClient client, Class<M> tag) {
         this.httpClient = client;
         this.TAG = "QsDownloader-" + tag.getSimpleName();
-        this.supportBreakPointTransmission = true;
         this.executorMap = new HashMap<>();
         this.globeListeners = new ArrayList<>();
     }
 
     /**
-     * 设置是否开启断点续传功能，默认开启
-     */
-    public final void setSupportBreakPointTransmission(boolean supportBreakPointTransmission) {
-        this.supportBreakPointTransmission = supportBreakPointTransmission;
-    }
-
-    public final boolean isSupportBreakPointTransmission() {
-        return supportBreakPointTransmission;
-    }
-
-    /**
-     * 是否强制下载
-     * 强制下载会忽略本地已存在的文件
-     */
-    public final void setForceDownload(boolean forceDownload) {
-        this.forceDownload = forceDownload;
-    }
-
-    public final boolean isForceDownload() {
-        return forceDownload;
-    }
-
-    /**
-     * 是否打印响应头信息
+     * 是否打印响应头信息,下载前设置，默认不打印
      */
     public final void sePrintResponseHeader(boolean printResponseHeader) {
         this.printResponseHeader = printResponseHeader;
@@ -74,6 +48,8 @@ public final class QsDownloader<M extends QsDownloadModel<K>, K> {
 
     /**
      * 异步执行下载动作
+     * 根据服务器是否支持断点续传以及是否是大文件来确定是否开启断点续传功能
+     * 根据文件大小确定开启的线程数
      *
      * @see #enqueueDownload(QsDownloadModel)
      */
@@ -83,6 +59,8 @@ public final class QsDownloader<M extends QsDownloadModel<K>, K> {
 
     /**
      * 异步执行下载动作
+     * 根据服务器是否支持断点续传以及是否是大文件来确定是否开启断点续传功能
+     * 根据文件大小确定开启的线程数
      * 任务种类用QsDownloadModel{@link QsDownloadModel}的子类区分
      * 同一任务种类的不同任务由Model的id{@link QsDownloadModel#getId()}区分
      * 若该任务正在执行时，再次执行会立即收到{@link DownloadListener#onDownloading(QsDownloadModel, long, long)}回调
@@ -103,16 +81,15 @@ public final class QsDownloader<M extends QsDownloadModel<K>, K> {
         synchronized (executorMap) {
             executor = executorMap.get(model.getId());
             if (executor == null) {
-                executor = new DownloadExecutor<>(this, model, TAG);
+                executor = createDownloadExecutor(model);
                 executorMap.put(model.getId(), executor);
             } else {
                 isTaskExecuting = true;
             }
         }
         if (isTaskExecuting) {
-            if (!executor.isDownloadSuccess()) {
-                M m = (M) executor.getModel();
-                postDownloading(m, m.getDownloadedLength(), m.getTotalLength());
+            if (executor.isDownloading()) {
+                postDownloading((M) executor.getModel());
             }
         } else {
             postDownloadStart(model);
@@ -124,7 +101,7 @@ public final class QsDownloader<M extends QsDownloadModel<K>, K> {
                         postDownloadComplete(model);
                     } catch (Exception e) {
                         postDownloadFailed(model, e.getMessage());
-                        L.e(TAG, e);
+                        if (L.isEnable()) e.printStackTrace();
                     } finally {
                         removeExecutorFromTask(model);
                         finalExecutor.applyNotify();
@@ -136,6 +113,8 @@ public final class QsDownloader<M extends QsDownloadModel<K>, K> {
 
     /**
      * 同步执行下载动作
+     * 根据服务器是否支持断点续传以及是否是大文件来确定是否开启断点续传功能
+     * 根据文件大小确定开启的线程数
      * 任务种类用QsDownloadModel{@link QsDownloadModel}的子类区分
      * 同一任务种类的不同任务由Model的id{@link QsDownloadModel#getId()}区分
      * 若该任务正在执行时，再次执行会立即收到{@link DownloadListener#onDownloading(QsDownloadModel, long, long)}回调
@@ -150,7 +129,7 @@ public final class QsDownloader<M extends QsDownloadModel<K>, K> {
         synchronized (executorMap) {
             executor = executorMap.get(model.getId());
             if (executor == null) {
-                executor = new DownloadExecutor<>(this, model, TAG);
+                executor = createDownloadExecutor(model);
                 executorMap.put(model.getId(), executor);
             } else {
                 isTaskExecuting = true;
@@ -158,9 +137,9 @@ public final class QsDownloader<M extends QsDownloadModel<K>, K> {
         }
 
         if (isTaskExecuting) {
-            if (!executor.isDownloadSuccess()) {
+            if (executor.isDownloading()) {
                 M m = (M) executor.getModel();
-                postDownloading(m, m.getDownloadedLength(), model.getTotalLength());
+                postDownloading(m);
 
                 if (L.isEnable()) L.i(TAG, "executeDownload....相同的任务正在下载中，将当前线程置为等待中状态.........");
                 executor.applyWait();
@@ -186,6 +165,11 @@ public final class QsDownloader<M extends QsDownloadModel<K>, K> {
         }
     }
 
+    private DownloadExecutor createDownloadExecutor(M model) {
+        DownloadExecutor executor = new DownloadExecutor<>(this, model, TAG);
+        executor.setPrintRespHeader(printResponseHeader);
+        return executor;
+    }
 
     @NonNull private Request.Builder getBuilder(M model) throws Exception {
         if (model == null) {
@@ -225,7 +209,7 @@ public final class QsDownloader<M extends QsDownloadModel<K>, K> {
             if (L.isEnable()) L.e(TAG, "cleanDownloadCache failed, The cache cannot be deleted while downloading.....");
             return false;
         }
-        File cacheFile = new File(m.getTempFilePath());
+        File cacheFile = new File(m.getDownloadTempFilePath());
         if (cacheFile.exists()) {
             return cacheFile.delete();
         }
@@ -287,13 +271,13 @@ public final class QsDownloader<M extends QsDownloadModel<K>, K> {
         }
     }
 
-    final void postDownloading(final M model, final long size, final long totalSize) {
+    final void postDownloading(final M model) {
         if (isMainThread()) {
-            callbackDownloading(model, size, totalSize);
+            callbackDownloading(model, model.getDownloadedLength(), model.getTotalLength());
         } else {
             post(new Runnable() {
                 @Override public void run() {
-                    callbackDownloading(model, size, totalSize);
+                    callbackDownloading(model, model.getDownloadedLength(), model.getTotalLength());
                 }
             });
         }

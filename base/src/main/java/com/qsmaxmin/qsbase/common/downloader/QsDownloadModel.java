@@ -31,11 +31,6 @@ public abstract class QsDownloadModel<K> {
      */
     public abstract String getFilePath();
 
-    final void update(long downloadedLength, long totalLength) {
-        this.downloadedLength = downloadedLength;
-        this.totalLength = totalLength;
-    }
-
     public final long getDownloadedLength() {
         return downloadedLength;
     }
@@ -45,10 +40,37 @@ public abstract class QsDownloadModel<K> {
     }
 
     public final int getDownloadProgress() {
-        return totalLength == 0 ? 0 : (int) ((float) downloadedLength / totalLength * 100);
+        return totalLength == 0 ? 0 : (int) (downloadedLength * 100 / totalLength);
     }
 
-    public final String getTempFilePath() {
-        return getFilePath() + "_temp";
+    /**
+     * 设置文件总长度
+     * 该api不对外开放
+     *
+     * @see DownloadExecutor
+     */
+    final void setTotalLength(long len) {
+        this.totalLength = len;
     }
+
+    /**
+     * 下载时实时更新进度
+     * 该api不对外开放
+     *
+     * @see DownloadExecutor
+     */
+    final void addDownloadedLength(long added) {
+        this.downloadedLength += added;
+    }
+
+    /**
+     * 获取临时文件路径
+     * 该api不对外开放
+     *
+     * @see DownloadExecutor
+     */
+    final String getDownloadTempFilePath() {
+        return getFilePath() + "_qs_temp";
+    }
+
 }
