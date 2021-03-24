@@ -288,12 +288,12 @@ class DownloadExecutor<M extends QsDownloadModel<T>, T> {
             accessFile.seek(startPoint + readLength);
             accessFile.write(buff, 0, len);
             readLength += len;
-            writeSeekPoint(0, startPoint + readLength);
             addDownloadedLength(len);
 
             progress = m.getDownloadProgress();
             if (progress != lastProgress) {
                 lastProgress = progress;
+                writeSeekPoint(0, startPoint + readLength);
                 postDownloading();
             }
         }
@@ -306,6 +306,7 @@ class DownloadExecutor<M extends QsDownloadModel<T>, T> {
         if (L.isEnable()) L.i(initTag(), "readDataMultithreaded(" + index + "), range[" + startPoint + "," + endPoint + "].....");
         long targetLength = endPoint - startPoint;
         byte[] buff = new byte[1024_0];
+        int whileCount = 0;
         int len;
         long progress;
         long readLength = 0;
@@ -318,7 +319,11 @@ class DownloadExecutor<M extends QsDownloadModel<T>, T> {
                 accessFile.seek(startPoint + readLength);
                 accessFile.write(buff, 0, realLen);
                 readLength += realLen;
-                writeSeekPoint(index, startPoint + readLength);
+
+                whileCount++;
+                if (readLength == targetLength || whileCount % 10 == 0) {
+                    writeSeekPoint(index, startPoint + readLength);
+                }
             }
             addDownloadedLength(realLen);
 
