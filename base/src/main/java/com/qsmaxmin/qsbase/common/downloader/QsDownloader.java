@@ -19,7 +19,8 @@ import okhttp3.Request;
 /**
  * @CreateBy qsmaxmin
  * @Date 2020-03-17  15:25
- * @Description
+ * @Description 管理同一分类的下载任务
+ * @see QsDownloadHelper#getDownloader(Class)
  */
 public final class QsDownloader<M extends QsDownloadModel<K>, K> {
     private final String                       TAG;
