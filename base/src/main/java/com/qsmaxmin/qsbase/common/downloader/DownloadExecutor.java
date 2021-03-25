@@ -1,5 +1,7 @@
 package com.qsmaxmin.qsbase.common.downloader;
 
+import android.text.TextUtils;
+
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.plugin.threadpoll.QsThreadPollHelper;
 
@@ -129,8 +131,9 @@ class DownloadExecutor<M extends QsDownloadModel<T>, T> {
                     L.i(initTag(), "response ok, contentLength:" + contentLength + ", id:" + m.getId() + ", time gone:" + getTimeGone());
                 }
 
-                if (isBigFile(contentLength) && isServerSupportBreakPointTransmission(response)) {
-                    if (canBreakPointTransmission(response)) {
+                String eTag = getETag(response);
+                if (isBigFile(contentLength) && !TextUtils.isEmpty(eTag) && isServerSupportBreakPointTransmission(response)) {
+                    if (canBreakPointTransmission(body, eTag)) {
                         int threadCount = lastSeekPoints.length;
                         long[][] ranges = new long[threadCount][];
                         long stepLength = contentLength / threadCount;
@@ -142,7 +145,7 @@ class DownloadExecutor<M extends QsDownloadModel<T>, T> {
                             addDownloadedLength(seekPoint - start);
                         }
                         postDownloading();
-                        onStart(builder, response, ranges);
+                        onStart(builder, body, ranges);
                     } else {
                         int threadCount = calculateThreadCount(contentLength);
                         long stepLength = contentLength / threadCount;
@@ -152,11 +155,11 @@ class DownloadExecutor<M extends QsDownloadModel<T>, T> {
                             long end = (i == threadCount - 1) ? contentLength : (i * stepLength + stepLength);
                             ranges[i] = new long[]{start, end};
                         }
-                        writeThreadCountAndETag(threadCount, getETag(response));
-                        onStart(builder, response, ranges);
+                        writeThreadCountAndETag(threadCount, eTag);
+                        onStart(builder, body, ranges);
                     }
                 } else {
-                    readDataOnly(response.body());
+                    readDataOnly(body);
                 }
 
                 if (isDownloadSuccess()) {
@@ -180,44 +183,52 @@ class DownloadExecutor<M extends QsDownloadModel<T>, T> {
         }
     }
 
-    private void onStart(@NonNull final Request.Builder builder, @NonNull Response response, @NonNull long[][] ranges) throws Exception {
+
+    private void onStart(@NonNull final Request.Builder builder, @NonNull ResponseBody body, @NonNull final long[][] ranges) throws Exception {
         if (ranges.length == 1) {
             long[] firstRange = ranges[0];
             if (firstRange[0] == 0) {
-                readDataSingleThread(response.body(), 0);
-            } else {
+                readDataSingleThread(body, 0);
+            } else if (isRangeNotEmpty(firstRange)) {
                 startRangeDownload(0, builder, firstRange[0], firstRange[1], false);
             }
         } else {
-            final int threadCount = ranges.length;
             final AtomicInteger completeCount = new AtomicInteger(1);
-            for (int i = 1; i < threadCount; i++) {
+            for (int i = 1; i < ranges.length; i++) {
                 final long[] seekRange = ranges[i];
-                final int index = i;
-                QsThreadPollHelper.runOnHttpThread(new Runnable() {
-                    @Override public void run() {
-                        try {
-                            startRangeDownload(index, builder, seekRange[0], seekRange[1], true);
-                        } catch (Exception e) {
-                            if (L.isEnable()) L.e(initTag(), e);
-                        } finally {
-                            if (completeCount.addAndGet(1) == threadCount) {
-                                downloadNotify();
+                if (isRangeNotEmpty(seekRange)) {
+                    final int index = i;
+                    QsThreadPollHelper.runOnHttpThread(new Runnable() {
+                        @Override public void run() {
+                            try {
+                                startRangeDownload(index, builder, seekRange[0], seekRange[1], true);
+                            } catch (Exception e) {
+                                if (L.isEnable()) L.e(initTag(), e);
+                            } finally {
+                                if (completeCount.addAndGet(1) == ranges.length) {
+                                    downloadNotify();
+                                }
                             }
                         }
-                    }
-                });
+                    });
+                } else if (completeCount.addAndGet(1) == ranges.length) {
+                    downloadNotify();
+                }
             }
             long[] firstRange = ranges[0];
             if (firstRange[0] == 0) {
-                readDataMultithreaded(0, response.body(), 0, firstRange[1]);
-            } else {
+                readDataMultithreaded(0, body, 0, firstRange[1]);
+            } else if (isRangeNotEmpty(firstRange)) {
                 startRangeDownload(0, builder, firstRange[0], firstRange[1], true);
             }
-            if (completeCount.get() < threadCount) {
+            if (completeCount.get() < ranges.length) {
                 downloadWait();
             }
         }
+    }
+
+    private boolean isRangeNotEmpty(long[] range) {
+        return range[1] > range[0];
     }
 
     /**
@@ -408,29 +419,25 @@ class DownloadExecutor<M extends QsDownloadModel<T>, T> {
     /**
      * 服务器是否支持断点续传
      */
-    private boolean isServerSupportBreakPointTransmission(Response response) {
-        String eTag = getETag(response);
-        return eTag != null && eTag.length() > 0 &&
-                ("bytes".equalsIgnoreCase(response.header("Accept-Ranges")) || response.header("Content-Range") != null);
+    private boolean isServerSupportBreakPointTransmission(@NonNull Response response) {
+        return "bytes".equalsIgnoreCase(response.header("Accept-Ranges")) || response.header("Content-Range") != null;
     }
 
-    private String getETag(Response response) {
+    private String getETag(@NonNull Response response) {
         return response.header("ETag");
     }
 
     /**
      * 检查本地临时文件，判断是否支持断点续传
      */
-    private boolean canBreakPointTransmission(Response response) {
-        if (tempFile == null || !tempFile.exists() || tempFile.length() <= 0) {
+    private boolean canBreakPointTransmission(@NonNull ResponseBody body, String eTag) {
+        if (tempFile == null || !tempFile.exists() || tempFile.length() <= 0
+                || eTag == null || eTag.length() == 0) {
             return false;
         }
         try {
-            String eTag = getETag(response);
-            if (eTag == null || eTag.length() == 0) return false;
-
             long fileLength = accessFile.length();
-            long contentLength = response.body().contentLength();
+            long contentLength = body.contentLength();
             if (fileLength < contentLength) {
                 return false;
             }
@@ -488,6 +495,9 @@ class DownloadExecutor<M extends QsDownloadModel<T>, T> {
         return Math.min(count, MAX_THREAD_COUNT);
     }
 
+    /**
+     * 大文件才执行断点续传逻辑
+     */
     private boolean isBigFile(long contentLength) {
         return contentLength > 500_000;
     }
