@@ -211,8 +211,8 @@ class DownloadExecutor<M extends QsDownloadModel<T>, T> {
                             }
                         }
                     });
-                } else if (completeCount.addAndGet(1) == ranges.length) {
-                    downloadNotify();
+                } else {
+                    completeCount.addAndGet(1);
                 }
             }
             long[] firstRange = ranges[0];
