@@ -62,7 +62,7 @@ public class QsDownloadHelper {
         return helper;
     }
 
-    public static <M extends QsDownloadModel> void releaseAll() {
+    public static void releaseAll() {
         if (helper != null) {
             if (L.isEnable()) L.i("QsDownloadHelper", "release........");
             if (!helper.downloaderHolder.isEmpty()) {
