@@ -1,5 +1,8 @@
 package com.qsmaxmin.qsbase.plugin.event;
 
+import com.qsmaxmin.qsbase.plugin.threadpoll.QsThreadPollHelper;
+import com.qsmaxmin.qsbase.plugin.threadpoll.SafeRunnable;
+
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -43,7 +46,26 @@ public class EventHelper {
         }
     }
 
-    public static void eventPost(Object data) {
+    /**
+     * 发送事件，并在主线程接收事件
+     */
+    public static void eventPost(final Object data) {
+        if (data == null) return;
+        if (QsThreadPollHelper.isMainThread()) {
+            eventSend(data);
+        } else {
+            QsThreadPollHelper.post(new SafeRunnable() {
+                @Override protected void safeRun() {
+                    eventSend(data);
+                }
+            });
+        }
+    }
+
+    /**
+     * 发送事件，并在当前线程接收事件
+     */
+    public static void eventSend(Object data) {
         if (data == null) return;
         HashSet<EventHandler> eventItems = itemHolder.get(data.getClass());
         if (eventItems == null || eventItems.isEmpty()) return;

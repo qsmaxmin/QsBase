@@ -113,16 +113,12 @@ public class QsHelper {
         return PermissionHelper.getInstance();
     }
 
-    public static void eventPost(final Object object) {
-        if (isMainThread()) {
-            EventHelper.eventPost(object);
-        } else {
-            post(new Runnable() {
-                @Override public void run() {
-                    EventHelper.eventPost(object);
-                }
-            });
-        }
+    public static void eventPost(Object object) {
+        EventHelper.eventPost(object);
+    }
+
+    public static void eventSend(Object object) {
+        EventHelper.eventSend(object);
     }
 
     public static HttpHelper getHttpHelper() {
