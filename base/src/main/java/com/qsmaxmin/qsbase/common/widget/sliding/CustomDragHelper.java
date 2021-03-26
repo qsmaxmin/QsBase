@@ -23,6 +23,8 @@ public final class CustomDragHelper extends ViewDragHelper.Callback {
     private       boolean         canSliding;
     private       boolean         isDragIng;
     private       float           slidingRatio;
+    private       float           downY;
+    private       float           downX;
 
     public CustomDragHelper(ViewGroup parent) {
         this.parentView = parent;
@@ -40,7 +42,20 @@ public final class CustomDragHelper extends ViewDragHelper.Callback {
     }
 
     public final boolean onInterceptTouchEvent(MotionEvent ev) {
-        return canSliding && dragHelper.shouldInterceptTouchEvent(ev);
+        if (!canSliding) {
+            return false;
+        }
+        int action = ev.getAction();
+        if (action == MotionEvent.ACTION_MOVE) {
+            float x = ev.getX();
+            float y = ev.getY();
+            return Math.abs(x - downX) > Math.abs(y - downY) && dragHelper.shouldInterceptTouchEvent(ev);
+        } else if (action == MotionEvent.ACTION_DOWN) {
+            downX = ev.getX();
+            downY = ev.getY();
+            return dragHelper.shouldInterceptTouchEvent(ev);
+        }
+        return dragHelper.shouldInterceptTouchEvent(ev);
     }
 
     public final void computeScroll() {
