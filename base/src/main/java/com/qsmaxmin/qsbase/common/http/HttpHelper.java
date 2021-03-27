@@ -1,11 +1,10 @@
 package com.qsmaxmin.qsbase.common.http;
 
-import android.text.TextUtils;
-
 import com.google.gson.Gson;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.proxy.HttpHandler;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
+import com.qsmaxmin.qsbase.common.utils.StreamCloseUtils;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -18,7 +17,6 @@ import okhttp3.Dispatcher;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import okhttp3.ResponseBody;
 
 /**
  * @CreateBy qsmaxmin
@@ -187,70 +185,28 @@ public class HttpHelper {
         }
     }
 
-    private Object createResult(HttpRequest request, Response response) throws Exception {
-        if (response == null) return null;
-        int responseCode = response.code();
-        HttpResponse httpResponse = new HttpResponse();
-        httpResponse.response = response;
-
-        if (response.isSuccessful()) {
-            Class<?> returnType = request.getReturnType();
-            if (returnType == void.class) {
-                if (callback != null) {
-                    callback.onHttpResponse(request, httpResponse);
-                    callback.onHttpComplete(request, null);
-                }
-                response.close();
-                return null;
-
-            } else if (returnType == byte[].class) {
-                if (callback != null) callback.onHttpResponse(request, httpResponse);
-                ResponseBody body = response.body();
-                byte[] result = null;
-                if (body != null) {
-                    result = body.bytes();
-                }
-                response.close();
-                if (callback != null) callback.onHttpComplete(request, result);
-                return result;
-
-            } else if (returnType.equals(Response.class)) {
-                if (callback != null) {
-                    callback.onHttpResponse(request, httpResponse);
-                    callback.onHttpComplete(request, response);
-                }
-                return response;
-
-            } else {
-                ResponseBody body = response.body();
-                if (body == null) {
-                    throw new Exception("http response error... method:" + request.getMethodName() + ", response body is null!!");
-                }
-                if (callback != null) callback.onHttpResponse(request, httpResponse);
-                String jsonStr = httpResponse.getJsonString();
-                response.close();
-                if (L.isEnable()) {
-                    L.i(TAG, "on http response... method:" + request.getMethodName() + ", url:" + request.getUrl() + "\nresponse body Json:\n" + getConverter().formatJson(jsonStr));
-                }
-                if (!TextUtils.isEmpty(jsonStr)) {
-                    Object result = gson.fromJson(jsonStr, returnType);
-                    if (callback != null) callback.onHttpComplete(request, result);
-                    return result;
-                } else {
-                    if (callback != null) callback.onHttpComplete(request, null);
-                    return null;
-                }
+    private Object createResult(HttpRequest request, Response resp) throws Exception {
+        try {
+            if (resp == null) {
+                throw new Exception("http error... method:" + request.getMethodName() + ", http response is null !!");
             }
-        } else {
+            if (!resp.isSuccessful()) {
+                throw new Exception("http error... method:" + request.getMethodName() + ", http response code = " + resp.code());
+            }
+
+            HttpResponse httpResponse = new HttpResponse(resp, request, gson);
             if (callback != null) callback.onHttpResponse(request, httpResponse);
-            response.close();
-            throw new Exception("http error... method:" + request.getMethodName() + ", http response code = " + responseCode);
+            Object result = httpResponse.getResponseObject();
+
+            if (callback != null) callback.onHttpComplete(request, result);
+            return result;
+        } finally {
+            StreamCloseUtils.close(resp);
         }
     }
 
-    private HttpConverter getConverter() {
+    HttpConverter getConverter() {
         if (converter == null) converter = new HttpConverter();
         return converter;
     }
-
 }

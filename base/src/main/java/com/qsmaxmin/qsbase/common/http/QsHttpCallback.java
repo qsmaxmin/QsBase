@@ -1,5 +1,8 @@
 package com.qsmaxmin.qsbase.common.http;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 /**
  * @CreateBy qsmaxmin
  * @Date 2019/3/5 17:13
@@ -11,19 +14,19 @@ public interface QsHttpCallback {
      *
      * @throws Exception do not catch
      */
-    void processParams(HttpRequest request) throws Exception;
+    void processParams(@NonNull HttpRequest request) throws Exception;
 
     /**
      * step 2, onHttpResponse
      *
      * @throws Exception do not catch
      */
-    void onHttpResponse(HttpRequest request, HttpResponse response) throws Exception;
+    void onHttpResponse(@NonNull HttpRequest request, @Nullable HttpResponse response) throws Exception;
 
     /**
      * step 3, onHttpComplete
      *
      * @throws Exception do not catch
      */
-    void onHttpComplete(HttpRequest builder, Object result) throws Exception;
+    void onHttpComplete(@NonNull HttpRequest request, @Nullable Object result) throws Exception;
 }

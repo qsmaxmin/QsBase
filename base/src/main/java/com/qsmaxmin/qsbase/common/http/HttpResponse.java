@@ -1,14 +1,9 @@
 package com.qsmaxmin.qsbase.common.http;
 
-import com.qsmaxmin.qsbase.common.utils.StreamCloseUtils;
-
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.Charset;
+import com.google.gson.Gson;
+import com.qsmaxmin.qsbase.common.log.L;
 
 import androidx.annotation.NonNull;
-import okhttp3.MediaType;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 
@@ -18,8 +13,16 @@ import okhttp3.ResponseBody;
  * @Description
  */
 public class HttpResponse {
-    Response response;
-    private DecryptionProvider decryptionProvider;
+    @NonNull private final Response           response;
+    @NonNull private final Gson               gson;
+    @NonNull private final HttpRequest        request;
+    private                DecryptionProvider decryptionProvider;
+
+    public HttpResponse(@NonNull Response response, @NonNull HttpRequest request, @NonNull Gson gson) {
+        this.response = response;
+        this.request = request;
+        this.gson = gson;
+    }
 
     public Response getResponse() {
         return response;
@@ -29,48 +32,44 @@ public class HttpResponse {
         this.decryptionProvider = provider;
     }
 
-    String getJsonString() throws Exception {
-        if (decryptionProvider != null) {
-            ResponseBody body = response.body();
-            if (body != null) {
-                byte[] decryptionBytes = decryptionProvider.decryption(body.bytes());
-                return new String(decryptionBytes, getCharset(body));
-            } else {
-                return null;
+    Object getResponseObject() throws Exception {
+        Class<?> returnType = request.getReturnType();
+        if (returnType == Response.class) {
+            if (L.isEnable()) {
+                L.i("HttpAdapter", "method:" + request.getMethodName() + ", url:" + request.getUrl() + "\nbody:returnType is Response, so can not print response body!!!");
             }
+            return response;
+        }
+
+        ResponseBody body = response.body();
+        if (body == null) {
+            if (L.isEnable()) {
+                L.i("HttpAdapter", "method:" + request.getMethodName() + ", url:" + request.getUrl() + "\nbody:null");
+            }
+            return null;
+        }
+
+        if (returnType == void.class) {
+            if (L.isEnable()) {
+                L.i("HttpAdapter", "method:" + request.getMethodName() + ", url:" + request.getUrl() + "\nbody:" + format(body.bytes()));
+            }
+            return null;
+        }
+
+        if (L.isEnable()) {
+            byte[] bytes = body.bytes();
+            if (decryptionProvider != null) bytes = decryptionProvider.decryption(bytes);
+            L.i("HttpAdapter", "method:" + request.getMethodName() + ", url:" + request.getUrl() + "\nbody:" + format(bytes));
+            return returnType == byte[].class ? bytes : gson.fromJson(new String(bytes), returnType);
+
         } else {
-            return getJsonFromBody(response.body());
-        }
-    }
-
-    private String getJsonFromBody(ResponseBody body) throws Exception {
-        Charset charset = getCharset(body);
-        InputStream is = body.byteStream();
-        InputStreamReader isr = new InputStreamReader(is, charset);
-        BufferedReader br = null;
-        try {
-            br = new BufferedReader(isr);
-            StringBuilder result = new StringBuilder();
-            String line;
-            while ((line = br.readLine()) != null) {
-                result.append(line).append("\n");
+            if (decryptionProvider != null) {
+                byte[] bytes = decryptionProvider.decryption(body.bytes());
+                return returnType == byte[].class ? bytes : gson.fromJson(new String(bytes), returnType);
+            } else {
+                return returnType == byte[].class ? body.bytes() : gson.fromJson(body.charStream(), returnType);
             }
-            return result.toString();
-        } finally {
-            StreamCloseUtils.close(isr);
-            StreamCloseUtils.close(is);
-            StreamCloseUtils.close(br);
         }
-    }
-
-    @NonNull private Charset getCharset(ResponseBody body) {
-        Charset charset = Charset.defaultCharset();
-        MediaType mediaType = body.contentType();
-        if (mediaType != null) {
-            Charset c = mediaType.charset(charset);
-            if (c != null) charset = c;
-        }
-        return charset;
     }
 
     /**
@@ -78,5 +77,13 @@ public class HttpResponse {
      */
     public interface DecryptionProvider {
         byte[] decryption(byte[] secretBytes);
+    }
+
+    private String format(byte[] bytes) {
+        return bytes == null || bytes.length == 0 ? null : format(new String(bytes));
+    }
+
+    private String format(String text) {
+        return HttpHelper.getInstance().getConverter().formatJson(text);
     }
 }
