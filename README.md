@@ -50,7 +50,7 @@ MVP(或MVVM)架构+AOP面向切面编程，摒弃反射、代理等操作，稳�
 
         该步有两种方案(任选其一即可)：
         1，继承QsApplication，开发者可以自行重写回调方法
-        2，实现QsIApplication接口并在onCreate回调里调用QsHelper.getInstance().init(this); 参考QsApplication源码。
+        2，实现QsIApplication接口并在onCreate回调里调用QsHelper.init(this); 参考QsApplication源码。
 
         public class GrapeApplication extends QsApplication {
 
@@ -125,9 +125,8 @@ MVP(或MVVM)架构+AOP面向切面编程，摒弃反射、代理等操作，稳�
 
         2，Activity的使用：
         所有的Activity必须继承框架里的Activity
-            为快速开发，框架有多个Activity供开发者继承
+            为快速开发，框架有多个Activity供开发者继承，如：
             MvActivity: 基类activity，可重写actionbarLayoutId()返回actionbar布局
-            MvListActivity: 集成Viewpager的activity，快速开发
             MvListActivity: 集成List的activity，实现抽象方法即可
             MvViewpagerActivity: 集成Viewpager的activity，实现抽象方法即可
             ...
@@ -141,7 +140,7 @@ MVP(或MVVM)架构+AOP面向切面编程，摒弃反射、代理等操作，稳�
             private ActivityMainBinding binding;
 
             @Override public View onCreateContentView(LayoutInflater inflater, ViewGroup parent) {
-                binding = DataBindingUtil.inflate(layoutInflater, R.layout.activity_main, viewGroup, true);
+                binding = DataBindingUtil.inflate(inflater, R.layout.activity_main, viewGroup, true);
                 return binding.getRoot();
             }
 
@@ -212,6 +211,7 @@ MVP(或MVVM)架构+AOP面向切面编程，摒弃反射、代理等操作，稳�
         @Property注解可以持久化参数到本地（注意Class必须有@AutoProperty注解才能生效）
         @ThreadPoint注解的方法，可以让该方法在指定线程中执行
         @Permission注解的方法，会在方法执行前申请指定的权限，权限申请成功后再接着执行该方法
+        @QsAspect可实现自定义AOP功能
 
 #### 代码混淆
         -keep class com.qsmaxmin.qsbase** { *; }
