@@ -63,9 +63,10 @@ MVP(或MVVM)架构+AOP面向切面编程，摒弃反射、代理等操作，稳�
             }
 
             /**
-             * 注册http请求公共回调
+             * http请求公共拦截器
+             * 可设置公共主机地址，添加公共参数和公共请求头，对响应体进行解密等操作
              */
-            @Override  public QsHttpCallback registerGlobalHttpListener() {
+            @Override  public HttpInterceptor registerGlobalHttpInterceptor() {
                 return new CustomHttpCallback();
             }
 
@@ -91,7 +92,8 @@ MVP(或MVVM)架构+AOP面向切面编程，摒弃反射、代理等操作，稳�
             }
 
             /**
-             * 自定义进度条
+             * 自定义进度条对话框
+             * 通过Activity.loading()打开该对话框
              */
             @Override public QsProgressDialog getCommonProgressDialog() {
                 return new DefaultProgressDialog();
