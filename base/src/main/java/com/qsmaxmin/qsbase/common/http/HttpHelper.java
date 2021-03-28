@@ -118,7 +118,7 @@ public class HttpHelper {
 
     public Object startRequest(Method method, Object[] args, Object requestTag) throws Exception {
         HttpRequest httpRequest = new HttpRequest(method, args, requestTag, gson);
-        Chain chain = new Chain(httpRequest, client);
+        Chain chain = new Chain(httpRequest, getHttpClient());
 
         Response response;
         if (httpInterceptor != null) {
