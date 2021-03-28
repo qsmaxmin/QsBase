@@ -10,5 +10,5 @@ import okhttp3.Response;
  */
 public interface HttpInterceptor {
 
-    @NonNull Response onIntercept(@NonNull Chain chain);
+    @NonNull Response onIntercept(@NonNull Chain chain) throws Exception;
 }
