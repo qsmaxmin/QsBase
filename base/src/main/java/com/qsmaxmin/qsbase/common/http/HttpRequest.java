@@ -63,7 +63,7 @@ public final class HttpRequest {
     private String                  url;
     private Headers.Builder         headerBuilder;
 
-    public HttpRequest(Method method, Object[] args, Object requestTag, Gson gson) {
+    HttpRequest(Method method, Object[] args, Object requestTag, Gson gson) {
         this.method = method;
         this.args = args;
         this.requestTag = requestTag;
@@ -72,13 +72,12 @@ public final class HttpRequest {
         this.gson = gson;
     }
 
-    Request createRequest(QsHttpCallback callback) throws Exception {
+    @NonNull public Request createRequest() throws Exception {
         processMethodAnnotation();
         processParamsAnnotation();
 
-        if (callback != null) callback.processParams(this);
         if (TextUtils.isEmpty(terminal)) {
-            throw new Exception("url terminal error... method:" + methodName + ", terminal is null...");
+            throw new Exception("error... method:" + methodName + ", 未设置主机地址，可单独给接口添加@TERMINAL注解，也可以通过拦截器添加公共主机地址");
         }
 
         StringBuilder urlBuilder = new StringBuilder(terminal);

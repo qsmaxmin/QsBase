@@ -2,25 +2,19 @@ package com.qsmaxmin.qsbase.common.http;
 
 import android.text.TextUtils;
 
-import com.google.gson.Gson;
-
-import java.lang.reflect.Type;
 import java.util.regex.Pattern;
 
 
-class HttpConverter {
-    private final Gson gson;
+public class JsonPrintFormatter {
+    private final String pattern;
 
-    HttpConverter() {
-        this.gson = new Gson();
+    public JsonPrintFormatter() {
+        String singlePattern = "[0-9|a-f|A-F]";
+        pattern = singlePattern + singlePattern + singlePattern + singlePattern;
     }
 
-    Object jsonToObject(String jsonStr, Type type) {
-        return gson.fromJson(jsonStr, type);
-    }
-
-    String formatJson(String sourceStr) {
-        if (TextUtils.isEmpty(sourceStr)) return null;
+    public String formatJson(String sourceStr) {
+        if (TextUtils.isEmpty(sourceStr)) return sourceStr;
         String str = unicodeToCn(sourceStr);
         int level = 0;
         StringBuilder builder = new StringBuilder();
@@ -62,14 +56,11 @@ class HttpConverter {
     }
 
     private String unicodeToCn(final String str) {
-        String singlePattern = "[0-9|a-f|A-F]";
-        String pattern = singlePattern + singlePattern + singlePattern + singlePattern;
-
         StringBuilder sb = new StringBuilder();
         int length = str.length();
         for (int i = 0; i < length; ) {
             String tmpStr = str.substring(i, (i < length - 6) ? (i + 6) : length);
-            if (isStartWithUnicode(pattern, tmpStr)) { // 分支1
+            if (isStartWithUnicode(tmpStr)) { // 分支1
                 sb.append(unicodeToCnSingle(tmpStr));
                 i += 6;
             } else {
@@ -80,7 +71,7 @@ class HttpConverter {
         return sb.toString();
     }
 
-    private boolean isStartWithUnicode(String pattern, String str) {
+    private boolean isStartWithUnicode(String str) {
         if (TextUtils.isEmpty(str) || !str.startsWith("\\u") || str.length() < 6) {
             return false;
         }
@@ -90,6 +81,6 @@ class HttpConverter {
 
     private String unicodeToCnSingle(final String str) {
         int code = Integer.decode("0x" + str.substring(2, 6));
-        return String.valueOf((char) code);
+        return new String(new int[]{code}, 0, 1);
     }
 }

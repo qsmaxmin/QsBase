@@ -3,7 +3,7 @@ package com.qsmaxmin.qsbase;
 import android.app.Activity;
 import android.app.Application;
 
-import com.qsmaxmin.qsbase.common.http.QsHttpCallback;
+import com.qsmaxmin.qsbase.common.http.HttpInterceptor;
 import com.qsmaxmin.qsbase.common.utils.ImageHelper;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.common.widget.dialog.DefaultProgressDialog;
@@ -64,7 +64,7 @@ public abstract class QsApplication extends Application implements QsIApplicatio
         return new DefaultProgressDialog();
     }
 
-    @Override public QsHttpCallback registerGlobalHttpListener() {
+    @Override public HttpInterceptor registerGlobalHttpInterceptor() {
         return null;
     }
 

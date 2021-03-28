@@ -5,7 +5,7 @@ import android.app.Application;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
-import com.qsmaxmin.qsbase.common.http.QsHttpCallback;
+import com.qsmaxmin.qsbase.common.http.HttpInterceptor;
 import com.qsmaxmin.qsbase.common.utils.ImageHelper;
 import com.qsmaxmin.qsbase.common.widget.dialog.QsProgressDialog;
 import com.qsmaxmin.qsbase.mvvm.MvIView;
@@ -65,9 +65,9 @@ public interface QsIApplication {
     QsProgressDialog getLoadingDialog();
 
     /**
-     * http请求全局回调
+     * http请求全局拦截器
      */
-    QsHttpCallback registerGlobalHttpListener();
+    HttpInterceptor registerGlobalHttpInterceptor();
 
     /**
      * 公共图片加载回调

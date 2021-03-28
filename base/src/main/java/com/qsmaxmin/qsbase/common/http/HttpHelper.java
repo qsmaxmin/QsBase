@@ -17,6 +17,7 @@ import okhttp3.Dispatcher;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 /**
  * @CreateBy qsmaxmin
@@ -25,13 +26,13 @@ import okhttp3.Response;
  */
 @SuppressWarnings("unchecked")
 public class HttpHelper {
-    private static       HttpHelper     helper;
-    private static final String         TAG     = "HttpAdapter";
-    private final static int            timeOut = 10;
-    private              OkHttpClient   client;
-    private              Gson           gson;
-    private              QsHttpCallback callback;
-    private              HttpConverter  converter;
+    private static       HttpHelper         helper;
+    private static final String             TAG     = "HttpAdapter";
+    private final static int                timeOut = 10;
+    private              OkHttpClient       client;
+    private              Gson               gson;
+    private              JsonPrintFormatter printFormatter;
+    private              HttpInterceptor    httpInterceptor;
 
     public static HttpHelper getInstance() {
         if (helper == null) {
@@ -49,8 +50,8 @@ public class HttpHelper {
     public static void release() {
         if (helper != null) {
             helper.client = null;
-            helper.callback = null;
-            helper.converter = null;
+            helper.httpInterceptor = null;
+            helper.printFormatter = null;
             helper.gson = null;
             helper = null;
         }
@@ -79,7 +80,7 @@ public class HttpHelper {
         if (gson == null) {
             gson = new Gson();
         }
-        callback = QsHelper.getAppInterface().registerGlobalHttpListener();
+        httpInterceptor = QsHelper.getAppInterface().registerGlobalHttpInterceptor();
     }
 
     public <T> T create(Class<T> clazz) {
@@ -117,9 +118,39 @@ public class HttpHelper {
 
     public Object startRequest(Method method, Object[] args, Object requestTag) throws Exception {
         HttpRequest httpRequest = new HttpRequest(method, args, requestTag, gson);
-        Request request = httpRequest.createRequest(callback);
-        Call call = client.newCall(request);
-        return createResult(httpRequest, call.execute());
+        Chain chain = new Chain(httpRequest, client);
+
+        Response response;
+        if (httpInterceptor != null) {
+            response = httpInterceptor.onIntercept(chain);
+        } else {
+            response = chain.process();
+        }
+        return createResult(httpRequest, response);
+    }
+
+    private Object createResult(HttpRequest request, Response response) throws Exception {
+        try {
+            if (response == null) {
+                throw new Exception("http error... method:" + request.getMethodName() + ", http response is null !!");
+            }
+            if (!response.isSuccessful()) {
+                throw new Exception("http error... method:" + request.getMethodName() + ", http response code = " + response.code());
+            }
+
+            Class<?> returnType = request.getReturnType();
+            if (returnType == Response.class) {
+                return response;
+            } else if (returnType == void.class) {
+                return null;
+            } else {
+                ResponseBody body = response.body();
+                if (body == null) return null;
+                return returnType == byte[].class ? body.bytes() : gson.fromJson(body.charStream(), returnType);
+            }
+        } finally {
+            StreamCloseUtils.close(response);
+        }
     }
 
     public void cancelRequest(Object requestTag) {
@@ -185,28 +216,8 @@ public class HttpHelper {
         }
     }
 
-    private Object createResult(HttpRequest request, Response resp) throws Exception {
-        try {
-            if (resp == null) {
-                throw new Exception("http error... method:" + request.getMethodName() + ", http response is null !!");
-            }
-            if (!resp.isSuccessful()) {
-                throw new Exception("http error... method:" + request.getMethodName() + ", http response code = " + resp.code());
-            }
-
-            HttpResponse httpResponse = new HttpResponse(resp, request, gson);
-            if (callback != null) callback.onHttpResponse(request, httpResponse);
-            Object result = httpResponse.getResponseObject();
-
-            if (callback != null) callback.onHttpComplete(request, result);
-            return result;
-        } finally {
-            StreamCloseUtils.close(resp);
-        }
-    }
-
-    HttpConverter getConverter() {
-        if (converter == null) converter = new HttpConverter();
-        return converter;
+    public String formatJson(String sourceStr) {
+        if (printFormatter == null) printFormatter = new JsonPrintFormatter();
+        return printFormatter.formatJson(sourceStr);
     }
 }
