@@ -106,35 +106,35 @@ public abstract class MvListAdapterItem<D> implements IView {
         viewLayer.activityFinish(finishAfterTransition);
     }
 
-    @Override public final void intent2Activity(Class clazz) {
+    @Override public final void intent2Activity(Class<?> clazz) {
         viewLayer.intent2Activity(clazz);
     }
 
-    @Override public final void intent2Activity(Class clazz, int requestCode) {
+    @Override public final void intent2Activity(Class<?> clazz, int requestCode) {
         viewLayer.intent2Activity(clazz, requestCode);
     }
 
-    @Override public final void intent2Activity(Class clazz, Bundle bundle) {
+    @Override public final void intent2Activity(Class<?> clazz, Bundle bundle) {
         viewLayer.intent2Activity(clazz, bundle);
     }
 
-    @Override public final void intent2Activity(Class clazz, Bundle bundle, int requestCode) {
+    @Override public final void intent2Activity(Class<?> clazz, Bundle bundle, int requestCode) {
         viewLayer.intent2Activity(clazz, bundle, requestCode);
     }
 
-    @Override public final void intent2Activity(Class clazz, Bundle bundle, int inAnimId, int outAnimId) {
+    @Override public final void intent2Activity(Class<?> clazz, Bundle bundle, int inAnimId, int outAnimId) {
         viewLayer.intent2Activity(clazz, bundle, inAnimId, outAnimId);
     }
 
-    @Override public final void intent2Activity(Class clazz, Bundle bundle, ActivityOptionsCompat optionsCompat) {
+    @Override public final void intent2Activity(Class<?> clazz, Bundle bundle, ActivityOptionsCompat optionsCompat) {
         viewLayer.intent2Activity(clazz, bundle, optionsCompat);
     }
 
-    @Override public final void intent2Activity(Class clazz, Bundle bundle, int requestCode, ActivityOptionsCompat optionsCompat) {
+    @Override public final void intent2Activity(Class<?> clazz, Bundle bundle, int requestCode, ActivityOptionsCompat optionsCompat) {
         viewLayer.intent2Activity(clazz, bundle, requestCode, optionsCompat);
     }
 
-    @Override public final void intent2Activity(Class clazz, Bundle bundle, int requestCode, ActivityOptionsCompat optionsCompat, int enterAnim, int existAnim) {
+    @Override public final void intent2Activity(Class<?> clazz, Bundle bundle, int requestCode, ActivityOptionsCompat optionsCompat, int enterAnim, int existAnim) {
         viewLayer.intent2Activity(clazz, bundle, requestCode, optionsCompat, enterAnim, existAnim);
     }
 }

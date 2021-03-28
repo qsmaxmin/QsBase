@@ -43,20 +43,20 @@ public interface IView {
 
     void activityFinish(boolean finishAfterTransition);
 
-    void intent2Activity(Class clazz);
+    void intent2Activity(Class<?> clazz);
 
-    void intent2Activity(Class clazz, int requestCode);
+    void intent2Activity(Class<?> clazz, int requestCode);
 
-    void intent2Activity(Class clazz, Bundle bundle);
+    void intent2Activity(Class<?> clazz, Bundle bundle);
 
-    void intent2Activity(Class clazz, Bundle bundle, int requestCode);
+    void intent2Activity(Class<?> clazz, Bundle bundle, int requestCode);
 
-    void intent2Activity(Class clazz, Bundle bundle, int inAnimId, int outAnimId);
+    void intent2Activity(Class<?> clazz, Bundle bundle, int inAnimId, int outAnimId);
 
-    void intent2Activity(Class clazz, Bundle bundle, ActivityOptionsCompat optionsCompat);
+    void intent2Activity(Class<?> clazz, Bundle bundle, ActivityOptionsCompat optionsCompat);
 
-    void intent2Activity(Class clazz, Bundle bundle, int requestCode, ActivityOptionsCompat optionsCompat);
+    void intent2Activity(Class<?> clazz, Bundle bundle, int requestCode, ActivityOptionsCompat optionsCompat);
 
-    void intent2Activity(Class clazz, Bundle bundle, int requestCode, ActivityOptionsCompat optionsCompat, int enterAnim, int existAnim);
+    void intent2Activity(Class<?> clazz, Bundle bundle, int requestCode, ActivityOptionsCompat optionsCompat, int enterAnim, int existAnim);
 
 }

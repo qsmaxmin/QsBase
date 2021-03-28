@@ -94,7 +94,7 @@ public class ViewHelper {
     }
 
 
-    public static void intent2Activity(Activity activity, Class clazz, Bundle bundle, int requestCode, ActivityOptionsCompat optionsCompat, int inAnimId, int outAnimId) {
+    public static void intent2Activity(Activity activity, Class<?> clazz, Bundle bundle, int requestCode, ActivityOptionsCompat optionsCompat, int inAnimId, int outAnimId) {
         if (clazz != null) {
             Intent intent = new Intent();
             intent.setClass(activity, clazz);
@@ -116,7 +116,7 @@ public class ViewHelper {
         }
     }
 
-    public static void intent2Activity(Fragment fragment, Class clazz, Bundle bundle, int requestCode, ActivityOptionsCompat optionsCompat, int inAnimId, int outAnimId) {
+    public static void intent2Activity(Fragment fragment, Class<?> clazz, Bundle bundle, int requestCode, ActivityOptionsCompat optionsCompat, int inAnimId, int outAnimId) {
         if (fragment != null && clazz != null) {
             Context context = fragment.getContext();
             FragmentActivity activity = fragment.getActivity();

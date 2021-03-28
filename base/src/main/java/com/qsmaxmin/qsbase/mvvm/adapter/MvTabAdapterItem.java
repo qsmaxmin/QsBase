@@ -62,15 +62,6 @@ public abstract class MvTabAdapterItem implements IView, QsNotProguard {
         this.viewLayer = viewLayer;
     }
 
-    @Override public final void onViewClicked(@NonNull View view) {
-        onViewClicked(view, 400);
-    }
-
-    @Override public final void onViewClicked(@NonNull View view, long interval) {
-        if (interval > 0 && ViewHelper.isFastClick(interval)) return;
-        onViewClick(view);
-    }
-
     protected void onViewClick(@NonNull View view) {
     }
 
@@ -85,6 +76,16 @@ public abstract class MvTabAdapterItem implements IView, QsNotProguard {
     public abstract void bindData(@NonNull MvModelPager pagers, int position);
 
     public abstract void onPageSelectChanged(boolean selected);
+
+
+    @Override public final void onViewClicked(@NonNull View view) {
+        onViewClicked(view, 400);
+    }
+
+    @Override public final void onViewClicked(@NonNull View view, long interval) {
+        if (interval > 0 && ViewHelper.isFastClick(interval)) return;
+        onViewClick(view);
+    }
 
     @Override public final Context getContext() {
         return viewLayer.getContext();
@@ -134,35 +135,35 @@ public abstract class MvTabAdapterItem implements IView, QsNotProguard {
         viewLayer.activityFinish(finishAfterTransition);
     }
 
-    @Override public final void intent2Activity(Class clazz) {
+    @Override public final void intent2Activity(Class<?> clazz) {
         viewLayer.intent2Activity(clazz);
     }
 
-    @Override public final void intent2Activity(Class clazz, int requestCode) {
+    @Override public final void intent2Activity(Class<?> clazz, int requestCode) {
         viewLayer.intent2Activity(clazz, requestCode);
     }
 
-    @Override public final void intent2Activity(Class clazz, Bundle bundle) {
+    @Override public final void intent2Activity(Class<?> clazz, Bundle bundle) {
         viewLayer.intent2Activity(clazz, bundle);
     }
 
-    @Override public final void intent2Activity(Class clazz, Bundle bundle, int requestCode) {
+    @Override public final void intent2Activity(Class<?> clazz, Bundle bundle, int requestCode) {
         viewLayer.intent2Activity(clazz, bundle, requestCode);
     }
 
-    @Override public final void intent2Activity(Class clazz, Bundle bundle, int inAnimId, int outAnimId) {
+    @Override public final void intent2Activity(Class<?> clazz, Bundle bundle, int inAnimId, int outAnimId) {
         viewLayer.intent2Activity(clazz, bundle, inAnimId, outAnimId);
     }
 
-    @Override public final void intent2Activity(Class clazz, Bundle bundle, ActivityOptionsCompat optionsCompat) {
+    @Override public final void intent2Activity(Class<?> clazz, Bundle bundle, ActivityOptionsCompat optionsCompat) {
         viewLayer.intent2Activity(clazz, bundle, optionsCompat);
     }
 
-    @Override public final void intent2Activity(Class clazz, Bundle bundle, int requestCode, ActivityOptionsCompat optionsCompat) {
+    @Override public final void intent2Activity(Class<?> clazz, Bundle bundle, int requestCode, ActivityOptionsCompat optionsCompat) {
         viewLayer.intent2Activity(clazz, bundle, requestCode, optionsCompat);
     }
 
-    @Override public final void intent2Activity(Class clazz, Bundle bundle, int requestCode, ActivityOptionsCompat optionsCompat, int enterAnim, int existAnim) {
+    @Override public final void intent2Activity(Class<?> clazz, Bundle bundle, int requestCode, ActivityOptionsCompat optionsCompat, int enterAnim, int existAnim) {
         viewLayer.intent2Activity(clazz, bundle, requestCode, optionsCompat, enterAnim, existAnim);
     }
 

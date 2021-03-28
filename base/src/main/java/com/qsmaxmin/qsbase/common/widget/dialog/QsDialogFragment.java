@@ -1,6 +1,5 @@
 package com.qsmaxmin.qsbase.common.widget.dialog;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -43,16 +42,6 @@ public abstract class QsDialogFragment extends DialogFragment implements IView, 
         if (getDialogTheme() != 0) setStyle(DialogFragment.STYLE_NO_TITLE, getDialogTheme());
     }
 
-    @Override public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        if (getDialog() != null && getDialog().getWindow() != null) {
-            int[] padding = getPadding();
-            getDialog().getWindow().getDecorView().setPadding(padding[0], padding[1], padding[2], padding[3]);
-            setAttribute(getDialog().getWindow().getAttributes());
-        }
-        initData();
-    }
-
     @Override @CallSuper @NonNull public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         bindBundleByQsPlugin(getArguments());
         if (getDialog() != null) {
@@ -63,6 +52,16 @@ public abstract class QsDialogFragment extends DialogFragment implements IView, 
         bindViewByQsPlugin(customView);
         bindEventByQsPlugin();
         return customView;
+    }
+
+    @Override public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (getDialog() != null && getDialog().getWindow() != null) {
+            int[] padding = getPadding();
+            getDialog().getWindow().getDecorView().setPadding(padding[0], padding[1], padding[2], padding[3]);
+            setAttribute(getDialog().getWindow().getAttributes());
+        }
+        initData();
     }
 
     @CallSuper @Override public void bindBundleByQsPlugin(Bundle bundle) {
@@ -90,79 +89,6 @@ public abstract class QsDialogFragment extends DialogFragment implements IView, 
 
     protected String initTag() {
         return L.isEnable() ? getClass().getSimpleName() : "QsDialogFragment";
-    }
-
-    @Override public final void onViewClicked(@NonNull View view) {
-        onViewClicked(view, 400);
-    }
-
-    @Override public final void onViewClicked(@NonNull View view, long interval) {
-        if (interval > 0 && ViewHelper.isFastClick(interval)) return;
-        onViewClick(view);
-    }
-
-    @Override public final void loading() {
-        if (getActivity() instanceof IView) {
-            ((IView) getActivity()).loading();
-        }
-    }
-
-    @Override public final void loading(int resId) {
-        if (getActivity() instanceof IView) {
-            ((IView) getActivity()).loading(resId);
-        }
-    }
-
-    @Override public final void loading(String message) {
-        if (getActivity() instanceof IView) {
-            ((IView) getActivity()).loading(message);
-        }
-    }
-
-    @Override public final void loading(boolean cancelAble) {
-        if (getActivity() instanceof IView) {
-            ((IView) getActivity()).loading(cancelAble);
-        }
-    }
-
-    @Override public final void loading(int resId, boolean cancelAble) {
-        if (getActivity() instanceof IView) {
-            ((IView) getActivity()).loading(resId, cancelAble);
-        }
-    }
-
-    @Override public final void loading(String message, boolean cancelAble) {
-        if (getActivity() instanceof IView) {
-            ((IView) getActivity()).loading(message, cancelAble);
-        }
-    }
-
-    @Override public final void loadingClose() {
-        if (getActivity() instanceof IView) {
-            ((IView) getActivity()).loadingClose();
-        }
-    }
-
-    @Nullable @Override public final Context getContext() {
-        return super.getContext();
-    }
-
-    @Override public final void activityFinish() {
-        if (getActivity() instanceof IView) {
-            ((IView) getActivity()).activityFinish();
-        }
-    }
-
-    @Override public final void activityFinish(int enterAnim, int exitAnim) {
-        if (getActivity() instanceof IView) {
-            ((IView) getActivity()).activityFinish(enterAnim, exitAnim);
-        }
-    }
-
-    @Override public final void activityFinish(boolean finishAfterTransition) {
-        if (getActivity() instanceof IView) {
-            ((IView) getActivity()).activityFinish(finishAfterTransition);
-        }
     }
 
     protected void onViewClick(View view) {
@@ -283,35 +209,85 @@ public abstract class QsDialogFragment extends DialogFragment implements IView, 
         return isShow;
     }
 
-    @Override public final void intent2Activity(Class clazz) {
+
+    @Override public final void onViewClicked(@NonNull View view) {
+        onViewClicked(view, 400);
+    }
+
+    @Override public final void onViewClicked(@NonNull View view, long interval) {
+        if (interval > 0 && ViewHelper.isFastClick(interval)) return;
+        onViewClick(view);
+    }
+
+    @Override public final void loading() {
+        if (getActivity() instanceof IView) ((IView) getActivity()).loading();
+    }
+
+    @Override public final void loading(int resId) {
+        if (getActivity() instanceof IView) ((IView) getActivity()).loading(resId);
+    }
+
+    @Override public final void loading(String message) {
+        if (getActivity() instanceof IView) ((IView) getActivity()).loading(message);
+    }
+
+    @Override public final void loading(boolean cancelAble) {
+        if (getActivity() instanceof IView) ((IView) getActivity()).loading(cancelAble);
+    }
+
+    @Override public final void loading(int resId, boolean cancelAble) {
+        if (getActivity() instanceof IView) ((IView) getActivity()).loading(resId, cancelAble);
+    }
+
+    @Override public final void loading(String message, boolean cancelAble) {
+        if (getActivity() instanceof IView) ((IView) getActivity()).loading(message, cancelAble);
+    }
+
+    @Override public final void loadingClose() {
+        if (getActivity() instanceof IView) ((IView) getActivity()).loadingClose();
+    }
+
+    @Override public final void activityFinish() {
+        if (getActivity() instanceof IView) ((IView) getActivity()).activityFinish();
+    }
+
+    @Override public final void activityFinish(int enterAnim, int exitAnim) {
+        if (getActivity() instanceof IView) ((IView) getActivity()).activityFinish(enterAnim, exitAnim);
+    }
+
+    @Override public final void activityFinish(boolean finishAfterTransition) {
+        if (getActivity() instanceof IView) ((IView) getActivity()).activityFinish(finishAfterTransition);
+    }
+
+    @Override public final void intent2Activity(Class<?> clazz) {
         intent2Activity(clazz, null, 0, null, 0, 0);
     }
 
-    @Override public final void intent2Activity(Class clazz, int requestCode) {
+    @Override public final void intent2Activity(Class<?> clazz, int requestCode) {
         intent2Activity(clazz, null, requestCode, null, 0, 0);
     }
 
-    @Override public final void intent2Activity(Class clazz, Bundle bundle) {
+    @Override public final void intent2Activity(Class<?> clazz, Bundle bundle) {
         intent2Activity(clazz, bundle, 0, null, 0, 0);
     }
 
-    @Override public final void intent2Activity(Class clazz, Bundle bundle, int requestCode) {
+    @Override public final void intent2Activity(Class<?> clazz, Bundle bundle, int requestCode) {
         intent2Activity(clazz, bundle, requestCode, null, 0, 0);
     }
 
-    @Override public final void intent2Activity(Class clazz, Bundle bundle, int inAnimId, int outAnimId) {
+    @Override public final void intent2Activity(Class<?> clazz, Bundle bundle, int inAnimId, int outAnimId) {
         intent2Activity(clazz, bundle, 0, null, inAnimId, outAnimId);
     }
 
-    @Override public final void intent2Activity(Class clazz, Bundle bundle, ActivityOptionsCompat optionsCompat) {
+    @Override public final void intent2Activity(Class<?> clazz, Bundle bundle, ActivityOptionsCompat optionsCompat) {
         intent2Activity(clazz, bundle, 0, optionsCompat, 0, 0);
     }
 
-    @Override public final void intent2Activity(Class clazz, Bundle bundle, int requestCode, ActivityOptionsCompat optionsCompat) {
+    @Override public final void intent2Activity(Class<?> clazz, Bundle bundle, int requestCode, ActivityOptionsCompat optionsCompat) {
         intent2Activity(clazz, bundle, requestCode, optionsCompat, 0, 0);
     }
 
-    @Override public final void intent2Activity(Class clazz, Bundle bundle, int requestCode, ActivityOptionsCompat optionsCompat, int enterAnim, int existAnim) {
+    @Override public final void intent2Activity(Class<?> clazz, Bundle bundle, int requestCode, ActivityOptionsCompat optionsCompat, int enterAnim, int existAnim) {
         ViewHelper.intent2Activity(this, clazz, bundle, requestCode, optionsCompat, enterAnim, existAnim);
     }
 }
