@@ -1,5 +1,7 @@
 package com.qsmaxmin.qsbase.common.downloader;
 
+import java.io.File;
+
 import androidx.annotation.NonNull;
 import okhttp3.Request;
 
@@ -12,6 +14,7 @@ import okhttp3.Request;
 public abstract class QsDownloadModel<K> {
     private long downloadedLength;
     private long totalLength;
+    private File targetFile;
 
     /**
      * 同一类型的该对象表示同一类型的下载任务。
@@ -31,16 +34,49 @@ public abstract class QsDownloadModel<K> {
      */
     public abstract String getFilePath();
 
+    /**
+     * 获取文件已下载的大小，下载中以后才能获取到正确的值
+     *
+     * @see DownloadListener#onDownloading(QsDownloadModel, long, long)
+     * @see DownloadListener#onDownloadComplete(QsDownloadModel)
+     */
     public final long getDownloadedLength() {
         return downloadedLength;
     }
 
+    /**
+     * 获取文件已总大小，下载中以后才能获取到正确的值
+     *
+     * @see DownloadListener#onDownloading(QsDownloadModel, long, long)
+     * @see DownloadListener#onDownloadComplete(QsDownloadModel)
+     */
     public final long getTotalLength() {
         return totalLength;
     }
 
+    /**
+     * 获取文件下载进度，下载中以后才能获取到正确的值
+     *
+     * @see DownloadListener#onDownloading(QsDownloadModel, long, long)
+     * @see DownloadListener#onDownloadComplete(QsDownloadModel)
+     */
     public final int getDownloadProgress() {
         return totalLength == 0 ? 0 : (int) (downloadedLength * 100 / totalLength);
+    }
+
+    /**
+     * 下载的文件是否已存在
+     */
+    public final boolean isFileExists() {
+        return getFile().exists();
+    }
+
+    /**
+     * 下载的文件
+     */
+    public final File getFile() {
+        if (targetFile == null) targetFile = new File(getFilePath());
+        return targetFile;
     }
 
     /**

@@ -47,7 +47,7 @@ class DownloadExecutor<M extends QsDownloadModel<T>, T> {
         this.qsDownloader = downloader;
         this.m = model;
         this.TAG = tag;
-        this.targetFile = new File(model.getFilePath());
+        this.targetFile = model.getFile();
         this.threadLocker = new Object();
     }
 
