@@ -49,7 +49,7 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
     private   OnActivityResultListener activityResultListener;
     private   HashSet<Object>          requestTags;
     private   ProgressView             progressView;
-    private   boolean                  isDestroyed;
+    private   boolean                  isViewCreated;
 
     @Override public final String initTag() {
         return L.isEnable() ? getClass().getSimpleName() : "QsFragment";
@@ -124,8 +124,8 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
     }
 
     @Override public void onCreate(@Nullable Bundle savedInstanceState) {
+        isViewCreated = true;
         super.onCreate(savedInstanceState);
-        isDestroyed = false;
         bindBundleByQsPlugin(getArguments());
         if (interceptBackPressed()) {
             requireActivity().getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
@@ -166,8 +166,8 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
     }
 
     @CallSuper @Override public void onDestroy() {
+        isViewCreated = false;
         super.onDestroy();
-        isDestroyed = true;
         unbindEventByQsPlugin();
         cancelAllHttpRequest();
     }
@@ -646,6 +646,6 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
     }
 
     @Override public final boolean isViewDestroyed() {
-        return isDestroyed;
+        return !isViewCreated;
     }
 }
