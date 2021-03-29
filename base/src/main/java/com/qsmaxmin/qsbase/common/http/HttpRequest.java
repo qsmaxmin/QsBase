@@ -45,56 +45,50 @@ import okhttp3.RequestBody;
  * @Description
  */
 public final class HttpRequest {
-    private final Method   method;
-    private final Object[] args;
-    private final Object   requestTag;
-    private final String   methodName;
-    private final Class<?> returnType;
-    private final Gson     gson;
-    private       String   terminal;
-    private       int      requestStyle;
-    private       String   path;
-    private       String   requestType;
+    private final Method                  method;
+    private final Object[]                args;
+    private final Object                  requestTag;
+    private final String                  methodName;
+    private final Class<?>                returnType;
+    private final Gson                    gson;
+    private       String                  terminal;
+    private       int                     requestStyle;
+    private       String                  path;
+    private       String                  requestType;
+    private       HashMap<String, Object> filedMap;
+    private       HashMap<String, String> queryMap;
+    private       String                  requestBodyMimeType;
+    private       Object                  requestBody;
+    private       Headers.Builder         headerBuilder;
 
-    private HashMap<String, Object> filedMap;
-    private HashMap<String, String> queryMap;
-    private String                  requestBodyMimeType;
-    private Object                  requestBody;
-    private String                  url;
-    private Headers.Builder         headerBuilder;
-
-    HttpRequest(Method method, Object[] args, Object requestTag, Gson gson) {
+    HttpRequest(Method method, Object[] args, Object requestTag, Gson gson) throws Exception {
         this.method = method;
         this.args = args;
         this.requestTag = requestTag;
         this.methodName = method.getName();
         this.returnType = method.getReturnType();
         this.gson = gson;
+
+        processMethodAnnotation();
+        processParamsAnnotation();
     }
 
     @NonNull public Request createRequest() throws Exception {
-        processMethodAnnotation();
-        processParamsAnnotation();
-
         if (TextUtils.isEmpty(terminal)) {
             throw new Exception("error... method:" + methodName + ", 未设置主机地址，可单独给接口添加@TERMINAL注解，也可以通过拦截器添加公共主机地址");
         }
 
-        StringBuilder urlBuilder = new StringBuilder(terminal);
-        urlBuilder.append(path);
+        StringBuilder url = new StringBuilder(terminal);
+        url.append(path);
 
         if (queryMap != null && !queryMap.isEmpty()) {
-            appendQueryParams(urlBuilder);
-        }
-        url = urlBuilder.toString();
-        if (L.isEnable()) {
-            L.i("HttpRequest", "start request....method:" + method.getName() + ", url:" + url);
+            appendQueryParams(url);
         }
 
         Request.Builder builder = new Request.Builder();
         if (headerBuilder != null) builder.headers(headerBuilder.build());
         if (requestTag != null) builder.tag(requestTag);
-        return builder.url(url).method(requestType, createRequestBody()).build();
+        return builder.url(url.toString()).method(requestType, createRequestBody()).build();
     }
 
     private RequestBody createRequestBody() {
@@ -382,10 +376,6 @@ public final class HttpRequest {
     @NonNull public final Headers.Builder getHeader() {
         if (headerBuilder == null) headerBuilder = new Headers.Builder();
         return headerBuilder;
-    }
-
-    final String getUrl() {
-        return url;
     }
 
     private void parseFormBody(@NonNull HashMap<String, Object> formMap, @NonNull Object formBody) throws Exception {
