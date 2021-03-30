@@ -11,7 +11,7 @@ import okhttp3.OkHttpClient;
  * @CreateBy qsmaxmin
  * @Date 2020/3/16 9:40
  * @Description 文件下载管理器，统一管理所有类型的下载任务
- * 根据下载实体(QsDownloadModel)的不同，创建不同的QsDownload对象。
+ * 根据下载实体(QsDownloadModel的子类)的不同，创建不同的QsDownload对象。
  * @see QsDownloader
  * @see QsDownloadModel
  */
@@ -28,6 +28,15 @@ public class QsDownloadHelper {
         httpClient = builder.build();
     }
 
+    /**
+     * 下载步骤：
+     * 1，新建一个类继承QsDownloadModel并定义好id的泛型(String,Long等)，实现抽象方法。例如{@link CommonDownloadModel}
+     * 2，调用此方法，传入刚新建的类的Class对象，可返回一个QsDownloader对象
+     * 3，如果需要的话，给QsDownloader设置全局监听{@link QsDownloader#registerGlobalDownloadListener(DownloadListener)}，用完记得注销该监听：removeGlobalDownloadListener
+     * 4，调用QsDownloader的enqueueDownload或executeDownload方法开始下载{@link QsDownloader#enqueueDownload(QsDownloadModel),QsDownloader#executeDownload(QsDownloadModel)}
+     *
+     * @param clazz QsDownloadModel的子类Class，相同的Class被认为是同一类任务，同类任务需保证id唯一
+     */
     @SuppressWarnings({"unchecked"})
     public static <M extends QsDownloadModel<K>, K> QsDownloader<M, K> getDownloader(Class<M> clazz) {
         if (clazz == null) return null;
@@ -62,6 +71,9 @@ public class QsDownloadHelper {
         return helper;
     }
 
+    /**
+     * 清空所有下载任务，释放内存
+     */
     public static void releaseAll() {
         if (helper != null) {
             if (L.isEnable()) L.i("QsDownloadHelper", "release........");
@@ -78,6 +90,9 @@ public class QsDownloadHelper {
         }
     }
 
+    /**
+     * 清空指定类型的下载任务
+     */
     public static <M extends QsDownloadModel> void release(Class<M> clazz) {
         synchronized (getInstance().downloaderHolder) {
             QsDownloader downloader = getInstance().downloaderHolder.remove(clazz);

@@ -65,9 +65,11 @@ public abstract class QsDownloadModel<K> {
     }
 
     /**
-     * 下载的文件是否已存在
+     * 下载的文件是否已下载
+     * 下载时会先将流写入一个临时文件，下载成功后才会重命名为指定文件
+     * 所以判断目标文件是否存在即可判断该文件是否已下载完成
      */
-    public final boolean isFileExists() {
+    public final boolean isFileDownloaded() {
         return getFile().exists();
     }
 

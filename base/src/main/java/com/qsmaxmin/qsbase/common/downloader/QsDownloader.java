@@ -53,6 +53,7 @@ public final class QsDownloader<M extends QsDownloadModel<K>, K> {
      * 根据文件大小确定开启的线程数
      *
      * @see #enqueueDownload(QsDownloadModel)
+     * @deprecated
      */
     public final void startDownload(final M model) {
         enqueueDownload(model);
