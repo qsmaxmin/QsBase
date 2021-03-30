@@ -133,33 +133,32 @@ class DownloadExecutor<M extends QsDownloadModel<K>, K> {
         try {
             checkCanceled();
             if (!targetFile.exists()) {
-                if (L.isEnable()) L.i(initTag(), "download started......id:" + m.getId() + ", time gone:" + getTimeGone());
+                if (L.isEnable()) L.i(initTag(), "download started......" + getCommonMsg());
                 File parentFile = targetFile.getParentFile();
                 if (!parentFile.exists()) {
                     boolean success = parentFile.mkdirs();
-                    if (L.isEnable()) L.i(initTag(), "onStart.........crate dir(" + success + "):" + parentFile.getAbsolutePath());
                 }
                 tempFile = new File(m.getDownloadTempFilePath());
                 accessFile = new RandomAccessFile(tempFile, "rwd");
 
                 response = getClient().newCall(builder.build()).execute();
                 if (!response.isSuccessful()) {
-                    throw new Exception("onResponse failed, response code=" + response.code());
+                    throw new Exception("onResponse failed, response code=" + response.code() + getCommonMsg());
                 }
                 if (L.isEnable() && isPrintRespHeader()) {
                     printResponseHeader(response);
                 }
                 ResponseBody body = response.body();
                 if (body == null) {
-                    throw new Exception("download failed, body is empty!");
+                    throw new Exception("download failed, body is empty!!" + getCommonMsg());
                 }
                 long contentLength = body.contentLength();
                 if (contentLength <= 0) {
-                    throw new Exception("download failed, content length is 0");
+                    throw new Exception("download failed, content length is 0!!" + getCommonMsg());
                 }
                 setContentLength(contentLength);
                 if (L.isEnable()) {
-                    L.i(initTag(), "response ok, contentLength:" + contentLength + ", id:" + m.getId() + ", time gone:" + getTimeGone());
+                    L.i(initTag(), "response ok, contentLength:" + contentLength + getCommonMsg());
                 }
 
                 String eTag;
@@ -195,17 +194,17 @@ class DownloadExecutor<M extends QsDownloadModel<K>, K> {
 
                 if (isDownloadSuccess()) {
                     if (L.isEnable()) {
-                        L.i(initTag(), "download complete, id:" + m.getId() + ", time gone:" + getTimeGone());
+                        L.i(initTag(), "download complete!!" + getCommonMsg());
                     }
                     accessFile.setLength(contentLength);
                     renameFile(tempFile, targetFile);
                 } else {
                     throw new Exception("download failed!! downloadedLength(" + getDownloadedLength() +
-                            ")are not match contentLength(" + getContentLength() + ") id:" + m.getId());
+                            ")are not match contentLength(" + getContentLength() + getCommonMsg());
                 }
 
             } else {
-                if (L.isEnable()) L.i(initTag(), "download started...... old file is exists!! id:" + m.getId());
+                if (L.isEnable()) L.i(initTag(), "download started...... old file is exists!!" + getCommonMsg());
             }
         } finally {
             close(response);
@@ -267,21 +266,21 @@ class DownloadExecutor<M extends QsDownloadModel<K>, K> {
      */
     private void startRangeDownload(int index, @NonNull Request.Builder builder, long startPoint, long endPoint, boolean multithreaded) throws Exception {
         if (startPoint >= endPoint) return;
-        if (L.isEnable()) L.i(initTag(), "startRangeDownload(" + index + "), range[" + startPoint + "," + endPoint + "], multithreaded:" + multithreaded);
+        if (L.isEnable()) L.i(initTag(), "startRangeDownload(" + index + "), range[" + startPoint + "," + endPoint + "], multithreaded:" + multithreaded + getCommonMsg());
         Request request = builder.header("RANGE", "bytes=" + startPoint + "-" + endPoint).build();
         Response response = getClient().newCall(request).execute();
         checkCanceled();
         try {
             if (!response.isSuccessful()) {
-                throw new Exception("download failed, response code:" + response.code());
+                throw new Exception("download failed, response code:" + response.code() + getCommonMsg());
             }
             ResponseBody body = response.body();
             if (body == null) {
-                throw new Exception("download failed, response body is null");
+                throw new Exception("download failed, response body is null!!" + getCommonMsg());
             }
             long contentLength = body.contentLength();
             if (contentLength <= 0) {
-                throw new Exception("download failed, content length is 0");
+                throw new Exception("download failed, content length is 0!!" + getCommonMsg());
             }
             if (multithreaded) {
                 readDataMultithreaded(index, body, startPoint, endPoint);
@@ -297,7 +296,7 @@ class DownloadExecutor<M extends QsDownloadModel<K>, K> {
      * 服务器不支持断点续传时，不记录下载信息
      */
     private void readDataOnly(@NonNull ResponseBody body) throws Exception {
-        if (L.isEnable()) L.i(initTag(), "readDataOnly................");
+        if (L.isEnable()) L.i(initTag(), "readDataOnly...." + getCommonMsg());
         byte[] buff = new byte[1024_0];
         int len;
         long progress;
@@ -319,7 +318,7 @@ class DownloadExecutor<M extends QsDownloadModel<K>, K> {
      * 服务器支持断点续传，但文件太小了
      */
     private void readDataSingleThread(@NonNull ResponseBody body, long startPoint) throws Exception {
-        if (L.isEnable()) L.i(initTag(), "readDataSingleThread................startPoint:" + startPoint);
+        if (L.isEnable()) L.i(initTag(), "readDataSingleThread....startPoint:" + startPoint + getCommonMsg());
         byte[] buff = new byte[1024_0];
         int len;
         long progress;
@@ -345,7 +344,7 @@ class DownloadExecutor<M extends QsDownloadModel<K>, K> {
      * 服务器支持断点续传且多线程下载时，做好同步工作
      */
     private void readDataMultithreaded(int index, @NonNull ResponseBody body, long startPoint, long endPoint) throws Exception {
-        if (L.isEnable()) L.i(initTag(), "readDataMultithreaded(" + index + "), range[" + startPoint + "," + endPoint + "].....");
+        if (L.isEnable()) L.i(initTag(), "readDataMultithreaded(" + index + "), range[" + startPoint + "," + endPoint + "]" + getCommonMsg());
         long targetLength = endPoint - startPoint;
         byte[] buff = new byte[1024_0];
         int whileCount = 0;
@@ -376,8 +375,8 @@ class DownloadExecutor<M extends QsDownloadModel<K>, K> {
             }
         }
         if (readLength != targetLength) {
-            throw new Exception("range(index:" + index + ") download failed!! range not matched, startPoint:" + startPoint + ", endPoint:" + endPoint
-                    + ",targetLength:" + targetLength + ", but downloadLength:" + readLength);
+            throw new Exception("download failed!!(index:" + index + ") range not matched, range[" + startPoint + "," + endPoint + "] rangeLength:" + targetLength
+                    + ", but downloadLength:" + readLength + getCommonMsg());
         }
     }
 
@@ -390,19 +389,19 @@ class DownloadExecutor<M extends QsDownloadModel<K>, K> {
         }
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     private void renameFile(File tempFile, File targetFile) throws Exception {
         if (targetFile.exists()) {
-            boolean delete = targetFile.delete();
-            L.i(TAG, "delete old file(success:" + delete + "):" + targetFile.getAbsolutePath());
+            targetFile.delete();
         }
         if (!tempFile.renameTo(targetFile)) {
-            throw new Exception("tempFile(" + tempFile.getAbsolutePath() + ") rename to file(" + m.getFilePath() + ") failed....");
+            throw new Exception("tempFile(" + tempFile.getAbsolutePath() + ") rename to file(" + m.getFilePath() + ") failed!!" + getCommonMsg());
         }
     }
 
     private void checkCanceled() throws Exception {
         if (canceled) {
-            throw new Exception("当前任务已取消");
+            throw new Exception("当前任务已取消" + getCommonMsg());
         }
     }
 
@@ -439,7 +438,7 @@ class DownloadExecutor<M extends QsDownloadModel<K>, K> {
         int code = response.code();
         Headers headers = response.headers();
         Set<String> names = headers.names();
-        StringBuilder sb = new StringBuilder("onResponse......code:" + code);
+        StringBuilder sb = new StringBuilder("onResponse......code:" + code + getCommonMsg());
         for (String name : names) {
             String value = headers.get(name);
             sb.append("\n\t").append(name).append("=").append(value);
@@ -490,7 +489,7 @@ class DownloadExecutor<M extends QsDownloadModel<K>, K> {
                 if (lastETagBytes[i] != eTagBytes[i]) return false;
             }
             if (L.isEnable()) {
-                L.i(initTag(), "checked can break point transmission, seekPoints:" + Arrays.toString(lastSeekPoints) + ", ETag:" + eTag);
+                L.i(initTag(), "checked can break point transmission, seekPoints:" + Arrays.toString(lastSeekPoints) + ", ETag:" + eTag + getCommonMsg());
             }
             return true;
         } catch (Exception ignored) {
@@ -511,10 +510,6 @@ class DownloadExecutor<M extends QsDownloadModel<K>, K> {
     private void writeSeekPoint(int index, long seekValue) throws Exception {
         accessFile.seek(getContentLength() + 4 + index * 8);
         accessFile.writeLong(seekValue);
-    }
-
-    private String getTimeGone() {
-        return (System.currentTimeMillis() - initTime) + "ms";
     }
 
     /**
@@ -549,6 +544,10 @@ class DownloadExecutor<M extends QsDownloadModel<K>, K> {
             } catch (Exception ignored) {
             }
         }
+    }
+
+    private String getCommonMsg() {
+        return " [id:" + m.getId() + "], time gone:" + (System.currentTimeMillis() - initTime) + "ms";
     }
 
 }
