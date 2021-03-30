@@ -96,21 +96,18 @@ public final class QsDownloader<M extends QsDownloadModel<K>, K> {
         if (isTaskExecuting) {
             if (executor.isDownloading()) {
                 executor.addListener(listener);
-                callbackDownloadingFromExecutor(executor);
+                callbackDownloading(executor);
             }
         } else {
-            postDownloadStart(executor.collectCallbacks(), model);
-            postDownloadStart(collectCallbacks(), model);
+            callbackDownloadStart(executor);
             final DownloadExecutor<M, K> finalExecutor = executor;
             QsThreadPollHelper.runOnHttpThread(new SafeRunnable() {
                 @Override protected void safeRun() {
                     try {
                         finalExecutor.start(builder);
-                        postDownloadComplete(finalExecutor.collectCallbacks(), model);
-                        postDownloadComplete(collectCallbacks(), model);
+                        callbackDownloadComplete(finalExecutor);
                     } catch (Exception e) {
-                        postDownloadFailed(finalExecutor.collectCallbacks(), model, e.getMessage());
-                        postDownloadFailed(collectCallbacks(), model, e.getMessage());
+                        callbackDownloadFailed(finalExecutor, e);
                         if (L.isEnable()) e.printStackTrace();
                     } finally {
                         removeExecutorFromTask(model);
@@ -152,7 +149,7 @@ public final class QsDownloader<M extends QsDownloadModel<K>, K> {
         if (isTaskExecuting) {
             if (executor.isDownloading()) {
                 executor.addListener(listener);
-                callbackDownloadingFromExecutor(executor);
+                callbackDownloading(executor);
 
                 if (L.isEnable()) L.i(TAG, "executeDownload....相同的任务正在下载中，将当前线程置为等待中状态.........");
                 executor.applyWait();
@@ -164,15 +161,12 @@ public final class QsDownloader<M extends QsDownloadModel<K>, K> {
             }
         } else {
             try {
-                postDownloadStart(executor.collectCallbacks(), model);
-                postDownloadStart(collectCallbacks(), model);
+                callbackDownloadStart((DownloadExecutor<M, K>) executor);
                 Request.Builder builder = getBuilder(model);
                 executor.start(builder);
-                postDownloadComplete(executor.collectCallbacks(), model);
-                postDownloadComplete(collectCallbacks(), model);
+                callbackDownloadComplete((DownloadExecutor<M, K>) executor);
             } catch (Exception e) {
-                postDownloadFailed(executor.collectCallbacks(), model, e.getMessage());
-                postDownloadFailed(collectCallbacks(), model, e.getMessage());
+                callbackDownloadFailed((DownloadExecutor<M, K>) executor, e);
                 throw e;
             } finally {
                 removeExecutorFromTask(model);
@@ -253,9 +247,24 @@ public final class QsDownloader<M extends QsDownloadModel<K>, K> {
         return httpClient;
     }
 
-    final void callbackDownloadingFromExecutor(DownloadExecutor<M, K> executor) {
+    private void callbackDownloadStart(DownloadExecutor<M, K> executor) {
+        postDownloadStart(executor.collectCallbacks(), executor.getModel());
+        postDownloadStart(collectCallbacks(), executor.getModel());
+    }
+
+    final void callbackDownloading(DownloadExecutor<M, K> executor) {
         postDownloading(executor.collectCallbacks(), executor.getModel());
         postDownloading(collectCallbacks(), executor.getModel());
+    }
+
+    private void callbackDownloadComplete(DownloadExecutor<M, K> executor) {
+        postDownloadComplete(executor.collectCallbacks(), executor.getModel());
+        postDownloadComplete(collectCallbacks(), executor.getModel());
+    }
+
+    private void callbackDownloadFailed(DownloadExecutor<M, K> executor, Exception e) {
+        postDownloadFailed(executor.collectCallbacks(), executor.getModel(), e.getMessage());
+        postDownloadFailed(collectCallbacks(), executor.getModel(), e.getMessage());
     }
 
     private void removeExecutorFromTask(M model) {
