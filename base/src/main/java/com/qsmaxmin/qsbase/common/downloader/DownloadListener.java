@@ -5,13 +5,13 @@ package com.qsmaxmin.qsbase.common.downloader;
  * @Date 2020/3/16 9:17
  * @Description download listener
  */
-public interface DownloadListener<T extends QsDownloadModel> {
+public interface DownloadListener<M extends QsDownloadModel> {
 
-    void onDownloadStart(T model);
+    void onDownloadStart(M model);
 
-    void onDownloading(T model, long size, long totalSize);
+    void onDownloading(M model, long size, long totalSize);
 
-    void onDownloadComplete(T model);
+    void onDownloadComplete(M model);
 
-    void onDownloadFailed(T model, String message);
+    void onDownloadFailed(M model, String message);
 }
