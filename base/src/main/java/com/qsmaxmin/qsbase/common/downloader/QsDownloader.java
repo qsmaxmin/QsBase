@@ -133,13 +133,12 @@ public final class QsDownloader<M extends QsDownloadModel<K>, K> {
      * 同一任务种类的不同任务由Model的id{@link QsDownloadModel#getId()}区分
      * 若该任务正在执行时，再次执行会立即收到{@link DownloadListener#onDownloading(QsDownloadModel, long, long)}回调
      */
-    @SuppressWarnings("unchecked")
-    public final void executeDownload(final M model, final DownloadListener listener) throws Exception {
+    public final void executeDownload(final M model, final DownloadListener<M> listener) throws Exception {
         if (QsThreadPollHelper.isMainThread()) {
             throw new Exception("cannot execute method:startDownloadSync() in MAIN Thread!!!");
         }
         boolean isTaskExecuting = false;
-        DownloadExecutor executor;
+        DownloadExecutor<M, K> executor;
         synchronized (executorMap) {
             executor = executorMap.get(model.getId());
             if (executor == null) {
