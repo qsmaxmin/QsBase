@@ -19,8 +19,8 @@ import okhttp3.Request;
  * 次实现类仅适用于下载链接长期不变，或者id能全局唯一的任务。更多自定义功能请继承QsDownloadModel
  * QsDownloadHelper会以QsDownloadModel的子类Class分类下载任务，因此只需保证同一类任务的id唯一即可
  * @see QsDownloadHelper#getDownloader(Class) 根据QsDownloadModel的子类Class创建QsDownloader对象{@link QsDownloadModel}
- * @see QsDownloader#enqueueDownload(QsDownloadModel) 异步执行下载逻辑，下载回调{@link QsDownloader#registerGlobalDownloadListener(DownloadListener)}
- * @see QsDownloader#executeDownload(QsDownloadModel) 同步执行下载逻辑，必须在子线程调用该方法。下载回调同上
+ * @see QsDownloader#enqueueDownload(QsDownloadModel) 异步执行下载逻辑，
+ * @see QsDownloader#executeDownload(QsDownloadModel) 同步执行下载逻辑
  */
 public class CommonDownloadModel extends QsDownloadModel<String> {
     private final String id;

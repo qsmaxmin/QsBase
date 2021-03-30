@@ -16,11 +16,12 @@ import okhttp3.OkHttpClient;
  * @see QsDownloadModel
  */
 public class QsDownloadHelper {
-    private final  HashMap<Class, QsDownloader> downloaderHolder = new HashMap<>();
     private static QsDownloadHelper             helper;
     private final  OkHttpClient                 httpClient;
+    private final  HashMap<Class, QsDownloader> downloaderHolder;
 
     private QsDownloadHelper() {
+        downloaderHolder = new HashMap<>();
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         builder.connectTimeout(45, TimeUnit.SECONDS);
         builder.readTimeout(45, TimeUnit.SECONDS);
