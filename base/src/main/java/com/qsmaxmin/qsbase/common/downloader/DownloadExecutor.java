@@ -9,7 +9,9 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -26,20 +28,20 @@ import okhttp3.ResponseBody;
  * @Description
  */
 class DownloadExecutor<M extends QsDownloadModel<K>, K> {
-    private static final int                 MAX_THREAD_COUNT = 5;
-    private final        String              TAG;
-    private final        QsDownloader<M, K>  qsDownloader;
-    private final        M                   m;
-    private final        File                targetFile;
-    private final        Object              threadLocker;
-    private final        DownloadListener<M> listener;
-    private              File                tempFile;
-    private              RandomAccessFile    accessFile;
-    private              long                initTime;
-    private              boolean             canceled;
-    private              boolean             printRespHeader;
-    private              boolean             isDownloading;
-    private              long[]              lastSeekPoints;
+    private static final int                       MAX_THREAD_COUNT = 5;
+    private final        String                    TAG;
+    private final        QsDownloader<M, K>        qsDownloader;
+    private final        M                         m;
+    private final        File                      targetFile;
+    private final        Object                    threadLocker;
+    private final        List<DownloadListener<M>> listenerList;
+    private              File                      tempFile;
+    private              RandomAccessFile          accessFile;
+    private              long                      initTime;
+    private              boolean                   canceled;
+    private              boolean                   printRespHeader;
+    private              boolean                   isDownloading;
+    private              long[]                    lastSeekPoints;
 
     DownloadExecutor(QsDownloader<M, K> downloader, M model, DownloadListener<M> listener, String tag) {
         if (L.isEnable()) {
@@ -47,10 +49,13 @@ class DownloadExecutor<M extends QsDownloadModel<K>, K> {
         }
         this.qsDownloader = downloader;
         this.m = model;
-        this.listener = listener;
+        this.listenerList = new ArrayList<>();
         this.TAG = tag;
         this.targetFile = model.getFile();
         this.threadLocker = new Object();
+        if (listener != null) {
+            listenerList.add(listener);
+        }
     }
 
     private String initTag() {
@@ -59,6 +64,24 @@ class DownloadExecutor<M extends QsDownloadModel<K>, K> {
 
     final M getModel() {
         return m;
+    }
+
+    final void addListener(DownloadListener<M> listener) {
+        if (listener != null) {
+            synchronized (listenerList) {
+                if (!listenerList.contains(listener)) listenerList.add(listener);
+            }
+        }
+    }
+
+    final Object[] collectCallbacks() {
+        if (listenerList.size() == 0) return null;
+        synchronized (listenerList) {
+            if (listenerList.size() > 0) {
+                return listenerList.toArray();
+            }
+            return null;
+        }
     }
 
     final boolean isDownloading() {
@@ -386,8 +409,7 @@ class DownloadExecutor<M extends QsDownloadModel<K>, K> {
     }
 
     private void postDownloading() {
-        qsDownloader.postDownloading(listener, m);
-        qsDownloader.postDownloadingGlobal(m);
+        qsDownloader.callbackDownloadingFromExecutor(this);
     }
 
     private long getDownloadedLength() {
@@ -522,5 +544,6 @@ class DownloadExecutor<M extends QsDownloadModel<K>, K> {
             }
         }
     }
+
 }
 

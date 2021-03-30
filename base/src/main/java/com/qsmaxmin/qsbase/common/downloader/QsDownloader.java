@@ -75,9 +75,9 @@ public final class QsDownloader<M extends QsDownloadModel<K>, K> {
         final Request.Builder builder;
         try {
             builder = getBuilder(model);
-        } catch (Exception e) {
-            postDownloadFailed(listener, model, e.getMessage());
-            postDownloadFailedGlobal(model, e.getMessage());
+        } catch (final Exception e) {
+            postDownloadFailed(new DownloadListener[]{listener}, model, e.getMessage());
+            postDownloadFailed(collectCallbacks(), model, e.getMessage());
             L.e(TAG, e);
             return;
         }
@@ -95,22 +95,22 @@ public final class QsDownloader<M extends QsDownloadModel<K>, K> {
         }
         if (isTaskExecuting) {
             if (executor.isDownloading()) {
-                postDownloading(listener, model);
-                postDownloadingGlobal(executor.getModel());
+                executor.addListener(listener);
+                callbackDownloadingFromExecutor(executor);
             }
         } else {
-            postDownloadStart(listener, model);
-            postDownloadStartGlobal(model);
+            postDownloadStart(executor.collectCallbacks(), model);
+            postDownloadStart(collectCallbacks(), model);
             final DownloadExecutor<M, K> finalExecutor = executor;
             QsThreadPollHelper.runOnHttpThread(new SafeRunnable() {
                 @Override protected void safeRun() {
                     try {
                         finalExecutor.start(builder);
-                        postDownloadComplete(listener, model);
-                        postDownloadCompleteGlobal(model);
+                        postDownloadComplete(finalExecutor.collectCallbacks(), model);
+                        postDownloadComplete(collectCallbacks(), model);
                     } catch (Exception e) {
-                        postDownloadFailed(listener, model, e.getMessage());
-                        postDownloadFailedGlobal(model, e.getMessage());
+                        postDownloadFailed(finalExecutor.collectCallbacks(), model, e.getMessage());
+                        postDownloadFailed(collectCallbacks(), model, e.getMessage());
                         if (L.isEnable()) e.printStackTrace();
                     } finally {
                         removeExecutorFromTask(model);
@@ -151,9 +151,8 @@ public final class QsDownloader<M extends QsDownloadModel<K>, K> {
 
         if (isTaskExecuting) {
             if (executor.isDownloading()) {
-                M m = (M) executor.getModel();
-                postDownloading(listener, m);
-                postDownloadingGlobal(m);
+                executor.addListener(listener);
+                callbackDownloadingFromExecutor(executor);
 
                 if (L.isEnable()) L.i(TAG, "executeDownload....相同的任务正在下载中，将当前线程置为等待中状态.........");
                 executor.applyWait();
@@ -165,15 +164,15 @@ public final class QsDownloader<M extends QsDownloadModel<K>, K> {
             }
         } else {
             try {
-                postDownloadStart(listener, model);
-                postDownloadStartGlobal(model);
+                postDownloadStart(executor.collectCallbacks(), model);
+                postDownloadStart(collectCallbacks(), model);
                 Request.Builder builder = getBuilder(model);
                 executor.start(builder);
-                postDownloadComplete(listener, model);
-                postDownloadCompleteGlobal(model);
+                postDownloadComplete(executor.collectCallbacks(), model);
+                postDownloadComplete(collectCallbacks(), model);
             } catch (Exception e) {
-                postDownloadFailed(listener, model, e.getMessage());
-                postDownloadFailedGlobal(model, e.getMessage());
+                postDownloadFailed(executor.collectCallbacks(), model, e.getMessage());
+                postDownloadFailed(collectCallbacks(), model, e.getMessage());
                 throw e;
             } finally {
                 removeExecutorFromTask(model);
@@ -254,6 +253,11 @@ public final class QsDownloader<M extends QsDownloadModel<K>, K> {
         return httpClient;
     }
 
+    final void callbackDownloadingFromExecutor(DownloadExecutor<M, K> executor) {
+        postDownloading(executor.collectCallbacks(), executor.getModel());
+        postDownloading(collectCallbacks(), executor.getModel());
+    }
+
     private void removeExecutorFromTask(M model) {
         synchronized (executorMap) {
             executorMap.remove(model.getId());
@@ -276,61 +280,8 @@ public final class QsDownloader<M extends QsDownloadModel<K>, K> {
         }
     }
 
-    private void postDownloadStart(final DownloadListener<M> listener, final M model) {
-        if (listener == null) return;
-        if (isMainThread()) {
-            listener.onDownloadStart(model);
-        } else {
-            post(new SafeRunnable() {
-                @Override protected void safeRun() {
-                    listener.onDownloadStart(model);
-                }
-            });
-        }
-    }
-
-    void postDownloading(final DownloadListener<M> listener, final M model) {
-        if (listener == null) return;
-        if (isMainThread()) {
-            listener.onDownloading(model, model.getDownloadedLength(), model.getTotalLength());
-        } else {
-            post(new SafeRunnable() {
-                @Override protected void safeRun() {
-                    listener.onDownloading(model, model.getDownloadedLength(), model.getTotalLength());
-                }
-            });
-        }
-    }
-
-    private void postDownloadComplete(final DownloadListener<M> listener, final M model) {
-        if (listener == null) return;
-        if (isMainThread()) {
-            listener.onDownloadComplete(model);
-        } else {
-            post(new SafeRunnable() {
-                @Override protected void safeRun() {
-                    listener.onDownloadComplete(model);
-                }
-            });
-        }
-    }
-
-    private void postDownloadFailed(final DownloadListener<M> listener, final M model, final String msg) {
-        if (listener == null) return;
-        if (isMainThread()) {
-            listener.onDownloadFailed(model, msg);
-        } else {
-            post(new SafeRunnable() {
-                @Override protected void safeRun() {
-                    listener.onDownloadFailed(model, msg);
-                }
-            });
-        }
-    }
-
     @SuppressWarnings("unchecked")
-    private void postDownloadStartGlobal(final M model) {
-        final Object[] callbacks = collectCallbacks();
+    private void postDownloadStart(final Object[] callbacks, final M model) {
         if (callbacks == null) return;
         if (isMainThread()) {
             for (Object callback : callbacks) {
@@ -351,8 +302,8 @@ public final class QsDownloader<M extends QsDownloadModel<K>, K> {
         }
     }
 
-    @SuppressWarnings("unchecked") final void postDownloadingGlobal(final M model) {
-        final Object[] callbacks = collectCallbacks();
+    @SuppressWarnings("unchecked")
+    private void postDownloading(final Object[] callbacks, final M model) {
         if (callbacks == null) return;
         if (isMainThread()) {
             for (Object callback : callbacks) {
@@ -374,8 +325,7 @@ public final class QsDownloader<M extends QsDownloadModel<K>, K> {
     }
 
     @SuppressWarnings("unchecked")
-    private void postDownloadCompleteGlobal(final M model) {
-        final Object[] callbacks = collectCallbacks();
+    private void postDownloadComplete(final Object[] callbacks, final M model) {
         if (callbacks == null) return;
         if (isMainThread()) {
             for (Object callback : callbacks) {
@@ -397,8 +347,7 @@ public final class QsDownloader<M extends QsDownloadModel<K>, K> {
     }
 
     @SuppressWarnings("unchecked")
-    private void postDownloadFailedGlobal(final M model, final String msg) {
-        final Object[] callbacks = collectCallbacks();
+    private void postDownloadFailed(final Object[] callbacks, final M model, final String msg) {
         if (callbacks == null) return;
         if (isMainThread()) {
             for (Object callback : callbacks) {
