@@ -133,8 +133,8 @@ class DownloadExecutor<M extends QsDownloadModel<K>, K> {
                     L.i(initTag(), "response ok, contentLength:" + contentLength + ", id:" + m.getId() + ", time gone:" + getTimeGone());
                 }
 
-                String eTag = getETag(response);
-                if (isBigFile(contentLength) && !TextUtils.isEmpty(eTag) && isServerSupportBreakPointTransmission(response)) {
+                String eTag;
+                if (isBigFile(contentLength) && !TextUtils.isEmpty(eTag = getETag(response)) && isServerSupportBreakPointTransmission(response)) {
                     if (canBreakPointTransmission(body, eTag)) {
                         int threadCount = lastSeekPoints.length;
                         long[][] ranges = new long[threadCount][];
