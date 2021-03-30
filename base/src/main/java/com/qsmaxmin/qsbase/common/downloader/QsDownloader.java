@@ -23,11 +23,11 @@ import okhttp3.Request;
  * @see QsDownloadHelper#getDownloader(Class)
  */
 public final class QsDownloader<M extends QsDownloadModel<K>, K> {
-    private final String                       TAG;
-    private final HashMap<K, DownloadExecutor> executorMap;
-    private final List<DownloadListener<M>>    globeListeners;
-    private final OkHttpClient                 httpClient;
-    private       boolean                      printResponseHeader;
+    private final String                             TAG;
+    private final HashMap<K, DownloadExecutor<M, K>> executorMap;
+    private final List<DownloadListener<M>>          globeListeners;
+    private final OkHttpClient                       httpClient;
+    private       boolean                            printResponseHeader;
 
     QsDownloader(OkHttpClient client, Class<M> tag) {
         this.httpClient = client;
@@ -56,7 +56,11 @@ public final class QsDownloader<M extends QsDownloadModel<K>, K> {
      * @deprecated
      */
     public final void startDownload(final M model) {
-        enqueueDownload(model);
+        enqueueDownload(model, null);
+    }
+
+    public final void enqueueDownload(final M model) {
+        enqueueDownload(model, null);
     }
 
     /**
@@ -67,13 +71,13 @@ public final class QsDownloader<M extends QsDownloadModel<K>, K> {
      * 同一任务种类的不同任务由Model的id{@link QsDownloadModel#getId()}区分
      * 若该任务正在执行时，再次执行会立即收到{@link DownloadListener#onDownloading(QsDownloadModel, long, long)}回调
      */
-    @SuppressWarnings("unchecked")
-    public final void enqueueDownload(final M model) {
+    public final void enqueueDownload(final M model, final DownloadListener<M> listener) {
         final Request.Builder builder;
         try {
             builder = getBuilder(model);
         } catch (Exception e) {
-            postDownloadFailed(model, e.getMessage());
+            postDownloadFailed(listener, model, e.getMessage());
+            postDownloadFailedGlobal(model, e.getMessage());
             L.e(TAG, e);
             return;
         }
@@ -83,7 +87,7 @@ public final class QsDownloader<M extends QsDownloadModel<K>, K> {
         synchronized (executorMap) {
             executor = executorMap.get(model.getId());
             if (executor == null) {
-                executor = createDownloadExecutor(model);
+                executor = createDownloadExecutor(model, listener);
                 executorMap.put(model.getId(), executor);
             } else {
                 isTaskExecuting = true;
@@ -91,18 +95,22 @@ public final class QsDownloader<M extends QsDownloadModel<K>, K> {
         }
         if (isTaskExecuting) {
             if (executor.isDownloading()) {
-                postDownloading((M) executor.getModel());
+                postDownloading(listener, model);
+                postDownloadingGlobal(executor.getModel());
             }
         } else {
-            postDownloadStart(model);
+            postDownloadStart(listener, model);
+            postDownloadStartGlobal(model);
             final DownloadExecutor<M, K> finalExecutor = executor;
             QsThreadPollHelper.runOnHttpThread(new SafeRunnable() {
                 @Override protected void safeRun() {
                     try {
                         finalExecutor.start(builder);
-                        postDownloadComplete(model);
+                        postDownloadComplete(listener, model);
+                        postDownloadCompleteGlobal(model);
                     } catch (Exception e) {
-                        postDownloadFailed(model, e.getMessage());
+                        postDownloadFailed(listener, model, e.getMessage());
+                        postDownloadFailedGlobal(model, e.getMessage());
                         if (L.isEnable()) e.printStackTrace();
                     } finally {
                         removeExecutorFromTask(model);
@@ -111,6 +119,10 @@ public final class QsDownloader<M extends QsDownloadModel<K>, K> {
                 }
             });
         }
+    }
+
+    public final void executeDownload(final M model) throws Exception {
+        executeDownload(model, null);
     }
 
     /**
@@ -122,7 +134,7 @@ public final class QsDownloader<M extends QsDownloadModel<K>, K> {
      * 若该任务正在执行时，再次执行会立即收到{@link DownloadListener#onDownloading(QsDownloadModel, long, long)}回调
      */
     @SuppressWarnings("unchecked")
-    public final void executeDownload(final M model) throws Exception {
+    public final void executeDownload(final M model, final DownloadListener listener) throws Exception {
         if (QsThreadPollHelper.isMainThread()) {
             throw new Exception("cannot execute method:startDownloadSync() in MAIN Thread!!!");
         }
@@ -131,7 +143,7 @@ public final class QsDownloader<M extends QsDownloadModel<K>, K> {
         synchronized (executorMap) {
             executor = executorMap.get(model.getId());
             if (executor == null) {
-                executor = createDownloadExecutor(model);
+                executor = createDownloadExecutor(model, listener);
                 executorMap.put(model.getId(), executor);
             } else {
                 isTaskExecuting = true;
@@ -141,7 +153,8 @@ public final class QsDownloader<M extends QsDownloadModel<K>, K> {
         if (isTaskExecuting) {
             if (executor.isDownloading()) {
                 M m = (M) executor.getModel();
-                postDownloading(m);
+                postDownloading(listener, m);
+                postDownloadingGlobal(m);
 
                 if (L.isEnable()) L.i(TAG, "executeDownload....相同的任务正在下载中，将当前线程置为等待中状态.........");
                 executor.applyWait();
@@ -153,12 +166,15 @@ public final class QsDownloader<M extends QsDownloadModel<K>, K> {
             }
         } else {
             try {
-                postDownloadStart(model);
+                postDownloadStart(listener, model);
+                postDownloadStartGlobal(model);
                 Request.Builder builder = getBuilder(model);
                 executor.start(builder);
-                postDownloadComplete(model);
+                postDownloadComplete(listener, model);
+                postDownloadCompleteGlobal(model);
             } catch (Exception e) {
-                postDownloadFailed(model, e.getMessage());
+                postDownloadFailed(listener, model, e.getMessage());
+                postDownloadFailedGlobal(model, e.getMessage());
                 throw e;
             } finally {
                 removeExecutorFromTask(model);
@@ -167,8 +183,8 @@ public final class QsDownloader<M extends QsDownloadModel<K>, K> {
         }
     }
 
-    private DownloadExecutor createDownloadExecutor(M model) {
-        DownloadExecutor executor = new DownloadExecutor<>(this, model, TAG);
+    private DownloadExecutor<M, K> createDownloadExecutor(M model, DownloadListener<M> listener) {
+        DownloadExecutor<M, K> executor = new DownloadExecutor<>(this, model, listener, TAG);
         executor.setPrintRespHeader(printResponseHeader);
         return executor;
     }
@@ -261,111 +277,160 @@ public final class QsDownloader<M extends QsDownloadModel<K>, K> {
         }
     }
 
-    private void postDownloadStart(final M model) {
+    private void postDownloadStart(final DownloadListener<M> listener, final M model) {
+        if (listener == null) return;
         if (isMainThread()) {
-            callbackDownloadStart(model);
+            listener.onDownloadStart(model);
         } else {
-            post(new Runnable() {
-                @Override public void run() {
-                    callbackDownloadStart(model);
+            post(new SafeRunnable() {
+                @Override protected void safeRun() {
+                    listener.onDownloadStart(model);
                 }
             });
         }
     }
 
-    final void postDownloading(final M model) {
+    void postDownloading(final DownloadListener<M> listener, final M model) {
+        if (listener == null) return;
         if (isMainThread()) {
-            callbackDownloading(model, model.getDownloadedLength(), model.getTotalLength());
+            listener.onDownloading(model, model.getDownloadedLength(), model.getTotalLength());
         } else {
-            post(new Runnable() {
-                @Override public void run() {
-                    callbackDownloading(model, model.getDownloadedLength(), model.getTotalLength());
+            post(new SafeRunnable() {
+                @Override protected void safeRun() {
+                    listener.onDownloading(model, model.getDownloadedLength(), model.getTotalLength());
                 }
             });
         }
     }
 
-    private void postDownloadComplete(final M model) {
+    private void postDownloadComplete(final DownloadListener<M> listener, final M model) {
+        if (listener == null) return;
         if (isMainThread()) {
-            callbackDownloadComplete(model);
+            listener.onDownloadComplete(model);
         } else {
-            post(new Runnable() {
-                @Override public void run() {
-                    callbackDownloadComplete(model);
+            post(new SafeRunnable() {
+                @Override protected void safeRun() {
+                    listener.onDownloadComplete(model);
                 }
             });
         }
     }
 
-    private void postDownloadFailed(final M model, final String msg) {
+    private void postDownloadFailed(final DownloadListener<M> listener, final M model, final String msg) {
+        if (listener == null) return;
         if (isMainThread()) {
-            callbackDownloadFailed(model, msg);
+            listener.onDownloadFailed(model, msg);
         } else {
-            post(new Runnable() {
-                @Override public void run() {
-                    callbackDownloadFailed(model, msg);
+            post(new SafeRunnable() {
+                @Override protected void safeRun() {
+                    listener.onDownloadFailed(model, msg);
                 }
             });
         }
     }
 
-    private void post(Runnable action) {
-        QsThreadPollHelper.post(action);
-    }
-
-    @SuppressWarnings({"unchecked"})
-    private void callbackDownloadStart(M model) {
-        Object[] callbacks = collectCallbacks();
-        if (callbacks != null) {
+    @SuppressWarnings("unchecked")
+    private void postDownloadStartGlobal(final M model) {
+        final Object[] callbacks = collectCallbacks();
+        if (callbacks == null) return;
+        if (isMainThread()) {
             for (Object callback : callbacks) {
                 if (callback != null) {
                     ((DownloadListener) callback).onDownloadStart(model);
                 }
             }
+        } else {
+            post(new SafeRunnable() {
+                @Override public void safeRun() {
+                    for (Object callback : callbacks) {
+                        if (callback != null) {
+                            ((DownloadListener) callback).onDownloadStart(model);
+                        }
+                    }
+                }
+            });
         }
     }
 
-    @SuppressWarnings({"unchecked"})
-    private void callbackDownloading(M model, long size, long totalSize) {
-        Object[] callbacks = collectCallbacks();
-        if (callbacks != null) {
+    @SuppressWarnings("unchecked") final void postDownloadingGlobal(final M model) {
+        final Object[] callbacks = collectCallbacks();
+        if (callbacks == null) return;
+        if (isMainThread()) {
             for (Object callback : callbacks) {
                 if (callback != null) {
-                    ((DownloadListener) callback).onDownloading(model, size, totalSize);
+                    ((DownloadListener) callback).onDownloading(model, model.getDownloadedLength(), model.getTotalLength());
                 }
             }
+        } else {
+            post(new SafeRunnable() {
+                @Override public void safeRun() {
+                    for (Object callback : callbacks) {
+                        if (callback != null) {
+                            ((DownloadListener) callback).onDownloading(model, model.getDownloadedLength(), model.getTotalLength());
+                        }
+                    }
+                }
+            });
         }
     }
 
-    @SuppressWarnings({"unchecked"})
-    private void callbackDownloadComplete(M model) {
-        Object[] callbacks = collectCallbacks();
-        if (callbacks != null) {
+    @SuppressWarnings("unchecked")
+    private void postDownloadCompleteGlobal(final M model) {
+        final Object[] callbacks = collectCallbacks();
+        if (callbacks == null) return;
+        if (isMainThread()) {
             for (Object callback : callbacks) {
                 if (callback != null) {
                     ((DownloadListener) callback).onDownloadComplete(model);
                 }
             }
+        } else {
+            post(new SafeRunnable() {
+                @Override public void safeRun() {
+                    for (Object callback : callbacks) {
+                        if (callback != null) {
+                            ((DownloadListener) callback).onDownloadComplete(model);
+                        }
+                    }
+                }
+            });
         }
     }
 
-    @SuppressWarnings({"unchecked"})
-    private void callbackDownloadFailed(M model, String msg) {
-        Object[] callbacks = collectCallbacks();
-        if (callbacks != null) {
+    @SuppressWarnings("unchecked")
+    private void postDownloadFailedGlobal(final M model, final String msg) {
+        final Object[] callbacks = collectCallbacks();
+        if (callbacks == null) return;
+        if (isMainThread()) {
             for (Object callback : callbacks) {
                 if (callback != null) {
                     ((DownloadListener) callback).onDownloadFailed(model, msg);
                 }
             }
+        } else {
+            post(new SafeRunnable() {
+                @Override public void safeRun() {
+                    for (Object callback : callbacks) {
+                        if (callback != null) {
+                            ((DownloadListener) callback).onDownloadFailed(model, msg);
+                        }
+                    }
+                }
+            });
         }
     }
+
+    private void post(SafeRunnable action) {
+        QsThreadPollHelper.post(action);
+    }
+
 
     private boolean isMainThread() {
         return Thread.currentThread() == Looper.getMainLooper().getThread();
     }
 
     private Object[] collectCallbacks() {
+        if (globeListeners.size() == 0) return null;
         synchronized (globeListeners) {
             if (globeListeners.size() > 0) {
                 return globeListeners.toArray();

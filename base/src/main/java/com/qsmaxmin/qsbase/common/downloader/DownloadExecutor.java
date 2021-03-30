@@ -25,27 +25,29 @@ import okhttp3.ResponseBody;
  * @Date 2020/3/16 9:30
  * @Description
  */
-class DownloadExecutor<M extends QsDownloadModel<T>, T> {
-    private static final int                MAX_THREAD_COUNT = 5;
-    private final        String             TAG;
-    private final        QsDownloader<M, T> qsDownloader;
-    private final        M                  m;
-    private final        File               targetFile;
-    private final        Object             threadLocker;
-    private              File               tempFile;
-    private              RandomAccessFile   accessFile;
-    private              long               initTime;
-    private              boolean            canceled;
-    private              boolean            printRespHeader;
-    private              boolean            isDownloading;
-    private              long[]             lastSeekPoints;
+class DownloadExecutor<M extends QsDownloadModel<K>, K> {
+    private static final int                 MAX_THREAD_COUNT = 5;
+    private final        String              TAG;
+    private final        QsDownloader<M, K>  qsDownloader;
+    private final        M                   m;
+    private final        File                targetFile;
+    private final        Object              threadLocker;
+    private final        DownloadListener<M> listener;
+    private              File                tempFile;
+    private              RandomAccessFile    accessFile;
+    private              long                initTime;
+    private              boolean             canceled;
+    private              boolean             printRespHeader;
+    private              boolean             isDownloading;
+    private              long[]              lastSeekPoints;
 
-    DownloadExecutor(QsDownloader<M, T> downloader, M model, String tag) {
+    DownloadExecutor(QsDownloader<M, K> downloader, M model, DownloadListener<M> listener, String tag) {
         if (L.isEnable()) {
             initTime = System.currentTimeMillis();
         }
         this.qsDownloader = downloader;
         this.m = model;
+        this.listener = listener;
         this.TAG = tag;
         this.targetFile = model.getFile();
         this.threadLocker = new Object();
@@ -384,7 +386,8 @@ class DownloadExecutor<M extends QsDownloadModel<T>, T> {
     }
 
     private void postDownloading() {
-        qsDownloader.postDownloading(m);
+        qsDownloader.postDownloading(listener, m);
+        qsDownloader.postDownloadingGlobal(m);
     }
 
     private long getDownloadedLength() {
