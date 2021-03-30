@@ -73,7 +73,7 @@ public final class QsDownloader<M extends QsDownloadModel<K>, K> {
         try {
             builder = getBuilder(model);
         } catch (final Exception e) {
-            postDownloadFailed(new DownloadListener[]{listener}, model, e.getMessage());
+            if (listener != null) postDownloadFailed(new DownloadListener[]{listener}, model, e.getMessage());
             postDownloadFailed(globeListeners, model, e.getMessage());
             L.e(TAG, e);
             return;
@@ -158,12 +158,12 @@ public final class QsDownloader<M extends QsDownloadModel<K>, K> {
             }
         } else {
             try {
-                callbackDownloadStart((DownloadExecutor<M, K>) executor);
+                callbackDownloadStart(executor);
                 Request.Builder builder = getBuilder(model);
                 executor.start(builder);
-                callbackDownloadComplete((DownloadExecutor<M, K>) executor);
+                callbackDownloadComplete(executor);
             } catch (Exception e) {
-                callbackDownloadFailed((DownloadExecutor<M, K>) executor, e);
+                callbackDownloadFailed(executor, e);
                 throw e;
             } finally {
                 removeExecutorFromTask(model);
