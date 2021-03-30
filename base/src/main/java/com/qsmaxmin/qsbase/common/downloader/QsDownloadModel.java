@@ -21,7 +21,7 @@ public abstract class QsDownloadModel<K> {
      * 同一类型的下载任务，id必须唯一
      * 可以和其它类型的id重复
      */
-    public abstract K getId();
+    @NonNull public abstract K getId();
 
     /**
      * 创建http请求所需参数的封装类，包括下载链接，自定义请求头等
@@ -32,7 +32,7 @@ public abstract class QsDownloadModel<K> {
     /**
      * 下载文件保存的路径
      */
-    public abstract String getFilePath();
+    @NonNull public abstract String getFilePath();
 
     /**
      * 获取文件已下载的大小，下载中以后才能获取到正确的值
