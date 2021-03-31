@@ -20,7 +20,7 @@ public abstract class SafeRunnable implements Runnable {
         }
     }
 
-    protected abstract void safeRun();
+    protected abstract void safeRun() throws Exception;
 
     protected void onError(Throwable t) {
         if (L.isEnable()) L.e("SafeRunnable", t);
