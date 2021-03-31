@@ -61,41 +61,16 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
     @CallSuper @Override public void unbindEventByQsPlugin() {
     }
 
-    @CallSuper @Override protected void onStart() {
-        super.onStart();
-        QsHelper.getAppInterface().onActivityStart(this);
-    }
-
-    @CallSuper @Override protected void onResume() {
-        super.onResume();
-        QsHelper.getAppInterface().onActivityResume(this);
-    }
-
-    @CallSuper @Override protected void onPause() {
-        super.onPause();
-        QsHelper.getAppInterface().onActivityPause(this);
-    }
-
-    @CallSuper @Override protected void onStop() {
-        super.onStop();
-        QsHelper.getAppInterface().onActivityStop(this);
-    }
-
     @CallSuper @Override protected void onDestroy() {
         isViewCreated = false;
         super.onDestroy();
         unbindEventByQsPlugin();
         cancelAllHttpRequest();
-
-        QsHelper.getAppInterface().onActivityDestroy(this);
-        QsHelper.getScreenHelper().popActivity(this);
     }
 
     @CallSuper @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
         isViewCreated = true;
         super.onCreate(savedInstanceState);
-        QsHelper.getScreenHelper().pushActivity(this);
-        QsHelper.getAppInterface().onActivityCreate(this);
         bindBundleByQsPlugin(getIntent().getExtras());
         initStatusBar();
         rootView = initView(getLayoutInflater());

@@ -1,6 +1,7 @@
 package com.qsmaxmin.qsbase.common.utils;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
@@ -10,6 +11,7 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Environment;
 
+import com.qsmaxmin.qsbase.LifeCycleCallbacksAdapter;
 import com.qsmaxmin.qsbase.QsIApplication;
 import com.qsmaxmin.qsbase.common.downloader.QsDownloadHelper;
 import com.qsmaxmin.qsbase.common.http.HttpHelper;
@@ -39,10 +41,20 @@ import androidx.fragment.app.FragmentTransaction;
  * @Description Qs center
  */
 public class QsHelper {
-    private static QsHelper       qsHelper;
-    private        QsIApplication mApplication;
+    private static QsHelper                  qsHelper;
+    private final  LifeCycleCallbacksAdapter lifeCycleCallback;
+    private        QsIApplication            mApplication;
 
     private QsHelper() {
+        lifeCycleCallback = new LifeCycleCallbacksAdapter() {
+            @Override public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+                ScreenHelper.getInstance().pushActivity(activity);
+            }
+
+            @Override public void onActivityDestroyed(Activity activity) {
+                ScreenHelper.getInstance().popActivity(activity);
+            }
+        };
     }
 
     private static QsHelper getInstance() {
@@ -55,7 +67,10 @@ public class QsHelper {
     }
 
     public static void init(QsIApplication application) {
-        getInstance().mApplication = application;
+        QsHelper instance = getInstance();
+        instance.mApplication = application;
+        getApplication().unregisterActivityLifecycleCallbacks(instance.lifeCycleCallback);
+        getApplication().registerActivityLifecycleCallbacks(instance.lifeCycleCallback);
         if (application.isLogOpen()) {
             L.init(true);
         }
@@ -154,7 +169,7 @@ public class QsHelper {
     }
 
     private static void intent2ActivityInner(Class<?> clazz, Bundle bundle, int requestCode, ActivityOptionsCompat optionsCompat, int inAnimId, int outAnimId) {
-        FragmentActivity activity = getScreenHelper().currentActivity();
+        Activity activity = getScreenHelper().currentActivity();
         if (clazz != null && activity != null) {
             Intent intent = new Intent();
             intent.setClass(activity, clazz);
@@ -198,7 +213,11 @@ public class QsHelper {
      * @deprecated
      */
     public static void commitDialogFragment(DialogFragment fragment) {
-        commitDialogFragmentInner(null, fragment);
+        Activity activity = getScreenHelper().currentActivity();
+        if (activity instanceof FragmentActivity) {
+            FragmentManager manager = ((FragmentActivity) activity).getSupportFragmentManager();
+            commitDialogFragmentInner(manager, fragment);
+        }
     }
 
     public static void commitDialogFragment(FragmentManager manager, DialogFragment fragment) {
@@ -206,12 +225,7 @@ public class QsHelper {
     }
 
     private static void commitDialogFragmentInner(FragmentManager manager, final DialogFragment fragment) {
-        if (manager == null) {
-            FragmentActivity activity = getScreenHelper().currentActivity();
-            if (activity == null) return;
-            manager = activity.getSupportFragmentManager();
-        }
-        if (fragment != null && !fragment.isAdded()) {
+        if (manager != null && fragment != null && !fragment.isAdded()) {
             manager.beginTransaction().add(fragment, fragment.getClass().getSimpleName()).commitAllowingStateLoss();
         }
     }

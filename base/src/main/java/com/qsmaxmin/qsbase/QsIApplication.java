@@ -23,18 +23,6 @@ public interface QsIApplication {
 
     boolean isLogOpen();
 
-    void onActivityCreate(Activity activity);
-
-    void onActivityStart(Activity activity);
-
-    void onActivityResume(Activity activity);
-
-    void onActivityPause(Activity activity);
-
-    void onActivityStop(Activity activity);
-
-    void onActivityDestroy(Activity activity);
-
     /**
      * 全局加载中布局
      *

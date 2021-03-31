@@ -1,11 +1,11 @@
 package com.qsmaxmin.qsbase.common.utils;
 
+import android.app.Activity;
+
 import com.qsmaxmin.qsbase.common.log.L;
 
 import java.util.ArrayList;
 import java.util.Stack;
-
-import androidx.fragment.app.FragmentActivity;
 
 
 /**
@@ -27,7 +27,7 @@ public final class ScreenHelper {
     /**
      * FragmentActivity堆栈 单例模式
      */
-    private final Stack<FragmentActivity>         activityStack = new Stack<>();
+    private final Stack<Activity>                 activityStack = new Stack<>();
     private       ArrayList<OnTaskChangeListener> listeners;
 
     static ScreenHelper getInstance() {
@@ -37,7 +37,7 @@ public final class ScreenHelper {
     /**
      * 获取当前活动的activity
      */
-    public FragmentActivity currentActivity() {
+    public Activity currentActivity() {
         if (activityStack.size() == 0) {
             L.i(TAG, "Activity堆栈 size = 0");
             return null;
@@ -48,7 +48,7 @@ public final class ScreenHelper {
     /**
      * 入栈
      */
-    public void pushActivity(FragmentActivity activity) {
+    void pushActivity(Activity activity) {
         if (activity != null) {
             activityStack.add(activity);
             onActivityAdded(activity);
@@ -63,7 +63,7 @@ public final class ScreenHelper {
     /**
      * 出栈
      */
-    public void popActivity(FragmentActivity activity) {
+    void popActivity(Activity activity) {
         if (activity != null && activityStack.remove(activity)) {
             onActivityRemoved(activity);
             if (L.isEnable()) {
@@ -83,9 +83,9 @@ public final class ScreenHelper {
      * @param interrupt 便利到指定activity时是否中断操作, true中断, false不中断
      */
     public void popAllActivityExceptMain(Class clazz, boolean interrupt) {
-        FragmentActivity[] array = this.activityStack.toArray(new FragmentActivity[activityStack.size()]);
+        Activity[] array = this.activityStack.toArray(new Activity[activityStack.size()]);
         for (int i = array.length - 1; i > -1; i--) {
-            FragmentActivity activity = array[i];
+            Activity activity = array[i];
             if (clazz != activity.getClass()) {
                 activity.finish();
             } else if (interrupt) {
@@ -95,15 +95,15 @@ public final class ScreenHelper {
     }
 
     public void popAllActivity() {
-        FragmentActivity[] array = this.activityStack.toArray(new FragmentActivity[activityStack.size()]);
+        Activity[] array = this.activityStack.toArray(new Activity[activityStack.size()]);
         for (int i = array.length - 1; i > -1; i--) {
             array[i].finish();
         }
     }
 
     public boolean contains(Class clazz) {
-        FragmentActivity[] array = this.activityStack.toArray(new FragmentActivity[activityStack.size()]);
-        for (FragmentActivity ac : array) {
+        Activity[] array = this.activityStack.toArray(new Activity[activityStack.size()]);
+        for (Activity ac : array) {
             if (ac.getClass() == clazz) {
                 return true;
             }
@@ -111,7 +111,7 @@ public final class ScreenHelper {
         return false;
     }
 
-    public Stack<FragmentActivity> getActivityStack() {
+    public Stack<Activity> getActivityStack() {
         return activityStack;
     }
 
@@ -129,12 +129,12 @@ public final class ScreenHelper {
     }
 
     public interface OnTaskChangeListener {
-        void onActivityAdd(FragmentActivity activity);
+        void onActivityAdd(Activity activity);
 
-        void onActivityRemove(FragmentActivity activity);
+        void onActivityRemove(Activity activity);
     }
 
-    private void onActivityAdded(FragmentActivity activity) {
+    private void onActivityAdded(Activity activity) {
         if (listeners != null && listeners.size() != 0) {
             OnTaskChangeListener[] listenerArr = listeners.toArray(new OnTaskChangeListener[listeners.size()]);
             for (OnTaskChangeListener listener : listenerArr) {
@@ -143,7 +143,7 @@ public final class ScreenHelper {
         }
     }
 
-    private void onActivityRemoved(FragmentActivity activity) {
+    private void onActivityRemoved(Activity activity) {
         if (listeners != null && listeners.size() != 0) {
             OnTaskChangeListener[] listenerArr = listeners.toArray(new OnTaskChangeListener[listeners.size()]);
             for (OnTaskChangeListener listener : listenerArr) {

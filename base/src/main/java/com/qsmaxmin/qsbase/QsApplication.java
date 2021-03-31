@@ -1,6 +1,5 @@
 package com.qsmaxmin.qsbase;
 
-import android.app.Activity;
 import android.app.Application;
 
 import com.qsmaxmin.qsbase.common.http.HttpInterceptor;
@@ -29,24 +28,6 @@ public abstract class QsApplication extends Application implements QsIApplicatio
     }
 
     @Override public abstract boolean isLogOpen();
-
-    @Override public void onActivityCreate(Activity activity) {
-    }
-
-    @Override public void onActivityStart(Activity activity) {
-    }
-
-    @Override public void onActivityResume(Activity activity) {
-    }
-
-    @Override public void onActivityPause(Activity activity) {
-    }
-
-    @Override public void onActivityStop(Activity activity) {
-    }
-
-    @Override public void onActivityDestroy(Activity activity) {
-    }
 
     @Override public @LayoutRes int loadingLayoutId() {
         return R.layout.qs_default_loading;
