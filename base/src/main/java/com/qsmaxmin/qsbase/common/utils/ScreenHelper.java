@@ -5,7 +5,7 @@ import android.app.Activity;
 import com.qsmaxmin.qsbase.common.log.L;
 
 import java.util.ArrayList;
-import java.util.Stack;
+import java.util.List;
 
 
 /**
@@ -27,7 +27,7 @@ public final class ScreenHelper {
     /**
      * FragmentActivity堆栈 单例模式
      */
-    private final Stack<Activity>                 activityStack = new Stack<>();
+    private final List<Activity>                  activityStack = new ArrayList<>();
     private       ArrayList<OnTaskChangeListener> listeners;
 
     static ScreenHelper getInstance() {
@@ -38,11 +38,12 @@ public final class ScreenHelper {
      * 获取当前活动的activity
      */
     public Activity currentActivity() {
-        if (activityStack.size() == 0) {
+        Activity[] activities = stackToArray();
+        if (activities.length == 0) {
             L.i(TAG, "Activity堆栈 size = 0");
             return null;
         }
-        return activityStack.peek();
+        return activities[activities.length - 1];
     }
 
     /**
@@ -83,7 +84,7 @@ public final class ScreenHelper {
      * @param interrupt 便利到指定activity时是否中断操作, true中断, false不中断
      */
     public void popAllActivityExceptMain(Class clazz, boolean interrupt) {
-        Activity[] array = this.activityStack.toArray(new Activity[activityStack.size()]);
+        Activity[] array = stackToArray();
         for (int i = array.length - 1; i > -1; i--) {
             Activity activity = array[i];
             if (clazz != activity.getClass()) {
@@ -95,14 +96,14 @@ public final class ScreenHelper {
     }
 
     public void popAllActivity() {
-        Activity[] array = this.activityStack.toArray(new Activity[activityStack.size()]);
+        Activity[] array = stackToArray();
         for (int i = array.length - 1; i > -1; i--) {
             array[i].finish();
         }
     }
 
     public boolean contains(Class clazz) {
-        Activity[] array = this.activityStack.toArray(new Activity[activityStack.size()]);
+        Activity[] array = stackToArray();
         for (Activity ac : array) {
             if (ac.getClass() == clazz) {
                 return true;
@@ -111,8 +112,13 @@ public final class ScreenHelper {
         return false;
     }
 
-    public Stack<Activity> getActivityStack() {
+    public List<Activity> getActivityStack() {
         return activityStack;
+    }
+
+    private Activity[] stackToArray() {
+        int size = activityStack.size();
+        return activityStack.toArray(new Activity[size]);
     }
 
     public void addOnTaskChangedListener(OnTaskChangeListener listener) {
@@ -136,7 +142,8 @@ public final class ScreenHelper {
 
     private void onActivityAdded(Activity activity) {
         if (listeners != null && listeners.size() != 0) {
-            OnTaskChangeListener[] listenerArr = listeners.toArray(new OnTaskChangeListener[listeners.size()]);
+            int size = listeners.size();
+            OnTaskChangeListener[] listenerArr = listeners.toArray(new OnTaskChangeListener[size]);
             for (OnTaskChangeListener listener : listenerArr) {
                 listener.onActivityAdd(activity);
             }
@@ -145,7 +152,8 @@ public final class ScreenHelper {
 
     private void onActivityRemoved(Activity activity) {
         if (listeners != null && listeners.size() != 0) {
-            OnTaskChangeListener[] listenerArr = listeners.toArray(new OnTaskChangeListener[listeners.size()]);
+            int size = listeners.size();
+            OnTaskChangeListener[] listenerArr = listeners.toArray(new OnTaskChangeListener[size]);
             for (OnTaskChangeListener listener : listenerArr) {
                 listener.onActivityRemove(activity);
             }
