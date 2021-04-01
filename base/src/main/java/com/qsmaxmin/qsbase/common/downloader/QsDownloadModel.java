@@ -92,6 +92,15 @@ public abstract class QsDownloadModel<K> {
     }
 
     /**
+     * 设置文件已下载长度
+     *
+     * @see DownloadExecutor
+     */
+    final void setDownloadedLength(long length) {
+        this.downloadedLength = length;
+    }
+
+    /**
      * 下载时实时更新进度
      * 该api不对外开放
      *

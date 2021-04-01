@@ -156,6 +156,7 @@ class DownloadExecutor<M extends QsDownloadModel<K>, K> {
                 if (contentLength <= 0) {
                     throw new Exception("download failed, content length is 0!!" + getCommonMsg());
                 }
+                setDownloadedLength(0);
                 setContentLength(contentLength);
                 if (L.isEnable()) {
                     L.i(initTag(), "response ok, contentLength:" + contentLength + getCommonMsg());
@@ -204,6 +205,9 @@ class DownloadExecutor<M extends QsDownloadModel<K>, K> {
                 }
 
             } else {
+                long length = targetFile.length();
+                setDownloadedLength(length);
+                setContentLength(length);
                 if (L.isEnable()) L.i(initTag(), "download started...... old file is exists!!" + getCommonMsg());
             }
         } finally {
@@ -415,6 +419,10 @@ class DownloadExecutor<M extends QsDownloadModel<K>, K> {
 
     private void postDownloading() {
         qsDownloader.callbackDownloading(this);
+    }
+
+    private void setDownloadedLength(long length) {
+        m.setDownloadedLength(length);
     }
 
     private long getDownloadedLength() {
