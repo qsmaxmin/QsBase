@@ -249,12 +249,12 @@ public final class QsDownloader<M extends QsDownloadModel<K>, K> {
                 DownloadListener[] listeners = executor.collectCallbacks();
                 if (listeners != null && listeners.length > 0) {
                     for (DownloadListener l : listeners) {
-                        l.onDownloadStart(executor.getModel());
+                        if (l != null) l.onDownloadStart(executor.getModel());
                     }
                 }
                 if (globeListeners != null && globeListeners.length > 0) {
                     for (DownloadListener l : globeListeners) {
-                        l.onDownloadStart(executor.getModel());
+                        if (l != null) l.onDownloadStart(executor.getModel());
                     }
                 }
             }
@@ -269,12 +269,12 @@ public final class QsDownloader<M extends QsDownloadModel<K>, K> {
                 DownloadListener[] listeners = executor.collectCallbacks();
                 if (listeners != null && listeners.length > 0) {
                     for (DownloadListener l : listeners) {
-                        l.onDownloading(model, model.getDownloadedLength(), model.getTotalLength());
+                        if (l != null) l.onDownloading(model, model.getDownloadedLength(), model.getTotalLength());
                     }
                 }
                 if (globeListeners != null && globeListeners.length > 0) {
                     for (DownloadListener l : globeListeners) {
-                        l.onDownloading(model, model.getDownloadedLength(), model.getTotalLength());
+                        if (l != null) l.onDownloading(model, model.getDownloadedLength(), model.getTotalLength());
                     }
                 }
             }
@@ -290,12 +290,12 @@ public final class QsDownloader<M extends QsDownloadModel<K>, K> {
                 DownloadListener[] listeners = executor.collectCallbacks();
                 if (listeners != null && listeners.length > 0) {
                     for (DownloadListener l : listeners) {
-                        l.onDownloadComplete(executor.getModel());
+                        if (l != null) l.onDownloadComplete(executor.getModel());
                     }
                 }
                 if (globeListeners != null && globeListeners.length > 0) {
                     for (DownloadListener l : globeListeners) {
-                        l.onDownloadComplete(executor.getModel());
+                        if (l != null) l.onDownloadComplete(executor.getModel());
                     }
                 }
             }
@@ -310,12 +310,12 @@ public final class QsDownloader<M extends QsDownloadModel<K>, K> {
                 DownloadListener[] listeners = executor.collectCallbacks();
                 if (listeners != null && listeners.length > 0) {
                     for (DownloadListener l : listeners) {
-                        l.onDownloadFailed(executor.getModel(), e.getMessage());
+                        if (l != null) l.onDownloadFailed(executor.getModel(), e.getMessage());
                     }
                 }
                 if (globeListeners != null && globeListeners.length > 0) {
                     for (DownloadListener l : globeListeners) {
-                        l.onDownloadFailed(executor.getModel(), e.getMessage());
+                        if (l != null) l.onDownloadFailed(executor.getModel(), e.getMessage());
                     }
                 }
             }
