@@ -120,4 +120,29 @@ public abstract class QsDownloadModel<K> {
         return getFilePath() + "_qs_temp";
     }
 
+    /**
+     * 同一种任务，该回调仅执行一次
+     */
+    protected void onDownloadStart() {
+    }
+
+    /**
+     * 同一种任务，该回调仅执行一次
+     */
+    protected void onDownloading(long size, long totalSize) {
+    }
+
+    /**
+     * 同一种任务，该回调仅执行一次
+     * 特别适合下载完成后的解压，入库等操作
+     */
+    protected void onDownloadComplete() throws Exception {
+    }
+
+    /**
+     * 同一种任务，该回调仅执行一次
+     */
+    protected void onDownloadFailed(String message) {
+    }
+
 }
