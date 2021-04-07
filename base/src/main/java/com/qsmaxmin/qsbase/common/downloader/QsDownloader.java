@@ -192,19 +192,23 @@ public final class QsDownloader<M extends QsDownloadModel<K>, K> {
     }
 
     public final boolean isDownloading(M m) {
-        return executorMap.get(m.getId()) != null;
+        return isDownloading(m.getId());
     }
 
     public final boolean isDownloading(K k) {
-        return executorMap.get(k) != null;
+        synchronized (executorMap) {
+            return executorMap.get(k) != null;
+        }
     }
 
     public final void cancelDownload(M m) {
+        cancelDownload(m.getId());
+    }
+
+    public final void cancelDownload(K k) {
         synchronized (executorMap) {
-            DownloadExecutor executor = executorMap.get(m.getId());
-            if (executor != null) {
-                executor.cancel();
-            }
+            DownloadExecutor executor = executorMap.get(k);
+            if (executor != null) executor.cancel();
         }
     }
 
