@@ -122,25 +122,29 @@ public abstract class QsDownloadModel<K> {
 
     /**
      * 同一种任务，该回调仅执行一次
+     * 该回调在下载线程中执行
      */
     protected void onDownloadStart() {
     }
 
     /**
      * 同一种任务，该回调仅执行一次
+     * 该回调在下载线程中执行
      */
     protected void onDownloading(long size, long totalSize) {
     }
 
     /**
      * 同一种任务，该回调仅执行一次
-     * 特别适合下载完成后的解压，入库等操作
+     * 该回调在下载线程中执行
+     * 特别适合下载完成后的解压，入库等只需要执行一次的操作
      */
     protected void onDownloadComplete() throws Exception {
     }
 
     /**
      * 同一种任务，该回调仅执行一次
+     * 该回调在下载线程中执行
      */
     protected void onDownloadFailed(String message) {
     }
