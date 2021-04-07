@@ -1,6 +1,5 @@
 package com.qsmaxmin.qsbase.common.downloader;
 
-import android.os.Looper;
 import android.text.TextUtils;
 
 import com.qsmaxmin.qsbase.common.log.L;
@@ -365,8 +364,4 @@ public final class QsDownloader<M extends QsDownloadModel<K>, K> {
         QsThreadPollHelper.post(action);
     }
 
-
-    private boolean isMainThread() {
-        return Thread.currentThread() == Looper.getMainLooper().getThread();
-    }
 }
