@@ -369,8 +369,8 @@ class DownloadExecutor<M extends QsDownloadModel<K>, K> {
                 if (readLength == targetLength || whileCount % 10 == 0) {
                     writeSeekPoint(index, startPoint + readLength);
                 }
+                addDownloadedLength(realLen);
             }
-            addDownloadedLength(realLen);
 
             progress = m.getDownloadProgress();
             if (progress != lastProgress) {
