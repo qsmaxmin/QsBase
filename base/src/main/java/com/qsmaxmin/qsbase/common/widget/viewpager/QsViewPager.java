@@ -26,7 +26,7 @@ public class QsViewPager extends ViewPager {
         if (ev.getAction() == MotionEvent.ACTION_DOWN && getParent() != null && getAdapter() != null) {
             int count = getAdapter().getCount();
             int currentItem = getCurrentItem();
-            getParent().requestDisallowInterceptTouchEvent(currentItem != 0 && currentItem != count);
+            getParent().requestDisallowInterceptTouchEvent(currentItem != 0 && currentItem != count - 1);
         }
         return canScroll && super.onInterceptTouchEvent(ev);
     }
