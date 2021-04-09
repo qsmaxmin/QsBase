@@ -55,11 +55,11 @@ public abstract class MvViewPagerFragment extends MvFragment implements MvIViewP
         initViewPager(createModelPagers());
     }
 
-    @Override public void initViewPager(@Nullable List<MvModelPager> modelPagers) {
+    @Override public final void initViewPager(@Nullable List<MvModelPager> modelPagers) {
         initViewPager(modelPagers, getOffscreenPageLimit());
     }
 
-    @Override public void initViewPager(@Nullable List<MvModelPager> modelPagers, int offScreenPageLimit) {
+    @Override public final void initViewPager(@Nullable List<MvModelPager> modelPagers, int offScreenPageLimit) {
         if (modelPagers != null && !modelPagers.isEmpty()) {
             int size = modelPagers.size();
             MvModelPager[] pagers = modelPagers.toArray(new MvModelPager[size]);
@@ -67,11 +67,11 @@ public abstract class MvViewPagerFragment extends MvFragment implements MvIViewP
         }
     }
 
-    @Override public void initViewPager(@Nullable MvModelPager[] modelPagers) {
+    @Override public final void initViewPager(@Nullable MvModelPager[] modelPagers) {
         initViewPager(createModelPagers(), getOffscreenPageLimit());
     }
 
-    @Override public void initViewPager(@Nullable MvModelPager[] modelPagers, int offScreenPageLimit) {
+    @Override public final void initViewPager(@Nullable MvModelPager[] modelPagers, int offScreenPageLimit) {
         if (modelPagers != null && modelPagers.length > 0) {
             MvViewPagerHelper pagerHelper = new MvViewPagerHelper(this, pager, modelPagers);
             MvTabAdapterItem firstTabItem = createTabAdapterItemInner(0);
@@ -116,11 +116,11 @@ public abstract class MvViewPagerFragment extends MvFragment implements MvIViewP
         return adapter == null ? null : adapter.getCurrentPager().fragment;
     }
 
-    @Override public void setIndex(int index) {
+    @Override public final void setIndex(int index) {
         setIndex(index, true);
     }
 
-    @Override public void setIndex(int index, boolean bool) {
+    @Override public final void setIndex(int index, boolean bool) {
         if (adapter != null) {
             int childCount = adapter.getCount();
             if (0 <= index && index < childCount) {
@@ -131,7 +131,7 @@ public abstract class MvViewPagerFragment extends MvFragment implements MvIViewP
         }
     }
 
-    @Override public MvTabAdapterItem createTabAdapterItemInner(int position) {
+    @Override public final MvTabAdapterItem createTabAdapterItemInner(int position) {
         MvTabAdapterItem item = createTabAdapterItem(position);
         if (item != null) item.setLayer(this);
         return item;

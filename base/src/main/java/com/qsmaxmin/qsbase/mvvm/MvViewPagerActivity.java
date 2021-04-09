@@ -48,11 +48,11 @@ public abstract class MvViewPagerActivity extends MvActivity implements MvIViewP
         return view;
     }
 
-    @Override public void initViewPager(@Nullable List<MvModelPager> modelPagers) {
+    @Override public final void initViewPager(@Nullable List<MvModelPager> modelPagers) {
         initViewPager(modelPagers, getOffscreenPageLimit());
     }
 
-    @Override public void initViewPager(@Nullable List<MvModelPager> modelPagers, int offScreenPageLimit) {
+    @Override public final void initViewPager(@Nullable List<MvModelPager> modelPagers, int offScreenPageLimit) {
         if (modelPagers != null && !modelPagers.isEmpty()) {
             int size = modelPagers.size();
             MvModelPager[] pagers = modelPagers.toArray(new MvModelPager[size]);
@@ -60,11 +60,11 @@ public abstract class MvViewPagerActivity extends MvActivity implements MvIViewP
         }
     }
 
-    @Override public void initViewPager(@Nullable MvModelPager[] modelPagers) {
+    @Override public final void initViewPager(@Nullable MvModelPager[] modelPagers) {
         initViewPager(modelPagers, getOffscreenPageLimit());
     }
 
-    @Override public void initViewPager(@Nullable MvModelPager[] modelPagers, int offScreenPageLimit) {
+    @Override public final void initViewPager(@Nullable MvModelPager[] modelPagers, int offScreenPageLimit) {
         if (modelPagers != null && modelPagers.length > 0) {
             MvViewPagerHelper pagerHelper = new MvViewPagerHelper(this, pager, modelPagers);
             MvTabAdapterItem firstTabItem = createTabAdapterItemInner(0);
@@ -106,11 +106,11 @@ public abstract class MvViewPagerActivity extends MvActivity implements MvIViewP
     @Override public void onPageSelected(int position, int oldPosition) {
     }
 
-    @Override public void setIndex(int index) {
+    @Override public final void setIndex(int index) {
         setIndex(index, true);
     }
 
-    @Override public void setIndex(int index, boolean bool) {
+    @Override public final void setIndex(int index, boolean bool) {
         if (adapter != null) {
             int childCount = adapter.getCount();
             if (0 <= index && index < childCount) {
