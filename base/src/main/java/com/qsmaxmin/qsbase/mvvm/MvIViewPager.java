@@ -6,6 +6,8 @@ import com.qsmaxmin.qsbase.mvvm.adapter.MvTabAdapter;
 import com.qsmaxmin.qsbase.mvvm.adapter.MvTabAdapterItem;
 import com.qsmaxmin.qsbase.mvvm.model.MvModelPager;
 
+import java.util.List;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -29,7 +31,13 @@ public interface MvIViewPager extends MvIView {
 
     void initViewPager(@Nullable MvModelPager[] modelPagers, int offScreenPageLimit);
 
+    void initViewPager(@Nullable List<MvModelPager> modelPagers);
+
+    void initViewPager(@Nullable List<MvModelPager> modelPagers, int offScreenPageLimit);
+
     @Nullable MvModelPager[] createModelPagers();
+
+    void setIndex(int index);
 
     void setIndex(int index, boolean bool);
 

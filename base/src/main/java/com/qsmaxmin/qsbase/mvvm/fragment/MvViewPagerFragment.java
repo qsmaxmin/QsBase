@@ -19,6 +19,8 @@ import com.qsmaxmin.qsbase.mvvm.adapter.MvTabAdapterItem;
 import com.qsmaxmin.qsbase.mvvm.adapter.MvTabFragmentPagerAdapter;
 import com.qsmaxmin.qsbase.mvvm.model.MvModelPager;
 
+import java.util.List;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -51,6 +53,18 @@ public abstract class MvViewPagerFragment extends MvFragment implements MvIViewP
         tabs = view.findViewById(android.R.id.tabs);
         if (tabs != null) initTab(tabs);
         initViewPager(createModelPagers());
+    }
+
+    @Override public void initViewPager(@Nullable List<MvModelPager> modelPagers) {
+        initViewPager(modelPagers, getOffscreenPageLimit());
+    }
+
+    @Override public void initViewPager(@Nullable List<MvModelPager> modelPagers, int offScreenPageLimit) {
+        if (modelPagers != null && !modelPagers.isEmpty()) {
+            int size = modelPagers.size();
+            MvModelPager[] pagers = modelPagers.toArray(new MvModelPager[size]);
+            initViewPager(pagers, offScreenPageLimit);
+        }
     }
 
     @Override public void initViewPager(@Nullable MvModelPager[] modelPagers) {
@@ -100,6 +114,10 @@ public abstract class MvViewPagerFragment extends MvFragment implements MvIViewP
 
     @Override public final Fragment getCurrentFragment() {
         return adapter == null ? null : adapter.getCurrentPager().fragment;
+    }
+
+    @Override public void setIndex(int index) {
+        setIndex(index, true);
     }
 
     @Override public void setIndex(int index, boolean bool) {

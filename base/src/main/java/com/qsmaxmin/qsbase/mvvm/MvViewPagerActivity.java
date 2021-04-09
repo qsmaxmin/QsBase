@@ -16,6 +16,8 @@ import com.qsmaxmin.qsbase.mvvm.adapter.MvTabAdapterItem;
 import com.qsmaxmin.qsbase.mvvm.adapter.MvTabFragmentPagerAdapter;
 import com.qsmaxmin.qsbase.mvvm.model.MvModelPager;
 
+import java.util.List;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -46,6 +48,18 @@ public abstract class MvViewPagerActivity extends MvActivity implements MvIViewP
         return view;
     }
 
+    @Override public void initViewPager(@Nullable List<MvModelPager> modelPagers) {
+        initViewPager(modelPagers, getOffscreenPageLimit());
+    }
+
+    @Override public void initViewPager(@Nullable List<MvModelPager> modelPagers, int offScreenPageLimit) {
+        if (modelPagers != null && !modelPagers.isEmpty()) {
+            int size = modelPagers.size();
+            MvModelPager[] pagers = modelPagers.toArray(new MvModelPager[size]);
+            initViewPager(pagers, offScreenPageLimit);
+        }
+    }
+
     @Override public void initViewPager(@Nullable MvModelPager[] modelPagers) {
         initViewPager(modelPagers, getOffscreenPageLimit());
     }
@@ -72,6 +86,7 @@ public abstract class MvViewPagerActivity extends MvActivity implements MvIViewP
         tabStrip.setIndicatorWidth((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30, dm));
         tabStrip.setIndicatorCorner(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1.5f, dm));
         tabStrip.setIndicatorHeight((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 3, dm));
+        tabStrip.setIndicatorColor(getResources().getColor(R.color.colorAccent));
     }
 
     protected MvIPagerAdapter createPagerAdapter(MvViewPagerHelper pagerHelper, boolean customTabView) {
@@ -89,6 +104,10 @@ public abstract class MvViewPagerActivity extends MvActivity implements MvIViewP
     }
 
     @Override public void onPageSelected(int position, int oldPosition) {
+    }
+
+    @Override public void setIndex(int index) {
+        setIndex(index, true);
     }
 
     @Override public void setIndex(int index, boolean bool) {
