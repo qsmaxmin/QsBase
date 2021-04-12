@@ -56,4 +56,6 @@ public interface MvIViewPager extends MvIView {
     void initTab(@NonNull PagerSlidingTabStrip tabStrip);
 
     Fragment getCurrentFragment();
+
+    boolean isCustomTabView();
 }
