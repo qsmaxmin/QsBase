@@ -101,6 +101,7 @@ public abstract class MvViewPagerFragment extends MvFragment implements MvIViewP
         tabStrip.setIndicatorWidth((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30, dm));
         tabStrip.setIndicatorCorner(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1.5f, dm));
         tabStrip.setIndicatorHeight((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 3, dm));
+        tabStrip.setIndicatorColor(getResources().getColor(R.color.colorAccent));
     }
 
     @Override public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
