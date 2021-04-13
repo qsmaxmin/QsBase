@@ -212,17 +212,17 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
             }
 
         } else {
-            ViewGroup customView = rootView.findViewById(R.id.qs_default_container_for_fragment);
-            if (customView == null) {
-                customView = (ViewGroup) rootView;
+            ViewGroup customViewContainer = rootView.findViewById(R.id.qs_default_container_for_fragment);
+            if (customViewContainer == null) {
+                customViewContainer = (ViewGroup) rootView;
             }
-            View contentView = onCreateContentView(inflater, customView);
+            View contentView = onCreateContentView(inflater, customViewContainer);
             if (contentView != null) {
                 if (contentViewBackgroundColor() != 0) {
                     contentView.setBackgroundColor(contentViewBackgroundColor());
                 }
-                if (customView != contentView && contentView.getParent() == null) {
-                    customView.addView(contentView);
+                if (customViewContainer != contentView && contentView.getParent() == null) {
+                    customViewContainer.addView(contentView);
                 }
             }
 
