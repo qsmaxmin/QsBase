@@ -210,6 +210,9 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
 
         } else {
             ViewGroup customView = rootView.findViewById(R.id.qs_default_container_for_fragment);
+            if (customView == null) {
+                customView = (ViewGroup) rootView;
+            }
             View contentView = onCreateContentView(inflater, customView);
             if (contentView != null) {
                 if (contentViewBackgroundColor() != 0) {

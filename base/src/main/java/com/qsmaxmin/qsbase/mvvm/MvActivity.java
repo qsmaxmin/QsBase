@@ -192,6 +192,9 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
 
         } else {
             ViewGroup customView = rootView.findViewById(R.id.qs_default_container_for_activity);
+            if (customView == null) {
+                customView = (ViewGroup) rootView;
+            }
             View contentView = onCreateContentView(inflater, customView);
             if (contentView != null) {
                 if (contentViewBackgroundColor() != 0) {
