@@ -51,7 +51,7 @@ public interface MvIView extends IView, QsIBindEvent, QsIBindBundle, QsNotProgua
 
     View onCreateLoadingView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent);
 
-    View onCreateContentView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent);
+    View onCreateContentView(@NonNull LayoutInflater inflater, @Nullable ViewGroup parent);
 
     View onCreateEmptyView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent);
 

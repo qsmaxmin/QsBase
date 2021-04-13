@@ -95,7 +95,7 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
         return loadingLayoutId() == 0 ? null : inflater.inflate(loadingLayoutId(), parent, false);
     }
 
-    @Override public View onCreateContentView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
+    @Override public View onCreateContentView(@NonNull LayoutInflater inflater, @Nullable ViewGroup parent) {
         return layoutId() == 0 ? null : inflater.inflate(layoutId(), parent, false);
     }
 
@@ -176,6 +176,9 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
         long s0 = 0;
         if (L.isEnable()) s0 = System.nanoTime();
         View rootView = onCreateRootView(inflater, container);
+        if (rootView == null) {
+            return onCreateContentView(inflater, container);
+        }
 
         ViewGroup actionbarContainer = rootView.findViewById(R.id.qs_actionbar_parent);
         if (actionbarContainer != null) {

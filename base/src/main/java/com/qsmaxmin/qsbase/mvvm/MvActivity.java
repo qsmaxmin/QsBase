@@ -124,7 +124,7 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
         return loadingLayoutId() == 0 ? null : inflater.inflate(loadingLayoutId(), parent, false);
     }
 
-    @Override public View onCreateContentView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
+    @Override public View onCreateContentView(@NonNull LayoutInflater inflater, @Nullable ViewGroup parent) {
         return layoutId() == 0 ? null : inflater.inflate(layoutId(), parent, false);
     }
 
@@ -143,7 +143,9 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
         long s0 = 0;
         if (L.isEnable()) s0 = System.currentTimeMillis();
         View rootView = onCreateRootView(inflater, null);
-
+        if (rootView == null) {
+            return onCreateContentView(inflater, null);
+        }
         if (isOpenSlidingToClose()) {
             if (rootView instanceof ISlidingViewGroup) {
                 slidingView = (ISlidingViewGroup) rootView;
