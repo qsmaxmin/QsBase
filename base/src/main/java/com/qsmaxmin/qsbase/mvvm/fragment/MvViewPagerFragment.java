@@ -36,7 +36,6 @@ public abstract class MvViewPagerFragment extends MvFragment implements MvIViewP
     private PagerSlidingTabStrip tabs;
     private MvIPagerAdapter      adapter;
     private MvTabAdapter         tabAdapter;
-    private MvTabAdapterItem     firstTabItem;
 
     @Override public int layoutId() {
         return R.layout.qs_viewpager_top_tab;
@@ -46,14 +45,9 @@ public abstract class MvViewPagerFragment extends MvFragment implements MvIViewP
         View view = super.initView(inflater, container);
         pager = view.findViewById(R.id.pager);
         tabs = view.findViewById(android.R.id.tabs);
-        firstTabItem = createTabAdapterItemInner(0);
         if (tabs != null) initTab(tabs);
         initViewPager(createModelPagers());
         return view;
-    }
-
-    @Override public final boolean isCustomTabView() {
-        return firstTabItem != null;
     }
 
     @Override public final void initViewPager(@Nullable List<MvModelPager> modelPagers) {
@@ -75,10 +69,14 @@ public abstract class MvViewPagerFragment extends MvFragment implements MvIViewP
     @Override public final void initViewPager(@Nullable MvModelPager[] modelPagers, int offScreenPageLimit) {
         if (modelPagers != null && modelPagers.length > 0) {
             MvViewPagerHelper pagerHelper = new MvViewPagerHelper(this, pager, modelPagers);
-            if (isCustomTabView()) {
+            MvTabAdapterItem firstTabItem = createTabAdapterItemInner(0);
+            if (firstTabItem != null) {
                 tabAdapter = new MvTabAdapter(this, modelPagers, firstTabItem);
+                adapter = createPagerAdapter(pagerHelper, true);
+            } else {
+                adapter = createPagerAdapter(pagerHelper, false);
             }
-            adapter = createPagerAdapter(pagerHelper);
+
             pager.setAdapter(adapter.getAdapter());
             pager.setPageMargin(getPageMargin());
             pager.setOffscreenPageLimit(offScreenPageLimit);
@@ -86,8 +84,8 @@ public abstract class MvViewPagerFragment extends MvFragment implements MvIViewP
         }
     }
 
-    protected MvIPagerAdapter createPagerAdapter(MvViewPagerHelper pagerHelper) {
-        if (isCustomTabView()) {
+    protected MvIPagerAdapter createPagerAdapter(MvViewPagerHelper pagerHelper, boolean isCustomTabView) {
+        if (isCustomTabView) {
             return new MvTabFragmentPagerAdapter(getChildFragmentManager(), pagerHelper);
         } else {
             return new MvFragmentPagerAdapter(getChildFragmentManager(), pagerHelper);
