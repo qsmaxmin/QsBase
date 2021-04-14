@@ -1,6 +1,5 @@
 package com.qsmaxmin.qsbase.mvvm.fragment;
 
-import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -95,14 +94,10 @@ public abstract class MvViewPagerFragment extends MvFragment implements MvIViewP
         }
     }
 
+    /**
+     * 重写可定义PagerSlidingTabStrip样式
+     */
     @Override public void initTab(@NonNull PagerSlidingTabStrip tabStrip) {
-        if (!isCustomTabView()) {
-            DisplayMetrics dm = getResources().getDisplayMetrics();
-            tabStrip.setIndicatorWidth((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30, dm));
-            tabStrip.setIndicatorCorner(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1.5f, dm));
-            tabStrip.setIndicatorHeight((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 3, dm));
-            tabStrip.setIndicatorColor(getResources().getColor(R.color.colorAccent));
-        }
     }
 
     @Override public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {

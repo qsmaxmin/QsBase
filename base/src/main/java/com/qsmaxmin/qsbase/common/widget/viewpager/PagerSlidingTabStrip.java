@@ -470,7 +470,6 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
         return indicatorWidth;
     }
 
-
     public void setIndicatorHeight(int indicatorHeight) {
         if (this.indicatorHeight != indicatorHeight) {
             this.indicatorHeight = indicatorHeight;
@@ -491,6 +490,33 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 
     public float getIndicatorCorner() {
         return indicatorCorner;
+    }
+
+    public void setIndicatorDrawable(Drawable drawable) {
+        if (this.indicatorDrawable != drawable) {
+            this.indicatorDrawable = drawable;
+            invalidate();
+        }
+    }
+
+    public Drawable getIndicatorDrawable() {
+        return indicatorDrawable;
+    }
+
+    /**
+     * 目前支持0，1两种类型
+     * 0，标题底部显示
+     * 1，标题背后显示
+     */
+    public void setIndicatorStyle(int style) {
+        if (this.indicatorStyle != style) {
+            this.indicatorStyle = style;
+            invalidate();
+        }
+    }
+
+    public int getIndicatorStyle() {
+        return indicatorStyle;
     }
 
     public void setUnderlineColor(int underlineColor) {
