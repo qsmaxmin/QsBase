@@ -8,6 +8,11 @@
         <attr name="psts_IndicatorWidth" format="dimension" />
         <attr name="psts_IndicatorHeight" format="dimension" />
         <attr name="psts_IndicatorCorner" format="float" />
+        <attr name="psts_IndicatorDrawable" format="reference" />
+        <attr name="psts_IndicatorStyle" format="enum">
+            <enum name="underText" value="0" />
+            <enum name="behindText" value="1" />
+        </attr>
         <attr name="psts_UnderlineColor" format="color" />
         <attr name="psts_DividerColor" format="color" />
         <attr name="psts_DividerWidth" format="dimension" />
@@ -19,6 +24,7 @@
         <attr name="psts_ScrollOffset" format="dimension" />
         <attr name="psts_ShouldExpand" format="boolean" />
         <attr name="psts_TextAllCaps" format="boolean" />
+
     </declare-styleable>
 
     <!--PtrFrameLayout-->
