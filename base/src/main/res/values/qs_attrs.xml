@@ -70,4 +70,37 @@
     <declare-styleable name="HeaderScrollView">
         <attr name="hsv_tabOffsetY" format="dimension" />
     </declare-styleable>
+
+
+    <declare-styleable name="RelativeTextView">
+        <!--如：“2,0.9,3,0.8” 表示前2个字缩放0.9倍，往右3个字缩放0.8倍，颜色定义规则也是一样-->
+        <attr name="rtv_orderScale" format="string" />
+        <attr name="rtv_orderColor" format="string" />
+
+        <!--如：“2,0.9,3,0.8” 表示后2个字缩放0.9倍，往左3个字缩放0.8倍，颜色定义规则也是一样-->
+        <attr name="rtv_invertedOrderScale" format="string" />
+        <attr name="rtv_invertedOrderColor" format="string" />
+
+        <!--指定字符之后的所有字符缩放比例，如“好,0.8”表示“好”字之后的字符缩放0.8倍，颜色定义规则也是一样-->
+        <attr name="rtv_rightOfTextScale" format="string" />
+        <attr name="rtv_rightOfTextColor" format="string" />
+        <attr name="rtv_leftOfTextScale" format="string" />
+        <attr name="rtv_leftOfTextColor" format="string" />
+
+        <!--指定字符的缩放比例，如“好,0.8”表示“好”字缩放0.8倍，颜色定义规则也是一样-->
+        <attr name="rtv_specifiedTextScale" format="string" />
+        <attr name="rtv_specifiedTextColor" format="string" />
+        <attr name="rtv_gravity" format="enum">
+            <enum name="baseLine" value="0" />
+            <enum name="top" value="1" />
+            <enum name="center" value="2" />
+            <enum name="bottom" value="3" />
+        </attr>
+
+        <!--开始和结束字符位置绘制指定图形-->
+        <attr name="rtv_drawableFirst" format="reference" />
+        <attr name="rtv_drawableEnd" format="reference" />
+        <attr name="rtv_drawableFirstMargin" format="dimension" />
+        <attr name="rtv_drawableEndMargin" format="dimension" />
+    </declare-styleable>
 </resources>
