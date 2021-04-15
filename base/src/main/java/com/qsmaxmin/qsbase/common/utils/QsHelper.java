@@ -204,7 +204,7 @@ public class QsHelper {
         if (!fragment.isAdded()) {
             FragmentTransaction ft = manager.beginTransaction();
             if (enterAnim != 0 || existAnim != 0) ft.setCustomAnimations(enterAnim, existAnim);
-            ft.add(layoutId, fragment, tag).commitNowAllowingStateLoss();
+            ft.add(layoutId, fragment, tag).commitAllowingStateLoss();
         }
     }
 
