@@ -1,6 +1,5 @@
 package com.qsmaxmin.qsbase;
 
-import android.app.Activity;
 import android.app.Application;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
