@@ -348,9 +348,9 @@ public final class HttpRequest {
     }
 
     public final void addFiled(String key, Object value) {
-        if (!TextUtils.isEmpty(key)) {
+        if (!TextUtils.isEmpty(key) && value != null) {
             HashMap<String, Object> map = getFiledMap();
-            map.put(key, value == null ? "" : value);
+            map.put(key, value);
         }
     }
 
