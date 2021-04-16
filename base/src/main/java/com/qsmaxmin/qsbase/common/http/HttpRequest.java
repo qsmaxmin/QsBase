@@ -28,6 +28,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -411,7 +412,7 @@ public final class HttpRequest {
         }
     }
 
-    private RequestBody createRequestBodyByObject(String mimeType, Object data) {
+    private RequestBody createRequestBodyByObject(String mimeType, @NonNull Object data) {
         if (data instanceof String) {
             return RequestBody.create(MediaType.parse(mimeType), (String) data);
         } else if (data instanceof File) {
@@ -419,31 +420,43 @@ public final class HttpRequest {
         } else if (data instanceof byte[]) {
             return RequestBody.create(MediaType.parse(mimeType), (byte[]) data);
         } else {
-            String json = gson.toJson(data, data.getClass());
-            return RequestBody.create(MediaType.parse(mimeType), json);
+            boolean isArray = data.getClass().isArray();
+            if (isArray) {
+                String text = Arrays.toString((Object[]) (data));
+                return RequestBody.create(MediaType.parse(mimeType), text);
+            } else {
+                String json = gson.toJson(data, data.getClass());
+                return RequestBody.create(MediaType.parse(mimeType), json);
+            }
         }
     }
 
     private RequestBody createRequestBodyByForm(@NonNull HashMap<String, Object> formMap) {
-        boolean isArrString = true;
+        boolean isFormBody = true;
         for (String key : formMap.keySet()) {
             Object obj = formMap.get(key);
             if (obj instanceof File || obj instanceof byte[]) {
-                isArrString = false;
+                isFormBody = false;
             }
         }
-        if (isArrString) {
+        if (isFormBody) {
             okhttp3.FormBody.Builder builder = new okhttp3.FormBody.Builder();
             for (String key : formMap.keySet()) {
-                String valueStr = String.valueOf(formMap.get(key));
-                if (!TextUtils.isEmpty(key) && valueStr.length() > 0) {
-                    builder.add(key, valueStr);
+                if (TextUtils.isEmpty(key)) continue;
+                Object value = formMap.get(key);
+                if (value != null) {
+                    if (value.getClass().isArray()) {
+                        builder.add(key, Arrays.toString((Object[]) value));
+                    } else {
+                        builder.add(key, String.valueOf(value));
+                    }
                 }
             }
             return builder.build();
         } else {
             MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
             for (String key : formMap.keySet()) {
+                if (TextUtils.isEmpty(key)) continue;
                 Object value = formMap.get(key);
                 if (value instanceof File) {
                     RequestBody rb = RequestBody.create(MediaType.parse("file/*"), (File) value);
@@ -451,8 +464,10 @@ public final class HttpRequest {
                 } else if (value instanceof byte[]) {
                     RequestBody rb = RequestBody.create(MediaType.parse("file/*"), (byte[]) value);
                     builder.addFormDataPart(key, String.valueOf(System.nanoTime()), rb);
-                } else {
-                    if (!TextUtils.isEmpty(key)) {
+                } else if (value != null) {
+                    if (value.getClass().isArray()) {
+                        builder.addFormDataPart(key, Arrays.toString((Object[]) value));
+                    } else {
                         builder.addFormDataPart(key, String.valueOf(value));
                     }
                 }
