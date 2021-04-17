@@ -349,14 +349,12 @@ public final class HttpRequest {
 
     public final void addFiled(String key, Object value) {
         if (!TextUtils.isEmpty(key) && value != null) {
-            HashMap<String, Object> map = getFiledMap();
-            map.put(key, value);
+            getFiledMap().put(key, value);
         }
     }
 
     public final Object getField(String key) {
-        HashMap<String, Object> map = getFiledMap();
-        return map.get(key);
+        return getFiledMap().get(key);
     }
 
     public final Object getRequestBody() {
