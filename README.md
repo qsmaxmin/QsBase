@@ -99,20 +99,6 @@ MVP(或MVVM)架构+AOP面向切面编程，摒弃反射、代理等操作，稳�
                 return new DefaultProgressDialog();
             }
 
-            /**
-             * 全局Activity状态回调
-             */
-            @Override public void onActivityResume(Activity activity) {
-                ...
-            }
-
-            /**
-             * 全局Activity状态回调
-             */
-            @Override public void onActivityPause(Activity activity) {
-                ...
-            }
-
             ...
         }
 
