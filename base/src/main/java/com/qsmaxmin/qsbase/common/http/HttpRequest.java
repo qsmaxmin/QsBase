@@ -94,10 +94,10 @@ public final class HttpRequest {
 
     private RequestBody createRequestBody() {
         if (shouldProcessBody()) {
-            if (requestBody != null) {
-                return createRequestBodyByObject(requestBodyMimeType, requestBody);
-            } else if (filedMap != null) {
+            if (filedMap != null) {
                 return createRequestBodyByForm(filedMap);
+            } else if (requestBody != null) {
+                return createRequestBodyByObject(requestBodyMimeType, requestBody);
             }
         }
         return null;
