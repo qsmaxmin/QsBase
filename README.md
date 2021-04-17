@@ -118,14 +118,7 @@ MVP(或MVVM)架构+AOP面向切面编程，摒弃反射、代理等操作，稳�
 
 #### step 4：继承框架里面的Activity和Fragment
 
-        1，请使用QsTheme：
-            <style name="YourTheme" parent="QsTheme">
-                <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-                <item name="colorPrimary">@color/colorPrimary</item>
-                <item name="colorAccent">@color/colorAccent</item>
-            </style>
-
-        2，Activity的使用：
+        1，Activity的使用：
         所有的Activity必须继承框架里的Activity
             为快速开发，框架有多个Activity供开发者继承，如：
             MvActivity: 基类activity，可重写actionbarLayoutId()返回actionbar布局
@@ -198,7 +191,7 @@ MVP(或MVVM)架构+AOP面向切面编程，摒弃反射、代理等操作，稳�
         资源获取：QsHelper.getString()，QsHelper.getDrawable()....
 
 
-        3，Fragment的使用
+        2，Fragment的使用
         所有的Fragment必须继承框架的Fragment，用法和MvActivity基本一致
             为快速开发，框架有多个Fragment供开发者继承如：
             MvFragment: 普通fragment
@@ -207,7 +200,7 @@ MVP(或MVVM)架构+AOP面向切面编程，摒弃反射、代理等操作，稳�
             ...
         Fragment写法和Activity一样...
 
-        4，注解的使用
+        3，注解的使用
         @BindBundle可以直接绑定Bundle值到field
         @Subscribe注解可以绑定事件接收到method，可通过QsHelper.eventPost(xxx)发送事件
         @Property注解可以持久化参数到本地（注意Class必须有@AutoProperty注解才能生效）
