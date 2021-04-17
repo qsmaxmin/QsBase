@@ -95,7 +95,7 @@ public final class HttpRequest {
     private RequestBody createRequestBody() {
         if (shouldProcessBody()) {
             if (filedMap != null) {
-                return createRequestBodyByForm(filedMap);
+                return createRequestBodyByFieldMap(filedMap);
             } else if (requestBody != null) {
                 return createRequestBodyByObject(requestBodyMimeType, requestBody);
             }
@@ -429,7 +429,7 @@ public final class HttpRequest {
         }
     }
 
-    private RequestBody createRequestBodyByForm(@NonNull HashMap<String, Object> formMap) {
+    private RequestBody createRequestBodyByFieldMap(@NonNull HashMap<String, Object> formMap) {
         boolean isFormBody = true;
         for (String key : formMap.keySet()) {
             Object obj = formMap.get(key);
