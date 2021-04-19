@@ -28,7 +28,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -418,14 +417,8 @@ public final class HttpRequest {
         } else if (data instanceof byte[]) {
             return RequestBody.create(MediaType.parse(mimeType), (byte[]) data);
         } else {
-            boolean isArray = data.getClass().isArray();
-            if (isArray) {
-                String text = Arrays.toString((Object[]) (data));
-                return RequestBody.create(MediaType.parse(mimeType), text);
-            } else {
-                String json = gson.toJson(data, data.getClass());
-                return RequestBody.create(MediaType.parse(mimeType), json);
-            }
+            String json = gson.toJson(data, data.getClass());
+            return RequestBody.create(MediaType.parse(mimeType), json);
         }
     }
 
@@ -459,11 +452,7 @@ public final class HttpRequest {
                     RequestBody rb = RequestBody.create(MediaType.parse("file/*"), (byte[]) value);
                     builder.addFormDataPart(key, String.valueOf(System.nanoTime()), rb);
                 } else if (value != null) {
-                    if (value.getClass().isArray()) {
-                        builder.addFormDataPart(key, Arrays.toString((Object[]) value));
-                    } else {
-                        builder.addFormDataPart(key, String.valueOf(value));
-                    }
+                    builder.addFormDataPart(key, valueToString(value));
                 }
             }
             return builder.build();
