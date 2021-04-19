@@ -460,10 +460,6 @@ public final class HttpRequest {
     }
 
     private String valueToString(Object value) {
-        return valueToString(gson, value);
-    }
-
-    public static String valueToString(Gson gson, @NonNull Object value) {
         if (value.getClass().isArray()) {
             return gson.toJson(value);
         } else {
