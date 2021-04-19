@@ -443,11 +443,7 @@ public final class HttpRequest {
                 if (TextUtils.isEmpty(key)) continue;
                 Object value = formMap.get(key);
                 if (value != null) {
-                    if (value.getClass().isArray()) {
-                        builder.add(key, Arrays.toString((Object[]) value));
-                    } else {
-                        builder.add(key, String.valueOf(value));
-                    }
+                    builder.add(key, valueToString(value));
                 }
             }
             return builder.build();
@@ -471,6 +467,25 @@ public final class HttpRequest {
                 }
             }
             return builder.build();
+        }
+    }
+
+    public static String valueToString(@NonNull Object value) {
+        if (value.getClass().isArray()) {
+            Object[] a = (Object[]) value;
+            int iMax = a.length - 1;
+            if (iMax == -1) return "[]";
+            StringBuilder b = new StringBuilder();
+            b.append('[');
+            for (int i = 0; ; i++) {
+                b.append(a[i]);
+                if (i == iMax) {
+                    return b.append(']').toString();
+                }
+                b.append(",");
+            }
+        } else {
+            return String.valueOf(value);
         }
     }
 }
