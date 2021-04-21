@@ -562,7 +562,7 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
     @Override protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (activityResultListener != null) {
-            activityResultListener.onActivityResult(this, requestCode, requestCode, data);
+            activityResultListener.onActivityResult(this, requestCode, resultCode, data);
         }
     }
 
