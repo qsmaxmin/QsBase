@@ -650,4 +650,10 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
     @Override public final boolean isAllowSlidingToClose() {
         return slidingView != null && slidingView.isCanSliding();
     }
+
+    @Override public void onReceivedEventFromFragment(int eventType, Bundle data) {
+        if (L.isEnable()) {
+            L.i(initTag(), "onReceivedEventFromFragment....eventType" + eventType + ", data:" + (data == null ? null : data.toString()));
+        }
+    }
 }

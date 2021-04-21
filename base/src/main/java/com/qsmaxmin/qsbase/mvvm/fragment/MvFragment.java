@@ -623,6 +623,16 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
         }
     }
 
+    /**
+     * 发送事件给当前Activity
+     */
+    @Override public void sendEventToActivity(int eventType, Bundle data) {
+        final FragmentActivity activity = getActivity();
+        if (activity instanceof MvIActivity) {
+            ((MvIActivity) activity).onReceivedEventFromFragment(eventType, data);
+        }
+    }
+
     @Override @NonNull public final <T> T createHttpRequest(Class<T> clazz) {
         return createHttpRequest(clazz, System.nanoTime(), null);
     }

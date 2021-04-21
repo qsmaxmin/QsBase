@@ -1,5 +1,7 @@
 package com.qsmaxmin.qsbase.mvvm.fragment;
 
+import android.os.Bundle;
+
 import com.qsmaxmin.qsbase.mvvm.MvIView;
 
 /**
@@ -27,4 +29,6 @@ public interface MvIFragment extends MvIView {
     void onBackPressed(int enterAnim, int exitAnim);
 
     void onBackPressed(int enterAnim, int exitAnim, int popEnterAnim, int popExitAnim);
+
+    void sendEventToActivity(int eventType, Bundle data);
 }

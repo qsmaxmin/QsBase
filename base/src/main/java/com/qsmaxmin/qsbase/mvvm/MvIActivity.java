@@ -1,5 +1,6 @@
 package com.qsmaxmin.qsbase.mvvm;
 
+import android.os.Bundle;
 import android.view.KeyEvent;
 
 import com.qsmaxmin.qsbase.common.viewbind.OnKeyDownListener;
@@ -31,4 +32,6 @@ public interface MvIActivity extends MvIView {
     void setAllowSlidingToClose(boolean allow);
 
     boolean isAllowSlidingToClose();
+
+    void onReceivedEventFromFragment(int eventType, Bundle data);
 }
