@@ -23,4 +23,8 @@ public interface MvIFragment extends MvIView {
     boolean isDelayData();
 
     void initDataWhenDelay();
+
+    void onBackPressed(int enterAnim, int exitAnim);
+
+    void onBackPressed(int enterAnim, int exitAnim, int popEnterAnim, int popExitAnim);
 }

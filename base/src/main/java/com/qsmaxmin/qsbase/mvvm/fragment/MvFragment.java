@@ -290,10 +290,18 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
     }
 
     @Override public void onBackPressed() {
+        onBackPressed(0, 0, 0, 0);
+    }
+
+    @Override public void onBackPressed(int enterAnim, int exitAnim) {
+        onBackPressed(0, 0, 0, 0);
+    }
+
+    @Override public void onBackPressed(int enterAnim, int exitAnim, int popEnterAnim, int popExitAnim) {
         FragmentManager manager = getFragmentManager();
         if (manager != null) {
             FragmentTransaction ft = manager.beginTransaction();
-            ft.remove(this).commitAllowingStateLoss();
+            ft.remove(this).setCustomAnimations(enterAnim, exitAnim, popEnterAnim, popExitAnim).commitAllowingStateLoss();
         }
     }
 
