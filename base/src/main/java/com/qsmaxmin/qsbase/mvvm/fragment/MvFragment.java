@@ -24,7 +24,9 @@ import com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout;
 import com.qsmaxmin.qsbase.mvvm.MvIActivity;
 import com.qsmaxmin.qsbase.plugin.threadpoll.QsThreadPollHelper;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.CallSuper;
@@ -44,12 +46,13 @@ import androidx.fragment.app.FragmentTransaction;
  * @Description
  */
 public abstract class MvFragment extends Fragment implements MvIFragment, ScrollerProvider, View.OnTouchListener {
-    private   boolean                  hasInitData;
-    protected ViewAnimator             mViewAnimator;
-    private   OnActivityResultListener activityResultListener;
-    private   HashSet<Object>          requestTags;
-    private   ProgressView             progressView;
-    private   boolean                  isViewCreated;
+    private   boolean                        hasInitData;
+    protected ViewAnimator                   mViewAnimator;
+    private   OnActivityResultListener       activityResultListener;
+    private   List<OnActivityResultListener> resultListenerList;
+    private   HashSet<Object>                requestTags;
+    private   ProgressView                   progressView;
+    private   boolean                        isViewCreated;
 
     @Override public final String initTag() {
         return L.isEnable() ? getClass().getSimpleName() : "QsFragment";
@@ -574,10 +577,28 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
         if (activityResultListener != null) {
             activityResultListener.onActivityResult(getActivity(), requestCode, resultCode, data);
         }
+        List<OnActivityResultListener> list = resultListenerList;
+        if (list != null && list.size() > 0) {
+            int size = list.size();
+            OnActivityResultListener[] listeners = list.toArray(new OnActivityResultListener[size]);
+            for (OnActivityResultListener l : listeners) {
+                l.onActivityResult(getActivity(), requestCode, resultCode, data);
+            }
+        }
     }
 
     @Override public final void setOnActivityResultListener(OnActivityResultListener listener) {
         this.activityResultListener = listener;
+    }
+
+    @Override public void addOnActivityResultListener(OnActivityResultListener listener) {
+        if (listener == null) return;
+        if (resultListenerList == null) {
+            resultListenerList = new ArrayList<>();
+        }
+        if (!resultListenerList.contains(listener)) {
+            resultListenerList.add(listener);
+        }
     }
 
     @Override public boolean interceptTouchEvent() {

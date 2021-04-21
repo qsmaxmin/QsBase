@@ -26,7 +26,9 @@ import com.qsmaxmin.qsbase.common.widget.sliding.ISlidingViewGroup;
 import com.qsmaxmin.qsbase.common.widget.sliding.SlidingListenerAdapter;
 import com.qsmaxmin.qsbase.plugin.permission.PermissionHelper;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
@@ -43,14 +45,15 @@ import androidx.fragment.app.FragmentActivity;
  * @Description
  */
 public abstract class MvActivity extends FragmentActivity implements MvIActivity {
-    private   ViewAnimator             mViewAnimator;
-    protected ProgressView             progressView;
-    private   OnActivityResultListener activityResultListener;
-    private   OnKeyDownListener        onKeyDownListener;
-    private   View                     rootView;
-    private   HashSet<Object>          requestTags;
-    private   boolean                  isViewCreated;
-    private   ISlidingViewGroup        slidingView;
+    private   ViewAnimator                   mViewAnimator;
+    protected ProgressView                   progressView;
+    private   OnActivityResultListener       resultListener;
+    private   List<OnActivityResultListener> resultListenerList;
+    private   OnKeyDownListener              onKeyDownListener;
+    private   View                           rootView;
+    private   HashSet<Object>                requestTags;
+    private   boolean                        isViewCreated;
+    private   ISlidingViewGroup              slidingView;
 
     @CallSuper @Override public void bindBundleByQsPlugin(Bundle bundle) {
     }
@@ -513,7 +516,17 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
     }
 
     @Override public final void setOnActivityResultListener(OnActivityResultListener listener) {
-        this.activityResultListener = listener;
+        this.resultListener = listener;
+    }
+
+    @Override public void addOnActivityResultListener(OnActivityResultListener listener) {
+        if (listener == null) return;
+        if (resultListenerList == null) {
+            resultListenerList = new ArrayList<>();
+        }
+        if (!resultListenerList.contains(listener)) {
+            resultListenerList.add(listener);
+        }
     }
 
     @Override public int contentViewBackgroundColor() {
@@ -559,10 +572,18 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
         //custom your logic
     }
 
-    @Override protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    @CallSuper @Override protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (activityResultListener != null) {
-            activityResultListener.onActivityResult(this, requestCode, resultCode, data);
+        if (resultListener != null) {
+            resultListener.onActivityResult(this, requestCode, resultCode, data);
+        }
+        List<OnActivityResultListener> list = resultListenerList;
+        if (list != null && list.size() > 0) {
+            int size = list.size();
+            OnActivityResultListener[] listeners = list.toArray(new OnActivityResultListener[size]);
+            for (OnActivityResultListener l : listeners) {
+                l.onActivityResult(this, requestCode, resultCode, data);
+            }
         }
     }
 
