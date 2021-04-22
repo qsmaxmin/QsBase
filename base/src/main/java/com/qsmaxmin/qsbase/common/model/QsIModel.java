@@ -15,5 +15,5 @@ public interface QsIModel extends QsNotProguard {
 
     String getMessage();
 
-    long getRequestTimeLoss();
+    long getNetworkTimeLoss();
 }
