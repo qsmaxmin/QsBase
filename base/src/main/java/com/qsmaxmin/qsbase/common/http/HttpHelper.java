@@ -2,10 +2,13 @@ package com.qsmaxmin.qsbase.common.http;
 
 import com.google.gson.Gson;
 import com.qsmaxmin.qsbase.common.log.L;
+import com.qsmaxmin.qsbase.common.model.QsModel;
 import com.qsmaxmin.qsbase.common.proxy.HttpHandler;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.common.utils.StreamCloseUtils;
 
+import java.io.InputStream;
+import java.io.Reader;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Collection;
@@ -18,6 +21,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
+import okio.BufferedSource;
 
 /**
  * @CreateBy qsmaxmin
@@ -137,7 +141,6 @@ public class HttpHelper {
             if (!response.isSuccessful()) {
                 throw new Exception("http error... method:" + request.getMethodName() + ", http response code = " + response.code());
             }
-
             Class<?> returnType = request.getReturnType();
             if (returnType == Response.class) {
                 return response;
@@ -146,7 +149,25 @@ public class HttpHelper {
             } else {
                 ResponseBody body = response.body();
                 if (body == null) return null;
-                return returnType == byte[].class ? body.bytes() : gson.fromJson(body.charStream(), returnType);
+
+                if (returnType == byte[].class) {
+                    return body.bytes();
+                } else if (returnType == String.class) {
+                    return body.string();
+                } else if (returnType == InputStream.class) {
+                    return body.byteStream();
+                } else if (returnType == Reader.class) {
+                    return body.charStream();
+                } else if (returnType == BufferedSource.class) {
+                    return body.source();
+                } else {
+                    Object result = gson.fromJson(body.charStream(), returnType);
+                    if (result instanceof QsModel) {
+                        ((QsModel) result).sentRequestAtMillis = response.sentRequestAtMillis();
+                        ((QsModel) result).receivedResponseAtMillis = response.receivedResponseAtMillis();
+                    }
+                    return result;
+                }
             }
         } finally {
             StreamCloseUtils.close(response);

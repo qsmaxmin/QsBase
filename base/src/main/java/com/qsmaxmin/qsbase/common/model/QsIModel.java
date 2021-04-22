@@ -14,4 +14,6 @@ public interface QsIModel extends QsNotProguard {
     boolean isLastPage();
 
     String getMessage();
+
+    long getRequestTimeLoss();
 }

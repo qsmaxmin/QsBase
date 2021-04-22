@@ -7,6 +7,9 @@ package com.qsmaxmin.qsbase.common.model;
  */
 
 public class QsModel implements QsIModel {
+    public long sentRequestAtMillis;
+    public long receivedResponseAtMillis;
+
     @Override public boolean isResponseOk() {
         return true;
     }
@@ -17,5 +20,9 @@ public class QsModel implements QsIModel {
 
     @Override public String getMessage() {
         return null;
+    }
+
+    @Override public long getRequestTimeLoss() {
+        return receivedResponseAtMillis - sentRequestAtMillis;
     }
 }
