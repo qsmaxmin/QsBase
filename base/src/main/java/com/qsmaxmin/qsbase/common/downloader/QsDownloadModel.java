@@ -121,6 +121,15 @@ public abstract class QsDownloadModel<K> {
     }
 
     /**
+     * 将要被下载的文件已存在时是否还执行下载
+     *
+     * @see #getFilePath()
+     */
+    protected boolean shouldDownloadWhenFileExist() {
+        return false;
+    }
+
+    /**
      * 同一种任务，该回调仅执行一次
      * 该回调在下载线程中执行
      */
