@@ -49,10 +49,28 @@ public class QsHelper {
         lifeCycleCallback = new LifeCycleCallbacksAdapter() {
             @Override public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
                 ScreenHelper.getInstance().pushActivity(activity);
+                mApplication.onActivityCreated(activity, savedInstanceState);
+            }
+
+            @Override public void onActivityStarted(Activity activity) {
+                mApplication.onActivityStarted(activity);
+            }
+
+            @Override public void onActivityResumed(Activity activity) {
+                mApplication.onActivityResumed(activity);
+            }
+
+            @Override public void onActivityPaused(Activity activity) {
+                mApplication.onActivityPaused(activity);
+            }
+
+            @Override public void onActivityStopped(Activity activity) {
+                mApplication.onActivityStopped(activity);
             }
 
             @Override public void onActivityDestroyed(Activity activity) {
                 ScreenHelper.getInstance().popActivity(activity);
+                mApplication.onActivityDestroyed(activity);
             }
         };
     }
@@ -66,12 +84,13 @@ public class QsHelper {
         return qsHelper;
     }
 
-    public static void init(QsIApplication application) {
+    public static void init(QsIApplication iApp) {
         QsHelper instance = getInstance();
-        instance.mApplication = application;
-        getApplication().unregisterActivityLifecycleCallbacks(instance.lifeCycleCallback);
-        getApplication().registerActivityLifecycleCallbacks(instance.lifeCycleCallback);
-        if (application.isLogOpen()) {
+        instance.mApplication = iApp;
+        Application app = iApp.getApplication();
+        app.unregisterActivityLifecycleCallbacks(instance.lifeCycleCallback);
+        app.registerActivityLifecycleCallbacks(instance.lifeCycleCallback);
+        if (iApp.isLogOpen()) {
             L.init(true);
         }
     }

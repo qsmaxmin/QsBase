@@ -1,6 +1,8 @@
 package com.qsmaxmin.qsbase;
 
+import android.app.Activity;
 import android.app.Application;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -60,4 +62,16 @@ public interface QsIApplication {
      * 公共图片加载回调
      */
     void onCommonLoadImage(ImageHelper.Builder builder);
+
+    void onActivityCreated(Activity activity, Bundle savedInstanceState);
+
+    void onActivityStarted(Activity activity);
+
+    void onActivityResumed(Activity activity);
+
+    void onActivityPaused(Activity activity);
+
+    void onActivityStopped(Activity activity);
+
+    void onActivityDestroyed(Activity activity);
 }
