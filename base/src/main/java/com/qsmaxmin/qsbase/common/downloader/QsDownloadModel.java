@@ -21,7 +21,7 @@ public abstract class QsDownloadModel<K> {
      * 同一类型的下载任务，id必须唯一
      * 可以和其它类型的id重复
      */
-    @NonNull public abstract K getId();
+    public abstract K getId();
 
     /**
      * 创建http请求所需参数的封装类，包括下载链接，自定义请求头等
@@ -118,6 +118,15 @@ public abstract class QsDownloadModel<K> {
      */
     final String getDownloadTempFilePath() {
         return getFilePath() + "_qs_temp";
+    }
+
+    /**
+     * 将要被下载的文件已存在时是否还执行下载
+     *
+     * @see #getFilePath()
+     */
+    protected boolean shouldDownloadWhenFileExist() {
+        return false;
     }
 
     /**

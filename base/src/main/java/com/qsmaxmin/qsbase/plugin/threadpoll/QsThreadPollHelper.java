@@ -3,8 +3,6 @@ package com.qsmaxmin.qsbase.plugin.threadpoll;
 import android.os.Handler;
 import android.os.Looper;
 
-import com.qsmaxmin.qsbase.QsConstants;
-
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.SynchronousQueue;
@@ -21,12 +19,16 @@ import androidx.annotation.NonNull;
  */
 
 public class QsThreadPollHelper {
-    private static QsThreadPollHelper helper;
-    private        Handler            handler;
-    private        ThreadPoolExecutor workThreadPoll;
-    private        ThreadPoolExecutor httpThreadPoll;
-    private        ThreadPoolExecutor singleThreadPoll;
-    private        ThreadPoolExecutor lIFOThreadPoll;
+    private static final String             NAME_HTTP_THREAD   = "HttpThreadPoll";
+    private static final String             NAME_WORK_THREAD   = "WorkThreadPoll";
+    private static final String             NAME_SINGLE_THREAD = "SingleThreadPoll";
+    private static final String             NAME_LIFO_THREAD   = "LIFOThreadPoll";
+    private static       QsThreadPollHelper helper;
+    private              Handler            handler;
+    private              ThreadPoolExecutor workThreadPoll;
+    private              ThreadPoolExecutor httpThreadPoll;
+    private              ThreadPoolExecutor singleThreadPoll;
+    private              ThreadPoolExecutor lIFOThreadPoll;
 
     private QsThreadPollHelper() {
         handler = new Handler(Looper.getMainLooper());
@@ -48,19 +50,19 @@ public class QsThreadPollHelper {
     }
 
     public static boolean isWorkThread() {
-        return QsConstants.NAME_WORK_THREAD.equals(Thread.currentThread().getName());
+        return NAME_WORK_THREAD.equals(Thread.currentThread().getName());
     }
 
     public static boolean isHttpThread() {
-        return QsConstants.NAME_HTTP_THREAD.equals(Thread.currentThread().getName());
+        return NAME_HTTP_THREAD.equals(Thread.currentThread().getName());
     }
 
     public static boolean isSingleThread() {
-        return QsConstants.NAME_SINGLE_THREAD.equals(Thread.currentThread().getName());
+        return NAME_SINGLE_THREAD.equals(Thread.currentThread().getName());
     }
 
     public static boolean isLIFOThread() {
-        return QsConstants.NAME_LIFO_THREAD.equals(Thread.currentThread().getName());
+        return NAME_LIFO_THREAD.equals(Thread.currentThread().getName());
     }
 
     public static void post(Runnable action) {
@@ -185,22 +187,22 @@ public class QsThreadPollHelper {
 
     private static ThreadPoolExecutor createSingleThreadPool() {
         return new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS,
-                new LinkedBlockingQueue<Runnable>(), generateThread(QsConstants.NAME_SINGLE_THREAD));
+                new LinkedBlockingQueue<Runnable>(), generateThread(NAME_SINGLE_THREAD));
     }
 
     private static ThreadPoolExecutor createHttpThreadPool() {
         return new ThreadPoolExecutor(0, Integer.MAX_VALUE, 60, TimeUnit.SECONDS,
-                new SynchronousQueue<Runnable>(), generateThread(QsConstants.NAME_HTTP_THREAD));
+                new SynchronousQueue<Runnable>(), generateThread(NAME_HTTP_THREAD));
     }
 
     private static ThreadPoolExecutor createWorkThreadPool() {
         return new ThreadPoolExecutor(10, 10, 0L, TimeUnit.MILLISECONDS,
-                new LinkedBlockingQueue<Runnable>(), generateThread(QsConstants.NAME_WORK_THREAD));
+                new LinkedBlockingQueue<Runnable>(), generateThread(NAME_WORK_THREAD));
     }
 
     private static ThreadPoolExecutor createLIFOThreadPool() {
         return new ThreadPoolExecutor(15, 15, 0L, TimeUnit.MILLISECONDS,
-                new LIFOLinkedBlockingDeque<Runnable>(), generateThread(QsConstants.NAME_LIFO_THREAD));
+                new LIFOLinkedBlockingDeque<Runnable>(), generateThread(NAME_LIFO_THREAD));
     }
 
     private static ThreadFactory generateThread(final String name) {

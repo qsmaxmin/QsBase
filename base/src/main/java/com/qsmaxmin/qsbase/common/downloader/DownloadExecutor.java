@@ -132,7 +132,7 @@ class DownloadExecutor<M extends QsDownloadModel<K>, K> {
         Response response = null;
         try {
             checkCanceled();
-            if (!targetFile.exists()) {
+            if (!targetFile.exists() || m.shouldDownloadWhenFileExist()) {
                 if (L.isEnable()) L.i(initTag(), "download started......" + getCommonMsg());
                 File parentFile = targetFile.getParentFile();
                 if (!parentFile.exists()) {
@@ -393,10 +393,9 @@ class DownloadExecutor<M extends QsDownloadModel<K>, K> {
         }
     }
 
-    @SuppressWarnings("ResultOfMethodCallIgnored")
     private void renameFile(File tempFile, File targetFile) throws Exception {
         if (targetFile.exists()) {
-            targetFile.delete();
+            boolean delete = targetFile.delete();
         }
         if (!tempFile.renameTo(targetFile)) {
             throw new Exception("tempFile(" + tempFile.getAbsolutePath() + ") rename to file(" + m.getFilePath() + ") failed!!" + getCommonMsg());

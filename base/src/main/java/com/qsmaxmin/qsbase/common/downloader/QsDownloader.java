@@ -207,7 +207,7 @@ public final class QsDownloader<M extends QsDownloadModel<K>, K> {
 
     public final void cancelDownload(K k) {
         synchronized (executorMap) {
-            DownloadExecutor executor = executorMap.get(k);
+            DownloadExecutor<M, K> executor = executorMap.get(k);
             if (executor != null) executor.cancel();
         }
     }
@@ -231,7 +231,7 @@ public final class QsDownloader<M extends QsDownloadModel<K>, K> {
         if (L.isEnable()) L.i(TAG, "release........");
         if (executorMap.size() > 0) {
             synchronized (executorMap) {
-                for (DownloadExecutor executor : executorMap.values()) {
+                for (DownloadExecutor<M, K> executor : executorMap.values()) {
                     executor.cancel();
                 }
                 executorMap.clear();
