@@ -167,4 +167,7 @@ public abstract class MvTabAdapterItem implements IView, QsNotProguard {
         viewLayer.intent2Activity(clazz, bundle, requestCode, optionsCompat, enterAnim, existAnim);
     }
 
+    @Override public boolean isViewDestroyed() {
+        return viewLayer.isViewDestroyed();
+    }
 }

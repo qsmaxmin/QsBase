@@ -144,4 +144,8 @@ public abstract class MvRecycleAdapterItem<D> implements IView {
     @Override public final void intent2Activity(Class<?> clazz, Bundle bundle, int requestCode, ActivityOptionsCompat optionsCompat, int enterAnim, int existAnim) {
         viewLayer.intent2Activity(clazz, bundle, requestCode, optionsCompat, enterAnim, existAnim);
     }
+
+    @Override public boolean isViewDestroyed() {
+        return viewLayer.isViewDestroyed();
+    }
 }

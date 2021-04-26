@@ -288,6 +288,16 @@ public abstract class QsDialogFragment extends DialogFragment implements IView, 
     }
 
     @Override public final void intent2Activity(Class<?> clazz, Bundle bundle, int requestCode, ActivityOptionsCompat optionsCompat, int enterAnim, int existAnim) {
-        ViewHelper.intent2Activity(this, clazz, bundle, requestCode, optionsCompat, enterAnim, existAnim);
+        if (getActivity() instanceof IView) {
+            ((IView) getActivity()).intent2Activity(clazz, bundle, requestCode, optionsCompat, enterAnim, existAnim);
+        }
+    }
+
+    @Override public boolean isViewDestroyed() {
+        boolean activityDestroyed = false;
+        if (getActivity() instanceof IView) {
+            activityDestroyed = ((IView) getActivity()).isViewDestroyed();
+        }
+        return activityDestroyed || isDetached() || !isAdded();
     }
 }

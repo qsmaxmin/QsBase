@@ -59,4 +59,5 @@ public interface IView {
 
     void intent2Activity(Class<?> clazz, Bundle bundle, int requestCode, ActivityOptionsCompat optionsCompat, int enterAnim, int existAnim);
 
+    boolean isViewDestroyed();
 }
