@@ -11,6 +11,7 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.viewpager.widget.ViewPager;
 
 /**
@@ -56,4 +57,6 @@ public interface MvIViewPager extends MvIView {
     void initTab(@NonNull PagerSlidingTabStrip tabStrip);
 
     Fragment getCurrentFragment();
+
+    FragmentManager getViewPagerFragmentManager();
 }

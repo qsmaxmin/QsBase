@@ -23,6 +23,7 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.viewpager.widget.ViewPager;
 
 /**
@@ -84,11 +85,15 @@ public abstract class MvViewPagerFragment extends MvFragment implements MvIViewP
         }
     }
 
+    @Override public final FragmentManager getViewPagerFragmentManager() {
+        return getChildFragmentManager();
+    }
+
     protected MvIPagerAdapter createPagerAdapter(MvViewPagerHelper pagerHelper, boolean isCustomTabView) {
         if (isCustomTabView) {
-            return new MvTabFragmentPagerAdapter(getChildFragmentManager(), pagerHelper);
+            return new MvTabFragmentPagerAdapter(getViewPagerFragmentManager(), pagerHelper);
         } else {
-            return new MvFragmentPagerAdapter(getChildFragmentManager(), pagerHelper);
+            return new MvFragmentPagerAdapter(getViewPagerFragmentManager(), pagerHelper);
         }
     }
 

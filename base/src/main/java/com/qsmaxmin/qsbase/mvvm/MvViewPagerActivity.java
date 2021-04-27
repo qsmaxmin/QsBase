@@ -20,6 +20,7 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.viewpager.widget.ViewPager;
 
 /**
@@ -81,6 +82,10 @@ public abstract class MvViewPagerActivity extends MvActivity implements MvIViewP
         }
     }
 
+    @Override public final FragmentManager getViewPagerFragmentManager() {
+        return getSupportFragmentManager();
+    }
+
     /**
      * 重写可定义PagerSlidingTabStrip样式
      */
@@ -89,9 +94,9 @@ public abstract class MvViewPagerActivity extends MvActivity implements MvIViewP
 
     protected MvIPagerAdapter createPagerAdapter(MvViewPagerHelper pagerHelper, boolean isCustomTabView) {
         if (isCustomTabView) {
-            return new MvTabFragmentPagerAdapter(getSupportFragmentManager(), pagerHelper);
+            return new MvTabFragmentPagerAdapter(getViewPagerFragmentManager(), pagerHelper);
         } else {
-            return new MvFragmentPagerAdapter(getSupportFragmentManager(), pagerHelper);
+            return new MvFragmentPagerAdapter(getViewPagerFragmentManager(), pagerHelper);
         }
     }
 

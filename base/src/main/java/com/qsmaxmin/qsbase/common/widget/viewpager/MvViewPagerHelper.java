@@ -5,7 +5,12 @@ import com.qsmaxmin.qsbase.mvvm.adapter.MvTabAdapter;
 import com.qsmaxmin.qsbase.mvvm.fragment.MvIFragment;
 import com.qsmaxmin.qsbase.mvvm.model.MvModelPager;
 
+import java.util.List;
+
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 /**
@@ -25,6 +30,21 @@ public class MvViewPagerHelper {
         this.viewPagerData = modelPagers;
         this.pager = pager;
         pager.clearOnPageChangeListeners();
+
+        PagerAdapter oldAdapter = pager.getAdapter();
+        if (oldAdapter != null && oldAdapter.getCount() > 0 && viewPagerLayer.getViewPagerFragmentManager() != null) {
+            FragmentManager fm = viewPagerLayer.getViewPagerFragmentManager();
+            List<Fragment> list = fm.getFragments();
+            if (list.size() > 0) {
+                Fragment[] fragments = new Fragment[list.size()];
+                Fragment[] fs = list.toArray(fragments);
+                FragmentTransaction ft = fm.beginTransaction();
+                for (Fragment f : fs) {
+                    if (f != null) ft.remove(f);
+                }
+                ft.commit();
+            }
+        }
         pager.addOnPageChangeListener(new MyPageChangeListener());
     }
 
