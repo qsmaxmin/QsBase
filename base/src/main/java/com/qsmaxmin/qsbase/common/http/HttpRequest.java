@@ -27,6 +27,7 @@ import java.io.File;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -49,7 +50,7 @@ public final class HttpRequest {
     private final Object[]                args;
     private final Object                  requestTag;
     private final String                  methodName;
-    private final Class<?>                returnType;
+    private final Type                    returnType;
     private final Gson                    gson;
     private       String                  terminal;
     private       int                     requestStyle;
@@ -66,7 +67,7 @@ public final class HttpRequest {
         this.args = args;
         this.requestTag = requestTag;
         this.methodName = method.getName();
-        this.returnType = method.getReturnType();
+        this.returnType = method.getGenericReturnType();
         this.gson = gson;
 
         processMethodAnnotation();
@@ -253,7 +254,7 @@ public final class HttpRequest {
         return method;
     }
 
-    @NonNull public final Class<?> getReturnType() {
+    @NonNull public final Type getReturnType() {
         return returnType;
     }
 

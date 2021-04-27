@@ -1,8 +1,11 @@
 package com.qsmaxmin.qsbase.common.http;
 
 import com.google.gson.Gson;
+import com.google.gson.TypeAdapter;
+import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonToken;
 import com.qsmaxmin.qsbase.common.log.L;
-import com.qsmaxmin.qsbase.common.model.QsModel;
 import com.qsmaxmin.qsbase.common.proxy.HttpHandler;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.common.utils.StreamCloseUtils;
@@ -11,6 +14,7 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -141,7 +145,7 @@ public class HttpHelper {
             if (!response.isSuccessful()) {
                 throw new Exception("http error... method:" + request.getMethodName() + ", http response code = " + response.code());
             }
-            Class<?> returnType = request.getReturnType();
+            Type returnType = request.getReturnType();
             if (returnType == Response.class) {
                 return response;
             } else if (returnType == void.class) {
@@ -161,10 +165,11 @@ public class HttpHelper {
                 } else if (returnType == BufferedSource.class) {
                     return body.source();
                 } else {
-                    Object result = gson.fromJson(body.charStream(), returnType);
-                    if (result instanceof QsModel) {
-                        ((QsModel) result).sentRequestAtMillis = response.sentRequestAtMillis();
-                        ((QsModel) result).receivedResponseAtMillis = response.receivedResponseAtMillis();
+                    TypeAdapter<?> adapter = gson.getAdapter(TypeToken.get(returnType));
+                    JsonReader jsonReader = gson.newJsonReader(body.charStream());
+                    Object result = adapter.read(jsonReader);
+                    if (jsonReader.peek() != JsonToken.END_DOCUMENT) {
+                        throw new Exception("JSON document was not fully consumed.");
                     }
                     return result;
                 }
