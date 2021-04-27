@@ -24,6 +24,7 @@ public class MvViewPagerHelper {
         this.viewPagerLayer = viewPagerLayer;
         this.viewPagerData = modelPagers;
         this.pager = pager;
+        pager.clearOnPageChangeListeners();
         pager.addOnPageChangeListener(new MyPageChangeListener());
     }
 

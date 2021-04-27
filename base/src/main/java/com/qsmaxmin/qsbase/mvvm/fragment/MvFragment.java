@@ -565,7 +565,7 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
     }
 
     @Override public void onFragmentSelectedInViewPager(boolean isSelected, int currentPosition, int totalCount) {
-        L.i(initTag(), "onFragmentSelectedInViewPager..... isSelected:" + isSelected + "  currentPosition:" + currentPosition + "  totalCount:" + totalCount);
+        //当该fragment的父控件时ViewPager时，滑动ViewPager会触发该回调
     }
 
     @Override public boolean onTouch(View v, MotionEvent event) {
