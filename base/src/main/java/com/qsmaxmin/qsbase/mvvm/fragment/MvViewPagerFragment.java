@@ -102,31 +102,31 @@ public abstract class MvViewPagerFragment extends MvFragment implements MvIViewP
         }
     }
 
-    @Override public void addModelPager(MvModelPager pager) {
+    @Override public final void addModelPager(MvModelPager pager) {
         if (adapter != null) adapter.addModelPager(pager);
     }
 
-    @Override public void addModelPager(int index, MvModelPager pager) {
+    @Override public  final void addModelPager(int index, MvModelPager pager) {
         if (adapter != null) adapter.addModelPager(index, pager);
     }
 
-    @Override public void removeModelPager(int index) {
+    @Override public  final void removeModelPager(int index) {
         if (adapter != null) adapter.removeModelPager(index);
     }
 
-    @Override public void removeModelPager(Fragment fragment) {
+    @Override public final  void removeModelPager(Fragment fragment) {
         if (adapter != null) adapter.removeModelPager(fragment);
     }
 
-    @Override public void removeModelPager(MvModelPager pager) {
+    @Override public final  void removeModelPager(MvModelPager pager) {
         if (adapter != null) adapter.removeModelPager(pager);
     }
 
-    @Override public MvModelPager getModelPager(int index) {
+    @Override public final  MvModelPager getModelPager(int index) {
         return getModelPagers() == null ? null : getModelPagers().get(index);
     }
 
-    @Override public List<MvModelPager> getModelPagers() {
+    @Override public final  List<MvModelPager> getModelPagers() {
         return adapter == null ? null : adapter.getModelPagers();
     }
 
