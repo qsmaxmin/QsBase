@@ -48,6 +48,8 @@ public interface MvIViewPager extends MvIView {
 
     @Nullable MvModelPager[] createModelPagers();
 
+    @Nullable List<MvModelPager> createModelPagerList();
+
     void setIndex(int index);
 
     void setIndex(int index, boolean bool);

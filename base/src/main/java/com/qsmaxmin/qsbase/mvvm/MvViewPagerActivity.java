@@ -46,8 +46,17 @@ public abstract class MvViewPagerActivity extends MvActivity implements MvIViewP
         tabs = view.findViewById(android.R.id.tabs);
 
         if (tabs != null) initTab(tabs);
-        initViewPager(createModelPagers());
+        initViewPager(createModelPagerList());
         return view;
+    }
+
+    @Nullable @Override public List<MvModelPager> createModelPagerList() {
+        MvModelPager[] modelPagers = createModelPagers();
+        return modelPagers == null ? null : Arrays.asList(modelPagers);
+    }
+
+    @Nullable @Override public MvModelPager[] createModelPagers() {
+        return null;
     }
 
     @Override public final void initViewPager(@Nullable MvModelPager[] modelPagers) {
