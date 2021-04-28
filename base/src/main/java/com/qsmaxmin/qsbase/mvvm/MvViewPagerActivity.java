@@ -136,6 +136,10 @@ public abstract class MvViewPagerActivity extends MvActivity implements MvIViewP
         }
     }
 
+    @Override public final MvModelPager getModelPager(int index) {
+        return getModelPagers() == null ? null : getModelPagers().get(index);
+    }
+
     @Override public final List<MvModelPager> getModelPagers() {
         return adapter == null ? null : adapter.getModelPagers();
     }

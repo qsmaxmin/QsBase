@@ -9,7 +9,9 @@ import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
@@ -42,7 +44,9 @@ public class MvFragmentPagerAdapter extends FragmentPagerAdapter implements MvIP
         mPagerList.clear();
         mIdList.clear();
         if (list != null && list.size() > 0) {
-            for (MvModelPager pager : list) {
+            for (int i = 0, size = list.size(); i < size; i++) {
+                MvModelPager pager = list.get(i);
+                pager.position = i;
                 pageId++;
                 mPagerList.add(pager);
                 mIdList.add(pageId);
@@ -51,6 +55,16 @@ public class MvFragmentPagerAdapter extends FragmentPagerAdapter implements MvIP
     }
 
     @Override public void updateModelPagers(List<MvModelPager> list) {
+        if (!mPagerList.isEmpty()) {
+            FragmentManager manager = iViewPager.getViewPagerFragmentManager();
+            if (manager == null) return;
+            FragmentTransaction transaction = manager.beginTransaction();
+            if (transaction == null) return;
+            for (MvModelPager pager : mPagerList) {
+                transaction.remove(pager.fragment);
+            }
+            transaction.commitAllowingStateLoss();
+        }
         setModelPagers(list);
         notifyDataSetChanged();
     }
@@ -86,9 +100,15 @@ public class MvFragmentPagerAdapter extends FragmentPagerAdapter implements MvIP
     }
 
     @Override public void removeModelPager(int index) {
-        mPagerList.remove(index);
-        mIdList.remove(index);
-        notifyDataSetChanged();
+        if (index >= 0 && index < mPagerList.size()) {
+            mIdList.remove(index);
+            MvModelPager pager = mPagerList.remove(index);
+            FragmentManager manager = iViewPager.getViewPagerFragmentManager();
+            if (manager == null) return;
+            FragmentTransaction transaction = manager.beginTransaction();
+            transaction.remove(pager.fragment).commitAllowingStateLoss();
+            notifyDataSetChanged();
+        }
     }
 
     @Override public List<MvModelPager> getModelPagers() {
@@ -118,13 +138,13 @@ public class MvFragmentPagerAdapter extends FragmentPagerAdapter implements MvIP
     }
 
     @Override public int getItemPosition(@NonNull Object object) {
-//        if (object instanceof Fragment && getCount() > 0) {
-//            for (int i = 0, size = getCount(); i < size; i++) {
-//                if (mPagerList.get(i).fragment == object) {
-//                    return i;
-//                }
-//            }
-//        }
+        if (object instanceof Fragment && getCount() > 0) {
+            for (int i = 0, size = getCount(); i < size; i++) {
+                if (mPagerList.get(i).fragment == object) {
+                    return i;
+                }
+            }
+        }
         return POSITION_NONE;
     }
 
