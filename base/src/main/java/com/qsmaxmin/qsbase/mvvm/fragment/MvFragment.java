@@ -239,8 +239,8 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
 
     @Override public final void initDataWhenDelay() {
         if (!hasInitData && isDelayData()) {
-            initData(null);
             hasInitData = true;
+            initData(null);
         }
     }
 
