@@ -44,9 +44,7 @@ public class MvFragmentPagerAdapter extends FragmentPagerAdapter implements MvIP
         mPagerList.clear();
         mIdList.clear();
         if (list != null && list.size() > 0) {
-            for (int i = 0, size = list.size(); i < size; i++) {
-                MvModelPager pager = list.get(i);
-                pager.position = i;
+            for (MvModelPager pager : list) {
                 pageId++;
                 mPagerList.add(pager);
                 mIdList.add(pageId);
