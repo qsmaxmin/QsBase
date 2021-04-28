@@ -44,7 +44,7 @@ public abstract class MvViewPagerActivity extends MvActivity implements MvIViewP
         View view = super.initView(inflater);
         pager = view.findViewById(R.id.pager);
         tabs = view.findViewById(android.R.id.tabs);
-
+        pager.setPageMargin(getPageMargin());
         if (tabs != null) initTab(tabs);
         initViewPager(createModelPagerList());
         return view;

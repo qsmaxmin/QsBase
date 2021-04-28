@@ -168,8 +168,8 @@ public class MvFragmentPagerAdapter extends FragmentPagerAdapter implements MvIP
             }
         }
 
-        MvModelPager current = getModelPager(position);
-        if (current instanceof MvIFragment && current != null && current.fragment.isAdded()) {
+        Fragment current = getModelPager(position).fragment;
+        if (current instanceof MvIFragment && current.isAdded()) {
             ((MvIFragment) current).initDataWhenDelay(); // 调用延迟加载
         }
 
