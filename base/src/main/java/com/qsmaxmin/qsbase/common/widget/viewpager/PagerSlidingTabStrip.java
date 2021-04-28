@@ -65,7 +65,6 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
     private       Paint                     dividerPaint;
     public        LinearLayout              tabsContainer;
     private       ViewPager                 pager;
-    private       int                       tabCount;
     private       RectF                     indicateRectF;
     private       LinearLayout.LayoutParams defaultTabLayoutParams;
     private       LinearLayout.LayoutParams expandedTabLayoutParams;
@@ -174,8 +173,7 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
         if (pager.getAdapter() == null) return;
         tabsContainer.removeAllViews();
 
-        tabCount = pager.getAdapter().getCount();
-
+        int tabCount = pager.getAdapter().getCount();
         for (int i = 0; i < tabCount; i++) {
             if (pager.getAdapter() instanceof TitleCountTabProvider) {
                 addTextIconTab(i, String.valueOf(pager.getAdapter().getPageTitle(i)), ((TitleCountTabProvider) pager.getAdapter()).getPageCount(i));
@@ -276,6 +274,7 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
     }
 
     private void updateTabStyles() {
+        int tabCount = getTabCount();
         for (int i = 0; i < tabCount; i++) {
             View v = tabsContainer.getChildAt(i);
             if (v instanceof TextView) {
@@ -294,7 +293,7 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
     }
 
     private void scrollToChild(int position, int offset) {
-        if (tabCount == 0) return;
+        if (getTabCount() >= position) return;
         int newScrollX = tabsContainer.getChildAt(position).getLeft() + offset;
         if (position > 0 || offset > 0) newScrollX -= scrollOffset;
         if (newScrollX != lastScrollX) {
@@ -303,9 +302,13 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
         }
     }
 
+    private int getTabCount() {
+        return tabsContainer.getChildCount();
+    }
+
     @Override protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        if (isInEditMode() || tabCount == 0) return;
+        if (isInEditMode() || getTabCount() == 0) return;
 
         drawIndicator(canvas);
 
@@ -328,7 +331,7 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
             }
             dividerPaint.setColor(dividerColor);
             dividerPaint.setStrokeWidth(dividerWidth);
-            for (int i = 0; i < tabCount - 1; i++) {
+            for (int i = 0; i < getTabCount() - 1; i++) {
                 View tab = tabsContainer.getChildAt(i);
                 canvas.drawLine(tab.getRight(), dividerPadding, tab.getRight(), getHeight() - dividerPadding, dividerPaint);
             }
@@ -347,7 +350,7 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
             float left = (currentTab.getRight() + currentTab.getLeft()) / 2f - drawableW / 2f;
             float right = (currentTab.getRight() + currentTab.getLeft()) / 2f + drawableW / 2f;
 
-            if (currentPositionOffset > 0f && currentPosition < tabCount - 1) {
+            if (currentPositionOffset > 0f && currentPosition < getTabCount() - 1) {
                 View nextTab = tabsContainer.getChildAt(currentPosition + 1);
                 float nextLeft = (nextTab.getRight() + nextTab.getLeft()) / 2f - drawableW / 2f;
                 float nextRight = (nextTab.getRight() + nextTab.getLeft()) / 2f + drawableW / 2f;
@@ -375,7 +378,7 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
                 left = currentTab.getLeft();
                 right = currentTab.getRight();
             }
-            if (currentPositionOffset > 0f && currentPosition < tabCount - 1) {
+            if (currentPositionOffset > 0f && currentPosition < getTabCount() - 1) {
                 View nextTab = tabsContainer.getChildAt(currentPosition + 1);
                 float nextLeft;
                 float nextRight;
@@ -409,7 +412,9 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
         @Override public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
             currentPosition = position;
             currentPositionOffset = positionOffset;
-            scrollToChild(position, (int) (positionOffset * tabsContainer.getChildAt(position).getWidth()));
+            if (getTabCount() > 0) {
+                scrollToChild(position, (int) (positionOffset * tabsContainer.getChildAt(position).getWidth()));
+            }
             invalidate();
         }
 
