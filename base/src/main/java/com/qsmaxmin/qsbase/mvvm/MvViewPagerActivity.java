@@ -6,7 +6,6 @@ import android.view.View;
 
 import com.qsmaxmin.qsbase.R;
 import com.qsmaxmin.qsbase.common.log.L;
-import com.qsmaxmin.qsbase.common.widget.viewpager.MvViewPagerHelper;
 import com.qsmaxmin.qsbase.common.widget.viewpager.PagerSlidingTabStrip;
 import com.qsmaxmin.qsbase.mvvm.adapter.MvFragmentPagerAdapter;
 import com.qsmaxmin.qsbase.mvvm.adapter.MvIPagerAdapter;
@@ -15,6 +14,8 @@ import com.qsmaxmin.qsbase.mvvm.adapter.MvTabAdapterItem;
 import com.qsmaxmin.qsbase.mvvm.adapter.MvTabFragmentPagerAdapter;
 import com.qsmaxmin.qsbase.mvvm.model.MvModelPager;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -49,37 +50,72 @@ public abstract class MvViewPagerActivity extends MvActivity implements MvIViewP
         return view;
     }
 
-    @Override public final void initViewPager(@Nullable List<MvModelPager> modelPagers) {
-        initViewPager(modelPagers, getOffscreenPageLimit());
-    }
-
-    @Override public final void initViewPager(@Nullable List<MvModelPager> modelPagers, int offScreenPageLimit) {
-        if (modelPagers != null && !modelPagers.isEmpty()) {
-            int size = modelPagers.size();
-            MvModelPager[] pagers = modelPagers.toArray(new MvModelPager[size]);
-            initViewPager(pagers, offScreenPageLimit);
-        }
-    }
-
     @Override public final void initViewPager(@Nullable MvModelPager[] modelPagers) {
         initViewPager(modelPagers, getOffscreenPageLimit());
     }
 
     @Override public final void initViewPager(@Nullable MvModelPager[] modelPagers, int offScreenPageLimit) {
         if (modelPagers != null && modelPagers.length > 0) {
-            MvViewPagerHelper pagerHelper = new MvViewPagerHelper(this, pager, modelPagers);
+            ArrayList<MvModelPager> pagers = new ArrayList<>(modelPagers.length);
+            pagers.addAll(Arrays.asList(modelPagers));
+            initViewPager(pagers, offScreenPageLimit);
+        }
+    }
+
+    @Override public final void initViewPager(@Nullable List<MvModelPager> modelPagers) {
+        initViewPager(modelPagers, getOffscreenPageLimit());
+    }
+
+    @Override public final void initViewPager(@Nullable List<MvModelPager> modelPagers, int offScreenPageLimit) {
+        if (modelPagers != null && !modelPagers.isEmpty()) {
             MvTabAdapterItem firstTabItem = createTabAdapterItemInner(0);
             if (firstTabItem != null) {
                 tabAdapter = new MvTabAdapter(this, modelPagers, firstTabItem);
-                adapter = createPagerAdapter(pagerHelper, true);
+                if (adapter == null) {
+                    adapter = createPagerAdapter(true);
+                    pager.setAdapter(adapter.getAdapter());
+                } else {
+                    adapter.setModelPagers(modelPagers);
+                }
             } else {
-                adapter = createPagerAdapter(pagerHelper, false);
+                if (adapter == null) {
+                    adapter = createPagerAdapter(false);
+                    pager.setAdapter(adapter.getAdapter());
+                } else {
+                    adapter.setModelPagers(modelPagers);
+                }
             }
-            pager.setAdapter(adapter.getAdapter());
-            pager.setPageMargin(getPageMargin());
             pager.setOffscreenPageLimit(offScreenPageLimit);
             if (tabs != null) tabs.setViewPager(pager);
         }
+    }
+
+    @Override public void addModelPager(MvModelPager pager) {
+        if (adapter != null) adapter.addModelPager(pager);
+    }
+
+    @Override public void addModelPager(int index, MvModelPager pager) {
+        if (adapter != null) adapter.addModelPager(index, pager);
+    }
+
+    @Override public void removeModelPager(int index) {
+        if (adapter != null) adapter.removeModelPager(index);
+    }
+
+    @Override public void removeModelPager(Fragment fragment) {
+        if (adapter != null) adapter.removeModelPager(fragment);
+    }
+
+    @Override public void removeModelPager(MvModelPager pager) {
+        if (adapter != null) adapter.removeModelPager(pager);
+    }
+
+    @Override public MvModelPager getModelPager(int index) {
+        return getModelPagers() == null ? null : getModelPagers().get(index);
+    }
+
+    @Override public List<MvModelPager> getModelPagers() {
+        return adapter == null ? null : adapter.getModelPagers();
     }
 
     @Override public final FragmentManager getViewPagerFragmentManager() {
@@ -92,11 +128,11 @@ public abstract class MvViewPagerActivity extends MvActivity implements MvIViewP
     @Override public void initTab(@NonNull PagerSlidingTabStrip tabStrip) {
     }
 
-    protected MvIPagerAdapter createPagerAdapter(MvViewPagerHelper pagerHelper, boolean isCustomTabView) {
+    protected MvIPagerAdapter createPagerAdapter(boolean isCustomTabView) {
         if (isCustomTabView) {
-            return new MvTabFragmentPagerAdapter(getViewPagerFragmentManager(), pagerHelper);
+            return new MvTabFragmentPagerAdapter(this);
         } else {
-            return new MvFragmentPagerAdapter(getViewPagerFragmentManager(), pagerHelper);
+            return new MvFragmentPagerAdapter(this);
         }
     }
 
@@ -147,7 +183,7 @@ public abstract class MvViewPagerActivity extends MvActivity implements MvIViewP
     }
 
     @Override public final Fragment getCurrentFragment() {
-        return adapter == null ? null : adapter.getCurrentFragment();
+        return adapter == null ? null : adapter.getModelPager(pager.getCurrentItem()).fragment;
     }
 
     @Override public final MvTabAdapter getTabAdapter() {

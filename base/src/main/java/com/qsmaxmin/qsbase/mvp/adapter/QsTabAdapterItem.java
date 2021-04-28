@@ -8,6 +8,8 @@ import com.qsmaxmin.qsbase.mvvm.adapter.MvTabAdapterItem;
 import com.qsmaxmin.qsbase.mvvm.model.MvModelPager;
 import com.qsmaxmin.qsbase.plugin.bind.QsIBindView;
 
+import java.util.List;
+
 import androidx.annotation.NonNull;
 
 /**
@@ -27,7 +29,7 @@ public abstract class QsTabAdapterItem extends MvTabAdapterItem implements QsIBi
     @Override public void bindViewByQsPlugin(View view) {
     }
 
-    @Override public void init(View itemView, @NonNull MvModelPager[] modelPagers) {
+    @Override public void init(View itemView, @NonNull List<MvModelPager> modelPagers) {
         bindViewByQsPlugin(itemView);
         super.init(itemView, modelPagers);
     }

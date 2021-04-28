@@ -4,11 +4,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.qsmaxmin.qsbase.common.widget.viewpager.MvViewPagerHelper;
 import com.qsmaxmin.qsbase.common.widget.viewpager.PagerSlidingTabStrip;
+import com.qsmaxmin.qsbase.mvvm.MvIViewPager;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.FragmentManager;
 
 /**
  * @CreateBy qsmaxmin
@@ -18,20 +17,20 @@ import androidx.fragment.app.FragmentManager;
 
 public class MvTabFragmentPagerAdapter extends MvFragmentPagerAdapter implements PagerSlidingTabStrip.CustomTabProvider {
 
-    public MvTabFragmentPagerAdapter(@NonNull FragmentManager fm, @NonNull MvViewPagerHelper helper) {
-        super(fm, helper);
+    public MvTabFragmentPagerAdapter(MvIViewPager iViewPager) {
+        super(iViewPager);
     }
 
     @Override public View getCustomTabView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent, int position) {
-        if (getPagerHelper().getTabAdapter() != null) {
-            return getPagerHelper().getTabAdapter().getTabItemView(inflater, parent, position);
+        if (getIViewPager().getTabAdapter() != null) {
+            return getIViewPager().getTabAdapter().getTabItemView(inflater, parent, position);
         }
         return null;
     }
 
     @Override public void initTabsItem(@NonNull View view, int position) {
-        if (getPagerHelper().getTabAdapter() != null && position >= 0 && position < getCount()) {
-            getPagerHelper().getTabAdapter().init(view, position);
+        if (getIViewPager().getTabAdapter() != null && position >= 0 && position < getCount()) {
+            getIViewPager().getTabAdapter().init(view, position);
         }
     }
 }

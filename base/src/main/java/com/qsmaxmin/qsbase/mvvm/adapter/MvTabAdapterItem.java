@@ -13,6 +13,8 @@ import com.qsmaxmin.qsbase.mvvm.IView;
 import com.qsmaxmin.qsbase.mvvm.MvIView;
 import com.qsmaxmin.qsbase.mvvm.model.MvModelPager;
 
+import java.util.List;
+
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.fragment.app.FragmentActivity;
@@ -23,10 +25,10 @@ import androidx.fragment.app.FragmentActivity;
  * @Description
  */
 public abstract class MvTabAdapterItem implements IView, QsNotProguard {
-    private final int            position;
-    private       MvIView        viewLayer;
-    private       View           itemView;
-    private       MvModelPager[] modelPagers;
+    private final int                position;
+    private       MvIView            viewLayer;
+    private       View               itemView;
+    private       List<MvModelPager> modelPagers;
 
     @NonNull protected final String initTag() {
         return L.isEnable() ? getClass().getSimpleName() : "MvTabAdapterItem";
@@ -40,18 +42,18 @@ public abstract class MvTabAdapterItem implements IView, QsNotProguard {
         return position;
     }
 
-    public void init(View itemView, @NonNull MvModelPager[] modelPagers) {
+    public void init(View itemView, @NonNull List<MvModelPager> modelPagers) {
         this.itemView = itemView;
         this.modelPagers = modelPagers;
-        bindData(modelPagers[position], position);
+        bindData(modelPagers.get(position), position);
     }
 
-    protected final MvModelPager[] getModelPagers() {
+    protected final List<MvModelPager> getModelPagers() {
         return modelPagers;
     }
 
     protected final MvModelPager getModelPager(int index) {
-        return modelPagers[index];
+        return modelPagers.get(index);
     }
 
     protected final View getItemView() {

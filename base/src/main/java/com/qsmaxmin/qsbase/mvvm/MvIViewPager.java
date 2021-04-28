@@ -36,6 +36,16 @@ public interface MvIViewPager extends MvIView {
 
     void initViewPager(@Nullable List<MvModelPager> modelPagers, int offScreenPageLimit);
 
+    void addModelPager(int index, MvModelPager pager);
+
+    void addModelPager(MvModelPager pager);
+
+    void removeModelPager(MvModelPager pager);
+
+    void removeModelPager(Fragment fragment);
+
+    void removeModelPager(int index);
+
     @Nullable MvModelPager[] createModelPagers();
 
     void setIndex(int index);
@@ -57,6 +67,10 @@ public interface MvIViewPager extends MvIView {
     void initTab(@NonNull PagerSlidingTabStrip tabStrip);
 
     Fragment getCurrentFragment();
+
+    List<MvModelPager> getModelPagers();
+
+    MvModelPager getModelPager(int index);
 
     FragmentManager getViewPagerFragmentManager();
 }

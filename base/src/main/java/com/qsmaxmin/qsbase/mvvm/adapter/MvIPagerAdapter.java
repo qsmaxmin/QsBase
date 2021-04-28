@@ -2,6 +2,8 @@ package com.qsmaxmin.qsbase.mvvm.adapter;
 
 import com.qsmaxmin.qsbase.mvvm.model.MvModelPager;
 
+import java.util.List;
+
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.PagerAdapter;
 
@@ -16,11 +18,19 @@ public interface MvIPagerAdapter {
 
     PagerAdapter getAdapter();
 
-    MvModelPager[] getModelPagers();
+    void setModelPagers(List<MvModelPager> list);
+
+    List<MvModelPager> getModelPagers();
 
     MvModelPager getModelPager(int position);
 
-    MvModelPager getCurrentPager();
+    void addModelPager(MvModelPager pager);
 
-    Fragment getCurrentFragment();
+    void addModelPager(int index, MvModelPager pager);
+
+    void removeModelPager(MvModelPager pager);
+
+    void removeModelPager(Fragment fragment);
+
+    void removeModelPager(int index);
 }

@@ -8,6 +8,7 @@ import com.qsmaxmin.qsbase.mvvm.MvIViewPager;
 import com.qsmaxmin.qsbase.mvvm.model.MvModelPager;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @CreateBy qsmaxmin
@@ -15,14 +16,14 @@ import java.util.ArrayList;
  * @Description tab 适配器
  */
 public class MvTabAdapter {
-    private final ArrayList<MvTabAdapterItem> items;
-    private final MvModelPager[]              modelPagers;
+    private final List<MvTabAdapterItem> items;
+    private final List<MvModelPager>     modelPagers;
 
-    public MvTabAdapter(MvIViewPager viewLayer, MvModelPager[] modelPagers, MvTabAdapterItem firstTabItem) {
+    public MvTabAdapter(MvIViewPager viewLayer, List<MvModelPager> modelPagers, MvTabAdapterItem firstTabItem) {
         this.modelPagers = modelPagers;
-        this.items = new ArrayList<>(modelPagers.length);
+        this.items = new ArrayList<>(modelPagers.size());
         items.add(firstTabItem);
-        for (int i = 1; i < modelPagers.length; i++) {
+        for (int i = 1, size = modelPagers.size(); i < size; i++) {
             MvTabAdapterItem tabAdapterItem = viewLayer.createTabAdapterItemInner(i);
             if (tabAdapterItem == null) {
                 throw new IllegalStateException(viewLayer.getClass().getName() + ".createTabAdapterItem() cannot return null!");
@@ -35,11 +36,11 @@ public class MvTabAdapter {
         return items.get(position).onCreateTabItemView(inflater, parent);
     }
 
-    public final MvModelPager[] getModelPagers() {
+    public final List<MvModelPager> getModelPagers() {
         return modelPagers;
     }
 
-    public final ArrayList<MvTabAdapterItem> getTabAdapterItems() {
+    public final List<MvTabAdapterItem> getTabAdapterItems() {
         return items;
     }
 
