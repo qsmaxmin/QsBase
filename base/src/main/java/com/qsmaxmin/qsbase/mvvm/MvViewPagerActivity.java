@@ -102,27 +102,38 @@ public abstract class MvViewPagerActivity extends MvActivity implements MvIViewP
     }
 
     @Override public final void addModelPager(MvModelPager pager) {
-        if (adapter != null) adapter.addModelPager(pager);
+        if (adapter != null) {
+            adapter.addModelPager(pager);
+            if (tabs != null) tabs.notifyDataSetChanged();
+        }
     }
 
     @Override public final void addModelPager(int index, MvModelPager pager) {
-        if (adapter != null) adapter.addModelPager(index, pager);
+        if (adapter != null) {
+            adapter.addModelPager(index, pager);
+            if (tabs != null) tabs.notifyDataSetChanged();
+        }
     }
 
     @Override public final void removeModelPager(int index) {
-        if (adapter != null) adapter.removeModelPager(index);
+        if (adapter != null) {
+            adapter.removeModelPager(index);
+            if (tabs != null) tabs.notifyDataSetChanged();
+        }
     }
 
     @Override public final void removeModelPager(Fragment fragment) {
-        if (adapter != null) adapter.removeModelPager(fragment);
+        if (adapter != null) {
+            adapter.removeModelPager(fragment);
+            if (tabs != null) tabs.notifyDataSetChanged();
+        }
     }
 
     @Override public final void removeModelPager(MvModelPager pager) {
-        if (adapter != null) adapter.removeModelPager(pager);
-    }
-
-    @Override public final MvModelPager getModelPager(int index) {
-        return getModelPagers() == null ? null : getModelPagers().get(index);
+        if (adapter != null) {
+            adapter.removeModelPager(pager);
+            if (tabs != null) tabs.notifyDataSetChanged();
+        }
     }
 
     @Override public final List<MvModelPager> getModelPagers() {
