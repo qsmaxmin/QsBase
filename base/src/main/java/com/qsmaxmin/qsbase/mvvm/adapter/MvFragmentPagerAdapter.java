@@ -43,8 +43,8 @@ public class MvFragmentPagerAdapter extends FragmentPagerAdapter implements MvIP
         mIdList.clear();
         if (list != null && list.size() > 0) {
             for (MvModelPager pager : list) {
-                mPagerList.add(pager);
                 pageId++;
+                mPagerList.add(pager);
                 mIdList.add(pageId);
             }
         }
@@ -118,14 +118,14 @@ public class MvFragmentPagerAdapter extends FragmentPagerAdapter implements MvIP
     }
 
     @Override public int getItemPosition(@NonNull Object object) {
-        if (object instanceof Fragment && getCount() > 0) {
-            for (int i = 0, size = getCount(); i < size; i++) {
-                if (mPagerList.get(i).fragment == object) {
-                    return i;
-                }
-            }
-        }
-        return super.getItemPosition(object);
+//        if (object instanceof Fragment && getCount() > 0) {
+//            for (int i = 0, size = getCount(); i < size; i++) {
+//                if (mPagerList.get(i).fragment == object) {
+//                    return i;
+//                }
+//            }
+//        }
+        return POSITION_NONE;
     }
 
     @Override public long getItemId(int position) {
