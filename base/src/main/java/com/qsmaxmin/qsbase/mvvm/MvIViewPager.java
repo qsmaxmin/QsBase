@@ -28,13 +28,13 @@ public interface MvIViewPager extends MvIView {
 
     void onPageScrolled(int position, float positionOffset, int positionOffsetPixels);
 
-    void initViewPager(@Nullable MvModelPager[] modelPagers);
+    void initViewPager(@Nullable MvModelPager[] pagers);
 
-    void initViewPager(@Nullable MvModelPager[] modelPagers, int offScreenPageLimit);
+    void initViewPager(@Nullable MvModelPager[] pagers, int offScreenPageLimit);
 
-    void initViewPager(@Nullable List<MvModelPager> modelPagers);
+    void initViewPager(@Nullable List<MvModelPager> list);
 
-    void initViewPager(@Nullable List<MvModelPager> modelPagers, int offScreenPageLimit);
+    void initViewPager(@Nullable List<MvModelPager> list, int offScreenPageLimit);
 
     void addModelPager(int index, MvModelPager pager);
 

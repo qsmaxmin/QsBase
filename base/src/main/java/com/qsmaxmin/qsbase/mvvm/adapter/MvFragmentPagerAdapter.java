@@ -38,16 +38,20 @@ public class MvFragmentPagerAdapter extends FragmentPagerAdapter implements MvIP
         return iViewPager;
     }
 
-    @Override public void setModelPagers(List<MvModelPager> pagerList) {
+    @Override public void setModelPagers(List<MvModelPager> list) {
         mPagerList.clear();
         mIdList.clear();
-        if (pagerList != null && pagerList.size() > 0) {
-            for (MvModelPager pager : pagerList) {
+        if (list != null && list.size() > 0) {
+            for (MvModelPager pager : list) {
                 mPagerList.add(pager);
                 pageId++;
                 mIdList.add(pageId);
             }
         }
+    }
+
+    @Override public void updateModelPagers(List<MvModelPager> list) {
+        setModelPagers(list);
         notifyDataSetChanged();
     }
 

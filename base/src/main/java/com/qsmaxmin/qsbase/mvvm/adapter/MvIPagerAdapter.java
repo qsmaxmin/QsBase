@@ -20,6 +20,8 @@ public interface MvIPagerAdapter {
 
     void setModelPagers(List<MvModelPager> list);
 
+    void updateModelPagers(List<MvModelPager> list);
+
     List<MvModelPager> getModelPagers();
 
     MvModelPager getModelPager(int position);

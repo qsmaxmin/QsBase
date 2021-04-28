@@ -59,8 +59,8 @@ public abstract class MvViewPagerActivity extends MvActivity implements MvIViewP
         return null;
     }
 
-    @Override public final void initViewPager(@Nullable MvModelPager[] modelPagers) {
-        initViewPager(modelPagers, getOffscreenPageLimit());
+    @Override public final void initViewPager(@Nullable MvModelPager[] pagers) {
+        initViewPager(pagers, getOffscreenPageLimit());
     }
 
     @Override public final void initViewPager(@Nullable MvModelPager[] modelPagers, int offScreenPageLimit) {
@@ -71,27 +71,29 @@ public abstract class MvViewPagerActivity extends MvActivity implements MvIViewP
         }
     }
 
-    @Override public final void initViewPager(@Nullable List<MvModelPager> modelPagers) {
-        initViewPager(modelPagers, getOffscreenPageLimit());
+    @Override public final void initViewPager(@Nullable List<MvModelPager> list) {
+        initViewPager(list, getOffscreenPageLimit());
     }
 
-    @Override public final void initViewPager(@Nullable List<MvModelPager> modelPagers, int offScreenPageLimit) {
-        if (modelPagers != null && !modelPagers.isEmpty()) {
+    @Override public final void initViewPager(@Nullable List<MvModelPager> list, int offScreenPageLimit) {
+        if (list != null && !list.isEmpty()) {
             MvTabAdapterItem firstTabItem = createTabAdapterItemInner(0);
             if (firstTabItem != null) {
-                tabAdapter = new MvTabAdapter(this, modelPagers, firstTabItem);
+                tabAdapter = new MvTabAdapter(this, list, firstTabItem);
                 if (adapter == null) {
                     adapter = createPagerAdapter(true);
+                    adapter.setModelPagers(list);
                     pager.setAdapter(adapter.getAdapter());
                 } else {
-                    adapter.setModelPagers(modelPagers);
+                    adapter.updateModelPagers(list);
                 }
             } else {
                 if (adapter == null) {
                     adapter = createPagerAdapter(false);
+                    adapter.setModelPagers(list);
                     pager.setAdapter(adapter.getAdapter());
                 } else {
-                    adapter.setModelPagers(modelPagers);
+                    adapter.updateModelPagers(list);
                 }
             }
             pager.setOffscreenPageLimit(offScreenPageLimit);
