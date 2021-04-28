@@ -218,7 +218,7 @@ public abstract class MvViewPagerFragment extends MvFragment implements MvIViewP
     }
 
     protected int getOffscreenPageLimit() {
-        return 1;
+        return 2;
     }
 
     protected int getPageMargin() {

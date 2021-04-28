@@ -214,7 +214,7 @@ public abstract class MvViewPagerActivity extends MvActivity implements MvIViewP
     }
 
     protected int getOffscreenPageLimit() {
-        return 1;
+        return 2;
     }
 
     protected int getPageMargin() {
