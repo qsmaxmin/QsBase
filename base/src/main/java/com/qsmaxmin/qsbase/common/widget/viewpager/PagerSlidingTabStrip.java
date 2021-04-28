@@ -153,9 +153,6 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 
     public void setViewPager(ViewPager pager) {
         this.pager = pager;
-        if (pager.getAdapter() == null) {
-            throw new IllegalStateException("ViewPager does not have adapter instance.");
-        }
         pager.removeOnPageChangeListener(pageListener);
         pager.addOnPageChangeListener(pageListener);
         notifyDataSetChanged();

@@ -47,7 +47,10 @@ public abstract class MvViewPagerFragment extends MvFragment implements MvIViewP
         pager = view.findViewById(R.id.pager);
         tabs = view.findViewById(android.R.id.tabs);
         pager.setPageMargin(getPageMargin());
-        if (tabs != null) initTab(tabs);
+        if (tabs != null) {
+            initTab(tabs);
+            tabs.setViewPager(pager);
+        }
         initViewPager(createModelPagerList());
         return view;
     }
@@ -78,26 +81,16 @@ public abstract class MvViewPagerFragment extends MvFragment implements MvIViewP
     @Override public final void initViewPager(@Nullable List<MvModelPager> list, int offScreenPageLimit) {
         if (list != null && !list.isEmpty()) {
             MvTabAdapterItem firstTabItem = createTabAdapterItemInner(0);
+            pager.setOffscreenPageLimit(offScreenPageLimit);
             if (firstTabItem != null) {
                 tabAdapter = new MvTabAdapter(this, list, firstTabItem);
-                if (adapter == null) {
-                    adapter = createPagerAdapter(true);
-                    adapter.setModelPagers(list);
-                    pager.setAdapter(adapter.getAdapter());
-                } else {
-                    adapter.updateModelPagers(list);
-                }
+                if (adapter == null) adapter = createPagerAdapter(true);
             } else {
-                if (adapter == null) {
-                    adapter = createPagerAdapter(false);
-                    adapter.setModelPagers(list);
-                    pager.setAdapter(adapter.getAdapter());
-                } else {
-                    adapter.updateModelPagers(list);
-                }
+                if (adapter == null) adapter = createPagerAdapter(false);
             }
-            pager.setOffscreenPageLimit(offScreenPageLimit);
-            if (tabs != null) tabs.setViewPager(pager);
+            adapter.setModelPagers(list);
+            pager.setAdapter(adapter.getAdapter());
+            if (tabs != null) tabs.notifyDataSetChanged();
         }
     }
 

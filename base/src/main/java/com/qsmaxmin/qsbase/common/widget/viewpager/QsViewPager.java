@@ -42,4 +42,8 @@ public class QsViewPager extends ViewPager {
     protected String initTag() {
         return getClass().getSimpleName();
     }
+
+    @Override protected void onPageScrolled(int position, float offset, int offsetPixels) {
+        super.onPageScrolled(position, offset, offsetPixels);
+    }
 }
