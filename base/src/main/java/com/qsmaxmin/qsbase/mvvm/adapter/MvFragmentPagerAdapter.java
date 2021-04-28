@@ -18,7 +18,7 @@ import androidx.viewpager.widget.ViewPager;
  * @Date 2017/7/3 13:14
  * @Description 适合少量页面，常驻内存
  */
-public class MvFragmentPagerAdapter extends FragmentPagerAdapter implements MvIPagerAdapter {
+public class MvFragmentPagerAdapter extends FragmentPagerAdapter implements MvIPagerAdapter, ViewPager.OnPageChangeListener {
     private final MvIViewPager       iViewPager;
     private final List<MvModelPager> mPagerList;
     private final List<Integer>      mIdList;
@@ -31,10 +31,7 @@ public class MvFragmentPagerAdapter extends FragmentPagerAdapter implements MvIP
         this.mPagerList = new ArrayList<>();
         this.mIdList = new ArrayList<>();
         this.pageId = 0;
-
-        ViewPager pager = iViewPager.getViewPager();
-        pager.clearOnPageChangeListeners();
-        pager.addOnPageChangeListener(new MyPageChangeListener());
+        iViewPager.getViewPager().addOnPageChangeListener(this);
     }
 
     public MvIViewPager getIViewPager() {
@@ -98,20 +95,22 @@ public class MvFragmentPagerAdapter extends FragmentPagerAdapter implements MvIP
         return getModelPagers().get(position);
     }
 
-    @Override public CharSequence getPageTitle(int position) {
-        return getModelPager(position).title;
+    @Override public PagerAdapter getAdapter() {
+        return this;
     }
+
+    //------------------------------以下是FragmentPagerAdapter固有方法--------------------------------------
 
     @Override public int getCount() {
         return getModelPagers().size();
     }
 
-    @NonNull @Override public Fragment getItem(int position) {
-        return getModelPager(position).fragment;
+    @Override public CharSequence getPageTitle(int position) {
+        return getModelPager(position).title;
     }
 
-    @Override public PagerAdapter getAdapter() {
-        return this;
+    @NonNull @Override public Fragment getItem(int position) {
+        return getModelPager(position).fragment;
     }
 
     @Override public int getItemPosition(@NonNull Object object) {
@@ -129,51 +128,40 @@ public class MvFragmentPagerAdapter extends FragmentPagerAdapter implements MvIP
         return mIdList.get(position);
     }
 
-    public MvTabAdapter getTabAdapter() {
-        return iViewPager.getTabAdapter();
+    protected void onPageSelected(int position, int oldPosition) {
+        //custom your logic
     }
 
-
-    private class MyPageChangeListener implements ViewPager.OnPageChangeListener {
-
-        @Override public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-            if (getTabAdapter() != null) {
-                getTabAdapter().onPageScrolled(position, positionOffset, positionOffsetPixels);
-            }
-            if (iViewPager != null) {
-                iViewPager.onPageScrolled(position, positionOffset, positionOffsetPixels);
-            }
-        }
-
-        @Override public void onPageSelected(int position) {
-            for (int i = 0, size = getCount(); i < size; i++) {
-                MvModelPager qsModelPager = mPagerList.get(i);
-                if (qsModelPager.fragment instanceof MvIFragment) {
-                    ((MvIFragment) qsModelPager.fragment).onFragmentSelectedInViewPager(position == i, position, size);
-                }
-            }
-
-            MvModelPager current = getModelPager(position);
-            if (current instanceof MvIFragment && current != null && current.fragment.isAdded()) {
-                ((MvIFragment) current).initDataWhenDelay(); // 调用延迟加载
-            }
-
-            if (getTabAdapter() != null) {
-                getTabAdapter().onPageSelected(position, oldPosition);
-            }
-            if (iViewPager != null) {
-                iViewPager.onPageSelected(position, oldPosition);
-            }
-            oldPosition = position;
-        }
-
-        @Override public void onPageScrollStateChanged(int state) {
-            if (getTabAdapter() != null) {
-                getTabAdapter().onPageScrollStateChanged(state);
-            }
-            if (iViewPager != null) {
-                iViewPager.onPageScrollStateChanged(state);
-            }
+    @Override public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+        if (iViewPager != null) {
+            iViewPager.onPageScrolled(position, positionOffset, positionOffsetPixels);
         }
     }
+
+    @Override public final void onPageSelected(int position) {
+        for (int i = 0, size = getCount(); i < size; i++) {
+            MvModelPager qsModelPager = mPagerList.get(i);
+            if (qsModelPager.fragment instanceof MvIFragment) {
+                ((MvIFragment) qsModelPager.fragment).onFragmentSelectedInViewPager(position == i, position, size);
+            }
+        }
+
+        MvModelPager current = getModelPager(position);
+        if (current instanceof MvIFragment && current != null && current.fragment.isAdded()) {
+            ((MvIFragment) current).initDataWhenDelay(); // 调用延迟加载
+        }
+
+        onPageSelected(position, oldPosition);
+        if (iViewPager != null) {
+            iViewPager.onPageSelected(position, oldPosition);
+        }
+        oldPosition = position;
+    }
+
+    @Override public void onPageScrollStateChanged(int state) {
+        if (iViewPager != null) {
+            iViewPager.onPageScrollStateChanged(state);
+        }
+    }
+
 }
