@@ -14,7 +14,6 @@ import com.qsmaxmin.qsbase.mvvm.adapter.MvTabAdapterItem;
 import com.qsmaxmin.qsbase.mvvm.adapter.MvTabFragmentPagerAdapter;
 import com.qsmaxmin.qsbase.mvvm.model.MvModelPager;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -65,9 +64,7 @@ public abstract class MvViewPagerActivity extends MvActivity implements MvIViewP
 
     @Override public final void initViewPager(@Nullable MvModelPager[] modelPagers, int offScreenPageLimit) {
         if (modelPagers != null && modelPagers.length > 0) {
-            ArrayList<MvModelPager> pagers = new ArrayList<>(modelPagers.length);
-            pagers.addAll(Arrays.asList(modelPagers));
-            initViewPager(pagers, offScreenPageLimit);
+            initViewPager(Arrays.asList(modelPagers), offScreenPageLimit);
         }
     }
 
