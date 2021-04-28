@@ -88,7 +88,7 @@ public class MvFragmentPagerAdapter extends FragmentPagerAdapter implements MvIP
     @Override public void removeModelPager(int index) {
         if (index >= 0 && index < mPagerList.size()) {
             mIdList.remove(index);
-            MvModelPager pager = mPagerList.remove(index);
+            mPagerList.remove(index);
             notifyDataSetChanged();
         }
     }
