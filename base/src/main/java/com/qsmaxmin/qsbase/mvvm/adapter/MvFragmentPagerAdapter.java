@@ -9,9 +9,7 @@ import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
@@ -53,16 +51,6 @@ public class MvFragmentPagerAdapter extends FragmentPagerAdapter implements MvIP
     }
 
     @Override public void updateModelPagers(List<MvModelPager> list) {
-        if (!mPagerList.isEmpty()) {
-            FragmentManager manager = iViewPager.getViewPagerFragmentManager();
-            if (manager == null) return;
-            FragmentTransaction transaction = manager.beginTransaction();
-            if (transaction == null) return;
-            for (MvModelPager pager : mPagerList) {
-                transaction.remove(pager.fragment);
-            }
-            transaction.commitAllowingStateLoss();
-        }
         setModelPagers(list);
         notifyDataSetChanged();
     }
@@ -101,10 +89,6 @@ public class MvFragmentPagerAdapter extends FragmentPagerAdapter implements MvIP
         if (index >= 0 && index < mPagerList.size()) {
             mIdList.remove(index);
             MvModelPager pager = mPagerList.remove(index);
-            FragmentManager manager = iViewPager.getViewPagerFragmentManager();
-            if (manager == null) return;
-            FragmentTransaction transaction = manager.beginTransaction();
-            transaction.remove(pager.fragment).commitAllowingStateLoss();
             notifyDataSetChanged();
         }
     }
@@ -149,6 +133,9 @@ public class MvFragmentPagerAdapter extends FragmentPagerAdapter implements MvIP
     @Override public long getItemId(int position) {
         return mIdList.get(position);
     }
+
+
+    //---------------------------以下是ViewPager滑动回调-----------------------------------
 
     protected void onPageSelected(int position, int oldPosition) {
         //custom your logic
