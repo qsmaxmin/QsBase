@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.KeyEvent;
 
 import com.qsmaxmin.qsbase.common.viewbind.OnKeyDownListener;
+import com.qsmaxmin.qsbase.common.viewbind.OnTouchListener;
 
 import androidx.annotation.NonNull;
 
@@ -34,4 +35,6 @@ public interface MvIActivity extends MvIView {
     boolean isAllowSlidingToClose();
 
     void onReceivedEventFromFragment(int eventType, Bundle data);
+
+    void setOnTouchListener(OnTouchListener listener);
 }

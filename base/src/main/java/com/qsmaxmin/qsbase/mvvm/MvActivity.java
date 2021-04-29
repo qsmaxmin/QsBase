@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -19,6 +20,7 @@ import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.common.utils.ViewHelper;
 import com.qsmaxmin.qsbase.common.viewbind.OnActivityResultListener;
 import com.qsmaxmin.qsbase.common.viewbind.OnKeyDownListener;
+import com.qsmaxmin.qsbase.common.viewbind.OnTouchListener;
 import com.qsmaxmin.qsbase.common.widget.dialog.ProgressView;
 import com.qsmaxmin.qsbase.common.widget.dialog.QsProgressDialog;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout;
@@ -676,5 +678,16 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
         if (L.isEnable()) {
             L.i(initTag(), "onReceivedEventFromFragment....eventType" + eventType + ", data:" + (data == null ? null : data.toString()));
         }
+    }
+
+    @Override public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (touchListener != null) touchListener.onTouch(ev);
+        return super.dispatchTouchEvent(ev);
+    }
+
+    private OnTouchListener touchListener;
+
+    @Override public void setOnTouchListener(OnTouchListener listener) {
+        this.touchListener = listener;
     }
 }
