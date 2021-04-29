@@ -688,7 +688,7 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
         return super.dispatchTouchEvent(ev);
     }
 
-    @Override public void setOnTouchListener(OnTouchListener listener) {
+    @Override public final void setOnTouchListener(OnTouchListener listener) {
         this.touchListener = listener;
     }
 }

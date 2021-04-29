@@ -12,8 +12,6 @@ import com.qsmaxmin.qsbase.mvvm.MvIView;
 
 public interface MvIFragment extends MvIView {
 
-    boolean interceptTouchEvent();
-
     boolean interceptBackPressed();
 
     void onFragmentSelectedInViewPager(boolean isSelected, int currentPosition, int totalCount);

@@ -3,7 +3,6 @@ package com.qsmaxmin.qsbase.mvvm.fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -45,7 +44,7 @@ import androidx.fragment.app.FragmentTransaction;
  * @Date 2017/6/21 11:40
  * @Description
  */
-public abstract class MvFragment extends Fragment implements MvIFragment, ScrollerProvider, View.OnTouchListener {
+public abstract class MvFragment extends Fragment implements MvIFragment, ScrollerProvider {
     private   boolean                        hasInitData;
     protected ViewAnimator                   mViewAnimator;
     private   OnActivityResultListener       activityResultListener;
@@ -145,7 +144,6 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
     @Override @Nullable @CallSuper
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = initView(inflater, container);
-        rootView.setOnTouchListener(this);
         onViewCreated(rootView);
         bindEventByQsPlugin();
         return rootView;
@@ -568,10 +566,6 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
         //当该fragment的父控件时ViewPager时，滑动ViewPager会触发该回调
     }
 
-    @Override public boolean onTouch(View v, MotionEvent event) {
-        return interceptTouchEvent();
-    }
-
     @Override public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (activityResultListener != null) {
@@ -599,10 +593,6 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
         if (!resultListenerList.contains(listener)) {
             resultListenerList.add(listener);
         }
-    }
-
-    @Override public boolean interceptTouchEvent() {
-        return true;
     }
 
     /**
