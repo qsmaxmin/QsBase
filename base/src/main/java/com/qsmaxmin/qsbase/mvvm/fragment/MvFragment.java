@@ -297,7 +297,7 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
     }
 
     @Override public void onBackPressed(int enterAnim, int exitAnim) {
-        onBackPressed(0, 0, 0, 0);
+        onBackPressed(enterAnim, exitAnim, 0, 0);
     }
 
     @Override public void onBackPressed(int enterAnim, int exitAnim, int popEnterAnim, int popExitAnim) {
