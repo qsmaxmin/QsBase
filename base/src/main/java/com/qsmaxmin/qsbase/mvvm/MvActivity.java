@@ -56,6 +56,7 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
     private   HashSet<Object>                requestTags;
     private   boolean                        isViewCreated;
     private   ISlidingViewGroup              slidingView;
+    private   OnTouchListener                touchListener;
 
     @CallSuper @Override public void bindBundleByQsPlugin(Bundle bundle) {
     }
@@ -684,8 +685,6 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
         if (touchListener != null) touchListener.onTouch(ev);
         return super.dispatchTouchEvent(ev);
     }
-
-    private OnTouchListener touchListener;
 
     @Override public void setOnTouchListener(OnTouchListener listener) {
         this.touchListener = listener;
