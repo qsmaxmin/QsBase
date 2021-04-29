@@ -302,7 +302,8 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
         FragmentManager manager = getFragmentManager();
         if (manager != null) {
             FragmentTransaction ft = manager.beginTransaction();
-            ft.remove(this).setCustomAnimations(enterAnim, exitAnim, popEnterAnim, popExitAnim).commitAllowingStateLoss();
+            ft.setCustomAnimations(enterAnim, exitAnim, popEnterAnim, popExitAnim);
+            ft.remove(this).commitAllowingStateLoss();
         }
     }
 
