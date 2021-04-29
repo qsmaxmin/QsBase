@@ -8,5 +8,5 @@ import android.view.MotionEvent;
  * @Description
  */
 public interface OnTouchListener {
-    void onTouch(MotionEvent ev);
+    boolean onTouch(MotionEvent ev);
 }

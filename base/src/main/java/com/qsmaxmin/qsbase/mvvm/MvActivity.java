@@ -682,7 +682,9 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
     }
 
     @Override public boolean dispatchTouchEvent(MotionEvent ev) {
-        if (touchListener != null) touchListener.onTouch(ev);
+        if (touchListener != null) {
+            return touchListener.onTouch(ev) || super.dispatchTouchEvent(ev);
+        }
         return super.dispatchTouchEvent(ev);
     }
 
