@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
  * @Description
  */
 public interface MvIRecyclerView<D> extends MvIView, AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
+
     MvRecycleAdapterItem<D> getRecycleAdapterItemInner(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent, int type);
 
     MvRecycleAdapterItem<D> getRecycleAdapterItem(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent, int type);
@@ -47,6 +48,8 @@ public interface MvIRecyclerView<D> extends MvIView, AdapterView.OnItemClickList
     void addData(List<D> list);
 
     void addData(D d);
+
+    void addData(int position, D d);
 
     void addData(List<D> data, int position);
 

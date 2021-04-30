@@ -151,6 +151,22 @@ public abstract class MvListActivity<D> extends MvActivity implements MvIListVie
         }
     }
 
+    @Override public final void addData(final int position, final D d) {
+        if (d != null) {
+            if (QsHelper.isMainThread()) {
+                mList.add(position, d);
+                updateAdapter(true);
+            } else {
+                post(new Runnable() {
+                    @Override public void run() {
+                        mList.add(position, d);
+                        updateAdapter(true);
+                    }
+                });
+            }
+        }
+    }
+
     @Override public final void addData(List<D> list) {
         addData(list, mList.size());
     }

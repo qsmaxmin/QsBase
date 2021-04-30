@@ -55,6 +55,8 @@ public interface MvIListView<D> extends MvIView, AdapterView.OnItemClickListener
 
     void addData(D d);
 
+    void addData(int position, D d);
+
     void delete(int position);
 
     void delete(D d);
