@@ -7,7 +7,7 @@
         <attr name="psts_IndicatorColor" format="color" />
         <attr name="psts_IndicatorWidth" format="dimension" />
         <attr name="psts_IndicatorHeight" format="dimension" />
-        <attr name="psts_IndicatorCorner" format="float" />
+        <attr name="psts_IndicatorCorner" format="dimension" />
         <attr name="psts_IndicatorDrawable" format="reference" />
         <attr name="psts_IndicatorStyle" format="enum">
             <enum name="underText" value="0" />
