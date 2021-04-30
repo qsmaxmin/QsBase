@@ -57,7 +57,7 @@ public final class HttpRequest {
     private       String                  path;
     private       String                  requestType;
     private       HashMap<String, Object> filedMap;
-    private       HashMap<String, String> queryMap;
+    private       HashMap<String, Object> queryMap;
     private       String                  requestBodyMimeType;
     private       Object                  requestBody;
     private       Headers.Builder         headerBuilder;
@@ -83,7 +83,7 @@ public final class HttpRequest {
         url.append(path);
 
         if (queryMap != null && !queryMap.isEmpty()) {
-            appendQueryParams(url);
+            appendQueryParams(url, queryMap);
         }
 
         Request.Builder builder = new Request.Builder();
@@ -103,14 +103,20 @@ public final class HttpRequest {
         return null;
     }
 
-    private void appendQueryParams(StringBuilder urlBuilder) {
+    private void appendQueryParams(StringBuilder urlBuilder, HashMap<String, Object> map) {
         int i = 0;
         Uri uri = Uri.parse(urlBuilder.toString());
         String uriQuery = uri.getQuery();
         boolean shouldAdd = TextUtils.isEmpty(uriQuery) && urlBuilder.charAt(urlBuilder.length() - 1) != '?';
-        for (String key : queryMap.keySet()) {
-            String value = queryMap.get(key);
-            urlBuilder.append((i == 0 && shouldAdd) ? '?' : '&').append(key).append('=').append(value);
+        for (String key : map.keySet()) {
+            Object value = map.get(key);
+            String valueStr;
+            if (value == null) {
+                valueStr = "";
+            } else {
+                valueStr = valueToString(value);
+            }
+            urlBuilder.append((i == 0 && shouldAdd) ? '?' : '&').append(key).append('=').append(valueStr);
             i++;
         }
     }
@@ -290,52 +296,23 @@ public final class HttpRequest {
         return requestType;
     }
 
-    @NonNull public final HashMap<String, String> getQueryMap() {
+    @NonNull public final HashMap<String, Object> getQueryMap() {
         if (queryMap == null) queryMap = new HashMap<>();
         return queryMap;
     }
 
-    public final void setQueryMap(HashMap<String, String> queryMap) {
+    public final void setQueryMap(HashMap<String, Object> queryMap) {
         this.queryMap = queryMap;
     }
 
-    /**
-     * @see #addQuery(String, String)
-     * @deprecated
-     */
-    public final void addQueryParam(String key, String value) {
-        addQuery(key, value);
-    }
-
-    public final void addQuery(String key, String value) {
+    public final void addQuery(String key, Object value) {
         if (!TextUtils.isEmpty(key)) {
-            HashMap<String, String> map = this.queryMap;
-            map.put(key, value == null ? "" : value);
+            getQueryMap().put(key, value == null ? "" : valueToString(value));
         }
     }
 
-    /**
-     * @see #getFiledMap()
-     * @deprecated
-     */
-    @NonNull public final HashMap<String, Object> getFormMap() {
-        return getFiledMap();
-    }
-
-    /**
-     * @see #setFiledMap(HashMap)
-     * @deprecated
-     */
-    public final void setFormMap(HashMap<String, Object> formMap) {
-        setFiledMap(formMap);
-    }
-
-    /**
-     * @see #addFiled(String, Object)
-     * @deprecated
-     */
-    public final void addFormParam(String key, Object value) {
-        addFiled(key, value);
+    public final Object getQuery(String key) {
+        return getQueryMap().get(key);
     }
 
     public final void setFiledMap(HashMap<String, Object> formMap) {
@@ -460,7 +437,7 @@ public final class HttpRequest {
         }
     }
 
-    private String valueToString(Object value) {
+    private String valueToString(@NonNull Object value) {
         if (value.getClass().isArray()) {
             return gson.toJson(value);
         } else {
