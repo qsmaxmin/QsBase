@@ -339,6 +339,11 @@ public final class HttpRequest {
     }
 
     public final void setRequestBody(Object requestBody) {
+        setRequestBody("application/json; charset=UTF-8", requestBody);
+    }
+
+    public final void setRequestBody(@NonNull String mimeType, Object requestBody) {
+        this.requestBodyMimeType = mimeType;
         this.requestBody = requestBody;
     }
 
