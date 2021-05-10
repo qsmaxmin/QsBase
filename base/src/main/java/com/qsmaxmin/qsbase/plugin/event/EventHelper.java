@@ -73,8 +73,8 @@ public class EventHelper {
         for (EventHandler item : eventItems) {
             try {
                 item.execute(data);
-            } catch (Exception e) {
-                if (L.isEnable()) L.e("EventHelper", e);
+            } catch (Throwable t) {
+                if (L.isEnable()) L.e("EventHelper", t);
             }
         }
     }
