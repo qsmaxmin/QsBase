@@ -1,5 +1,6 @@
 package com.qsmaxmin.qsbase.plugin.event;
 
+import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.plugin.threadpoll.QsThreadPollHelper;
 import com.qsmaxmin.qsbase.plugin.threadpoll.SafeRunnable;
 
@@ -70,7 +71,11 @@ public class EventHelper {
         HashSet<EventHandler> eventItems = itemHolder.get(data.getClass());
         if (eventItems == null || eventItems.isEmpty()) return;
         for (EventHandler item : eventItems) {
-            item.execute(data);
+            try {
+                item.execute(data);
+            } catch (Exception e) {
+                if (L.isEnable()) L.e("EventHelper", e);
+            }
         }
     }
 }
