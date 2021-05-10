@@ -20,7 +20,7 @@ import androidx.annotation.Nullable;
  */
 public class ProgressView extends FrameLayout {
     private boolean          cancelable;
-    private boolean          shouldShowing;
+    private boolean          shouldShow;
     private QsProgressDialog progressDialog;
     private Activity         activity;
 
@@ -45,22 +45,22 @@ public class ProgressView extends FrameLayout {
         setOnClickListener(new OnClickListener() {
             @Override public void onClick(View v) {
                 if (cancelable) {
-                    removeFromDecorView();
+                    dismissDialog();
                 }
             }
         });
     }
 
-    public void initView(QsProgressDialog progressDialog) {
+    public void initView(QsProgressDialog dialog) {
+        this.progressDialog = dialog;
         if (progressDialog != null) {
-            this.progressDialog = progressDialog;
             LayoutInflater factory = LayoutInflater.from(getContext());
             View view = progressDialog.onCreateContentView(factory, this);
             ViewHelper.addToParent(view, this);
         }
     }
 
-    public void setMessage(final String message) {
+    public void setMessage(final CharSequence message) {
         if (progressDialog == null) return;
         if (QsThreadPollHelper.isMainThread()) {
             progressDialog.onSetMessage(message);
@@ -75,70 +75,65 @@ public class ProgressView extends FrameLayout {
 
     public void setCancelable(boolean cancelAble) {
         this.cancelable = cancelAble;
+        if (progressDialog != null) {
+            progressDialog.setCancelAble(cancelAble);
+        }
     }
 
     public void show(final Activity activity) {
-        show(activity, progressDialog.getDelayedShowingTime());
+        if (progressDialog != null) {
+            show(activity, progressDialog.getDelayedShowingTime());
+        }
     }
 
     public void show(final Activity activity, long delayed) {
-        if (progressDialog == null || activity == null || activity.isFinishing()) {
+        if (progressDialog == null || activity == null) {
             return;
         }
-        this.shouldShowing = true;
+        this.shouldShow = true;
         this.activity = activity;
         if (delayed > 0) {
             QsThreadPollHelper.postDelayed(new Runnable() {
                 @Override public void run() {
-                    if (shouldShowing) {
-                        addToDecorView();
-                    }
+                    showDialog();
                 }
             }, delayed);
         } else if (QsThreadPollHelper.isMainThread()) {
-            if (shouldShowing) {
-                addToDecorView();
-            }
+            showDialog();
         } else {
             QsThreadPollHelper.post(new Runnable() {
                 @Override public void run() {
-                    if (shouldShowing) {
-                        addToDecorView();
-                    }
+                    showDialog();
                 }
             });
         }
     }
 
     public void hide() {
-        if (!shouldShowing || progressDialog == null || activity == null || activity.isFinishing()) {
+        if (!shouldShow || progressDialog == null || activity == null) {
             return;
         }
-        shouldShowing = false;
+        shouldShow = false;
         if (QsThreadPollHelper.isMainThread()) {
-            removeFromDecorView();
+            dismissDialog();
         } else {
             post(new Runnable() {
                 @Override public void run() {
-                    removeFromDecorView();
+                    dismissDialog();
                 }
             });
         }
     }
 
-    private void addToDecorView() {
-        if (getParent() == null && activity != null && !activity.isFinishing()) {
-            ViewGroup decorView = (ViewGroup) activity.getWindow().getDecorView();
-            decorView.addView(this);
-            if (progressDialog != null) progressDialog.onShowing();
+    private void showDialog() {
+        if (shouldShow && activity != null && progressDialog != null) {
+            progressDialog.show(activity, this);
         }
     }
 
-    private void removeFromDecorView() {
-        if (getParent() != null && activity != null && !activity.isFinishing()) {
-            ViewGroup decorView = (ViewGroup) activity.getWindow().getDecorView();
-            decorView.removeView(this);
-            if (progressDialog != null) progressDialog.onHidden();
+    private void dismissDialog() {
+        if (progressDialog != null && activity != null) {
+            progressDialog.hide(activity, this);
         }
     }
 }

@@ -1,11 +1,14 @@
 package com.qsmaxmin.qsbase.common.widget.dialog;
 
+import android.app.Activity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.qsmaxmin.qsbase.R;
+
+import androidx.annotation.NonNull;
 
 /**
  * @CreateBy qsmaxmin
@@ -29,11 +32,11 @@ public class DefaultProgressDialog extends QsProgressDialog {
         return 300;
     }
 
-    @Override public void onShowing() {
-        super.onShowing();
+    @Override public void show(@NonNull Activity activity, @NonNull View progressView) {
+        super.show(activity, progressView);
     }
 
-    @Override public void onHidden() {
-        super.onHidden();
+    @Override public void hide(@NonNull Activity activity, @NonNull View progressView) {
+        super.hide(activity, progressView);
     }
 }

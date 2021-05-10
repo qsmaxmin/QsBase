@@ -56,7 +56,7 @@ public class PermissionHelper {
 
     public void startRequestPermission(PermissionCallbackListener listener, String... permissions) {
         Activity activity = QsHelper.getScreenHelper().currentActivity();
-        if (permissions == null || permissions.length == 0 || activity == null || activity.isFinishing()) return;
+        if (permissions == null || permissions.length == 0 || activity == null) return;
         L.i(TAG, "startRequestPermission:" + Arrays.toString(permissions));
 
         activity.getApplication().registerActivityLifecycleCallbacks(new LifeCycleCallbacksAdapter() {

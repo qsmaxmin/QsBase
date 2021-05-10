@@ -118,8 +118,8 @@ public abstract class QsDialogFragment extends DialogFragment implements IView, 
     }
 
     public final void show(FragmentActivity activity, Bundle bundle) {
-        if (activity == null || activity.isFinishing()) {
-            L.e(initTag(), "activity is null or activity is finished!");
+        if (activity == null) {
+            L.e(initTag(), "activity is null !!!");
             return;
         }
         show(activity.getSupportFragmentManager(), bundle);
