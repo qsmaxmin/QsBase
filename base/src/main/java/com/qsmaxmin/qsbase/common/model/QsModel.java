@@ -22,7 +22,7 @@ public class QsModel implements QsIModel {
         return null;
     }
 
-    @Override public long getNetworkTimeLoss() {
+    @Override public final long getNetworkTimeLoss() {
         return receivedResponseAtMillis - sentRequestAtMillis;
     }
 }

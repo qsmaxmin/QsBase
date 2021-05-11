@@ -6,6 +6,7 @@ import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.qsmaxmin.qsbase.common.log.L;
+import com.qsmaxmin.qsbase.common.model.QsModel;
 import com.qsmaxmin.qsbase.common.proxy.HttpHandler;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.common.utils.StreamCloseUtils;
@@ -170,6 +171,10 @@ public class HttpHelper {
                     Object result = adapter.read(jsonReader);
                     if (jsonReader.peek() != JsonToken.END_DOCUMENT) {
                         throw new Exception("JSON document was not fully consumed.");
+                    }
+                    if (result instanceof QsModel) {
+                        ((QsModel) result).sentRequestAtMillis = response.sentRequestAtMillis();
+                        ((QsModel) result).receivedResponseAtMillis = response.receivedResponseAtMillis();
                     }
                     return result;
                 }
