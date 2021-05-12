@@ -2,13 +2,13 @@ package com.qsmaxmin.qsbase.common.widget.toast;
 
 import android.content.Context;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
 import android.text.TextUtils;
 import android.widget.Toast;
 
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
+import com.qsmaxmin.qsbase.plugin.threadpoll.QsThreadPollHelper;
 
 import java.lang.ref.SoftReference;
 import java.lang.reflect.Field;
@@ -40,7 +40,7 @@ public class QsToast {
     }
 
     private static class SafeHandler extends Handler {
-        private Handler impl;
+        private final Handler impl;
 
         SafeHandler(Handler impl) {
             this.impl = impl;
@@ -51,8 +51,9 @@ public class QsToast {
             try {
                 super.dispatchMessage(msg);
             } catch (Exception e) {
-                if (L.isEnable()) L.e("QsToast", "hand exception..." + e.getMessage());
-                e.printStackTrace();
+                if (L.isEnable()) {
+                    L.e("QsToast", "hand exception..." + e.getMessage(), e);
+                }
             }
         }
 
@@ -62,46 +63,48 @@ public class QsToast {
         }
     }
 
+    public static void show(@StringRes int resId) {
+        if (resId != 0) {
+            show(QsHelper.getString(resId));
+        }
+    }
+
     public static void show(final String msg) {
         show(msg, Toast.LENGTH_SHORT);
     }
 
-    public static void show(@StringRes int resId) {
-        if (resId != 0) show(QsHelper.getString(resId));
-    }
-
     public static void show(@StringRes int resId, int duration) {
-        if (resId != 0) show(QsHelper.getString(resId), duration);
+        if (resId != 0) {
+            show(QsHelper.getString(resId), duration);
+        }
     }
 
-    public static void show(final String msg, int duration) {
+    public static void show(final String msg, final int duration) {
         if (TextUtils.isEmpty(msg)) {
             return;
         }
         // 判断是否在主线程
-        if (Looper.getMainLooper().getThread() != Thread.currentThread()) {
-            QsHelper.post(new Runnable() {
+        if (QsThreadPollHelper.isMainThread()) {
+            showToast(QsHelper.getApplication(), msg, duration);
+        } else {
+            QsThreadPollHelper.post(new Runnable() {
                 @Override public void run() {
-                    showToast(QsHelper.getApplication(), msg, Toast.LENGTH_SHORT);
+                    showToast(QsHelper.getApplication(), msg, duration);
                 }
             });
-        } else {
-            showToast(QsHelper.getApplication(), msg, duration);
         }
     }
 
     private static void showToast(Context context, String text, int duration) {
         try {
+            cancelLastToast();
             int size = QsHelper.getScreenHelper().getActivityStack().size();
             if (size > 0) {
-                cancelLastToast();
-                Toast toast = Toast.makeText(context, text, Toast.LENGTH_SHORT);
+                Toast toast = Toast.makeText(context, text, duration);
                 hook(toast);
                 toast.setDuration(duration);
                 toast.show();
                 lastToast = new SoftReference<>(toast);
-            } else {
-                cancelLastToast();
             }
         } catch (Exception ignored) {
         }

@@ -7,7 +7,7 @@
         android:layout_gravity="center"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:background="@drawable/shape_bg_default_progress_dialog"
+        android:background="@drawable/qs_shape_bg_default_progress_dialog"
         android:gravity="center"
         android:orientation="vertical"
         android:padding="20dp">
