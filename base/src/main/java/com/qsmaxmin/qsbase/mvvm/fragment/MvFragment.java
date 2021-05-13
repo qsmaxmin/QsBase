@@ -129,6 +129,7 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
         isViewCreated = true;
         super.onCreate(savedInstanceState);
         bindBundleByQsPlugin(getArguments());
+        bindEventByQsPlugin();
         if (interceptBackPressed()) {
             requireActivity().getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
                 @Override public void handleOnBackPressed() {
@@ -145,17 +146,8 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = initView(inflater, container);
         onViewCreated(rootView);
-        bindEventByQsPlugin();
+
         return rootView;
-    }
-
-    @CallSuper @Override public void bindBundleByQsPlugin(Bundle bundle) {
-    }
-
-    @CallSuper @Override public void bindEventByQsPlugin() {
-    }
-
-    @CallSuper @Override public void unbindEventByQsPlugin() {
     }
 
     @Override public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -171,6 +163,15 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
         super.onDestroy();
         unbindEventByQsPlugin();
         cancelAllHttpRequest();
+    }
+
+    @CallSuper @Override public void bindBundleByQsPlugin(Bundle bundle) {
+    }
+
+    @CallSuper @Override public void bindEventByQsPlugin() {
+    }
+
+    @CallSuper @Override public void unbindEventByQsPlugin() {
     }
 
     protected View initView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container) {
