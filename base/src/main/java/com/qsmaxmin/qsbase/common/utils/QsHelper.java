@@ -90,9 +90,6 @@ public class QsHelper {
         Application app = iApp.getApplication();
         app.unregisterActivityLifecycleCallbacks(instance.lifeCycleCallback);
         app.registerActivityLifecycleCallbacks(instance.lifeCycleCallback);
-        if (iApp.isLogOpen()) {
-            L.init(true);
-        }
     }
 
     public static QsIApplication getAppInterface() {
@@ -104,7 +101,11 @@ public class QsHelper {
     }
 
     public static boolean isLogOpen() {
-        return getAppInterface().isLogOpen();
+        return L.isEnable();
+    }
+
+    public static boolean isDebug() {
+        return getAppInterface().isDebug();
     }
 
     public static ImageHelper.Builder getImageHelper() {

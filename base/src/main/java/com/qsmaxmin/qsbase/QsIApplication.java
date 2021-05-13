@@ -22,7 +22,10 @@ public interface QsIApplication {
 
     Application getApplication();
 
-    boolean isLogOpen();
+    /**
+     * 是否是测试模式
+     */
+    boolean isDebug();
 
     /**
      * 全局加载中布局

@@ -29,8 +29,6 @@ public abstract class QsApplication extends Application implements QsIApplicatio
         return this;
     }
 
-    @Override public abstract boolean isLogOpen();
-
     @Override public @LayoutRes int loadingLayoutId() {
         return R.layout.qs_default_loading;
     }
