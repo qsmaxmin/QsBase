@@ -105,25 +105,25 @@
     </declare-styleable>
 
     <declare-styleable name="FunctionImageView">
-        <attr name="miv_function" format="enum">
+        <attr name="fiv_function" format="enum">
             <enum name="preview" value="0" />
             <enum name="crop" value="1" />
         </attr>
     </declare-styleable>
 
     <declare-styleable name="QsSeekBar">
-        <attr name="sb_backgroundDrawable" format="reference" />
-        <attr name="sb_progressDrawable" format="reference" />
-        <attr name="sb_thumbDrawable" format="reference" />
+        <attr name="qsb_backgroundDrawable" format="reference|color" />
+        <attr name="qsb_progressDrawable" format="reference|color" />
+        <attr name="qsb_thumbDrawable" format="reference|color" />
         <!--原点drawable-->
-        <attr name="sb_originDrawable" format="reference" />
-        <attr name="sb_progressThickness" format="dimension" />
-        <attr name="sb_max" format="float" />
-        <attr name="sb_min" format="float" />
-        <attr name="sb_progress" format="float" />
+        <attr name="qsb_originDrawable" format="reference|color" />
+        <attr name="qsb_progressThickness" format="dimension" />
+        <attr name="qsb_max" format="float" />
+        <attr name="qsb_min" format="float" />
+        <attr name="qsb_progress" format="float" />
         <!--原点位置（min <= origin => max）-->
-        <attr name="sb_origin" format="float" />
-        <attr name="sb_orientation">
+        <attr name="qsb_origin" format="float" />
+        <attr name="qsb_orientation">
             <enum name="horizontal" value="0" />
             <enum name="vertical" value="1" />
         </attr>

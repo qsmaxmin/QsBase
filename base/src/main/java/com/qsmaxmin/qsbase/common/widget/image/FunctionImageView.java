@@ -50,7 +50,7 @@ public class FunctionImageView extends AppCompatImageView {
     private void init(AttributeSet attrs) {
         if (attrs != null) {
             TypedArray typedArray = getResources().obtainAttributes(attrs, R.styleable.FunctionImageView);
-            functionMode = typedArray.getInt(R.styleable.FunctionImageView_miv_function, 0);
+            functionMode = typedArray.getInt(R.styleable.FunctionImageView_fiv_function, 0);
             typedArray.recycle();
         }
         initData();

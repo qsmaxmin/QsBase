@@ -61,16 +61,16 @@ public class QsSeekBar extends View {
 
         if (attrs != null) {
             TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.QsSeekBar);
-            orientation = typedArray.getInt(R.styleable.QsSeekBar_sb_orientation, 0);
-            backgroundDrawable = typedArray.getDrawable(R.styleable.QsSeekBar_sb_backgroundDrawable);
-            progressDrawable = typedArray.getDrawable(R.styleable.QsSeekBar_sb_progressDrawable);
-            thumbDrawable = typedArray.getDrawable(R.styleable.QsSeekBar_sb_thumbDrawable);
-            originDrawable = typedArray.getDrawable(R.styleable.QsSeekBar_sb_originDrawable);
-            pThickness = typedArray.getDimension(R.styleable.QsSeekBar_sb_progressThickness, 3 * density);
-            max = typedArray.getFloat(R.styleable.QsSeekBar_sb_max, 100);
-            min = typedArray.getFloat(R.styleable.QsSeekBar_sb_min, 0);
-            progress = typedArray.getFloat(R.styleable.QsSeekBar_sb_progress, 0);
-            origin = typedArray.getFloat(R.styleable.QsSeekBar_sb_origin, 0);
+            orientation = typedArray.getInt(R.styleable.QsSeekBar_qsb_orientation, 0);
+            backgroundDrawable = typedArray.getDrawable(R.styleable.QsSeekBar_qsb_backgroundDrawable);
+            progressDrawable = typedArray.getDrawable(R.styleable.QsSeekBar_qsb_progressDrawable);
+            thumbDrawable = typedArray.getDrawable(R.styleable.QsSeekBar_qsb_thumbDrawable);
+            originDrawable = typedArray.getDrawable(R.styleable.QsSeekBar_qsb_originDrawable);
+            pThickness = typedArray.getDimension(R.styleable.QsSeekBar_qsb_progressThickness, 3 * density);
+            max = typedArray.getFloat(R.styleable.QsSeekBar_qsb_max, 100);
+            min = typedArray.getFloat(R.styleable.QsSeekBar_qsb_min, 0);
+            progress = typedArray.getFloat(R.styleable.QsSeekBar_qsb_progress, 0);
+            origin = typedArray.getFloat(R.styleable.QsSeekBar_qsb_origin, 0);
             typedArray.recycle();
         }
 
