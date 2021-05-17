@@ -110,4 +110,22 @@
             <enum name="crop" value="1" />
         </attr>
     </declare-styleable>
+
+    <declare-styleable name="QsSeekBar">
+        <attr name="sb_backgroundDrawable" format="reference" />
+        <attr name="sb_progressDrawable" format="reference" />
+        <attr name="sb_thumbDrawable" format="reference" />
+        <!--原点drawable-->
+        <attr name="sb_originDrawable" format="reference" />
+        <attr name="sb_progressThickness" format="dimension" />
+        <attr name="sb_max" format="float" />
+        <attr name="sb_min" format="float" />
+        <attr name="sb_progress" format="float" />
+        <!--原点位置（min<->max）-->
+        <attr name="sb_origin" format="float" />
+        <attr name="sb_orientation">
+            <enum name="horizontal" value="0" />
+            <enum name="vertical" value="1" />
+        </attr>
+    </declare-styleable>
 </resources>
