@@ -103,4 +103,11 @@
         <attr name="rtv_drawableFirstMargin" format="dimension" />
         <attr name="rtv_drawableEndMargin" format="dimension" />
     </declare-styleable>
+
+    <declare-styleable name="FunctionImageView">
+        <attr name="miv_function" format="enum">
+            <enum name="preview" value="0" />
+            <enum name="crop" value="1" />
+        </attr>
+    </declare-styleable>
 </resources>
