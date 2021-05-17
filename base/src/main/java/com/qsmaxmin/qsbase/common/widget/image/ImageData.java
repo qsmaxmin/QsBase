@@ -107,7 +107,7 @@ final class ImageData {
     }
 
     protected void callbackTouchScaleChanged() {
-        if (gestureListener != null) {
+        if (isPreviewFunction() && gestureListener != null) {
             gestureListener.onTouchScaleChanged(calculateTouchScale());
         }
     }
