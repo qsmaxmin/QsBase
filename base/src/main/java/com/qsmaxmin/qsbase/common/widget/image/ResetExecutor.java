@@ -11,7 +11,7 @@ import androidx.annotation.NonNull;
  * @Date 2021/5/14 14:59
  * @Description
  */
-public class ResetExecutor extends BaseExecutor {
+class ResetExecutor extends BaseExecutor {
     private final Matrix       tempMatrix;
     private final float        stepValue;
     private final float[]      sv;

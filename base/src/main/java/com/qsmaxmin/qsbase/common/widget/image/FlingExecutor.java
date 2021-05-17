@@ -10,7 +10,7 @@ import androidx.annotation.NonNull;
  * @Date 2021/5/14 14:04
  * @Description
  */
-public class FlingExecutor extends BaseExecutor {
+class FlingExecutor extends BaseExecutor {
     private final Scroller scroller;
     private final Matrix   tempMatrix;
     private       boolean  isFling;

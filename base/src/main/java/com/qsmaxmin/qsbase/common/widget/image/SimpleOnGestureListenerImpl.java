@@ -10,13 +10,13 @@ import android.view.ViewConfiguration;
  * @Date 2021/5/17 10:51
  * @Description
  */
-public class SimpleOnGestureListenerImpl extends GestureDetector.SimpleOnGestureListener {
+class SimpleOnGestureListenerImpl extends GestureDetector.SimpleOnGestureListener {
     private final ImageData        data;
     private final float[]          matrixValues;
     private final Runnable         singleTapCallback;
     private       TapScaleExecutor tapScaleExecutor;
 
-    public SimpleOnGestureListenerImpl(final ImageData data) {
+    SimpleOnGestureListenerImpl(final ImageData data) {
         this.data = data;
         this.matrixValues = new float[9];
         this.singleTapCallback = new Runnable() {
