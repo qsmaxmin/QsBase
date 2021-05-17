@@ -159,24 +159,26 @@ final class ImageData {
     final void setViewSize(int viewWidth, int viewHeight) {
         if (viewWidth > 0 && viewHeight > 0) {
             cutRect.set(0, 0, viewWidth, viewHeight);
-            int bitmapWidth = originalBitmap.getWidth();
-            int bitmapHeight = originalBitmap.getHeight();
-            float scaleX = (float) viewWidth / bitmapWidth;
-            float scaleY = (float) viewHeight / bitmapHeight;
-            float scale = isPreviewFunction() ? Math.min(scaleX, scaleY) : Math.max(scaleX, scaleY);
-            float newW = bitmapWidth * scale;
-            float newH = bitmapHeight * scale;
-            float left = ((float) viewWidth - newW) / 2f;
-            float top = ((float) viewHeight - newH) / 2f;
-            initRect.set(left, top, left + newW, top + newH);
+            if (originalBitmap != null) {
+                int bitmapWidth = originalBitmap.getWidth();
+                int bitmapHeight = originalBitmap.getHeight();
+                float scaleX = (float) viewWidth / bitmapWidth;
+                float scaleY = (float) viewHeight / bitmapHeight;
+                float scale = isPreviewFunction() ? Math.min(scaleX, scaleY) : Math.max(scaleX, scaleY);
+                float newW = bitmapWidth * scale;
+                float newH = bitmapHeight * scale;
+                float left = ((float) viewWidth - newW) / 2f;
+                float top = ((float) viewHeight - newH) / 2f;
+                initRect.set(left, top, left + newW, top + newH);
+                originalRect.set(0, 0, originalBitmap.getWidth(), originalBitmap.getHeight());
 
-            originalRect.set(0, 0, originalBitmap.getWidth(), originalBitmap.getHeight());
-            Matrix initMatrix = new Matrix();
-            initMatrix.postScale(scale, scale);
-            initMatrix.postTranslate(initRect.left, initRect.top);
-            initMatrix.getValues(initValues);
-            currentMatrix.set(initMatrix);
-            mapCurrentRect();
+                Matrix initMatrix = new Matrix();
+                initMatrix.postScale(scale, scale);
+                initMatrix.postTranslate(initRect.left, initRect.top);
+                initMatrix.getValues(initValues);
+                currentMatrix.set(initMatrix);
+                mapCurrentRect();
+            }
         }
     }
 
