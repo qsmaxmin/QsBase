@@ -36,8 +36,8 @@ class TapScaleExecutor extends BaseExecutor {
             for (int i = 0; i < 6; i++) {
                 cv[i] = sv[i] + (ev[i] - sv[i]) * value;
             }
-            data.currentMatrix.setValues(cv);
-            mapWithOriginalRect(data.currentMatrix, data.currentRect);
+            data.getCurrentMatrix().setValues(cv);
+            mapCurrentRect();
             invalidate();
             postAnimation(this);
         } else {
@@ -47,11 +47,11 @@ class TapScaleExecutor extends BaseExecutor {
     }
 
     void tapScale(float scale, float px, float py) {
-        data.isIdle = false;
+        data.setIdle(false);
         isRunning = true;
         removeCallbacks(this);
         progress = 0;
-        tempMatrix.set(data.currentMatrix);
+        tempMatrix.set(data.getCurrentMatrix());
         tempMatrix.getValues(sv);
         System.arraycopy(sv, 0, cv, 0, cv.length);
         tempMatrix.postScale(scale, scale, px, py);

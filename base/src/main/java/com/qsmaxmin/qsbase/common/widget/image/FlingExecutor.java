@@ -28,9 +28,9 @@ public class FlingExecutor extends BaseExecutor {
         if (!scroller.isFinished() && scroller.computeScrollOffset()) {
             int currX = scroller.getCurrX();
             int currY = scroller.getCurrY();
-            data.currentMatrix.set(tempMatrix);
-            data.currentMatrix.postTranslate(currX, currY);
-            mapWithOriginalRect(data.currentMatrix, data.currentRect);
+            data.getCurrentMatrix().set(tempMatrix);
+            data.getCurrentMatrix().postTranslate(currX, currY);
+            mapCurrentRect();
             invalidate();
             postAnimation(this);
         } else {
@@ -40,27 +40,27 @@ public class FlingExecutor extends BaseExecutor {
     }
 
     void fling(int velocityX, int velocityY) {
-            scroller.forceFinished(true);
-            int minX = 0, maxX = 0, minY = 0, maxY = 0;
-            if (data.currentRect.left < data.cutRect.left && velocityX > 0) {
-                maxX = (int) (data.cutRect.left - data.currentRect.left);
-            } else if (data.currentRect.right > data.cutRect.right && velocityX < 0) {
-                minX = (int) (data.cutRect.right - data.currentRect.right);
-            }
+        scroller.forceFinished(true);
+        int minX = 0, maxX = 0, minY = 0, maxY = 0;
+        if (data.getCurrentRect().left < data.getCutRect().left && velocityX > 0) {
+            maxX = (int) (data.getCutRect().left - data.getCurrentRect().left);
+        } else if (data.getCurrentRect().right > data.getCutRect().right && velocityX < 0) {
+            minX = (int) (data.getCutRect().right - data.getCurrentRect().right);
+        }
 
-            if (data.currentRect.top < data.cutRect.top && velocityY > 0) {
-                maxY = (int) (data.cutRect.top - data.currentRect.top);
-            } else if (data.currentRect.bottom > data.cutRect.bottom && velocityY < 0) {
-                minY = (int) (data.cutRect.bottom - data.currentRect.bottom);
-            }
-            if (minX != 0 || maxX != 0 || minY != 0 || maxY != 0) {
-                isFling = true;
-                scroller.fling(0, 0, velocityX, velocityY, minX, maxX, minY, maxY);
-                tempMatrix.set(data.currentMatrix);
-                postAnimation(this);
-            } else {
-                data.startRecover();
-            }
+        if (data.getCurrentRect().top < data.getCutRect().top && velocityY > 0) {
+            maxY = (int) (data.getCutRect().top - data.getCurrentRect().top);
+        } else if (data.getCurrentRect().bottom > data.getCutRect().bottom && velocityY < 0) {
+            minY = (int) (data.getCutRect().bottom - data.getCurrentRect().bottom);
+        }
+        if (minX != 0 || maxX != 0 || minY != 0 || maxY != 0) {
+            isFling = true;
+            scroller.fling(0, 0, velocityX, velocityY, minX, maxX, minY, maxY);
+            tempMatrix.set(data.getCurrentMatrix());
+            postAnimation(this);
+        } else {
+            data.startRecover();
+        }
     }
 
     void stopFling() {

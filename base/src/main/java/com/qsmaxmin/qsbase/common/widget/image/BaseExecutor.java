@@ -41,8 +41,16 @@ abstract class BaseExecutor implements Runnable {
         data.mapWithOriginalRect(matrix, rectF);
     }
 
+    protected void mapCurrentRect() {
+        data.mapCurrentRect();
+    }
+
     protected Context getContext() {
         return data.getContext();
+    }
+
+    protected float[] getInitValues() {
+        return data.getInitValues();
     }
 
     protected boolean isPreviewFunction() {

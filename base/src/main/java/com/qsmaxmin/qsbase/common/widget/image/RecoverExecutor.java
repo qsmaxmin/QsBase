@@ -37,33 +37,32 @@ class RecoverExecutor extends BaseExecutor {
         if (progress <= 1f) {
             progress += stepValue;
             float value = interpolator.getInterpolation(progress);
-            data.currentMatrix.set(tempMatrix);
+            data.getCurrentMatrix().set(tempMatrix);
             if (scaleEnd != 0) {
                 float scale = 1f + (scaleEnd / scaleStart - 1f) * value;
-                data.currentMatrix.postScale(scale, scale, tempRect.centerX(), tempRect.centerY());
+                data.getCurrentMatrix().postScale(scale, scale, tempRect.centerX(), tempRect.centerY());
             }
-            data.currentMatrix.postTranslate(translateX * value, translateY * value);
-            mapWithOriginalRect(data.currentMatrix, data.currentRect);
+            data.getCurrentMatrix().postTranslate(translateX * value, translateY * value);
+            mapCurrentRect();
             invalidate();
 
             data.callbackTouchScaleChanged();
 
             postAnimation(this);
         } else {
-            data.isIdle = true;
+            data.setIdle(true);
         }
     }
 
     void recover() {
         removeCallbacks(this);
         data.stopFling();
-
         progress = 0f;
         scaleEnd = 0;
         translateX = 0;
         translateY = 0;
-        tempMatrix.set(data.currentMatrix);
-        tempRect.set(data.currentRect);
+        tempMatrix.set(data.getCurrentMatrix());
+        tempRect.set(data.getCurrentRect());
 
         tempMatrix.getValues(values);
         scaleStart = values[Matrix.MSCALE_X];
@@ -76,73 +75,73 @@ class RecoverExecutor extends BaseExecutor {
     }
 
     private void recoverMatrix() {
-        if (tempRect.width() < data.cutRect.width() || tempRect.height() < data.cutRect.height()) {
-            float scaleX = data.cutRect.width() / tempRect.width();
-            float scaleY = data.cutRect.height() / tempRect.height();
+        if (tempRect.width() < data.getCutRect().width() || tempRect.height() < data.getCutRect().height()) {
+            float scaleX = data.getCutRect().width() / tempRect.width();
+            float scaleY = data.getCutRect().height() / tempRect.height();
             float maxScale = Math.max(scaleX, scaleY);
             tempMatrix.postScale(maxScale, maxScale, tempRect.centerX(), tempRect.centerY());
             mapWithOriginalRect(tempMatrix, tempRect);
             tempMatrix.getValues(values);
             scaleEnd = values[Matrix.MSCALE_X];
-            tempMatrix.set(data.currentMatrix);
+            tempMatrix.set(data.getCurrentMatrix());
         }
 
-        if (tempRect.left > data.cutRect.left) {
-            translateX = data.cutRect.left - tempRect.left;
-        } else if (tempRect.right < data.cutRect.right) {
-            translateX = data.cutRect.right - tempRect.right;
+        if (tempRect.left > data.getCutRect().left) {
+            translateX = data.getCutRect().left - tempRect.left;
+        } else if (tempRect.right < data.getCutRect().right) {
+            translateX = data.getCutRect().right - tempRect.right;
         }
 
-        if (tempRect.top > data.cutRect.top) {
-            translateY = data.cutRect.top - tempRect.top;
-        } else if (tempRect.bottom < data.cutRect.bottom) {
-            translateY = data.cutRect.bottom - tempRect.bottom;
+        if (tempRect.top > data.getCutRect().top) {
+            translateY = data.getCutRect().top - tempRect.top;
+        } else if (tempRect.bottom < data.getCutRect().bottom) {
+            translateY = data.getCutRect().bottom - tempRect.bottom;
         }
         if (scaleEnd != 0 || translateX != 0 || translateY != 0) {
             post(this);
         } else {
-            data.isIdle = true;
+            data.setIdle(true);
         }
     }
 
 
     private void recoverPreview() {
-        if (tempRect.width() < data.cutRect.width() && tempRect.height() < data.cutRect.height()) {
-            float scaleX = data.cutRect.width() / tempRect.width();
-            float scaleY = data.cutRect.height() / tempRect.height();
+        if (tempRect.width() < data.getCutRect().width() && tempRect.height() < data.getCutRect().height()) {
+            float scaleX = data.getCutRect().width() / tempRect.width();
+            float scaleY = data.getCutRect().height() / tempRect.height();
             float minScale = Math.min(scaleX, scaleY);
             tempMatrix.postScale(minScale, minScale, tempRect.centerX(), tempRect.centerY());
             mapWithOriginalRect(tempMatrix, tempRect);
             tempMatrix.getValues(values);
             scaleEnd = values[Matrix.MSCALE_X];
-            tempMatrix.set(data.currentMatrix);
+            tempMatrix.set(data.getCurrentMatrix());
         }
 
-        if (tempRect.left > data.cutRect.left || tempRect.right < data.cutRect.right) {
-            if (tempRect.width() < data.cutRect.width()) {
-                float left = (data.cutRect.width() - tempRect.width()) / 2f;
+        if (tempRect.left > data.getCutRect().left || tempRect.right < data.getCutRect().right) {
+            if (tempRect.width() < data.getCutRect().width()) {
+                float left = (data.getCutRect().width() - tempRect.width()) / 2f;
                 translateX = left - tempRect.left;
-            } else if (tempRect.left > data.cutRect.left) {
-                translateX = data.cutRect.left - tempRect.left;
-            } else if (tempRect.right < data.cutRect.right) {
-                translateX = data.cutRect.right - tempRect.right;
+            } else if (tempRect.left > data.getCutRect().left) {
+                translateX = data.getCutRect().left - tempRect.left;
+            } else if (tempRect.right < data.getCutRect().right) {
+                translateX = data.getCutRect().right - tempRect.right;
             }
         }
 
-        if (tempRect.top > data.cutRect.top || tempRect.bottom < data.cutRect.bottom) {
-            if (tempRect.height() < data.cutRect.height()) {
-                float top = (data.cutRect.height() - tempRect.height()) / 2f;
+        if (tempRect.top > data.getCutRect().top || tempRect.bottom < data.getCutRect().bottom) {
+            if (tempRect.height() < data.getCutRect().height()) {
+                float top = (data.getCutRect().height() - tempRect.height()) / 2f;
                 translateY = top - tempRect.top;
-            } else if (tempRect.top > data.cutRect.top) {
-                translateY = data.cutRect.top - tempRect.top;
-            } else if (tempRect.bottom < data.cutRect.bottom) {
-                translateY = data.cutRect.bottom - tempRect.bottom;
+            } else if (tempRect.top > data.getCutRect().top) {
+                translateY = data.getCutRect().top - tempRect.top;
+            } else if (tempRect.bottom < data.getCutRect().bottom) {
+                translateY = data.getCutRect().bottom - tempRect.bottom;
             }
         }
         if (scaleEnd != 0 || translateX != 0 || translateY != 0) {
             post(this);
         } else {
-            data.isIdle = true;
+            data.setIdle(true);
         }
     }
 }

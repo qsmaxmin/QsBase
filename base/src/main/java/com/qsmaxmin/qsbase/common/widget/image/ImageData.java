@@ -6,10 +6,8 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.os.Build;
-import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
-import android.view.ViewConfiguration;
 
 import androidx.annotation.Nullable;
 import androidx.core.view.GestureDetectorCompat;
@@ -20,134 +18,88 @@ import androidx.core.view.GestureDetectorCompat;
  * @Description
  */
 final class ImageData {
-    final         FunctionImageView     imageView;
-    final         RectF                 cutRect;
-    private final RectF                 originalRect;
-    final         Matrix                originalMatrix;
-    final         RectF                 initRect;
-    final         RectF                 currentRect;
-    final         Matrix                currentMatrix;
-    private final ScaleGestureDetector  scaleDetector;
-    private final GestureDetectorCompat touchDetector;
-    boolean isIdle;
-    private int              functionMode;
-    private float            touchBeginScale;
+    private final FunctionImageView           imageView;
+    private final RectF                       cutRect;
+    private final RectF                       originalRect;
+    private final float[]                     initValues;
+    private final RectF                       initRect;
+    private final RectF                       currentRect;
+    private final Matrix                      currentMatrix;
+    private final ScaleGestureDetector        scaleDetector;
+    private final GestureDetectorCompat       touchDetector;
+    private final SimpleOnGestureListenerImpl gestureListenerImpl;
+    private       boolean                     isIdle;
+    private       int                         functionMode;
+    private       float                       touchBeginScale;
     //
-    private RecoverExecutor  recoverExecutor;
-    private FlingExecutor    flingExecutor;
-    private ResetExecutor    resetExecutor;
-    private TapScaleExecutor tapScaleExecutor;
+    private       RecoverExecutor             recoverExecutor;
+    private       FlingExecutor               flingExecutor;
+    private       ResetExecutor               resetExecutor;
     //
-    float           lastAngle;
-    GestureListener gestureListener;
+    private       float                       lastAngle;
+    private       GestureListener             gestureListener;
     //
-    Bitmap          originalBitmap;
+    private       Bitmap                      originalBitmap;
+
+    RectF getCutRect() {
+        return cutRect;
+    }
+
+    float[] getInitValues() {
+        return initValues;
+    }
+
+    RectF getInitRect() {
+        return initRect;
+    }
+
+    RectF getCurrentRect() {
+        return currentRect;
+    }
+
+    Matrix getCurrentMatrix() {
+        return currentMatrix;
+    }
+
+    boolean isIdle() {
+        return isIdle;
+    }
+
+    void setIdle(boolean idle) {
+        this.isIdle = idle;
+    }
+
+    void resetLastAngle() {
+        this.lastAngle = 0f;
+    }
+
+    float getTouchBeginScale() {
+        return touchBeginScale;
+    }
+
+    void setTouchBeginScale(float touchBeginScale) {
+        this.touchBeginScale = touchBeginScale;
+    }
+
+    GestureListener getGestureListener() {
+        return gestureListener;
+    }
 
     ImageData(FunctionImageView view) {
         this.imageView = view;
         this.cutRect = new RectF();
         this.originalRect = new RectF();
-        this.originalMatrix = new Matrix();
+        this.initValues = new float[9];
         this.initRect = new RectF();
         this.currentRect = new RectF();
         this.currentMatrix = new Matrix();
         this.isIdle = true;
-        this.touchBeginScale = -1f;
-
-        final Runnable singleTapCallback = new Runnable() {
-            @Override public void run() {
-                if (gestureListener != null) gestureListener.onSingleTap();
-            }
-        };
-
-        this.scaleDetector = new ScaleGestureDetector(getContext(), new ScaleGestureDetector.OnScaleGestureListener() {
-            @Override public boolean onScale(ScaleGestureDetector detector) {
-                float scaleFactor = detector.getScaleFactor();
-                currentMatrix.postScale(scaleFactor, scaleFactor, detector.getFocusX(), detector.getFocusY());
-                mapWithOriginalRect(currentMatrix, currentRect);
-                invalidate();
-                return true;
-            }
-
-            @Override public boolean onScaleBegin(ScaleGestureDetector detector) {
-                return true;
-            }
-
-            @Override public void onScaleEnd(ScaleGestureDetector detector) {
-                startRecover();
-            }
-        });
-
-        this.touchDetector = new GestureDetectorCompat(getContext(), new GestureDetector.SimpleOnGestureListener() {
-            private final float[] matrixValues = new float[9];
-
-            @Override public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-                boolean active = e2.getPointerCount() == 1;
-                if (active) {
-                    currentMatrix.postTranslate(-distanceX, -distanceY);
-                    if (isPreviewFunction() && currentRect.top > initRect.top) {
-                        currentMatrix.getValues(matrixValues);
-                        float scaleCurrent = matrixValues[Matrix.MSCALE_X];
-                        if (touchBeginScale == -1f) {
-                            touchBeginScale = scaleCurrent;
-                        } else {
-                            float scaleBegin = touchBeginScale;
-                            float scaleEnd = 0.3f;
-                            float scaleTarget = scaleBegin + (scaleEnd - scaleBegin) * calculateTouchScale();
-                            float ps = scaleTarget / scaleCurrent;
-                            currentMatrix.postScale(ps, ps, e2.getX(), e2.getY());
-                            callbackTouchScaleChanged();
-                        }
-                    }
-                    mapWithOriginalRect(currentMatrix, currentRect);
-                    invalidate();
-                }
-                return active;
-            }
-
-
-            @Override public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-                if (canFling() && (velocityX != 0 || velocityY != 0)) {
-                    startFling(velocityX, velocityY);
-                } else {
-                    startRecover();
-                }
-                return true;
-            }
-
-            @Override public boolean onDown(MotionEvent e) {
-                isIdle = false;
-                stopFling();
-                return true;
-            }
-
-            @Override public boolean onSingleTapUp(MotionEvent e) {
-                removeCallbacks(singleTapCallback);
-                postDelayed(singleTapCallback, ViewConfiguration.getDoubleTapTimeout());
-                return false;
-            }
-
-            @Override public boolean onDoubleTap(MotionEvent e) {
-                removeCallbacks(singleTapCallback);
-                float scale = currentRect.width() / initRect.width();
-                float maxScale = 4f;
-                float x = e.getX();
-                float y = e.getY();
-                if (currentRect.contains(x, y)) {
-                    if (scale < maxScale) {
-                        scale *= 1.5f;
-                        if (scale > maxScale) scale = maxScale;
-                        startTapScale(scale, x, y);
-                    } else {
-                        reset(true);
-                    }
-                }
-                return true;
-            }
-        });
+        this.gestureListenerImpl = new SimpleOnGestureListenerImpl(this);
+        this.scaleDetector = new ScaleGestureDetector(getContext(), new OnScaleGestureListenerImpl(this));
+        this.touchDetector = new GestureDetectorCompat(getContext(), gestureListenerImpl);
     }
 
-    private float calculateTouchScale() {
+    float calculateTouchScale() {
         float ratio = (currentRect.top - initRect.top) / initRect.height();
         if (ratio < 0f) ratio = 0f;
         else if (ratio > 1f) ratio = 1f;
@@ -160,7 +112,7 @@ final class ImageData {
         }
     }
 
-    private void startFling(float velocityX, float velocityY) {
+    void startFling(float velocityX, float velocityY) {
         if (flingExecutor == null) flingExecutor = new FlingExecutor(this);
         flingExecutor.fling((int) velocityX, (int) velocityY);
     }
@@ -174,11 +126,15 @@ final class ImageData {
     }
 
     boolean onTouchEvent(MotionEvent event) {
-        if (!available() || touchDetector.onTouchEvent(event)) return true;
+        if (!available()) return true;
+        boolean isTouchUp = event.getAction() == MotionEvent.ACTION_UP;
+        if (isTouchUp) {
+            touchBeginScale = 0f;
+        }
+        if (touchDetector.onTouchEvent(event)) return true;
         scaleDetector.onTouchEvent(event);
-        if (event.getAction() == MotionEvent.ACTION_UP) {
-            touchBeginScale = -1f;
-            if (!isInFling() && !isInTapScaling()) startRecover();
+        if (isTouchUp && !isInFling() && !gestureListenerImpl.isInTapScaling()) {
+            startRecover();
         }
         return true;
     }
@@ -215,16 +171,21 @@ final class ImageData {
             initRect.set(left, top, left + newW, top + newH);
 
             originalRect.set(0, 0, originalBitmap.getWidth(), originalBitmap.getHeight());
-            originalMatrix.reset();
-            originalMatrix.postScale(scale, scale);
-            originalMatrix.postTranslate(initRect.left, initRect.top);
-            currentMatrix.set(originalMatrix);
-            mapWithOriginalRect(currentMatrix, currentRect);
+            Matrix initMatrix = new Matrix();
+            initMatrix.postScale(scale, scale);
+            initMatrix.postTranslate(initRect.left, initRect.top);
+            initMatrix.getValues(initValues);
+            currentMatrix.set(initMatrix);
+            mapCurrentRect();
         }
     }
 
     final void mapWithOriginalRect(Matrix matrix, RectF rectF) {
         matrix.mapRect(rectF, originalRect);
+    }
+
+    final void mapCurrentRect() {
+        currentMatrix.mapRect(currentRect, originalRect);
     }
 
     final void draw(Canvas canvas) {
@@ -237,7 +198,7 @@ final class ImageData {
         if (originalBitmap == null) return;
         if (angle != lastAngle) {
             currentMatrix.postRotate(angle - lastAngle, getWidth() / 2f, getHeight() / 2f);
-            mapWithOriginalRect(currentMatrix, currentRect);
+            mapCurrentRect();
             lastAngle = angle;
             invalidate();
         }
@@ -299,15 +260,6 @@ final class ImageData {
 
     final boolean isInFling() {
         return flingExecutor != null && flingExecutor.isFling();
-    }
-
-    final boolean isInTapScaling() {
-        return tapScaleExecutor != null && tapScaleExecutor.isScaling();
-    }
-
-    final void startTapScale(float scaleFactor, float px, float py) {
-        if (tapScaleExecutor == null) tapScaleExecutor = new TapScaleExecutor(this);
-        tapScaleExecutor.tapScale(scaleFactor, px, py);
     }
 
     final void reset(boolean anim) {
