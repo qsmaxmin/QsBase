@@ -121,7 +121,7 @@
         <attr name="sb_max" format="float" />
         <attr name="sb_min" format="float" />
         <attr name="sb_progress" format="float" />
-        <!--原点位置（min<->max）-->
+        <!--原点位置（min <= origin => max）-->
         <attr name="sb_origin" format="float" />
         <attr name="sb_orientation">
             <enum name="horizontal" value="0" />
