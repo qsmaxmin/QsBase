@@ -1,9 +1,8 @@
 package com.qsmaxmin.qsbase.common.widget.image;
 
-import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Matrix;
-import android.graphics.Paint;
+
+import androidx.annotation.NonNull;
 
 /**
  * @CreateBy qsmaxmin
@@ -35,34 +34,13 @@ class TransformMatrix {
         this.currentCoordinate = new CoordinateVariable();
     }
 
-    /*-------------------------debug begin-------------------------------------*/
-    private Paint debugPaint;
-
-    void drawDebug(Canvas canvas) {
-        if (debugPaint == null) {
-            debugPaint = new Paint();
-        }
-        debugPaint.setColor(Color.YELLOW);
-        int count = viewCoordinate.pointCount();
-        for (int i = 0; i < count; i++) {
-            canvas.drawCircle(viewCoordinate.getX(i), viewCoordinate.getY(i), 15, debugPaint);
-        }
-
-        debugPaint.setColor(Color.GREEN);
-        int count1 = currentCoordinate.pointCount();
-        for (int i = 0; i < count1; i++) {
-            canvas.drawCircle(currentCoordinate.getX(i), currentCoordinate.getY(i), 15, debugPaint);
-        }
-    }
-
-    @Override public String toString() {
+    @NonNull @Override public String toString() {
         return "TransformMatrix{" +
                 "\nlastAngle=" + lastAngle +
                 "\ninitCoordinate=" + initCoordinate +
                 "\ncurrentCoordinate=" + currentCoordinate +
                 '}';
     }
-    /*-------------------------debug end-------------------------------------*/
 
     void init(int viewWidth, int viewHeight, int bitmapWidth, int bitmapHeight, float left, float top, float right, float bottom) {
         viewCoordinate.setValuesByEdge(0, 0, viewWidth, viewHeight);

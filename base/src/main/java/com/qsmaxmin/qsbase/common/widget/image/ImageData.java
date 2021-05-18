@@ -39,17 +39,21 @@ final class ImageData {
         this.mMatrix = new TransformMatrix();
     }
 
-    private boolean debug() {
-        return true;
-    }
-
     void setBitmap(Bitmap bitmap) {
         this.originalBitmap = bitmap;
         setViewSize(imageView.getWidth(), imageView.getHeight());
     }
 
+    Bitmap getBitmap() {
+        return originalBitmap;
+    }
+
     void setFunction(int functionMode) {
         this.functionMode = functionMode;
+    }
+
+    int getFUnction() {
+        return functionMode;
     }
 
     void setEnableTouchScaleDown(boolean enableTouchScaleDown) {
@@ -126,7 +130,7 @@ final class ImageData {
     }
 
 
-    @Nullable Bitmap getBitmap() {
+    @Nullable Bitmap getCropBitmap() {
         if (originalBitmap != null && mMatrix.hasInit()) {
             Coordinate coordinate = mMatrix.getViewCoordinate();
             int w = (int) coordinate.getWidth();
@@ -164,7 +168,6 @@ final class ImageData {
         if (available()) {
             Matrix m = mMatrix.updateMatrix();
             canvas.drawBitmap(originalBitmap, m, null);
-            if (debug()) mMatrix.drawDebug(canvas);
         }
     }
 

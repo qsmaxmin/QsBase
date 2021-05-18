@@ -33,11 +33,9 @@ import static java.lang.annotation.RetentionPolicy.CLASS;
  * @Description 可预览图片和裁切图片的ImageView
  */
 public class FunctionImageView extends AppCompatImageView {
-    public static final int       FUNCTION_PREVIEW     = 0;
-    public static final int       FUNCTION_CROP        = 1;
+    public static final int       FUNCTION_PREVIEW = 0;
+    public static final int       FUNCTION_CROP    = 1;
     private             ImageData data;
-    private             int       functionMode         = FUNCTION_PREVIEW;
-    private             boolean   enableTouchScaleDown = true;
 
     public FunctionImageView(Context context) {
         super(context);
@@ -55,6 +53,8 @@ public class FunctionImageView extends AppCompatImageView {
     }
 
     private void init(AttributeSet attrs) {
+        int functionMode = FUNCTION_PREVIEW;
+        boolean enableTouchScaleDown = true;
         if (attrs != null) {
             TypedArray typedArray = getResources().obtainAttributes(attrs, R.styleable.FunctionImageView);
             functionMode = typedArray.getInt(R.styleable.FunctionImageView_fiv_function, FUNCTION_PREVIEW);
@@ -99,7 +99,6 @@ public class FunctionImageView extends AppCompatImageView {
      * 1：裁切模式
      */
     public void setFunction(@Function int functionMode) {
-        this.functionMode = functionMode;
         data.setFunction(functionMode);
     }
 
@@ -108,7 +107,6 @@ public class FunctionImageView extends AppCompatImageView {
      * 必须在加载图片前设置该参数
      */
     public void setEnableTouchScaleDown(boolean enable) {
-        this.enableTouchScaleDown = enable;
         data.setEnableTouchScaleDown(enable);
     }
 
@@ -116,13 +114,17 @@ public class FunctionImageView extends AppCompatImageView {
         data.setGestureListener(listener);
     }
 
+    @Nullable public Bitmap getBitmap() {
+        return data.getBitmap();
+    }
+
     /**
      * 根据裁剪区域纹理生成一个Bitmap
      *
      * @return 裁切后的Bitmap，bitmap形状与控件一致
      */
-    @Nullable public Bitmap getBitmap() {
-        return data.getBitmap();
+    @Nullable public Bitmap getCropBitmap() {
+        return data.getCropBitmap();
     }
 
     @Override public void setImageResource(int resId) {
