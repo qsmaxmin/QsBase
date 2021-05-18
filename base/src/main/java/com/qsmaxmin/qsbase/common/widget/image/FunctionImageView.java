@@ -6,6 +6,7 @@ import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -112,6 +113,14 @@ public class FunctionImageView extends AppCompatImageView {
 
     public void setGestureListener(GestureListener listener) {
         data.setGestureListener(listener);
+    }
+
+    public void setTransformListener(OnTransformListener listener) {
+        data.setTransformListener(listener);
+    }
+
+    public void transformTo(RectF rectF, boolean anim) {
+        data.transformTo(rectF, anim);
     }
 
     @Nullable public Bitmap getBitmap() {

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
+import android.graphics.RectF;
 import android.os.Build;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -30,6 +31,8 @@ final class ImageData {
     private       ExecutorRecover       recoverExecutor;
     private       ExecutorFling         flingExecutor;
     private       ExecutorTapScale      tapScaleExecutor;
+    private       OnTransformListener   transformListener;
+    private       ExecutorTransform     transformExecutor;
 
     ImageData(FunctionImageView imageView) {
         this.imageView = imageView;
@@ -211,5 +214,18 @@ final class ImageData {
 
     void postDelayed(Runnable action, long delayed) {
         imageView.postDelayed(action, delayed);
+    }
+
+    void setTransformListener(OnTransformListener listener) {
+        this.transformListener = listener;
+    }
+
+    void transformTo(RectF rectF, boolean anim) {
+        if (transformExecutor == null) transformExecutor = new ExecutorTransform(this);
+        transformExecutor.startTransform(rectF, anim);
+    }
+
+    void callbackTransformChanged(float progress, boolean end) {
+        if (transformListener != null) transformListener.onTransform(progress, end);
     }
 }

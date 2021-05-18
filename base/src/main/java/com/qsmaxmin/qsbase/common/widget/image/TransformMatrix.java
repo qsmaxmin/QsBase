@@ -137,6 +137,10 @@ class TransformMatrix {
         return currentCoordinate;
     }
 
+    Coordinate getOriginalCoordinate() {
+        return originalCoordinate;
+    }
+
     float getScale() {
         return currentCoordinate.getWidth() / initCoordinate.getWidth();
     }
