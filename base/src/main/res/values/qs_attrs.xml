@@ -105,6 +105,7 @@
     </declare-styleable>
 
     <declare-styleable name="FunctionImageView">
+        <attr name="fiv_enableTouchScaleDown" format="boolean" />
         <attr name="fiv_function" format="enum">
             <enum name="preview" value="0" />
             <enum name="crop" value="1" />

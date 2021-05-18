@@ -8,5 +8,9 @@ package com.qsmaxmin.qsbase.common.widget.image;
 public interface GestureListener {
     void onSingleTap();
 
+    /**
+     * 预览模式时，当手指向下滑动到一定位置时缩放显示
+     * 此时回调缩放进度
+     */
     void onTouchScaleChanged(float progress);
 }

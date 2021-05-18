@@ -1,6 +1,5 @@
 package com.qsmaxmin.qsbase.common.widget.image;
 
-import android.graphics.Matrix;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
 
@@ -11,23 +10,19 @@ import androidx.annotation.NonNull;
  * @Date 2021/5/14 14:59
  * @Description
  */
-class ResetExecutor extends BaseExecutor {
-    private final Matrix       tempMatrix;
+class ExecutorReset extends ExecutorBase {
     private final float        stepValue;
-    private final float[]      sv;
-    private final float[]      cv;
+    private final float[]      beginValues;
     private final Interpolator interpolator;
     private       float        progress;
 
     /**
      * @param data 数据实体
      */
-    ResetExecutor(@NonNull ImageData data) {
+    ExecutorReset(@NonNull ImageData data) {
         super(data);
         stepValue = 0.04f;
-        sv = new float[9];
-        cv = new float[9];
-        tempMatrix = new Matrix();
+        beginValues = new float[8];
         interpolator = new DecelerateInterpolator(2f);
     }
 
@@ -35,12 +30,8 @@ class ResetExecutor extends BaseExecutor {
         if (progress <= 1f) {
             progress += stepValue;
             float value = interpolator.getInterpolation(progress);
-            float[] ev = getInitValues();
-            for (int i = 0; i < 6; i++) {
-                cv[i] = sv[i] + (ev[i] - sv[i]) * value;
-            }
-            data.getCurrentMatrix().setValues(cv);
-            mapCurrentRect();
+            float[] endValues = data.getMatrix().getInitCoordinate().getValues();
+            transform(beginValues, endValues, value);
             invalidate();
             postAnimation(this);
         } else {
@@ -48,25 +39,21 @@ class ResetExecutor extends BaseExecutor {
         }
     }
 
-    void resetMatrix(boolean anim) {
+    void startReset(boolean anim) {
+        if (data.getMatrix().hasBeenReset()) return;
         if (anim) {
             removeCallbacks(this);
             progress = 0f;
-            data.setIdle(false);
-            tempMatrix.set(data.getCurrentMatrix());
-            tempMatrix.getValues(sv);
-            System.arraycopy(sv, 0, cv, 0, cv.length);
-            postAnimation(this);
+            data.getMatrix().copyValues(beginValues);
+            post(this);
         } else {
             resetFinal();
         }
     }
 
     private void resetFinal() {
-        data.setIdle(true);
-        data.resetLastAngle();
-        data.getCurrentMatrix().setValues(getInitValues());
-        mapCurrentRect();
+        data.getMatrix().reset();
+        onExecuteComplete();
         invalidate();
     }
 }

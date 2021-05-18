@@ -19,9 +19,13 @@ import com.qsmaxmin.qsbase.common.log.L;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.annotation.Retention;
 
+import androidx.annotation.IntDef;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageView;
+
+import static java.lang.annotation.RetentionPolicy.CLASS;
 
 /**
  * @CreateBy qsmaxmin
@@ -29,8 +33,11 @@ import androidx.appcompat.widget.AppCompatImageView;
  * @Description 可预览图片和裁切图片的ImageView
  */
 public class FunctionImageView extends AppCompatImageView {
-    private ImageData data;
-    private int       functionMode;
+    public static final int       FUNCTION_PREVIEW     = 0;
+    public static final int       FUNCTION_CROP        = 1;
+    private             ImageData data;
+    private             int       functionMode         = FUNCTION_PREVIEW;
+    private             boolean   enableTouchScaleDown = true;
 
     public FunctionImageView(Context context) {
         super(context);
@@ -50,11 +57,13 @@ public class FunctionImageView extends AppCompatImageView {
     private void init(AttributeSet attrs) {
         if (attrs != null) {
             TypedArray typedArray = getResources().obtainAttributes(attrs, R.styleable.FunctionImageView);
-            functionMode = typedArray.getInt(R.styleable.FunctionImageView_fiv_function, 0);
+            functionMode = typedArray.getInt(R.styleable.FunctionImageView_fiv_function, FUNCTION_PREVIEW);
+            enableTouchScaleDown = typedArray.getBoolean(R.styleable.FunctionImageView_fiv_enableTouchScaleDown, true);
             typedArray.recycle();
         }
         initData();
         data.setFunction(functionMode);
+        data.setEnableTouchScaleDown(enableTouchScaleDown);
     }
 
     private void initData() {
@@ -77,21 +86,30 @@ public class FunctionImageView extends AppCompatImageView {
      * 重置旋转，缩放，平移到初始状态
      */
     public void reset() {
-        data.reset(true);
+        data.startReset(true);
     }
 
     public void reset(boolean anim) {
-        data.reset(anim);
+        data.startReset(anim);
     }
 
     /**
-     * 设置功能模式
+     * 设置功能模式，必须在加载图片前设置该参数
      * 0：预览模式
      * 1：裁切模式
      */
-    public void setFunctionMode(int functionMode) {
+    public void setFunction(@Function int functionMode) {
         this.functionMode = functionMode;
         data.setFunction(functionMode);
+    }
+
+    /**
+     * 预览模式时，当手指向下滑动到一定位置时，是否进行缩放显示
+     * 必须在加载图片前设置该参数
+     */
+    public void setEnableTouchScaleDown(boolean enable) {
+        this.enableTouchScaleDown = enable;
+        data.setEnableTouchScaleDown(enable);
     }
 
     public void setGestureListener(GestureListener listener) {
@@ -101,7 +119,7 @@ public class FunctionImageView extends AppCompatImageView {
     /**
      * 根据裁剪区域纹理生成一个Bitmap
      *
-     * @return 裁切后的Bitmap，如果手指未离开该控件或者该控件变换动画未执行完成，返回null
+     * @return 裁切后的Bitmap，bitmap形状与控件一致
      */
     @Nullable public Bitmap getBitmap() {
         return data.getBitmap();
@@ -138,15 +156,15 @@ public class FunctionImageView extends AppCompatImageView {
                 if (L.isEnable()) L.e("BaseImageView", e);
             }
         } else {
-            setImagePath(null);
+            setImageBitmapInner(null);
         }
     }
 
-    public void setImagePath(String path) {
+    public void setImagePath(String filePath) {
         Bitmap bitmap = null;
-        if (!TextUtils.isEmpty(path)) {
+        if (!TextUtils.isEmpty(filePath)) {
             try {
-                FileInputStream fis = new FileInputStream(path);
+                FileInputStream fis = new FileInputStream(filePath);
                 bitmap = BitmapFactory.decodeStream(fis);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -175,5 +193,10 @@ public class FunctionImageView extends AppCompatImageView {
 
     @Override protected void onDraw(Canvas canvas) {
         data.draw(canvas);
+    }
+
+    @Retention(CLASS)
+    @IntDef({FUNCTION_PREVIEW, FUNCTION_CROP})
+    private @interface Function {
     }
 }

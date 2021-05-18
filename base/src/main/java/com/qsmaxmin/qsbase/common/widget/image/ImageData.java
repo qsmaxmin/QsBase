@@ -4,134 +4,140 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
-import android.graphics.RectF;
 import android.os.Build;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 
 import androidx.annotation.Nullable;
-import androidx.core.view.GestureDetectorCompat;
 
 /**
  * @CreateBy qsmaxmin
- * @Date 2021/5/14 13:31
+ * @Date 2021/5/17 13:10
  * @Description
  */
 final class ImageData {
-    private final FunctionImageView           imageView;
-    private final RectF                       cutRect;
-    private final RectF                       originalRect;
-    private final float[]                     initValues;
-    private final RectF                       initRect;
-    private final RectF                       currentRect;
-    private final Matrix                      currentMatrix;
-    private final ScaleGestureDetector        scaleDetector;
-    private final GestureDetectorCompat       touchDetector;
-    private final SimpleOnGestureListenerImpl gestureListenerImpl;
-    private       boolean                     isIdle;
-    private       int                         functionMode;
-    private       float                       touchBeginScale;
-    //
-    private       RecoverExecutor             recoverExecutor;
-    private       FlingExecutor               flingExecutor;
-    private       ResetExecutor               resetExecutor;
-    //
-    private       float                       lastAngle;
-    private       GestureListener             gestureListener;
-    //
-    private       Bitmap                      originalBitmap;
+    private final FunctionImageView     imageView;
+    private final ScaleGestureDetector  scaleDetector;
+    private final GestureDetector       gestureDetector;
+    private final TransformMatrix       mMatrix;
+    private final SimpleGestureListener gestureListenerImpl;
+    private       int                   functionMode;
+    private       boolean               enableTouchScaleDown;
+    private       Bitmap                originalBitmap;
+    private       ExecutorReset         resetExecutor;
+    private       GestureListener       listener;
+    private       ExecutorRecover       recoverExecutor;
+    private       ExecutorFling         flingExecutor;
 
-    RectF getCutRect() {
-        return cutRect;
+
+    ImageData(FunctionImageView imageView) {
+        this.imageView = imageView;
+        this.gestureListenerImpl = new SimpleGestureListener(this);
+        this.gestureDetector = new GestureDetector(getContext(), gestureListenerImpl);
+        this.scaleDetector = new ScaleGestureDetector(getContext(), new ScaleGestureListener(this));
+        this.mMatrix = new TransformMatrix();
     }
 
-    float[] getInitValues() {
-        return initValues;
+    private boolean debug() {
+        return true;
     }
 
-    RectF getInitRect() {
-        return initRect;
+    void setBitmap(Bitmap bitmap) {
+        this.originalBitmap = bitmap;
+        setViewSize(imageView.getWidth(), imageView.getHeight());
     }
 
-    RectF getCurrentRect() {
-        return currentRect;
+    void setFunction(int functionMode) {
+        this.functionMode = functionMode;
     }
 
-    Matrix getCurrentMatrix() {
-        return currentMatrix;
+    void setEnableTouchScaleDown(boolean enableTouchScaleDown) {
+        this.enableTouchScaleDown = enableTouchScaleDown;
     }
 
-    boolean isIdle() {
-        return isIdle;
-    }
-
-    void setIdle(boolean idle) {
-        this.isIdle = idle;
-    }
-
-    void resetLastAngle() {
-        this.lastAngle = 0f;
-    }
-
-    float getTouchBeginScale() {
-        return touchBeginScale;
-    }
-
-    void setTouchBeginScale(float touchBeginScale) {
-        this.touchBeginScale = touchBeginScale;
-    }
-
-    GestureListener getGestureListener() {
-        return gestureListener;
-    }
-
-    ImageData(FunctionImageView view) {
-        this.imageView = view;
-        this.cutRect = new RectF();
-        this.originalRect = new RectF();
-        this.initValues = new float[9];
-        this.initRect = new RectF();
-        this.currentRect = new RectF();
-        this.currentMatrix = new Matrix();
-        this.isIdle = true;
-        this.gestureListenerImpl = new SimpleOnGestureListenerImpl(this);
-        this.scaleDetector = new ScaleGestureDetector(getContext(), new OnScaleGestureListenerImpl(this));
-        this.touchDetector = new GestureDetectorCompat(getContext(), gestureListenerImpl);
-    }
-
-    float calculateTouchScale() {
-        float ratio = (currentRect.top - initRect.top) / initRect.height();
-        if (ratio < 0f) ratio = 0f;
-        else if (ratio > 1f) ratio = 1f;
-        return ratio;
-    }
-
-    protected void callbackTouchScaleChanged() {
-        if (isPreviewFunction() && gestureListener != null) {
-            gestureListener.onTouchScaleChanged(calculateTouchScale());
+    void setViewSize(int viewWidth, int viewHeight) {
+        if (viewWidth > 0 && viewHeight > 0 && originalBitmap != null) {
+            int bitmapWidth = originalBitmap.getWidth();
+            int bitmapHeight = originalBitmap.getHeight();
+            float scaleX = (float) viewWidth / bitmapWidth;
+            float scaleY = (float) viewHeight / bitmapHeight;
+            float scale = isPreviewFunction() ? Math.min(scaleX, scaleY) : Math.max(scaleX, scaleY);
+            float newW = bitmapWidth * scale;
+            float newH = bitmapHeight * scale;
+            float left = ((float) viewWidth - newW) / 2f;
+            float top = ((float) viewHeight - newH) / 2f;
+            float right = left + newW;
+            float bottom = top + newH;
+            mMatrix.init(viewWidth, viewHeight, bitmapWidth, bitmapHeight, left, top, right, bottom);
         }
     }
 
-    void startFling(float velocityX, float velocityY) {
-        if (flingExecutor == null) flingExecutor = new FlingExecutor(this);
-        flingExecutor.fling((int) velocityX, (int) velocityY);
+    boolean isPreviewFunction() {
+        return functionMode == 0;
     }
 
-    boolean canFling() {
-        return currentRect.contains(cutRect);
+    /**
+     * 手指向下滑动时，缩放显示
+     */
+    boolean canTouchScaleDown() {
+        return isPreviewFunction() && enableTouchScaleDown;
     }
 
-    void postDelayed(Runnable action, long delayMillis) {
-        imageView.postDelayed(action, delayMillis);
+    void setAngle(float angle) {
+        mMatrix.setAngle(angle);
+        invalidate();
+    }
+
+    void startRecover() {
+        if (recoverExecutor == null) recoverExecutor = new ExecutorRecover(this);
+        recoverExecutor.recover();
+    }
+
+    void startReset(boolean anim) {
+        if (resetExecutor == null) resetExecutor = new ExecutorReset(this);
+        resetExecutor.startReset(anim);
+    }
+
+    void startFling(int velocityX, int velocityY) {
+        if (flingExecutor == null) flingExecutor = new ExecutorFling(this);
+        flingExecutor.fling(velocityX, velocityY);
+    }
+
+    void stopFling() {
+        if (flingExecutor != null) flingExecutor.stopFling();
+    }
+
+    private boolean isInFling() {
+        return flingExecutor != null && flingExecutor.isRunning();
+    }
+
+    void setGestureListener(GestureListener listener) {
+        this.listener = listener;
+    }
+
+
+    @Nullable Bitmap getBitmap() {
+        if (originalBitmap != null && mMatrix.hasInit()) {
+            Coordinate coordinate = mMatrix.getViewCoordinate();
+            int w = (int) coordinate.getWidth();
+            int h = (int) coordinate.getHeight();
+            Bitmap bitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(bitmap);
+            Matrix m = mMatrix.updateMatrix();
+            canvas.drawBitmap(originalBitmap, m, null);
+            return bitmap;
+        }
+        return null;
     }
 
     boolean onTouchEvent(MotionEvent event) {
         if (!available()) return true;
         boolean isTouchUp = event.getAction() == MotionEvent.ACTION_UP;
         if (isTouchUp) {
-            touchBeginScale = 0f;
+            gestureListenerImpl.resetTouchBeginScale();
         }
-        if (touchDetector.onTouchEvent(event)) return true;
+        if (gestureDetector.onTouchEvent(event)) return true;
         scaleDetector.onTouchEvent(event);
         if (isTouchUp && !isInFling() && !gestureListenerImpl.isInTapScaling()) {
             startRecover();
@@ -139,137 +145,59 @@ final class ImageData {
         return true;
     }
 
-    final void setBitmap(Bitmap bitmap) {
-        this.originalBitmap = bitmap;
-        setViewSize(imageView.getWidth(), imageView.getHeight());
+    private boolean available() {
+        return originalBitmap != null
+                && originalBitmap.getWidth() > 0
+                && originalBitmap.getHeight() > 0;
     }
 
-    final void setFunction(int function) {
-        this.functionMode = function;
-    }
-
-    final Context getContext() {
-        return imageView.getContext();
-    }
-
-    final boolean available() {
-        return originalBitmap != null && originalBitmap.getWidth() > 0 && originalBitmap.getHeight() > 0;
-    }
-
-    final void setViewSize(int viewWidth, int viewHeight) {
-        if (viewWidth > 0 && viewHeight > 0) {
-            cutRect.set(0, 0, viewWidth, viewHeight);
-            if (originalBitmap != null) {
-                int bitmapWidth = originalBitmap.getWidth();
-                int bitmapHeight = originalBitmap.getHeight();
-                float scaleX = (float) viewWidth / bitmapWidth;
-                float scaleY = (float) viewHeight / bitmapHeight;
-                float scale = isPreviewFunction() ? Math.min(scaleX, scaleY) : Math.max(scaleX, scaleY);
-                float newW = bitmapWidth * scale;
-                float newH = bitmapHeight * scale;
-                float left = ((float) viewWidth - newW) / 2f;
-                float top = ((float) viewHeight - newH) / 2f;
-                initRect.set(left, top, left + newW, top + newH);
-                originalRect.set(0, 0, originalBitmap.getWidth(), originalBitmap.getHeight());
-
-                Matrix initMatrix = new Matrix();
-                initMatrix.postScale(scale, scale);
-                initMatrix.postTranslate(initRect.left, initRect.top);
-                initMatrix.getValues(initValues);
-                currentMatrix.set(initMatrix);
-                mapCurrentRect();
-            }
+    void draw(Canvas canvas) {
+        if (available()) {
+            Matrix m = mMatrix.updateMatrix();
+            canvas.drawBitmap(originalBitmap, m, null);
+            if (debug()) mMatrix.drawDebug(canvas);
         }
     }
 
-    final void mapWithOriginalRect(Matrix matrix, RectF rectF) {
-        matrix.mapRect(rectF, originalRect);
+    TransformMatrix getMatrix() {
+        return mMatrix;
     }
 
-    final void mapCurrentRect() {
-        currentMatrix.mapRect(currentRect, originalRect);
-    }
-
-    final void draw(Canvas canvas) {
-        if (originalBitmap != null) {
-            canvas.drawBitmap(originalBitmap, currentMatrix, null);
-        }
-    }
-
-    final void setAngle(float angle) {
-        if (originalBitmap == null) return;
-        if (angle != lastAngle) {
-            currentMatrix.postRotate(angle - lastAngle, getWidth() / 2f, getHeight() / 2f);
-            mapCurrentRect();
-            lastAngle = angle;
-            invalidate();
-        }
-    }
-
-    @Nullable public final Bitmap getBitmap() {
-        if (originalBitmap != null && isIdle) {
-            Bitmap bitmap = Bitmap.createBitmap((int) getWidth(), (int) getHeight(), Bitmap.Config.ARGB_8888);
-            Canvas canvas = new Canvas(bitmap);
-            canvas.drawBitmap(originalBitmap, currentMatrix, null);
-            return bitmap;
-        }
-        return null;
-    }
-
-    final void invalidate() {
-        imageView.invalidate();
-    }
-
-    final void removeCallbacks(Runnable action) {
-        imageView.removeCallbacks(action);
-    }
-
-    final float getHeight() {
-        return cutRect.height();
-    }
-
-    final float getWidth() {
-        return cutRect.width();
-    }
-
-    final void post(Runnable action) {
-        imageView.post(action);
-    }
-
-    final void postAnimation(Runnable action) {
+    void postAnimation(Runnable action) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             imageView.postOnAnimation(action);
         } else {
-            postDelayed(action, 16L);
+            imageView.postDelayed(action, 16L);
         }
     }
 
-    final void startRecover() {
-        if (recoverExecutor == null) {
-            recoverExecutor = new RecoverExecutor(this);
+    void invalidate() {
+        imageView.invalidate();
+    }
+
+    void post(Runnable action) {
+        imageView.post(action);
+    }
+
+    void removeCallbacks(Runnable action) {
+        imageView.removeCallbacks(action);
+    }
+
+    Context getContext() {
+        return imageView.getContext();
+    }
+
+    GestureListener getGestureListener() {
+        return listener;
+    }
+
+    void callbackTouchScaleChanged(float ratio) {
+        if (listener != null && isPreviewFunction()) {
+            listener.onTouchScaleChanged(ratio);
         }
-        recoverExecutor.recover();
     }
 
-    final void stopFling() {
-        if (flingExecutor != null) flingExecutor.stopFling();
-    }
-
-    final boolean isPreviewFunction() {
-        return functionMode == 0;
-    }
-
-
-    final boolean isInFling() {
-        return flingExecutor != null && flingExecutor.isFling();
-    }
-
-    final void reset(boolean anim) {
-        if (resetExecutor == null) resetExecutor = new ResetExecutor(this);
-        resetExecutor.resetMatrix(anim);
-    }
-
-    void setGestureListener(GestureListener listener) {
-        this.gestureListener = listener;
+    void postDelayed(Runnable action, long delayed) {
+        imageView.postDelayed(action, delayed);
     }
 }

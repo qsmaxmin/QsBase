@@ -7,17 +7,16 @@ import android.view.ScaleGestureDetector;
  * @Date 2021/5/17 10:47
  * @Description
  */
-class OnScaleGestureListenerImpl implements ScaleGestureDetector.OnScaleGestureListener {
+class ScaleGestureListener implements ScaleGestureDetector.OnScaleGestureListener {
     private final ImageData data;
 
-    OnScaleGestureListenerImpl(ImageData data) {
+    ScaleGestureListener(ImageData data) {
         this.data = data;
     }
 
     @Override public boolean onScale(ScaleGestureDetector detector) {
         float scaleFactor = detector.getScaleFactor();
-        data.getCurrentMatrix().postScale(scaleFactor, scaleFactor, detector.getFocusX(), detector.getFocusY());
-        data.mapCurrentRect();
+        data.getMatrix().postScale(scaleFactor, scaleFactor, detector.getFocusX(), detector.getFocusY());
         data.invalidate();
         return true;
     }
