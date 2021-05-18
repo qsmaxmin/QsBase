@@ -11,7 +11,7 @@ import androidx.annotation.NonNull;
  */
 abstract class ExecutorBase implements Runnable {
     protected final ImageData data;
-    private         boolean                                             running;
+    private         boolean   running;
 
     /**
      * @param data 数据实体
