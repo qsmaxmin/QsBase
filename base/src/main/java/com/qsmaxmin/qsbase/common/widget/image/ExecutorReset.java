@@ -27,8 +27,9 @@ class ExecutorReset extends ExecutorBase {
     }
 
     @Override public void run() {
-        if (progress <= 1f) {
+        if (progress < 1f) {
             progress += stepValue;
+            if (progress > 1f) progress = 1f;
             float value = interpolator.getInterpolation(progress);
             float[] endValues = data.getMatrix().getInitCoordinate().getValues();
             transform(beginValues, endValues, value);
