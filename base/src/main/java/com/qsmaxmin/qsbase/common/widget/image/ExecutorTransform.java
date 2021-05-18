@@ -30,8 +30,11 @@ public class ExecutorTransform extends ExecutorBase {
     }
 
     @Override public void run() {
-        if (progress <= 1f) {
+        if (progress < 1f) {
             progress += stepValue;
+            if (progress > 1f) {
+                progress = 1f;
+            }
             float value = interpolator.getInterpolation(progress);
             transform(beginValues, endValues, value);
             invalidate();
