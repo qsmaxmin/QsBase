@@ -29,7 +29,7 @@ final class ImageData {
     private       GestureListener       listener;
     private       ExecutorRecover       recoverExecutor;
     private       ExecutorFling         flingExecutor;
-
+    private       ExecutorTapScale      tapScaleExecutor;
 
     ImageData(FunctionImageView imageView) {
         this.imageView = imageView;
@@ -112,6 +112,15 @@ final class ImageData {
         return flingExecutor != null && flingExecutor.isRunning();
     }
 
+    void startTapScale(float scaleFactor, float px, float py) {
+        if (tapScaleExecutor == null) tapScaleExecutor = new ExecutorTapScale(this);
+        tapScaleExecutor.startTapScale(scaleFactor, px, py);
+    }
+
+    boolean isTapScaling() {
+        return tapScaleExecutor != null && tapScaleExecutor.isRunning();
+    }
+
     void setGestureListener(GestureListener listener) {
         this.listener = listener;
     }
@@ -139,7 +148,7 @@ final class ImageData {
         }
         if (gestureDetector.onTouchEvent(event)) return true;
         scaleDetector.onTouchEvent(event);
-        if (isTouchUp && !isInFling() && !gestureListenerImpl.isInTapScaling()) {
+        if (isTouchUp && !isInFling() && !isTapScaling()) {
             startRecover();
         }
         return true;

@@ -10,10 +10,9 @@ import android.view.ViewConfiguration;
  * @Description
  */
 class SimpleGestureListener extends GestureDetector.SimpleOnGestureListener {
-    private final ImageData        data;
-    private final Runnable         singleTapCallback;
-    private       ExecutorTapScale tapScaleExecutor;
-    private       float            touchBeginScale;
+    private final ImageData data;
+    private final Runnable  singleTapCallback;
+    private       float     touchBeginScale;
 
     SimpleGestureListener(final ImageData data) {
         this.data = data;
@@ -83,20 +82,11 @@ class SimpleGestureListener extends GestureDetector.SimpleOnGestureListener {
             if (scale < maxScale) {
                 float scale1 = scale * 1.5f;
                 if (scale1 > maxScale) scale1 = maxScale;
-                startTapScale(scale1, x, y);
+                data.startTapScale(scale1, x, y);
             } else {
-                startTapScale(1f / scale, x, y);
+                data.startTapScale(1f / scale, x, y);
             }
         }
         return true;
-    }
-
-    final boolean isInTapScaling() {
-        return tapScaleExecutor != null && tapScaleExecutor.isRunning();
-    }
-
-    final void startTapScale(float scaleFactor, float px, float py) {
-        if (tapScaleExecutor == null) tapScaleExecutor = new ExecutorTapScale(data);
-        tapScaleExecutor.startTapScale(scaleFactor, px, py);
     }
 }
