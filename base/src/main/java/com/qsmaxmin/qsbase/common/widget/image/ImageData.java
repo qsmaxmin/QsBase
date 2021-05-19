@@ -33,6 +33,8 @@ final class ImageData {
     private       ExecutorTapScale      tapScaleExecutor;
     private       OnTransformListener   transformListener;
     private       ExecutorTransform     transformExecutor;
+    private       float[]               initTransformFromCoordinate;
+    private       int                   initTransformFromDuration;
 
     ImageData(FunctionImageView imageView) {
         this.imageView = imageView;
@@ -55,7 +57,7 @@ final class ImageData {
         this.functionMode = functionMode;
     }
 
-    int getFUnction() {
+    int getFunction() {
         return functionMode;
     }
 
@@ -64,6 +66,7 @@ final class ImageData {
     }
 
     void setViewSize(int viewWidth, int viewHeight) {
+
         if (viewWidth > 0 && viewHeight > 0 && originalBitmap != null) {
             int bitmapWidth = originalBitmap.getWidth();
             int bitmapHeight = originalBitmap.getHeight();
@@ -77,6 +80,11 @@ final class ImageData {
             float right = left + newW;
             float bottom = top + newH;
             mMatrix.init(viewWidth, viewHeight, bitmapWidth, bitmapHeight, left, top, right, bottom);
+            if (initTransformFromCoordinate != null) {
+                getTransformExecutor().transformFrom(initTransformFromCoordinate, initTransformFromDuration);
+                initTransformFromCoordinate = null;
+                initTransformFromDuration = 0;
+            }
         }
     }
 
@@ -116,7 +124,7 @@ final class ImageData {
     }
 
     private boolean isInFling() {
-        return flingExecutor != null && flingExecutor.isRunning();
+        return flingExecutor != null && flingExecutor.isAnimating();
     }
 
     void startTapScale(float scaleFactor, float px, float py) {
@@ -125,7 +133,7 @@ final class ImageData {
     }
 
     boolean isTapScaling() {
-        return tapScaleExecutor != null && tapScaleExecutor.isRunning();
+        return tapScaleExecutor != null && tapScaleExecutor.isAnimating();
     }
 
     void setGestureListener(GestureListener listener) {
@@ -165,6 +173,11 @@ final class ImageData {
         return originalBitmap != null
                 && originalBitmap.getWidth() > 0
                 && originalBitmap.getHeight() > 0;
+    }
+
+    private ExecutorTransform getTransformExecutor() {
+        if (transformExecutor == null) transformExecutor = new ExecutorTransform(this);
+        return transformExecutor;
     }
 
     void draw(Canvas canvas) {
@@ -216,16 +229,28 @@ final class ImageData {
         imageView.postDelayed(action, delayed);
     }
 
+    void callbackTransformChanged(float progress, boolean end) {
+        if (transformListener != null) transformListener.onTransform(progress, end);
+    }
+
     void setTransformListener(OnTransformListener listener) {
         this.transformListener = listener;
     }
 
     void transformTo(RectF rectF, boolean anim) {
-        if (transformExecutor == null) transformExecutor = new ExecutorTransform(this);
-        transformExecutor.startTransform(rectF, anim);
+        getTransformExecutor().transformTo(Coordinate.getCoordinate(rectF), anim);
     }
 
-    void callbackTransformChanged(float progress, boolean end) {
-        if (transformListener != null) transformListener.onTransform(progress, end);
+    void transformTo(float[] coordinate, boolean anim) {
+        getTransformExecutor().transformTo(coordinate, anim);
+    }
+
+    void setInitTransformFrom(RectF rectF, int duration) {
+        setInitTransformFrom(Coordinate.getCoordinate(rectF), duration);
+    }
+
+    void setInitTransformFrom(float[] coordinate, int duration) {
+        this.initTransformFromCoordinate = coordinate;
+        this.initTransformFromDuration = duration;
     }
 }

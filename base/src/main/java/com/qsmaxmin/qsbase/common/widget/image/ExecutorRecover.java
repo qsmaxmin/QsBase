@@ -10,41 +10,30 @@ import androidx.annotation.NonNull;
  * @Date 2021/5/14 13:28
  * @Description
  */
-class ExecutorRecover extends ExecutorBase {
+class ExecutorRecover extends ExecutorAnimated {
     private final Interpolator interpolator;
-    private final float        stepValue;
     private final float[]      beginValues;
     private final float[]      endValues;
-    private       float        progress;
 
     ExecutorRecover(@NonNull ImageData imageData) {
         super(imageData);
-        stepValue = 0.04f;
         beginValues = new float[8];
         endValues = new float[8];
         interpolator = new DecelerateInterpolator(2f);
     }
 
-    @Override public void run() {
-        if (progress < 1f) {
-            progress += stepValue;
-            if (progress > 1f) progress = 1f;
-            float value = interpolator.getInterpolation(progress);
-            transform(beginValues, endValues, value);
-            invalidate();
-            if (data.canTouchScaleDown()) {
-                data.callbackTouchScaleChanged(data.getMatrix().calculateTouchScale());
-            }
-            postAnimation(this);
-        } else {
-            onExecuteComplete();
+    @Override protected void onAnimating(float progress, boolean ended) {
+        float value = interpolator.getInterpolation(progress);
+        transform(beginValues, endValues, value);
+        invalidate();
+        if (data.canTouchScaleDown()) {
+            data.callbackTouchScaleChanged(data.getMatrix().calculateTouchScale());
         }
     }
 
     void recover() {
         removeCallbacks(this);
         data.stopFling();
-        progress = 0f;
         TransformMatrix tempMatrix = data.getMatrix().copy();
         tempMatrix.copyValues(beginValues);
 
@@ -99,7 +88,7 @@ class ExecutorRecover extends ExecutorBase {
 
         if (scaled || translateX != 0 || translateY != 0) {
             tempMatrix.copyValues(endValues);
-            post(this);
+            startAnimation();
         }
     }
 
@@ -140,7 +129,7 @@ class ExecutorRecover extends ExecutorBase {
 
         if (scaled || translateX != 0 || translateY != 0) {
             tempMatrix.copyValues(endValues);
-            post(this);
+            startAnimation();
         }
     }
 }

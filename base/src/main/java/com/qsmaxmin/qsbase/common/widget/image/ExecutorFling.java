@@ -28,7 +28,7 @@ class ExecutorFling extends ExecutorBase {
             invalidate();
             postAnimation(this);
         } else {
-            onExecuteComplete();
+            setAnimating(false);
             data.startRecover();
         }
     }
@@ -63,6 +63,7 @@ class ExecutorFling extends ExecutorBase {
         if (minX != 0 || maxX != 0 || minY != 0 || maxY != 0) {
             data.getMatrix().copyValues(beginValues);
             scroller.fling(0, 0, velocityX, velocityY, minX, maxX, minY, maxY);
+            setAnimating(true);
             post(this);
         } else {
             data.startRecover();

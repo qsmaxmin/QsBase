@@ -103,6 +103,10 @@ public class FunctionImageView extends AppCompatImageView {
         data.setFunction(functionMode);
     }
 
+    public int getFunction() {
+        return data.getFunction();
+    }
+
     /**
      * 预览模式时，当手指向下滑动到一定位置时，是否进行缩放显示
      * 必须在加载图片前设置该参数
@@ -111,16 +115,73 @@ public class FunctionImageView extends AppCompatImageView {
         data.setEnableTouchScaleDown(enable);
     }
 
+    /**
+     * 手势触发的回调
+     */
     public void setGestureListener(GestureListener listener) {
         data.setGestureListener(listener);
     }
 
+    /**
+     * 非手势触发的轮廓变换时的回调，transformTo和setInitTransformFrom方法会触发该回调
+     *
+     * @see #transformTo(RectF, boolean)
+     * @see #setInitTransformFrom(RectF)
+     */
     public void setTransformListener(OnTransformListener listener) {
         data.setTransformListener(listener);
     }
 
+    /**
+     * 将当前图片的外轮廓变成指定矩形的外轮廓
+     *
+     * @param rectF 指定外轮廓
+     * @param anim  是否开启补间动画
+     */
     public void transformTo(RectF rectF, boolean anim) {
         data.transformTo(rectF, anim);
+    }
+
+    /**
+     * 将当前图片的外轮廓变成指定矩形的外轮廓
+     *
+     * @param coordinate 指定外轮廓4点角坐标
+     * @param anim       是否开启补间动画
+     */
+    public void transformTo(float[] coordinate, boolean anim) {
+        if (coordinate != null && coordinate.length == 8) {
+            data.transformTo(coordinate, anim);
+        }
+    }
+
+    /**
+     * 图片第一次显示出来时，图片轮廓变换的开始位置
+     *
+     * @param rectF 变换开始位置的图片外轮廓
+     */
+    public void setInitTransformFrom(RectF rectF) {
+        data.setInitTransformFrom(rectF, 400);
+    }
+
+    public void setInitTransformFrom(RectF rectF, int duration) {
+        data.setInitTransformFrom(rectF, duration);
+    }
+
+    /**
+     * 图片第一次显示出来时，图片轮廓变换的开始位置
+     *
+     * @param coordinate 变换开始位置的图片外轮廓4点角坐标
+     */
+    public void setInitTransformFrom(float[] coordinate) {
+        if (coordinate != null && coordinate.length == 8) {
+            data.setInitTransformFrom(coordinate, 400);
+        }
+    }
+
+    public void setInitTransformFrom(float[] coordinate, int duration) {
+        if (coordinate != null && coordinate.length == 8) {
+            data.setInitTransformFrom(coordinate, duration);
+        }
     }
 
     @Nullable public Bitmap getBitmap() {

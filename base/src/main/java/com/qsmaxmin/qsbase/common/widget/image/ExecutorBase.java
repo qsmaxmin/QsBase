@@ -20,7 +20,7 @@ abstract class ExecutorBase implements Runnable {
         this.data = data;
     }
 
-    protected String initTag() {
+    protected final String initTag() {
         return getClass().getSimpleName();
     }
 
@@ -33,16 +33,15 @@ abstract class ExecutorBase implements Runnable {
     }
 
     protected final void post(Runnable action) {
-        running = true;
         data.post(action);
     }
 
-    final boolean isRunning() {
+    final boolean isAnimating() {
         return running;
     }
 
-    protected final void onExecuteComplete() {
-        this.running = false;
+    protected final void setAnimating(boolean running) {
+        this.running = running;
     }
 
     protected final void removeCallbacks(Runnable action) {
@@ -58,10 +57,7 @@ abstract class ExecutorBase implements Runnable {
     }
 
     protected final void transform(float[] begin, float[] end, float progress) {
-        transform(begin, end, data.getMatrix().getValues(), progress);
-    }
-
-    protected final void transform(float[] begin, float[] end, float[] current, float progress) {
+        float[] current = data.getMatrix().getValues();
         for (int i = 0; i < current.length; i++) {
             current[i] = begin[i] + (end[i] - begin[i]) * progress;
         }

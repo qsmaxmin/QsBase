@@ -1,6 +1,10 @@
 package com.qsmaxmin.qsbase.common.widget.image;
 
+import android.graphics.RectF;
+
 import java.util.Arrays;
+
+import androidx.annotation.NonNull;
 
 /**
  * @CreateBy qsmaxmin
@@ -29,20 +33,12 @@ class Coordinate {
         return 4;
     }
 
-    float getX(int pointIndex) {
-        return mValues[pointIndex * 2];
-    }
-
-    float getY(int pointIndex) {
-        return mValues[pointIndex * 2 + 1];
-    }
-
     float getCenterX() {
-        return ((mValues[0] + mValues[2]) * .5f + (mValues[4] + mValues[6]) * .5f) * .5f;
+        return getCenterX(mValues);
     }
 
     float getCenterY() {
-        return ((mValues[1] + mValues[7]) * .5f + (mValues[3] + mValues[5]) * .5f) * .5f;
+        return getCenterY(mValues);
     }
 
     float getLeft() {
@@ -70,15 +66,44 @@ class Coordinate {
     }
 
     float getWidth() {
-        float dx = mValues[2] - mValues[0];
-        float dy = mValues[3] - mValues[1];
-        return (float) Math.sqrt(dx * dx + dy * dy);
+        return getWidth(mValues);
     }
 
     float getHeight() {
-        float dx = mValues[6] - mValues[0];
-        float dy = mValues[7] - mValues[1];
+        return getHeight(mValues);
+    }
+
+    static float getCenterX(float[] coordinate) {
+        return ((coordinate[0] + coordinate[2]) * .5f + (coordinate[4] + coordinate[6]) * .5f) * .5f;
+    }
+
+    static float getCenterY(float[] coordinate) {
+        return ((coordinate[1] + coordinate[7]) * .5f + (coordinate[3] + coordinate[5]) * .5f) * .5f;
+    }
+
+    static float getHeight(float[] coordinate) {
+        float dx = coordinate[6] - coordinate[0];
+        float dy = coordinate[7] - coordinate[1];
         return (float) Math.sqrt(dx * dx + dy * dy);
+    }
+
+    static float getWidth(float[] coordinate) {
+        float dx = coordinate[2] - coordinate[0];
+        float dy = coordinate[3] - coordinate[1];
+        return (float) Math.sqrt(dx * dx + dy * dy);
+    }
+
+    static float[] getCoordinate(RectF rectF) {
+        float dx = rectF.width() / 2f;
+        float dy = rectF.height() / 2f;
+        float cx = rectF.centerX();
+        float cy = rectF.centerY();
+        float[] pos = new float[8];
+        pos[0] = pos[6] = cx - dx;
+        pos[1] = pos[3] = cy - dy;
+        pos[2] = pos[4] = cx + dx;
+        pos[5] = pos[7] = cy + dy;
+        return pos;
     }
 
     float getRectWidth() {
@@ -111,7 +136,7 @@ class Coordinate {
         return true;
     }
 
-    @Override public String toString() {
+    @NonNull @Override public String toString() {
         return "values:" + Arrays.toString(mValues) + ", outRect:[" + getLeft() + ", " + getTop() + ", " + getRight() + ", " + getBottom() + "]";
     }
 }
