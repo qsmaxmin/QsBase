@@ -104,7 +104,7 @@ final class ImageData {
 
     boolean onTouchEvent(MotionEvent event) {
         if (!available() || isTransforming()) {
-            return true;
+            return false;
         }
         if (gestureDetector.onTouchEvent(event)) return true;
         scaleDetector.onTouchEvent(event);
