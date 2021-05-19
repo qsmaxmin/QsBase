@@ -179,6 +179,7 @@ final class ImageData {
     void draw(Canvas canvas) {
         if (available()) {
             if (initTransformFromCoordinate != null) {
+                mMatrix.setValues(initTransformFromCoordinate);
                 getTransformExecutor().transformFrom(initTransformFromCoordinate, initTransformFromDuration);
                 initTransformFromCoordinate = null;
                 initTransformFromDuration = 0;
