@@ -82,6 +82,23 @@ final class ImageData {
             float right = left + newW;
             float bottom = top + newH;
             mMatrix.init(viewWidth, viewHeight, bitmapWidth, bitmapHeight, left, top, right, bottom);
+            if (!isTransforming()) {
+                mMatrix.getCurrentCoordinate().setValuesByEdge(left, top, right, bottom);
+            }
+        }
+    }
+
+    void draw(Canvas canvas) {
+        if (available()) {
+            if (initTransformFromCoordinate != null) {
+                mMatrix.setValues(initTransformFromCoordinate);
+                getTransformExecutor().transformFrom(initTransformFromCoordinate, initTransformFromDuration);
+                initTransformFromCoordinate = null;
+                initTransformFromDuration = 0;
+            }
+
+            Matrix m = mMatrix.updateMatrix();
+            canvas.drawBitmap(originalBitmap, m, null);
         }
     }
 
@@ -179,20 +196,6 @@ final class ImageData {
     private ExecutorTransform getTransformExecutor() {
         if (transformExecutor == null) transformExecutor = new ExecutorTransform(this);
         return transformExecutor;
-    }
-
-    void draw(Canvas canvas) {
-        if (available()) {
-            if (initTransformFromCoordinate != null) {
-                mMatrix.setValues(initTransformFromCoordinate);
-                getTransformExecutor().transformFrom(initTransformFromCoordinate, initTransformFromDuration);
-                initTransformFromCoordinate = null;
-                initTransformFromDuration = 0;
-            }
-
-            Matrix m = mMatrix.updateMatrix();
-            canvas.drawBitmap(originalBitmap, m, null);
-        }
     }
 
     TransformMatrix getMatrix() {

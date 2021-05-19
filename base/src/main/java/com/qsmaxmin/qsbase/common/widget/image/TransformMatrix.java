@@ -43,10 +43,9 @@ class TransformMatrix {
     }
 
     void init(int viewWidth, int viewHeight, int bitmapWidth, int bitmapHeight, float left, float top, float right, float bottom) {
-        viewCoordinate.setValuesByEdge(0, 0, viewWidth, viewHeight);
         originalCoordinate.setValuesByEdge(0, 0, bitmapWidth, bitmapHeight);
+        viewCoordinate.setValuesByEdge(0, 0, viewWidth, viewHeight);
         initCoordinate.setValuesByEdge(left, top, right, bottom);
-        currentCoordinate.setValuesByEdge(left, top, right, bottom);
     }
 
     boolean hasInit() {
