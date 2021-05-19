@@ -35,7 +35,7 @@ public class ExecutorTransform extends ExecutorAnimated {
             transform(beginValues, endValues, value);
         }
         invalidate();
-        data.callbackTransformChanged(progress, progress == 1f);
+        data.callbackTransformChanged(progress, ended);
     }
 
     void transformTo(float[] coordinate, boolean anim) {
