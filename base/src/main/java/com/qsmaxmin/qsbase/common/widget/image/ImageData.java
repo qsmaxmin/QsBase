@@ -66,7 +66,6 @@ final class ImageData {
     }
 
     void setViewSize(int viewWidth, int viewHeight) {
-
         if (viewWidth > 0 && viewHeight > 0 && originalBitmap != null) {
             int bitmapWidth = originalBitmap.getWidth();
             int bitmapHeight = originalBitmap.getHeight();
@@ -80,11 +79,6 @@ final class ImageData {
             float right = left + newW;
             float bottom = top + newH;
             mMatrix.init(viewWidth, viewHeight, bitmapWidth, bitmapHeight, left, top, right, bottom);
-            if (initTransformFromCoordinate != null) {
-                getTransformExecutor().transformFrom(initTransformFromCoordinate, initTransformFromDuration);
-                initTransformFromCoordinate = null;
-                initTransformFromDuration = 0;
-            }
         }
     }
 
@@ -182,6 +176,12 @@ final class ImageData {
 
     void draw(Canvas canvas) {
         if (available()) {
+            if (initTransformFromCoordinate != null) {
+                getTransformExecutor().transformFrom(initTransformFromCoordinate, initTransformFromDuration);
+                initTransformFromCoordinate = null;
+                initTransformFromDuration = 0;
+            }
+
             Matrix m = mMatrix.updateMatrix();
             canvas.drawBitmap(originalBitmap, m, null);
         }

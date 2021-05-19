@@ -14,6 +14,7 @@ public class ExecutorTransform extends ExecutorAnimated {
     private final float[]      endValues;
     private final float[]      beginValues;
     private final Interpolator interpolator;
+    private       boolean      isInitTransform;
 
     /**
      * @param data 数据实体
@@ -27,13 +28,19 @@ public class ExecutorTransform extends ExecutorAnimated {
 
     @Override protected void onAnimating(float progress, boolean ended) {
         float value = interpolator.getInterpolation(progress);
-        transform(beginValues, endValues, value);
+        if (isInitTransform) {
+            float[] initEndValues = data.getMatrix().getInitCoordinate().getValues();
+            transform(beginValues, initEndValues, value);
+        } else {
+            transform(beginValues, endValues, value);
+        }
         invalidate();
         data.callbackTransformChanged(progress, progress == 1f);
     }
 
     void transformTo(float[] coordinate, boolean anim) {
         removeCallbacks(this);
+        isInitTransform = false;
         data.getMatrix().getCurrentCoordinate().copyValues(beginValues);
         System.arraycopy(coordinate, 0, endValues, 0, endValues.length);
         if (anim) {
@@ -46,10 +53,8 @@ public class ExecutorTransform extends ExecutorAnimated {
 
     void transformFrom(float[] coordinate, int duration) {
         removeCallbacks(this);
-        TransformMatrix matrix = data.getMatrix();
-        matrix.getCurrentCoordinate().setValues(coordinate);
+        isInitTransform = true;
         System.arraycopy(coordinate, 0, beginValues, 0, beginValues.length);
-        data.getMatrix().getInitCoordinate().copyValues(endValues);
         startAnimation(duration);
     }
 }
