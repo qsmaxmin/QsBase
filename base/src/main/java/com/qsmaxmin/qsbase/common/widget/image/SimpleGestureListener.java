@@ -27,21 +27,31 @@ class SimpleGestureListener extends GestureDetector.SimpleOnGestureListener {
         touchBeginScale = 0f;
     }
 
+    boolean isTriggeredTouchScale() {
+        return touchBeginScale != 0;
+    }
+
     @Override public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
         boolean active = e2.getPointerCount() == 1;
         if (active) {
             data.getMatrix().postTranslate(-distanceX, -distanceY);
-            if (data.canTouchScaleDown() && data.getMatrix().canTouchScaleDown()) {
-                float scaleCurrent = data.getMatrix().getScale();
-                if (touchBeginScale == 0f) {
-                    touchBeginScale = scaleCurrent;
+            if (data.isEnableTouchScaleDown()) {
+                if (data.getMatrix().canTouchScaleDown()) {
+                    float scaleCurrent = data.getMatrix().getScale();
+                    if (touchBeginScale == 0f) {
+                        touchBeginScale = scaleCurrent;
+                    } else {
+                        float ratio = data.getMatrix().calculateTouchProgress();
+                        float scaleBegin = touchBeginScale;
+                        float scaleEnd = 0.3f;
+                        float scaleTarget = scaleBegin + (scaleEnd - scaleBegin) * ratio;
+                        float ps = scaleTarget / scaleCurrent;
+                        data.getMatrix().postScale(ps, ps, e2.getX(), e2.getY());
+                        data.callbackTouchScaleChanged(ratio);
+                    }
                 } else {
-                    float ratio = data.getMatrix().calculateTouchScale();
-                    float scaleBegin = touchBeginScale;
-                    float scaleEnd = 0.3f;
-                    float scaleTarget = scaleBegin + (scaleEnd - scaleBegin) * ratio;
-                    float ps = scaleTarget / scaleCurrent;
-                    data.getMatrix().postScale(ps, ps, e2.getX(), e2.getY());
+                    touchBeginScale = 0;
+                    float ratio = data.getMatrix().calculateTouchProgress();
                     data.callbackTouchScaleChanged(ratio);
                 }
             }
@@ -56,7 +66,7 @@ class SimpleGestureListener extends GestureDetector.SimpleOnGestureListener {
         if ((vx != 0 || vy != 0) && data.getMatrix().canFling()) {
             data.startFling(vx, vy);
         } else {
-            data.startRecover();
+            data.startRecover("SimpleGestureListener-onFling");
         }
         return true;
     }

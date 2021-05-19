@@ -44,6 +44,6 @@ abstract class ExecutorAnimated extends ExecutorBase {
         this.time = 0;
         this.duration = duration;
         setAnimating(true);
-        post(this);
+        postAnimation(this);
     }
 }

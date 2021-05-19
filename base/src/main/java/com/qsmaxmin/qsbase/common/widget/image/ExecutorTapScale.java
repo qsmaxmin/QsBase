@@ -22,7 +22,7 @@ public class ExecutorTapScale extends ExecutorAnimated {
 
     @Override protected void onAnimating(float progress, boolean ended) {
         if (ended) {
-            data.startRecover();
+            data.startRecover("ExecutorTapScale");
         } else {
             float value = interpolator.getInterpolation(progress);
             transform(beginValues, endValues, value);

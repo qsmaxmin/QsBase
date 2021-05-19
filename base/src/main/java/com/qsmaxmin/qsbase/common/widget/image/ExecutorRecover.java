@@ -14,6 +14,7 @@ class ExecutorRecover extends ExecutorAnimated {
     private final Interpolator interpolator;
     private final float[]      beginValues;
     private final float[]      endValues;
+    private       boolean      triggeredTouchScale;
 
     ExecutorRecover(@NonNull ImageData imageData) {
         super(imageData);
@@ -26,12 +27,14 @@ class ExecutorRecover extends ExecutorAnimated {
         float value = interpolator.getInterpolation(progress);
         transform(beginValues, endValues, value);
         invalidate();
-        if (data.canTouchScaleDown()) {
-            data.callbackTouchScaleChanged(data.getMatrix().calculateTouchScale());
+        if (triggeredTouchScale && data.isEnableTouchScaleDown()) {
+            data.callbackTouchScaleChanged(data.getMatrix().calculateTouchProgress());
         }
     }
 
-    void recover() {
+    void recover(boolean triggeredTouchScale) {
+        if (isAnimating()) return;
+        this.triggeredTouchScale = triggeredTouchScale;
         removeCallbacks(this);
         data.stopFling();
         TransformMatrix tempMatrix = data.getMatrix().copy();

@@ -80,7 +80,7 @@ public class FunctionImageView extends AppCompatImageView {
      */
     public void setAngle(float angle, boolean end) {
         data.setAngle(angle);
-        if (end) data.startRecover();
+        if (end) data.startRecover("setAngle");
     }
 
     /**

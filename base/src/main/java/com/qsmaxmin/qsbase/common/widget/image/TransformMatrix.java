@@ -145,7 +145,7 @@ class TransformMatrix {
         return currentCoordinate.getWidth() / initCoordinate.getWidth();
     }
 
-    float calculateTouchScale() {
+    float calculateTouchProgress() {
         float ratio = (currentCoordinate.getTop() - initCoordinate.getTop()) / initCoordinate.getHeight();
         if (ratio < 0f) ratio = 0f;
         else if (ratio > 1f) ratio = 1f;

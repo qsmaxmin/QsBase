@@ -10,6 +10,8 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 
+import com.qsmaxmin.qsbase.common.log.L;
+
 import androidx.annotation.Nullable;
 
 /**
@@ -35,6 +37,7 @@ final class ImageData {
     private       ExecutorTransform     transformExecutor;
     private       float[]               initTransformFromCoordinate;
     private       int                   initTransformFromDuration;
+    private       float                 lastRatio;
 
     ImageData(FunctionImageView imageView) {
         this.imageView = imageView;
@@ -82,6 +85,16 @@ final class ImageData {
         }
     }
 
+    boolean onTouchEvent(MotionEvent event) {
+        if (!available()) return true;
+        if (gestureDetector.onTouchEvent(event)) return true;
+        scaleDetector.onTouchEvent(event);
+        if (event.getAction() == MotionEvent.ACTION_UP && !isInFling() && !isTapScaling()) {
+            startRecover("onTouchUp");
+        }
+        return true;
+    }
+
     boolean isPreviewFunction() {
         return functionMode == 0;
     }
@@ -89,7 +102,7 @@ final class ImageData {
     /**
      * 手指向下滑动时，缩放显示
      */
-    boolean canTouchScaleDown() {
+    boolean isEnableTouchScaleDown() {
         return isPreviewFunction() && enableTouchScaleDown;
     }
 
@@ -98,9 +111,12 @@ final class ImageData {
         invalidate();
     }
 
-    void startRecover() {
+    void startRecover(String from) {
+        boolean triggeredTouchScale = gestureListenerImpl.isTriggeredTouchScale();
+        if (L.isEnable()) L.i("'ImageData'", "startRecover.......from:" + from + ", triggeredTouchScale:" + triggeredTouchScale);
+        if (triggeredTouchScale) gestureListenerImpl.resetTouchBeginScale();
         if (recoverExecutor == null) recoverExecutor = new ExecutorRecover(this);
-        recoverExecutor.recover();
+        recoverExecutor.recover(triggeredTouchScale);
     }
 
     void startReset(boolean anim) {
@@ -147,20 +163,6 @@ final class ImageData {
             return bitmap;
         }
         return null;
-    }
-
-    boolean onTouchEvent(MotionEvent event) {
-        if (!available()) return true;
-        boolean isTouchUp = event.getAction() == MotionEvent.ACTION_UP;
-        if (isTouchUp) {
-            gestureListenerImpl.resetTouchBeginScale();
-        }
-        if (gestureDetector.onTouchEvent(event)) return true;
-        scaleDetector.onTouchEvent(event);
-        if (isTouchUp && !isInFling() && !isTapScaling()) {
-            startRecover();
-        }
-        return true;
     }
 
     private boolean available() {
@@ -219,9 +221,11 @@ final class ImageData {
         return listener;
     }
 
+
     void callbackTouchScaleChanged(float ratio) {
-        if (listener != null && isPreviewFunction()) {
+        if (listener != null && lastRatio != ratio && isPreviewFunction()) {
             listener.onTouchScaleChanged(ratio);
+            lastRatio = ratio;
         }
     }
 

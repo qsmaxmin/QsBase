@@ -26,6 +26,6 @@ class ScaleGestureListener implements ScaleGestureDetector.OnScaleGestureListene
     }
 
     @Override public void onScaleEnd(ScaleGestureDetector detector) {
-        data.startRecover();
+        data.startRecover("ScaleGestureListener-onScaleEnd");
     }
 }

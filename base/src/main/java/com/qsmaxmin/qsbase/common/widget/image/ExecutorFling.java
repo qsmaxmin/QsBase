@@ -29,7 +29,7 @@ class ExecutorFling extends ExecutorBase {
             postAnimation(this);
         } else {
             setAnimating(false);
-            data.startRecover();
+            data.startRecover("ExecutorFling-run");
         }
     }
 
@@ -66,7 +66,7 @@ class ExecutorFling extends ExecutorBase {
             setAnimating(true);
             post(this);
         } else {
-            data.startRecover();
+            data.startRecover("ExecutorFling-fling");
         }
     }
 
