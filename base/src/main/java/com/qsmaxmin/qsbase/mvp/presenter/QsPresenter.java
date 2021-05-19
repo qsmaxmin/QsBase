@@ -46,11 +46,20 @@ public class QsPresenter<V extends MvIView> implements NetworkErrorReceiver, QsN
         return mView.getActivity();
     }
 
-    @CallSuper public void initPresenter(V view) {
+    @CallSuper public final void initPresenter(V view) {
         mView = view;
     }
 
-    @CallSuper public void onViewDestroy() {
+    @CallSuper public void onCreate() {
+    }
+
+    @CallSuper public void onResume() {
+    }
+
+    @CallSuper public void onPause() {
+    }
+
+    @CallSuper public void onDestroy() {
         cancelAllHttpRequest();
     }
 

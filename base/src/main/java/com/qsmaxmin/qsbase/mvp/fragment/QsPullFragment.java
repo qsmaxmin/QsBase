@@ -30,9 +30,19 @@ public abstract class QsPullFragment<P extends QsPresenter> extends MvPullFragme
         return null;
     }
 
+    @Override public void onResume() {
+        super.onResume();
+        if (presenter != null) presenter.onResume();
+    }
+
+    @Override public void onPause() {
+        super.onPause();
+        if (presenter != null) presenter.onPause();
+    }
+
     @CallSuper @Override public void onDestroy() {
         super.onDestroy();
-        if (presenter != null) presenter.onViewDestroy();
+        if (presenter != null) presenter.onDestroy();
     }
 
     @SuppressWarnings("unchecked")
@@ -40,6 +50,7 @@ public abstract class QsPullFragment<P extends QsPresenter> extends MvPullFragme
         if (presenter == null) {
             presenter = (P) createPresenter();
             presenter.initPresenter(this);
+            presenter.onCreate();
         }
         return presenter;
     }
