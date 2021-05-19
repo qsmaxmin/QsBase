@@ -86,7 +86,9 @@ final class ImageData {
     }
 
     boolean onTouchEvent(MotionEvent event) {
-        if (!available()) return true;
+        if (!available() || isTransforming()) {
+            return true;
+        }
         if (gestureDetector.onTouchEvent(event)) return true;
         scaleDetector.onTouchEvent(event);
         if (event.getAction() == MotionEvent.ACTION_UP && !isInFling() && !isTapScaling()) {
@@ -146,10 +148,13 @@ final class ImageData {
         return tapScaleExecutor != null && tapScaleExecutor.isAnimating();
     }
 
+    boolean isTransforming() {
+        return transformExecutor != null && transformExecutor.isAnimating();
+    }
+
     void setGestureListener(GestureListener listener) {
         this.listener = listener;
     }
-
 
     @Nullable Bitmap getCropBitmap() {
         if (originalBitmap != null && mMatrix.hasInit()) {
