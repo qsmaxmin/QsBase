@@ -76,9 +76,9 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
 
     @CallSuper @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
         isViewCreated = true;
+        ViewHelper.initStatusAndNavigationBar(this);
         super.onCreate(savedInstanceState);
         bindBundleByQsPlugin(getIntent().getExtras());
-        initStatusBar();
         rootView = initView(getLayoutInflater());
         setContentView(rootView);
         onViewCreated(rootView);
@@ -536,10 +536,6 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
         return 0;
     }
 
-    protected void initStatusBar() {
-        ViewHelper.initStatusBar(this, isTransparentStatusBar(), isTransparentNavigationBar(), isBlackIconStatusBar());
-    }
-
     @Override public boolean isBlackIconStatusBar() {
         return false;
     }
@@ -549,6 +545,14 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
     }
 
     @Override public boolean isTransparentNavigationBar() {
+        return false;
+    }
+
+    @Override public boolean isHideStatusNavigationBar() {
+        return false;
+    }
+
+    @Override public boolean isFullScreenFix() {
         return false;
     }
 
@@ -671,7 +675,7 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
         if (slidingView != null) slidingView.setCanSliding(allow);
     }
 
-    @Override public final boolean isAllowSlidingToClose() {
+    @Override public final boolean isSlidingToCloseEnabled() {
         return slidingView != null && slidingView.isCanSliding();
     }
 

@@ -22,6 +22,13 @@ public interface MvIActivity extends MvIView {
 
     boolean isTransparentNavigationBar();
 
+    boolean isHideStatusNavigationBar();
+
+    /**
+     * 全屏时刘海屏页面适配
+     */
+    boolean isFullScreenFix();
+
     boolean onKeyDown(@NonNull KeyEvent event, int keyCode);
 
     void setOnKeyDownListener(OnKeyDownListener listener);
@@ -32,7 +39,7 @@ public interface MvIActivity extends MvIView {
 
     void setAllowSlidingToClose(boolean allow);
 
-    boolean isAllowSlidingToClose();
+    boolean isSlidingToCloseEnabled();
 
     void onReceivedEventFromFragment(int eventType, Bundle data);
 

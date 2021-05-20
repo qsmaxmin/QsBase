@@ -14,6 +14,7 @@ import android.view.animation.Animation;
 import android.widget.ViewAnimator;
 
 import com.qsmaxmin.qsbase.R;
+import com.qsmaxmin.qsbase.mvvm.MvIActivity;
 import com.qsmaxmin.qsbase.mvvm.MvIView;
 
 import androidx.annotation.NonNull;
@@ -39,15 +40,55 @@ public class ViewHelper {
         return false;
     }
 
-    public static void initStatusBar(Activity activity, boolean transparentStatus, boolean transparentNavigation, boolean blackIconInStatus) {
+    public static void initStatusAndNavigationBar(MvIActivity layer) {
+        if (layer.isTransparentStatusBar() && layer.isFullScreenFix()) {
+            fullScreenFix(layer.getActivity());
+        }
+        if (layer.isHideStatusNavigationBar()) {
+            hideStatusNavigationBar(layer.getActivity());
+        }
+        if (layer.isBlackIconStatusBar() || layer.isTransparentStatusBar() || layer.isTransparentNavigationBar()) {
+            initStatusBar(layer);
+        }
+    }
+
+    private static void fullScreenFix(Activity activity) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            try {
+                WindowManager.LayoutParams lp = activity.getWindow().getAttributes();
+                lp.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
+                activity.getWindow().setAttributes(lp);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private static void hideStatusNavigationBar(Activity activity) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            int flag = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_FULLSCREEN;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                flag |= View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+            }
+            activity.getWindow().getDecorView().setSystemUiVisibility(flag);
+        }
+    }
+
+    private static void initStatusBar(MvIActivity layer) {
+        boolean transparentStatus = layer.isTransparentStatusBar();
+        boolean transparentNavigation = layer.isTransparentNavigationBar();
+        boolean blackIconInStatus = layer.isBlackIconStatusBar();
         if (transparentStatus || transparentNavigation) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                Window window = activity.getWindow();
+                Window window = layer.getActivity().getWindow();
                 if (transparentNavigation) {
                     window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
                     window.setNavigationBarColor(Color.TRANSPARENT);
                 }
-
                 if (transparentStatus) {
                     window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
                     window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
@@ -59,18 +100,16 @@ public class ViewHelper {
                     }
                 }
 
-            } else if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
-                Window window = activity.getWindow();
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                Window window = layer.getActivity().getWindow();
                 WindowManager.LayoutParams winParams = window.getAttributes();
                 final int bits = WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS;
                 winParams.flags |= bits;
                 window.setAttributes(winParams);
             }
-        } else {
-            if (blackIconInStatus && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                Window window = activity.getWindow();
-                window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-            }
+        } else if (blackIconInStatus && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            Window window = layer.getActivity().getWindow();
+            window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
         }
     }
 
