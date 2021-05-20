@@ -1,6 +1,5 @@
 package com.qsmaxmin.qsbase.mvp.fragment;
 
-import android.content.Context;
 import android.view.View;
 
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
@@ -19,10 +18,6 @@ import androidx.annotation.NonNull;
 
 public abstract class QsViewPagerFragment<P extends QsPresenter> extends MvViewPagerFragment implements QsIBindView, QsIPresenter<P> {
     private final P presenter = createPresenter();
-
-    @Override public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-    }
 
     @Override public void onViewCreated(@NonNull View rootView) {
         bindViewByQsPlugin(rootView);
