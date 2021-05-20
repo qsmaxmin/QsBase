@@ -15,8 +15,8 @@ import androidx.annotation.NonNull;
  * @Date 2020/4/9 16:21
  * @Description pull recycler activity
  */
-public abstract class QsPullRecyclerActivity<P extends QsPresenter, D> extends MvPullRecyclerActivity<D> implements QsIBindView, QsIPresenter<P> {
-    private final P presenter = createPresenter();
+public abstract class QsPullRecyclerActivity<P extends QsPresenter, D> extends MvPullRecyclerActivity<D> implements QsIBindView, QsIPresenter {
+    @SuppressWarnings("unchecked") private final P presenter = (P) createPresenter();
 
     @CallSuper @Override public void onViewCreated(@NonNull View rootView) {
         if (getHeaderView() != null) bindViewByQsPlugin(getHeaderView());
@@ -27,7 +27,7 @@ public abstract class QsPullRecyclerActivity<P extends QsPresenter, D> extends M
     @CallSuper @Override public void bindViewByQsPlugin(View view) {
     }
 
-    @Override public P createPresenter() {
+    @Override public Object createPresenter() {
         return null;
     }
 

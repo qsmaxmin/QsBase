@@ -16,21 +16,21 @@ import androidx.annotation.NonNull;
  * @Date 17/7/2  下午4:29
  * @Description
  */
-public abstract class QsListFragment<P extends QsPresenter, D> extends MvListFragment<D> implements QsIBindView, QsIPresenter<P> {
-    private final P presenter = createPresenter();
+public abstract class QsListFragment<P extends QsPresenter, D> extends MvListFragment<D> implements QsIBindView, QsIPresenter {
+    @SuppressWarnings("unchecked") private final P presenter = (P) createPresenter();
 
-    @CallSuper @Override public void onViewCreated(@NonNull View rootView) {
+    @Override public void onViewCreated(@NonNull View rootView) {
         bindViewByQsPlugin(rootView);
     }
 
     @CallSuper @Override public void bindViewByQsPlugin(View view) {
     }
 
-    @Override public P createPresenter() {
+    @Override public Object createPresenter() {
         return null;
     }
 
-    protected final P getPresenter() {
+    public final P getPresenter() {
         return presenter;
     }
 }

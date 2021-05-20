@@ -16,8 +16,8 @@ import androidx.annotation.NonNull;
  * @Description
  */
 
-public abstract class QsHeaderViewpagerFragment<P extends QsPresenter> extends MvHeaderViewpagerFragment implements QsIBindView, QsIPresenter<P> {
-    private final P presenter = createPresenter();
+public abstract class QsHeaderViewpagerFragment<P extends QsPresenter> extends MvHeaderViewpagerFragment implements QsIBindView, QsIPresenter {
+    @SuppressWarnings("unchecked") private final P presenter = (P) createPresenter();
 
     @Override public void onViewCreated(@NonNull View rootView) {
         bindViewByQsPlugin(rootView);
@@ -26,7 +26,7 @@ public abstract class QsHeaderViewpagerFragment<P extends QsPresenter> extends M
     @CallSuper @Override public void bindViewByQsPlugin(View view) {
     }
 
-    @Override public P createPresenter() {
+    @Override public Object createPresenter() {
         return null;
     }
 

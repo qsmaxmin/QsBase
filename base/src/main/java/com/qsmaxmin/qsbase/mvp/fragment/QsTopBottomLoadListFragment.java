@@ -1,6 +1,5 @@
 package com.qsmaxmin.qsbase.mvp.fragment;
 
-import android.content.Context;
 import android.view.View;
 
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
@@ -16,12 +15,8 @@ import androidx.annotation.NonNull;
  * @Date 2019/3/21 13:55
  * @Description listView滑动到顶部和底部都能加载更多数据
  */
-public abstract class QsTopBottomLoadListFragment<P extends QsPresenter, D> extends MvTopBottomLoadListFragment<D> implements QsIBindView, QsIPresenter<P> {
-    private final P presenter = createPresenter();
-
-    @Override public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-    }
+public abstract class QsTopBottomLoadListFragment<P extends QsPresenter, D> extends MvTopBottomLoadListFragment<D> implements QsIBindView, QsIPresenter {
+    @SuppressWarnings("unchecked") private final P presenter = (P) createPresenter();
 
     @Override public void onViewCreated(@NonNull View rootView) {
         bindViewByQsPlugin(rootView);
@@ -30,7 +25,7 @@ public abstract class QsTopBottomLoadListFragment<P extends QsPresenter, D> exte
     @CallSuper @Override public void bindViewByQsPlugin(View view) {
     }
 
-    @Override public P createPresenter() {
+    @Override public Object createPresenter() {
         return null;
     }
 

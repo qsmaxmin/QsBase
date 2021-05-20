@@ -5,6 +5,6 @@ package com.qsmaxmin.qsbase.plugin.presenter;
  * @Date 2020/9/1 10:29
  * @Description
  */
-public interface QsIPresenter<P> {
-    P createPresenter();
+public interface QsIPresenter {
+    Object createPresenter();
 }

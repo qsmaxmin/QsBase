@@ -15,8 +15,8 @@ import androidx.annotation.NonNull;
  * @Date 17/7/1
  * @Description RecyclerView视图
  */
-public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends MvRecyclerFragment<D> implements QsIBindView, QsIPresenter<P> {
-    private final P presenter = createPresenter();
+public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends MvRecyclerFragment<D> implements QsIBindView, QsIPresenter {
+    @SuppressWarnings("unchecked") private final P presenter = (P) createPresenter();
 
     @CallSuper @Override public void onViewCreated(@NonNull View rootView) {
         if (getHeaderView() != null) bindViewByQsPlugin(getHeaderView());
@@ -27,11 +27,11 @@ public abstract class QsRecyclerFragment<P extends QsPresenter, D> extends MvRec
     @CallSuper @Override public void bindViewByQsPlugin(View view) {
     }
 
-    @Override public P createPresenter() {
+    @Override public Object createPresenter() {
         return null;
     }
 
-    protected final P getPresenter() {
+    public final P getPresenter() {
         return presenter;
     }
 }

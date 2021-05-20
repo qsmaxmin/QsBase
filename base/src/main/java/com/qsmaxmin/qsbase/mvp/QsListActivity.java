@@ -15,8 +15,8 @@ import androidx.annotation.NonNull;
  * @Date 2020/4/9 15:06
  * @Description list activity
  */
-public abstract class QsListActivity<P extends QsPresenter, D> extends MvListActivity<D> implements QsIBindView, QsIPresenter<P> {
-    private final P presenter = createPresenter();
+public abstract class QsListActivity<P extends QsPresenter, D> extends MvListActivity<D> implements QsIBindView, QsIPresenter {
+    @SuppressWarnings("unchecked") private final P presenter = (P) createPresenter();
 
     @CallSuper @Override public void onViewCreated(@NonNull View rootView) {
         bindViewByQsPlugin(rootView);
@@ -25,7 +25,7 @@ public abstract class QsListActivity<P extends QsPresenter, D> extends MvListAct
     @CallSuper @Override public void bindViewByQsPlugin(View view) {
     }
 
-    @Override public P createPresenter() {
+    @Override public Object createPresenter() {
         return null;
     }
 

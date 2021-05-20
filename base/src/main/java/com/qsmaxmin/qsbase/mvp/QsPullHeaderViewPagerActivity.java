@@ -15,8 +15,8 @@ import androidx.annotation.NonNull;
  * @Date 2020/9/9 11:14
  * @Description
  */
-public abstract class QsPullHeaderViewPagerActivity<P extends QsPresenter> extends MvPullHeaderViewPagerActivity implements QsIBindView, QsIPresenter<P> {
-    private final P presenter = createPresenter();
+public abstract class QsPullHeaderViewPagerActivity<P extends QsPresenter> extends MvPullHeaderViewPagerActivity implements QsIBindView, QsIPresenter {
+    @SuppressWarnings("unchecked") private final P presenter = (P) createPresenter();
 
     @CallSuper @Override public void onViewCreated(@NonNull View rootView) {
         bindViewByQsPlugin(rootView);
@@ -25,7 +25,7 @@ public abstract class QsPullHeaderViewPagerActivity<P extends QsPresenter> exten
     @CallSuper @Override public void bindViewByQsPlugin(View view) {
     }
 
-    @Override public P createPresenter() {
+    @Override public Object createPresenter() {
         return null;
     }
 
