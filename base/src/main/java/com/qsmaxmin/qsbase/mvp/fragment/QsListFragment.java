@@ -1,5 +1,6 @@
 package com.qsmaxmin.qsbase.mvp.fragment;
 
+import android.content.Context;
 import android.view.View;
 
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
@@ -15,41 +16,21 @@ import androidx.annotation.NonNull;
  * @Date 17/7/2  下午4:29
  * @Description
  */
-public abstract class QsListFragment<P extends QsPresenter, D> extends MvListFragment<D> implements QsIBindView, QsIPresenter {
-    private P presenter;
+public abstract class QsListFragment<P extends QsPresenter, D> extends MvListFragment<D> implements QsIBindView, QsIPresenter<P> {
+    private final P presenter = createPresenter();
 
-    @Override public void onViewCreated(@NonNull View rootView) {
+    @CallSuper @Override public void onViewCreated(@NonNull View rootView) {
         bindViewByQsPlugin(rootView);
     }
 
     @CallSuper @Override public void bindViewByQsPlugin(View view) {
     }
 
-    @Override public Object createPresenter() {
+    @Override public P createPresenter() {
         return null;
     }
 
-    @Override public void onResume() {
-        super.onResume();
-        if (presenter != null) presenter.onResume();
-    }
-
-    @Override public void onPause() {
-        super.onPause();
-        if (presenter != null) presenter.onPause();
-    }
-
-    @CallSuper @Override public void onDestroy() {
-        super.onDestroy();
-        if (presenter != null) presenter.onDestroy();
-    }
-
-    @SuppressWarnings("unchecked")
-    public final P getPresenter() {
-        if (presenter == null) {
-            presenter = (P) createPresenter();
-            presenter.initPresenter(this);
-        }
+    protected final P getPresenter() {
         return presenter;
     }
 }

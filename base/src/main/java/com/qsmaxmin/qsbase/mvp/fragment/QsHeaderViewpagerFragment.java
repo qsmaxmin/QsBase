@@ -1,5 +1,6 @@
 package com.qsmaxmin.qsbase.mvp.fragment;
 
+import android.content.Context;
 import android.view.View;
 
 import com.qsmaxmin.qsbase.mvp.presenter.QsPresenter;
@@ -16,8 +17,12 @@ import androidx.annotation.NonNull;
  * @Description
  */
 
-public abstract class QsHeaderViewpagerFragment<P extends QsPresenter> extends MvHeaderViewpagerFragment implements QsIBindView, QsIPresenter {
-    private P presenter;
+public abstract class QsHeaderViewpagerFragment<P extends QsPresenter> extends MvHeaderViewpagerFragment implements QsIBindView, QsIPresenter<P> {
+    private final P presenter = createPresenter();
+
+    @Override public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+    }
 
     @Override public void onViewCreated(@NonNull View rootView) {
         bindViewByQsPlugin(rootView);
@@ -26,31 +31,11 @@ public abstract class QsHeaderViewpagerFragment<P extends QsPresenter> extends M
     @CallSuper @Override public void bindViewByQsPlugin(View view) {
     }
 
-    @Override public Object createPresenter() {
+    @Override public P createPresenter() {
         return null;
     }
 
-    @Override public void onResume() {
-        super.onResume();
-        if (presenter != null) presenter.onResume();
-    }
-
-    @Override public void onPause() {
-        super.onPause();
-        if (presenter != null) presenter.onPause();
-    }
-
-    @CallSuper @Override public void onDestroy() {
-        super.onDestroy();
-        if (presenter != null) presenter.onDestroy();
-    }
-
-    @SuppressWarnings("unchecked")
     public final P getPresenter() {
-        if (presenter == null) {
-            presenter = (P) createPresenter();
-            presenter.initPresenter(this);
-        }
         return presenter;
     }
 }

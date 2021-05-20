@@ -17,63 +17,98 @@ import com.qsmaxmin.qsbase.mvvm.MvIView;
 
 import java.util.HashSet;
 
-import androidx.annotation.CallSuper;
 import androidx.annotation.ColorRes;
 import androidx.annotation.DimenRes;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleEventObserver;
+import androidx.lifecycle.LifecycleOwner;
 
 /**
  * @CreateBy qsmaxmin
  * @Date 2017/6/21 16:27
  * @Description base presenter
  */
-public class QsPresenter<V extends MvIView> implements NetworkErrorReceiver, QsNotProguard {
+public class QsPresenter<V extends MvIView> implements NetworkErrorReceiver, QsNotProguard, LifecycleEventObserver {
     private final HashSet<Object> tagList = new HashSet<>();
-    private       V               mView;
+    private       V               vLayer;
+
+    /**
+     * 该方法由QsTransform唤起，不可修改
+     */
+    public final void initPresenter(V v) {
+        this.vLayer = v;
+        v.getLifecycle().addObserver(this);
+    }
 
     protected final String initTag() {
         return L.isEnable() ? getClass().getSimpleName() : "QsPresenter";
     }
 
     public final Context getContext() {
-        return mView.getContext();
+        return vLayer.getContext();
     }
 
     public final FragmentActivity getActivity() {
-        return mView.getActivity();
+        return vLayer.getActivity();
     }
 
-    @CallSuper public final void initPresenter(V view) {
-        mView = view;
-        onCreate();
+    @Override public final void onStateChanged(@NonNull LifecycleOwner source, @NonNull Lifecycle.Event event) {
+        if (L.isEnable()) L.i(initTag(), "onStateChanged.........." + source.getLifecycle().getCurrentState().name() + ", " + event.name());
+        switch (event) {
+            case ON_CREATE:
+                onCreate();
+                break;
+            case ON_START:
+                onStart();
+                break;
+            case ON_RESUME:
+                onResume();
+                break;
+            case ON_PAUSE:
+                onPause();
+                break;
+            case ON_STOP:
+                onStop();
+                break;
+            case ON_DESTROY:
+                cancelAllHttpRequest();
+                onDestroy();
+                break;
+        }
     }
 
-    @CallSuper public void onCreate() {
+    protected void onCreate() {
     }
 
-    @CallSuper public void onResume() {
+    protected void onStart() {
     }
 
-    @CallSuper public void onPause() {
+    protected void onResume() {
     }
 
-    @CallSuper public void onDestroy() {
-        cancelAllHttpRequest();
+    protected void onPause() {
+    }
+
+    protected void onStop() {
+    }
+
+    protected void onDestroy() {
     }
 
     @NonNull public final V getView() {
-        return mView;
+        return vLayer;
     }
 
     public final boolean isViewDetach() {
-        return mView.isViewDestroyed();
+        return vLayer.isViewDestroyed();
     }
 
     public final boolean isViewAttach() {
-        return !mView.isViewDestroyed();
+        return !vLayer.isViewDestroyed();
     }
 
     /**

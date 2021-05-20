@@ -17,6 +17,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleOwner;
 
 /**
  * @CreateBy qsmaxmin
@@ -138,4 +140,6 @@ public interface MvIView extends IView, QsIBindEvent, QsIBindBundle, QsNotProgua
     @NonNull <T> T createHttpRequest(Class<T> clazz, Object requestTag, NetworkErrorReceiver receiver);
 
     @NonNull QsProgressDialog getLoadingDialog();
+
+    Lifecycle getLifecycle();
 }
