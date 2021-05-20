@@ -49,7 +49,6 @@ public abstract class QsFragment<P extends QsPresenter> extends MvFragment imple
         if (presenter == null) {
             presenter = (P) createPresenter();
             presenter.initPresenter(this);
-            presenter.onCreate();
         }
         return presenter;
     }

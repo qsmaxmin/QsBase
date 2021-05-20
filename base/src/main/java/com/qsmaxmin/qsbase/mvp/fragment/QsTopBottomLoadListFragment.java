@@ -49,7 +49,6 @@ public abstract class QsTopBottomLoadListFragment<P extends QsPresenter, D> exte
         if (presenter == null) {
             presenter = (P) createPresenter();
             presenter.initPresenter(this);
-            presenter.onCreate();
         }
         return presenter;
     }

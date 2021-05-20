@@ -49,7 +49,6 @@ public abstract class QsHeaderViewPagerActivity<P extends QsPresenter> extends M
         if (presenter == null) {
             presenter = (P) createPresenter();
             presenter.initPresenter(this);
-            presenter.onCreate();
         }
         return presenter;
     }

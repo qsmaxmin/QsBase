@@ -49,7 +49,6 @@ public abstract class QsListActivity<P extends QsPresenter, D> extends MvListAct
         if (presenter == null) {
             presenter = (P) createPresenter();
             presenter.initPresenter(this);
-            presenter.onCreate();
         }
         return presenter;
     }

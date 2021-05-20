@@ -51,7 +51,6 @@ public abstract class QsPullRecyclerFragment<P extends QsPresenter, D> extends M
         if (presenter == null) {
             presenter = (P) createPresenter();
             presenter.initPresenter(this);
-            presenter.onCreate();
         }
         return presenter;
     }

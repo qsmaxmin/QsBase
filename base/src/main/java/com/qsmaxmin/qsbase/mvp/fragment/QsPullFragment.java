@@ -50,7 +50,6 @@ public abstract class QsPullFragment<P extends QsPresenter> extends MvPullFragme
         if (presenter == null) {
             presenter = (P) createPresenter();
             presenter.initPresenter(this);
-            presenter.onCreate();
         }
         return presenter;
     }

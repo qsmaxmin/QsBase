@@ -50,7 +50,6 @@ public abstract class QsPullActivity<P extends QsPresenter> extends MvPullActivi
         if (presenter == null) {
             presenter = (P) createPresenter();
             presenter.initPresenter(this);
-            presenter.onCreate();
         }
         return presenter;
     }

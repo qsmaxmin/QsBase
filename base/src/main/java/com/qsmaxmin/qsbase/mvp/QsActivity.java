@@ -49,7 +49,6 @@ public abstract class QsActivity<P extends QsPresenter> extends MvActivity imple
         if (presenter == null) {
             presenter = (P) createPresenter();
             presenter.initPresenter(this);
-            presenter.onCreate();
         }
         return presenter;
     }

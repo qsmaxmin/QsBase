@@ -50,7 +50,6 @@ public abstract class QsPullHeaderViewpagerFragment<P extends QsPresenter> exten
         if (presenter == null) {
             presenter = (P) createPresenter();
             presenter.initPresenter(this);
-            presenter.onCreate();
         }
         return presenter;
     }

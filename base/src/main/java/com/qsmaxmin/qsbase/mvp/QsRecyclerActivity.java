@@ -51,7 +51,6 @@ public abstract class QsRecyclerActivity<P extends QsPresenter, D> extends MvRec
         if (presenter == null) {
             presenter = (P) createPresenter();
             presenter.initPresenter(this);
-            presenter.onCreate();
         }
         return presenter;
     }

@@ -50,7 +50,6 @@ public abstract class QsViewPagerActivity<P extends QsPresenter> extends MvViewP
         if (presenter == null) {
             presenter = (P) createPresenter();
             presenter.initPresenter(this);
-            presenter.onCreate();
         }
         return presenter;
     }

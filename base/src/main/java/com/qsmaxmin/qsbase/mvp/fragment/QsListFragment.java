@@ -49,7 +49,6 @@ public abstract class QsListFragment<P extends QsPresenter, D> extends MvListFra
         if (presenter == null) {
             presenter = (P) createPresenter();
             presenter.initPresenter(this);
-            presenter.onCreate();
         }
         return presenter;
     }
