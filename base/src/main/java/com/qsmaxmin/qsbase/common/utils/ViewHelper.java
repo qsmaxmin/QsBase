@@ -114,24 +114,21 @@ public class ViewHelper {
     }
 
     public static void initViewAnimator(ViewAnimator animator, MvIView iView) {
-        initViewAnimator(iView.getContext(), animator, iView.viewStateInAnimation(), iView.viewStateOutAnimation(),
-                iView.viewStateInAnimationId(), iView.viewStateOutAnimationId(), iView.viewStateAnimateFirstView());
-    }
-
-    private static void initViewAnimator(Context context, ViewAnimator animator, Animation inAnim, Animation outAnim, int inAnimId, int outAnimId, boolean animateFirst) {
+        Animation inAnim = iView.viewStateInAnimation();
         if (inAnim != null) {
             animator.setInAnimation(inAnim);
-        } else if (inAnimId != 0) {
-            animator.setInAnimation(context, inAnimId);
+        } else if (iView.viewStateInAnimationId() != 0) {
+            animator.setInAnimation(iView.getContext(), iView.viewStateInAnimationId());
         }
+
+        Animation outAnim = iView.viewStateOutAnimation();
         if (outAnim != null) {
             animator.setOutAnimation(outAnim);
-        } else if (outAnimId != 0) {
-            animator.setOutAnimation(context, outAnimId);
+        } else if (iView.viewStateOutAnimationId() != 0) {
+            animator.setOutAnimation(iView.getContext(), iView.viewStateOutAnimationId());
         }
-        animator.setAnimateFirstView(animateFirst);
+        animator.setAnimateFirstView(iView.viewStateAnimateFirstView());
     }
-
 
     public static void intent2Activity(Activity activity, Class<?> clazz, Bundle bundle, int requestCode, ActivityOptionsCompat optionsCompat, int inAnimId, int outAnimId) {
         if (clazz != null) {

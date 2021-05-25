@@ -127,6 +127,8 @@ public interface MvIView extends IView, QsIBindEvent, QsIBindBundle, QsNotProgua
 
     void addOnActivityResultListener(OnActivityResultListener listener);
 
+    void removeOnActivityResultListener(OnActivityResultListener listener);
+
     int contentViewBackgroundColor();
 
     void onBackPressed();

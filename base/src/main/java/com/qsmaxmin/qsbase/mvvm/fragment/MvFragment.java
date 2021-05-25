@@ -248,23 +248,23 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
     }
 
     @Override public Animation viewStateInAnimation() {
-        return null;
-    }
-
-    @Override public int viewStateInAnimationId() {
-        return 0;
+        return QsHelper.getAppInterface().viewStateInAnimation();
     }
 
     @Override public Animation viewStateOutAnimation() {
-        return null;
+        return QsHelper.getAppInterface().viewStateOutAnimation();
+    }
+
+    @Override public int viewStateInAnimationId() {
+        return QsHelper.getAppInterface().viewStateInAnimationId();
     }
 
     @Override public int viewStateOutAnimationId() {
-        return 0;
+        return QsHelper.getAppInterface().viewStateOutAnimationId();
     }
 
     @Override public boolean viewStateAnimateFirstView() {
-        return true;
+        return QsHelper.getAppInterface().viewStateAnimateFirstView();
     }
 
     @Override public boolean isDelayData() {
@@ -594,6 +594,12 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
         }
         if (!resultListenerList.contains(listener)) {
             resultListenerList.add(listener);
+        }
+    }
+
+    @Override public void removeOnActivityResultListener(OnActivityResultListener listener) {
+        if (listener != null && resultListenerList != null) {
+            resultListenerList.remove(listener);
         }
     }
 

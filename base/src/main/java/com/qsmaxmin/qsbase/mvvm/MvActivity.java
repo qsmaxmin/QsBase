@@ -68,10 +68,16 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
     }
 
     @CallSuper @Override protected void onDestroy() {
-        isViewCreated = false;
         super.onDestroy();
         unbindEventByQsPlugin();
         cancelAllHttpRequest();
+    }
+
+    @Override protected void onPause() {
+        super.onPause();
+        if (isFinishing()) {
+            isViewCreated = false;
+        }
     }
 
     @CallSuper @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -243,23 +249,23 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
     }
 
     @Override public Animation viewStateInAnimation() {
-        return null;
+        return QsHelper.getAppInterface().viewStateInAnimation();
     }
 
     @Override public Animation viewStateOutAnimation() {
-        return null;
+        return QsHelper.getAppInterface().viewStateOutAnimation();
     }
 
     @Override public int viewStateInAnimationId() {
-        return 0;
+        return QsHelper.getAppInterface().viewStateInAnimationId();
     }
 
     @Override public int viewStateOutAnimationId() {
-        return 0;
+        return QsHelper.getAppInterface().viewStateOutAnimationId();
     }
 
     @Override public boolean viewStateAnimateFirstView() {
-        return true;
+        return QsHelper.getAppInterface().viewStateAnimateFirstView();
     }
 
     @Override public boolean isShowBackButtonInDefaultView() {
@@ -522,13 +528,19 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
         this.resultListener = listener;
     }
 
-    @Override public void addOnActivityResultListener(OnActivityResultListener listener) {
+    @Override public final void addOnActivityResultListener(OnActivityResultListener listener) {
         if (listener == null) return;
         if (resultListenerList == null) {
             resultListenerList = new ArrayList<>();
         }
         if (!resultListenerList.contains(listener)) {
             resultListenerList.add(listener);
+        }
+    }
+
+    @Override public final void removeOnActivityResultListener(OnActivityResultListener listener) {
+        if (listener != null && resultListenerList != null) {
+            resultListenerList.remove(listener);
         }
     }
 

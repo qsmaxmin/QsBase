@@ -3,12 +3,14 @@ package com.qsmaxmin.qsbase;
 import android.app.Activity;
 import android.app.Application;
 import android.os.Bundle;
+import android.view.animation.Animation;
 
 import com.qsmaxmin.qsbase.common.http.HttpInterceptor;
 import com.qsmaxmin.qsbase.common.utils.ImageHelper;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.common.widget.dialog.DefaultProgressDialog;
 import com.qsmaxmin.qsbase.common.widget.dialog.QsProgressDialog;
+import com.qsmaxmin.qsbase.mvvm.MvIView;
 
 import androidx.annotation.LayoutRes;
 
@@ -68,5 +70,50 @@ public abstract class QsApplication extends Application implements QsIApplicatio
     }
 
     @Override public void onActivityDestroyed(Activity activity) {
+    }
+
+    /**
+     * 布局状态切换时播放的入场动画
+     *
+     * @see MvIView#isOpenViewState()
+     */
+    @Override public Animation viewStateInAnimation() {
+        return null;
+    }
+
+    /**
+     * 布局状态切换时播放的出场动画
+     *
+     * @see MvIView#isOpenViewState()
+     */
+    @Override public Animation viewStateOutAnimation() {
+        return null;
+    }
+
+    /**
+     * 布局状态切换时播放的入场动画
+     *
+     * @see MvIView#isOpenViewState()
+     */
+    @Override public int viewStateInAnimationId() {
+        return 0;
+    }
+
+    /**
+     * 布局状态切换时播放的出场动画
+     *
+     * @see MvIView#isOpenViewState()
+     */
+    @Override public int viewStateOutAnimationId() {
+        return 0;
+    }
+
+    /**
+     * 第一次切换时是否播放动画
+     *
+     * @see MvIView#isOpenViewState()
+     */
+    @Override public boolean viewStateAnimateFirstView() {
+        return true;
     }
 }

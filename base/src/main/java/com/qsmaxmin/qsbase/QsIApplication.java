@@ -5,6 +5,7 @@ import android.app.Application;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
 
 import com.qsmaxmin.qsbase.common.http.HttpInterceptor;
 import com.qsmaxmin.qsbase.common.utils.ImageHelper;
@@ -77,4 +78,14 @@ public interface QsIApplication {
     void onActivityStopped(Activity activity);
 
     void onActivityDestroyed(Activity activity);
+
+    Animation viewStateInAnimation();
+
+    Animation viewStateOutAnimation();
+
+    int viewStateInAnimationId();
+
+    int viewStateOutAnimationId();
+
+    boolean viewStateAnimateFirstView();
 }
