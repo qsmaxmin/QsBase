@@ -129,6 +129,20 @@ public abstract class MvViewPagerFragment extends MvFragment implements MvIViewP
         }
     }
 
+    @Override public void replaceModelPager(MvModelPager oldPager, MvModelPager newPager) {
+        if (adapter != null) {
+            adapter.replaceModelPager(oldPager, newPager);
+            if (tabs != null) tabs.notifyDataSetChanged();
+        }
+    }
+
+    @Override public void replaceModelPager(int index, MvModelPager pager) {
+        if (adapter != null) {
+            adapter.replaceModelPager(index, pager);
+            if (tabs != null) tabs.notifyDataSetChanged();
+        }
+    }
+
     @Override public final MvModelPager getModelPager(int index) {
         return getModelPagers() == null ? null : getModelPagers().get(index);
     }
