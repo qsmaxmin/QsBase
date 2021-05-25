@@ -35,4 +35,8 @@ public interface MvIPagerAdapter {
     void removeModelPager(Fragment fragment);
 
     void removeModelPager(int index);
+
+    void replaceModelPager(MvModelPager oldPager, MvModelPager newPager);
+
+    void replaceModelPager(int index, MvModelPager pager);
 }

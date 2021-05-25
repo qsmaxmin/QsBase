@@ -93,6 +93,22 @@ public class MvFragmentPagerAdapter extends FragmentPagerAdapter implements MvIP
         }
     }
 
+    @Override public void replaceModelPager(MvModelPager oldPager, MvModelPager newPager) {
+        int index = mPagerList.indexOf(oldPager);
+        replaceModelPager(index, newPager);
+    }
+
+    @Override public void replaceModelPager(int index, MvModelPager pager) {
+        if (index >= 0 && index < mPagerList.size()) {
+            mIdList.remove(index);
+            mPagerList.remove(index);
+            pageId++;
+            mPagerList.add(index, pager);
+            mIdList.add(index, pageId);
+            notifyDataSetChanged();
+        }
+    }
+
     @Override public List<MvModelPager> getModelPagers() {
         return mPagerList;
     }
