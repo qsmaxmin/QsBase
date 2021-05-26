@@ -12,10 +12,8 @@ import com.qsmaxmin.qsbase.common.utils.StreamUtil;
 
 import java.io.InputStream;
 import java.io.Reader;
-import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
-import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -91,29 +89,22 @@ public class HttpHelper {
         httpInterceptor = QsHelper.getAppInterface().registerGlobalHttpInterceptor();
     }
 
-    public <T> T create(Class<T> clazz) {
-        return create(clazz, System.nanoTime(), null);
-    }
-
-    public <T> T create(Class<T> clazz, Object requestTag) {
-        return create(clazz, requestTag, null);
-    }
-
-    public <T> T create(Class<T> clazz, NetworkErrorReceiver receiver) {
-        return create(clazz, System.nanoTime(), receiver);
-    }
 
     /**
      * 创建http接口代理
      *
-     * @param clazz      interface
-     * @param requestTag 标签，用来取消http请求
-     * @param receiver   用于接收异常
-     * @see #cancelRequest(Object)
+     * @param clazz interface
      */
-    public <T> T create(Class<T> clazz, Object requestTag, NetworkErrorReceiver receiver) {
+    public <T> T create(Class<T> clazz) {
+        return createHttp(clazz);
+    }
+
+    /**
+     * @deprecated
+     */
+    public <T> T create(Class<T> clazz, NetworkErrorReceiver receiver) {
         if (clazz != null && clazz.isInterface()) {
-            HttpHandler handler = new HttpHandler(this, requestTag, receiver);
+            HttpHandler handler = new HttpHandler(receiver);
             return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class<?>[]{clazz}, handler);
         } else {
             if (clazz == null) {
@@ -124,10 +115,21 @@ public class HttpHelper {
         }
     }
 
-    Object startRequest(Method method, Object[] args, Object requestTag) throws Exception {
-        HttpRequest httpRequest = new HttpRequest(method, args, requestTag, gson);
-        Chain chain = new Chain(httpRequest, getHttpClient());
+    public static <T> T createHttp(Class<T> clazz) {
+        if (clazz != null && clazz.isInterface()) {
+            HttpHandler handler = new HttpHandler(null);
+            return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class<?>[]{clazz}, handler);
+        } else {
+            if (clazz == null) {
+                throw new IllegalStateException("class is null...");
+            } else {
+                throw new IllegalStateException("class:" + clazz.getName() + ", is not Interface...");
+            }
+        }
+    }
 
+    Object startRequest(HttpRequest httpRequest) throws Exception {
+        Chain chain = new Chain(httpRequest, getHttpClient());
         Response response;
         if (httpInterceptor != null) {
             response = httpInterceptor.onIntercept(chain);
@@ -137,7 +139,7 @@ public class HttpHelper {
         return createResult(httpRequest, response);
     }
 
-    private Object createResult(HttpRequest request, Response response) throws Exception {
+    Object createResult(HttpRequest request, Response response) throws Exception {
         try {
             if (response == null) {
                 throw new Exception("http error... method:" + request.getMethodName() + ", http response is null !!");
@@ -185,57 +187,24 @@ public class HttpHelper {
 
     public void cancelRequest(Object requestTag) {
         if (client != null && requestTag != null) {
-            synchronized (client.dispatcher()) {
+            try {
                 Dispatcher dispatcher = client.dispatcher();
                 List<Call> queuedCalls = dispatcher.queuedCalls();
-                for (Call call : queuedCalls) {
-                    Request request = call.request();
-                    if (requestTag.equals(request.tag())) {
-                        if (L.isEnable()) {
-                            L.i(TAG, "cancel queued request success... requestTag=" + requestTag + "  url=" + request.url());
-                        }
-                        call.cancel();
-                    }
-                }
+                cancelCallByTag(requestTag, queuedCalls);
 
                 List<Call> runningCalls = dispatcher.runningCalls();
-                for (Call call : runningCalls) {
-                    Request request = call.request();
-                    if (requestTag.equals(request.tag())) {
-                        if (L.isEnable()) {
-                            L.i(TAG, "cancel running request ... requestTag=" + requestTag + "  url=" + call.request().url());
-                        }
-                        call.cancel();
-                    }
-                }
+                cancelCallByTag(requestTag, runningCalls);
+            } catch (Exception ignored) {
             }
         }
     }
 
-    public void cancelRequest(Collection<Object> list) {
-        if (client != null && list != null) {
-            synchronized (client.dispatcher()) {
-                Dispatcher dispatcher = client.dispatcher();
-                List<Call> queuedCalls = dispatcher.queuedCalls();
-                for (Call call : queuedCalls) {
-                    Request request = call.request();
-                    if (list.contains(request.tag())) {
-                        if (L.isEnable()) {
-                            L.i(TAG, "cancel queued request success... requestTag=" + list + "  url=" + request.url());
-                        }
-                        call.cancel();
-                    }
-                }
-                List<Call> runningCalls = dispatcher.runningCalls();
-                for (Call call : runningCalls) {
-                    Request request = call.request();
-                    if (list.contains(request.tag())) {
-                        if (L.isEnable()) {
-                            L.i(TAG, "cancel running request ... requestTag=" + list + "  url=" + call.request().url());
-                        }
-                        call.cancel();
-                    }
-                }
+    private void cancelCallByTag(Object requestTag, List<Call> list) {
+        for (Call call : list) {
+            Request request = call.request();
+            if (requestTag.equals(request.tag())) {
+                if (L.isEnable()) L.i(TAG, "cancel call by requestTag=" + requestTag + "  url=" + request.url());
+                call.cancel();
             }
         }
     }
@@ -246,8 +215,16 @@ public class HttpHelper {
         }
     }
 
-    public String formatJson(String sourceStr) {
-        if (printFormatter == null) printFormatter = new JsonPrintFormatter();
-        return printFormatter.formatJson(sourceStr);
+    public static String formatJson(String sourceStr) {
+        if (getInstance().printFormatter == null) getInstance().printFormatter = new JsonPrintFormatter();
+        return getInstance().printFormatter.formatJson(sourceStr);
+    }
+
+    Gson getJson() {
+        return gson;
+    }
+
+    HttpInterceptor getHttpInterceptor() {
+        return httpInterceptor;
     }
 }

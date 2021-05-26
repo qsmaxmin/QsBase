@@ -48,7 +48,6 @@ import okhttp3.RequestBody;
 public final class HttpRequest {
     private final Method                  method;
     private final Object[]                args;
-    private final Object                  requestTag;
     private final String                  methodName;
     private final Type                    returnType;
     private final Gson                    gson;
@@ -60,16 +59,15 @@ public final class HttpRequest {
     private       HashMap<String, Object> queryMap;
     private       String                  requestBodyMimeType;
     private       Object                  requestBody;
+    private       Object                  requestTag;
     private       Headers.Builder         headerBuilder;
 
-    HttpRequest(Method method, Object[] args, Object requestTag, Gson gson) throws Exception {
+    HttpRequest(Method method, Object[] args, Gson gson, Type returnType) throws Exception {
         this.method = method;
-        this.args = args;
-        this.requestTag = requestTag;
         this.methodName = method.getName();
-        this.returnType = method.getGenericReturnType();
+        this.args = args;
+        this.returnType = returnType;
         this.gson = gson;
-
         processMethodAnnotation();
         processParamsAnnotation();
     }
@@ -448,5 +446,9 @@ public final class HttpRequest {
         } else {
             return String.valueOf(value);
         }
+    }
+
+    void setRequestTag(Object requestTag) {
+        this.requestTag = requestTag;
     }
 }

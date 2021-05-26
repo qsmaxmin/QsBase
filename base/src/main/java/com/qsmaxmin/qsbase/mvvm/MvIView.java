@@ -7,7 +7,8 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 
 import com.qsmaxmin.annotation.QsNotProguard;
-import com.qsmaxmin.qsbase.common.http.NetworkErrorReceiver;
+import com.qsmaxmin.qsbase.common.http.HttpCall;
+import com.qsmaxmin.qsbase.common.http.HttpCallback;
 import com.qsmaxmin.qsbase.common.viewbind.OnActivityResultListener;
 import com.qsmaxmin.qsbase.common.widget.dialog.QsProgressDialog;
 import com.qsmaxmin.qsbase.plugin.bind.QsIBindBundle;
@@ -18,7 +19,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.LifecycleOwner;
 
 /**
  * @CreateBy qsmaxmin
@@ -135,11 +135,13 @@ public interface MvIView extends IView, QsIBindEvent, QsIBindBundle, QsNotProgua
 
     @NonNull <T> T createHttpRequest(Class<T> clazz);
 
-    @NonNull <T> T createHttpRequest(Class<T> clazz, Object tag);
+    <D> D execute(@NonNull HttpCall<D> call) throws Exception;
 
-    @NonNull <T> T createHttpRequest(Class<T> clazz, NetworkErrorReceiver receiver);
+    @Nullable <D> D executeSafely(@NonNull HttpCall<D> call);
 
-    @NonNull <T> T createHttpRequest(Class<T> clazz, Object requestTag, NetworkErrorReceiver receiver);
+    <D> void enqueue(@NonNull HttpCall<D> call, @NonNull HttpCallback<D> callback);
+
+    void cancelHttpRequest(Object requestTag);
 
     @NonNull QsProgressDialog getLoadingDialog();
 

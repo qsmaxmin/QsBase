@@ -21,6 +21,7 @@ import com.qsmaxmin.qsbase.plugin.permission.PermissionHelper;
 import com.qsmaxmin.qsbase.plugin.threadpoll.QsThreadPollHelper;
 
 import java.io.Closeable;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
@@ -291,8 +292,8 @@ public class QsHelper {
         StreamUtil.close(closeable);
     }
 
-    public static void copyStream(InputStream is, OutputStream os){
-        StreamUtil.copyStream(is,os);
+    public static void copyStream(InputStream is, OutputStream os) throws IOException {
+        StreamUtil.copyStream(is, os);
     }
 
     /**

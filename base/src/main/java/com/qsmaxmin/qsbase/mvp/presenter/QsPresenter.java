@@ -4,7 +4,8 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 
 import com.qsmaxmin.annotation.QsNotProguard;
-import com.qsmaxmin.qsbase.common.exception.QsException;
+import com.qsmaxmin.qsbase.common.http.HttpCall;
+import com.qsmaxmin.qsbase.common.http.HttpCallback;
 import com.qsmaxmin.qsbase.common.http.HttpHelper;
 import com.qsmaxmin.qsbase.common.http.NetworkErrorReceiver;
 import com.qsmaxmin.qsbase.common.log.L;
@@ -15,12 +16,11 @@ import com.qsmaxmin.qsbase.common.widget.toast.QsToast;
 import com.qsmaxmin.qsbase.mvvm.MvIPullToRefreshView;
 import com.qsmaxmin.qsbase.mvvm.MvIView;
 
-import java.util.HashSet;
-
 import androidx.annotation.ColorRes;
 import androidx.annotation.DimenRes;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.Lifecycle;
@@ -33,8 +33,8 @@ import androidx.lifecycle.LifecycleOwner;
  * @Description base presenter
  */
 public class QsPresenter<V extends MvIView> implements NetworkErrorReceiver, QsNotProguard, LifecycleEventObserver {
-    private final HashSet<Object> tagList = new HashSet<>();
-    private       V               vLayer;
+    private V      vLayer;
+    private Object requestTag;
 
     /**
      * 该方法由QsTransform唤起，不可修改
@@ -113,51 +113,47 @@ public class QsPresenter<V extends MvIView> implements NetworkErrorReceiver, QsN
 
     /**
      * 发起http请求
+     *
+     * @see #createHttpRequest2(Class) 使用该api创建Http接口代理对象
+     * @see #executeSafely(HttpCall)  使用该api同步请求网络
+     * @see #execute(HttpCall) 使用该api同步请求网络
+     * @see #enqueue(HttpCall, HttpCallback)  使用该api异步请求网络
+     * @deprecated
      */
     @NonNull protected final <T> T createHttpRequest(Class<T> clazz) {
-        return createHttpRequest(clazz, System.nanoTime());
+        return HttpHelper.getInstance().create(clazz, this);
     }
 
-    @NonNull protected final <T> T createHttpRequest(Class<T> clazz, Object requestTag) {
-        synchronized (tagList) {
-            if (!tagList.contains(requestTag)) {
-                tagList.add(requestTag);
-            } else {
-                L.e(initTag(), "createHttpRequest Repeated tag:" + requestTag);
-            }
-        }
-        return HttpHelper.getInstance().create(clazz, requestTag, this);
+    @NonNull protected final <T> T createHttpRequest2(Class<T> clazz) {
+        return HttpHelper.getInstance().create(clazz);
+    }
+
+    protected final <D> D execute(@NonNull HttpCall<D> call) throws Exception {
+        if (requestTag == null) requestTag = new Object();
+        return call.execute(requestTag);
+    }
+
+    @Nullable protected final <D> D executeSafely(@NonNull HttpCall<D> call) {
+        if (requestTag == null) requestTag = new Object();
+        return call.executeSafely(requestTag);
+    }
+
+    protected final <D> void enqueue(@NonNull HttpCall<D> call, @NonNull HttpCallback<D> callback) {
+        if (requestTag == null) requestTag = new Object();
+        call.enqueue(requestTag, callback);
     }
 
     /**
      * 取消由当前presenter发起的http请求
      */
-    protected final void cancelAllHttpRequest() {
-        synchronized (tagList) {
-            for (Object tag : tagList) {
-                try {
-                    QsHelper.getHttpHelper().cancelRequest(tag);
-                } catch (Exception e) {
-                    L.e(initTag(), "cancel http request failed :" + e.getMessage());
-                }
-            }
-            tagList.clear();
+    protected final void cancelHttpRequest(Object requestTag) {
+        if (requestTag != null) {
+            QsHelper.getHttpHelper().cancelRequest(requestTag);
         }
     }
 
-    protected final void cancelHttpRequest(Object requestTag) {
-        synchronized (tagList) {
-            if (tagList.contains(requestTag)) {
-                tagList.remove(requestTag);
-                try {
-                    QsHelper.getHttpHelper().cancelRequest(requestTag);
-                } catch (Exception e) {
-                    L.e(initTag(), "cancel http request failed :" + e.getMessage());
-                }
-            } else {
-                L.i(initTag(), "The current HTTP request has been cancelled! requestTag:" + requestTag);
-            }
-        }
+    private void cancelAllHttpRequest() {
+        cancelHttpRequest(requestTag);
     }
 
     public boolean isSuccess(QsIModel baseModel) {
@@ -197,8 +193,8 @@ public class QsPresenter<V extends MvIView> implements NetworkErrorReceiver, QsN
     /**
      * 当前Presenter请求网络出错时，都会回调该方法
      */
-    @Override public void methodError(@NonNull QsException e) {
-        if (L.isEnable()) L.e(initTag(), "methodError..." + e.getMessage());
+    @Override public void methodError(@NonNull Throwable t) {
+        if (L.isEnable()) L.e(initTag(), "methodError..." + t.getMessage());
         resetViewState();
     }
 

@@ -13,8 +13,9 @@ import android.widget.ScrollView;
 import android.widget.ViewAnimator;
 
 import com.qsmaxmin.qsbase.R;
+import com.qsmaxmin.qsbase.common.http.HttpCall;
+import com.qsmaxmin.qsbase.common.http.HttpCallback;
 import com.qsmaxmin.qsbase.common.http.HttpHelper;
-import com.qsmaxmin.qsbase.common.http.NetworkErrorReceiver;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.common.utils.ViewHelper;
@@ -29,7 +30,6 @@ import com.qsmaxmin.qsbase.common.widget.sliding.SlidingListenerAdapter;
 import com.qsmaxmin.qsbase.plugin.permission.PermissionHelper;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 import androidx.annotation.CallSuper;
@@ -53,10 +53,10 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
     private   List<OnActivityResultListener> resultListenerList;
     private   OnKeyDownListener              onKeyDownListener;
     private   View                           rootView;
-    private   HashSet<Object>                requestTags;
     private   boolean                        isViewCreated;
     private   ISlidingViewGroup              slidingView;
     private   OnTouchListener                touchListener;
+    private   Object                         requestTag;
 
     @CallSuper @Override public void bindBundleByQsPlugin(Bundle bundle) {
     }
@@ -630,39 +630,32 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
     }
 
     @Override @NonNull public final <T> T createHttpRequest(Class<T> clazz) {
-        return createHttpRequest(clazz, System.nanoTime(), null);
+        return HttpHelper.createHttp(clazz);
     }
 
-    @Override @NonNull public final <T> T createHttpRequest(Class<T> clazz, Object tag) {
-        return createHttpRequest(clazz, tag, null);
+    @Override public final <D> D execute(@NonNull HttpCall<D> call) throws Exception {
+        if (requestTag == null) requestTag = new Object();
+        return call.execute(requestTag);
     }
 
-    @Override @NonNull public final <T> T createHttpRequest(Class<T> clazz, NetworkErrorReceiver receiver) {
-        return createHttpRequest(clazz, System.nanoTime(), receiver);
+    @Override @Nullable public final <D> D executeSafely(@NonNull HttpCall<D> call) {
+        if (requestTag == null) requestTag = new Object();
+        return call.executeSafely(requestTag);
     }
 
-    @Override @NonNull public final <T> T createHttpRequest(Class<T> clazz, Object requestTag, NetworkErrorReceiver receiver) {
-        synchronized (this) {
-            if (requestTags == null) requestTags = new HashSet<>();
-            if (!requestTags.contains(requestTag)) {
-                requestTags.add(requestTag);
-            } else {
-                L.e(initTag(), "createHttpRequest Repeated tag:" + requestTag);
-            }
+    @Override public final <D> void enqueue(@NonNull HttpCall<D> call, @NonNull HttpCallback<D> callback) {
+        if (requestTag == null) requestTag = new Object();
+        call.enqueue(requestTag, callback);
+    }
+
+    @Override public final void cancelHttpRequest(Object requestTag) {
+        if (requestTag != null) {
+            QsHelper.getHttpHelper().cancelRequest(requestTag);
         }
-        return HttpHelper.getInstance().create(clazz, requestTag, receiver);
     }
 
-    /**
-     * 取消由当前Activity发起的http请求
-     */
-    protected final void cancelAllHttpRequest() {
-        if (requestTags != null) {
-            synchronized (this) {
-                QsHelper.getHttpHelper().cancelRequest(requestTags);
-                requestTags.clear();
-            }
-        }
+    private void cancelAllHttpRequest() {
+        cancelHttpRequest(requestTag);
     }
 
     @Override public final boolean isViewDestroyed() {
