@@ -125,7 +125,7 @@ public class QsPresenter<V extends MvIView> implements NetworkErrorReceiver, QsN
     }
 
     @NonNull protected final <T> T createHttpRequest2(Class<T> clazz) {
-        return HttpHelper.getInstance().create(clazz);
+        return HttpHelper.createHttp(clazz);
     }
 
     protected final <D> D execute(@NonNull HttpCall<D> call) throws Exception {
