@@ -57,7 +57,7 @@ public class QsPresenter<V extends MvIView> implements NetworkErrorReceiver, QsN
     }
 
     @Override public final void onStateChanged(@NonNull LifecycleOwner source, @NonNull Lifecycle.Event event) {
-        if (L.isEnable()) L.i(initTag(), "onStateChanged.........." + source.getLifecycle().getCurrentState().name() + ", " + event.name());
+        if (L.isEnable()) L.i(initTag(), "onStateChanged..........Event:" + event.name());
         switch (event) {
             case ON_CREATE:
                 onCreate();
