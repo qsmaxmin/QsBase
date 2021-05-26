@@ -12,9 +12,12 @@ import java.lang.reflect.WildcardType;
 
 
 public class HttpHandler implements InvocationHandler {
-    private final NetworkErrorReceiver errorReceiver;
+    private NetworkErrorReceiver errorReceiver;
 
-    public HttpHandler(NetworkErrorReceiver errorReceiver) {
+    HttpHandler() {
+    }
+
+    HttpHandler(NetworkErrorReceiver errorReceiver) {
         this.errorReceiver = errorReceiver;
     }
 
@@ -33,8 +36,7 @@ public class HttpHandler implements InvocationHandler {
         } else {
             try {
                 if (!QsHelper.isNetworkAvailable()) {
-                    if (errorReceiver != null) errorReceiver.methodError(new Exception("network disable"));
-                    return null;
+                    throw new Exception("network disable");
                 }
                 HttpHelper helper = HttpHelper.getInstance();
                 Gson gson = helper.getJson();

@@ -117,7 +117,7 @@ public class HttpHelper {
 
     public static <T> T createHttp(Class<T> clazz) {
         if (clazz != null && clazz.isInterface()) {
-            HttpHandler handler = new HttpHandler(null);
+            HttpHandler handler = new HttpHandler();
             return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class<?>[]{clazz}, handler);
         } else {
             if (clazz == null) {
