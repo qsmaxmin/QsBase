@@ -7,7 +7,6 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.model.QsModel;
-import com.qsmaxmin.qsbase.common.proxy.HttpHandler;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.common.utils.StreamUtil;
 
@@ -125,7 +124,7 @@ public class HttpHelper {
         }
     }
 
-    public Object startRequest(Method method, Object[] args, Object requestTag) throws Exception {
+    Object startRequest(Method method, Object[] args, Object requestTag) throws Exception {
         HttpRequest httpRequest = new HttpRequest(method, args, requestTag, gson);
         Chain chain = new Chain(httpRequest, getHttpClient());
 

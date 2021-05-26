@@ -1,4 +1,4 @@
-package com.qsmaxmin.qsbase.common.proxy;
+package com.qsmaxmin.qsbase.common.http;
 
 import com.qsmaxmin.qsbase.common.exception.QsException;
 import com.qsmaxmin.qsbase.common.http.HttpHelper;
