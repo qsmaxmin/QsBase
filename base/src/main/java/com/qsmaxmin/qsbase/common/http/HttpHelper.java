@@ -9,7 +9,7 @@ import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.model.QsModel;
 import com.qsmaxmin.qsbase.common.proxy.HttpHandler;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
-import com.qsmaxmin.qsbase.common.utils.StreamCloseUtils;
+import com.qsmaxmin.qsbase.common.utils.StreamUtil;
 
 import java.io.InputStream;
 import java.io.Reader;
@@ -180,7 +180,7 @@ public class HttpHelper {
                 }
             }
         } finally {
-            StreamCloseUtils.close(response);
+            StreamUtil.close(response);
         }
     }
 

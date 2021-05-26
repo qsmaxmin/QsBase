@@ -67,19 +67,6 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
     @CallSuper @Override public void unbindEventByQsPlugin() {
     }
 
-    @CallSuper @Override protected void onDestroy() {
-        super.onDestroy();
-        unbindEventByQsPlugin();
-        cancelAllHttpRequest();
-    }
-
-    @Override protected void onPause() {
-        super.onPause();
-        if (isFinishing()) {
-            isViewCreated = false;
-        }
-    }
-
     @CallSuper @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
         isViewCreated = true;
         ViewHelper.initStatusAndNavigationBar(this);
@@ -90,6 +77,20 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
         onViewCreated(rootView);
         bindEventByQsPlugin();
         initData(savedInstanceState);
+    }
+
+    @Override protected void onPause() {
+        super.onPause();
+        if (isFinishing()) {
+            isViewCreated = false;
+        }
+    }
+
+    @CallSuper @Override protected void onDestroy() {
+        super.onDestroy();
+        isViewCreated = false;
+        unbindEventByQsPlugin();
+        cancelAllHttpRequest();
     }
 
     @Override public final String initTag() {

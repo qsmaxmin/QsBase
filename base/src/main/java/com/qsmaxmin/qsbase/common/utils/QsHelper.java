@@ -21,6 +21,8 @@ import com.qsmaxmin.qsbase.plugin.permission.PermissionHelper;
 import com.qsmaxmin.qsbase.plugin.threadpoll.QsThreadPollHelper;
 
 import java.io.Closeable;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 import androidx.annotation.ColorRes;
 import androidx.annotation.DimenRes;
@@ -286,7 +288,11 @@ public class QsHelper {
     }
 
     public static void closeStream(Closeable closeable) {
-        StreamCloseUtils.close(closeable);
+        StreamUtil.close(closeable);
+    }
+
+    public static void copyStream(InputStream is, OutputStream os){
+        StreamUtil.copyStream(is,os);
     }
 
     /**

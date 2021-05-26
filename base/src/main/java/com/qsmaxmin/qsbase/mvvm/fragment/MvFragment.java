@@ -146,7 +146,6 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = initView(inflater, container);
         onViewCreated(rootView);
-
         return rootView;
     }
 

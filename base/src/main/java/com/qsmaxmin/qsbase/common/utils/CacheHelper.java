@@ -49,7 +49,7 @@ public class CacheHelper {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            StreamCloseUtils.close(fos);
+            StreamUtil.close(fos);
         }
     }
 
@@ -83,7 +83,7 @@ public class CacheHelper {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            StreamCloseUtils.close(fos);
+            StreamUtil.close(fos);
         }
     }
 
@@ -102,8 +102,8 @@ public class CacheHelper {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            StreamCloseUtils.close(fileInputStream);
-            StreamCloseUtils.close(inputStreamReader);
+            StreamUtil.close(fileInputStream);
+            StreamUtil.close(inputStreamReader);
         }
         return null;
     }
@@ -126,9 +126,9 @@ public class CacheHelper {
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            StreamCloseUtils.close(fileInputStream);
-            StreamCloseUtils.close(inputStreamReader);
-            StreamCloseUtils.close(bufferedReader);
+            StreamUtil.close(fileInputStream);
+            StreamUtil.close(inputStreamReader);
+            StreamUtil.close(bufferedReader);
         }
         return null;
     }
