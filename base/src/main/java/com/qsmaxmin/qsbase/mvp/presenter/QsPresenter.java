@@ -192,6 +192,10 @@ public class QsPresenter<V extends MvIView> implements NetworkErrorReceiver, QsN
 
     /**
      * 当前Presenter请求网络出错时，都会回调该方法
+     *
+     * @see #createHttpRequest(Class) 该方法创建的Htt接口才会回调该方法，不再推荐使用
+     * @see #createHttpRequest2(Class) 不再回调该方法
+     * @deprecated
      */
     @Override public void methodError(@NonNull Throwable t) {
         if (L.isEnable()) L.e(initTag(), "methodError..." + t.getMessage());

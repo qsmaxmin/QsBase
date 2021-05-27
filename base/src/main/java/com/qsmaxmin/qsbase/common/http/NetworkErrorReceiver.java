@@ -5,7 +5,8 @@ import androidx.annotation.NonNull;
 /**
  * @CreateBy qsmaxmin
  * @Date 2020/9/16 18:09
- * @Description for network request
+ * @Description for network
+ * @deprecated
  */
 public interface NetworkErrorReceiver {
     void methodError(@NonNull Throwable t);
