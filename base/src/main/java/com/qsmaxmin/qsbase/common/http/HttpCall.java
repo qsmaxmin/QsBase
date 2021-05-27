@@ -2,7 +2,6 @@ package com.qsmaxmin.qsbase.common.http;
 
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.plugin.threadpoll.QsThreadPollHelper;
-import com.qsmaxmin.qsbase.plugin.threadpoll.SafeRunnable;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,13 +23,25 @@ public class HttpCall<D> {
     }
 
     public void enqueue(final Object requestTag, @NonNull final HttpCallback<D> callback) {
-        QsThreadPollHelper.runOnHttpThread(new SafeRunnable() {
-            @Override public void safeRun() {
+        QsThreadPollHelper.runOnHttpThread(new Runnable() {
+            @Override public void run() {
                 try {
-                    D resp = execute(requestTag);
-                    if (callback != null) callback.onSuccess(resp);
-                } catch (Throwable t) {
-                    if (callback != null) callback.onFailed(t);
+                    final D resp = execute(requestTag);
+                    if (callback != null) {
+                        QsThreadPollHelper.post(new Runnable() {
+                            @Override public void run() {
+                                callback.onSuccess(resp);
+                            }
+                        });
+                    }
+                } catch (final Throwable t) {
+                    if (callback != null) {
+                        QsThreadPollHelper.post(new Runnable() {
+                            @Override public void run() {
+                                callback.onFailed(t);
+                            }
+                        });
+                    }
                     if (L.isEnable()) L.e("HttpCall", t);
                 }
             }
