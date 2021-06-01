@@ -18,7 +18,7 @@
         android:layout_height="match_parent">
 
         <ViewAnimator
-            android:id="@id/qs_view_animator"
+            android:id="@id/qs_layout_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
     </FrameLayout>

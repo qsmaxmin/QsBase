@@ -191,7 +191,7 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
         }
 
         if (isOpenViewState()) {
-            mViewAnimator = rootView.findViewById(R.id.qs_view_animator);
+            mViewAnimator = rootView.findViewById(R.id.qs_layout_container);
             ViewHelper.initViewAnimator(mViewAnimator, this);
 
             View loadingView = onCreateLoadingView(inflater, mViewAnimator);
@@ -214,9 +214,10 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
             }
 
         } else {
-            ViewGroup customViewContainer = rootView.findViewById(R.id.qs_default_container_for_activity);
+            ViewGroup customViewContainer = rootView.findViewById(R.id.qs_layout_container);
             if (customViewContainer == null) {
                 customViewContainer = (ViewGroup) rootView;
+                L.e(initTag(), "initView...Layout with id[R.id.qs_layout_container] were not found, so attach to root view!");
             }
             View contentView = onCreateContentView(inflater, customViewContainer);
             if (contentView != null) {

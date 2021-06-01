@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <item name="qs_layout_container" type="id" />
     <item name="qs_default_container_for_activity" type="id" />
     <item name="qs_default_container_for_fragment" type="id" />
 
     <item name="qs_actionbar_parent" type="id" />
-    <item name="qs_view_animator" type="id" />
 
     <item name="qs_back_in_default_view" type="id" />
     <item name="qs_reload_in_default_view" type="id" />

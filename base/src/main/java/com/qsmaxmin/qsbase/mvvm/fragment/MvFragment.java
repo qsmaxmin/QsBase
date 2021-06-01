@@ -190,7 +190,7 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
         }
 
         if (isOpenViewState()) {
-            mViewAnimator = rootView.findViewById(R.id.qs_view_animator);
+            mViewAnimator = rootView.findViewById(R.id.qs_layout_container);
             ViewHelper.initViewAnimator(mViewAnimator, this);
 
             View loadingView = onCreateLoadingView(inflater, mViewAnimator);
@@ -213,9 +213,10 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
             }
 
         } else {
-            ViewGroup customViewContainer = rootView.findViewById(R.id.qs_default_container_for_fragment);
+            ViewGroup customViewContainer = rootView.findViewById(R.id.qs_layout_container);
             if (customViewContainer == null) {
                 customViewContainer = (ViewGroup) rootView;
+                L.e(initTag(), "initView...Layout with id[R.id.qs_layout_container] were not found, so attach to root view!");
             }
             View contentView = onCreateContentView(inflater, customViewContainer);
             if (contentView != null) {

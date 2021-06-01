@@ -4,16 +4,25 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <!--actionbar-->
-    <FrameLayout
-        android:id="@id/qs_actionbar_parent"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <!--actionbar-->
+        <FrameLayout
+            android:id="@id/qs_actionbar_parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
-    <!--内容布局-->
+        <!--内容布局-->
+        <FrameLayout
+            android:id="@id/qs_layout_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+
     <FrameLayout
         android:id="@id/qs_default_container_for_activity"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-
 </FrameLayout>
