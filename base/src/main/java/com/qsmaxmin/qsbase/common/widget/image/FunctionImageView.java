@@ -21,12 +21,11 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 import androidx.annotation.IntDef;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageView;
-
-import static java.lang.annotation.RetentionPolicy.CLASS;
 
 /**
  * @CreateBy qsmaxmin
@@ -267,7 +266,7 @@ public class FunctionImageView extends AppCompatImageView {
         data.draw(canvas);
     }
 
-    @Retention(CLASS)
+    @Retention(RetentionPolicy.SOURCE)
     @IntDef({FUNCTION_PREVIEW, FUNCTION_CROP})
     private @interface Function {
     }
