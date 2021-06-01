@@ -58,10 +58,10 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
     }
 
     @Override public int rootViewLayoutId() {
-        if (isOpenViewState()) {
-            return R.layout.qs_fragment_animator;
+        if (isActionbarAtTheTopLevel()) {
+            return isOpenViewState() ? R.layout.qs_fragment_animator : R.layout.qs_fragment;
         } else {
-            return R.layout.qs_fragment;
+            return isOpenViewState() ? R.layout.qs_fragment_animator_full_fragment : R.layout.qs_fragment_full_fragment;
         }
     }
 
@@ -682,5 +682,15 @@ public abstract class MvFragment extends Fragment implements MvIFragment, Scroll
 
     @Override public final boolean isViewDestroyed() {
         return !isViewCreated;
+    }
+
+    /**
+     * actionbar是否在最顶层
+     *
+     * @return true会遮挡fragment
+     * @see #commitFragment(Fragment)
+     */
+    @Override public boolean isActionbarAtTheTopLevel() {
+        return true;
     }
 }

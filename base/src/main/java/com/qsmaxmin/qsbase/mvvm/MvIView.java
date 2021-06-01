@@ -146,4 +146,6 @@ public interface MvIView extends IView, QsIBindEvent, QsIBindBundle, QsNotProgua
     @NonNull QsProgressDialog getLoadingDialog();
 
     Lifecycle getLifecycle();
+
+    boolean isActionbarAtTheTopLevel();
 }

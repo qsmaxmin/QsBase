@@ -98,10 +98,18 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
     }
 
     @Override public int rootViewLayoutId() {
-        if (isOpenSlidingToClose()) {
-            return isOpenViewState() ? R.layout.qs_activity_sliding_animator : R.layout.qs_activity_sliding;
+        if (isActionbarAtTheTopLevel()) {
+            if (isOpenSlidingToClose()) {
+                return isOpenViewState() ? R.layout.qs_activity_sliding_animator : R.layout.qs_activity_sliding;
+            } else {
+                return isOpenViewState() ? R.layout.qs_activity_animator : R.layout.qs_activity;
+            }
         } else {
-            return isOpenViewState() ? R.layout.qs_activity_animator : R.layout.qs_activity;
+            if (isOpenSlidingToClose()) {
+                return isOpenViewState() ? R.layout.qs_activity_sliding_animator_full_fragment : R.layout.qs_activity_sliding_full_fragment;
+            } else {
+                return isOpenViewState() ? R.layout.qs_activity_animator_full_fragment : R.layout.qs_activity_full_fragment;
+            }
         }
     }
 
@@ -700,5 +708,15 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
 
     @Override public final void setOnTouchListener(OnTouchListener listener) {
         this.touchListener = listener;
+    }
+
+    /**
+     * actionbar是否在最顶层
+     *
+     * @return true会遮挡fragment
+     * @see #commitFragment(Fragment)
+     */
+    @Override public boolean isActionbarAtTheTopLevel() {
+        return true;
     }
 }
