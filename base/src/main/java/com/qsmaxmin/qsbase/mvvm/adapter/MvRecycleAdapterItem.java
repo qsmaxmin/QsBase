@@ -51,7 +51,23 @@ public abstract class MvRecycleAdapterItem<D> implements IView {
 
     final void onScrollStateChangedInner(int scrollState) {
         this.scrollState = scrollState;
+        if (isRecyclerViewIdle()) {
+            onRecyclerViewIdle();
+        } else if (isRecyclerViewDragging()) {
+            onRecyclerViewDragging();
+        } else if (isRecyclerViewSettling()) {
+            onRecyclerViewSetting();
+        }
         onScrollStateChanged(scrollState);
+    }
+
+    protected void onRecyclerViewSetting() {
+    }
+
+    protected void onRecyclerViewDragging() {
+    }
+
+    protected void onRecyclerViewIdle() {
     }
 
     protected void onScrollStateChanged(int scrollState) {

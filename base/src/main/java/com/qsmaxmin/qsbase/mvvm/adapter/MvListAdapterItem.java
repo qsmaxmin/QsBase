@@ -60,7 +60,23 @@ public abstract class MvListAdapterItem<D> implements IView {
 
     final void onScrollStateChangedInner(int scrollState) {
         this.scrollState = scrollState;
+        if (isListViewIdle()) {
+            onListViewIdle();
+        } else if (isListViewFling()) {
+            onListViewFling();
+        } else if (isListViewTouchScroll()) {
+            onListViewTouchScroll();
+        }
         onScrollStateChanged(scrollState);
+    }
+
+    protected void onListViewTouchScroll() {
+    }
+
+    protected void onListViewFling() {
+    }
+
+    protected void onListViewIdle() {
     }
 
     protected void onScrollStateChanged(int scrollState) {
