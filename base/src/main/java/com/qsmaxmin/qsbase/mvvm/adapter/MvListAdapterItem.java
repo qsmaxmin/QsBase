@@ -27,6 +27,7 @@ public abstract class MvListAdapterItem<D> implements IView {
     private int            position;
     private int            totalCount;
     private int            scrollState;
+    private boolean        hasBindDataIdle;
 
     protected String initTag() {
         return L.isEnable() ? getClass().getSimpleName() : "MvListAdapterItem";
@@ -54,29 +55,33 @@ public abstract class MvListAdapterItem<D> implements IView {
         this.position = position;
         this.totalCount = count;
         bindData(data, position, count);
+        if (isListViewIdle()) {
+            hasBindDataIdle = true;
+            bindDataIdle(data, position, totalCount);
+        } else {
+            hasBindDataIdle = false;
+        }
     }
 
     public abstract void bindData(D data, int position, int totalCount);
 
+    /**
+     * 当列表滚动停止时触发，每个适配器项仅触发一次
+     * 常见的做法如：
+     * 1，在{@link #bindData(Object, int, int)} 里将ImageView控件的纹理置空
+     * 2，重写该方法，在该方法里给ImageView设置图片
+     * 这么做的好处是能够带来更流畅的滑动体验
+     */
+    public void bindDataIdle(D data, int position, int totalCount) {
+    }
+
     final void onScrollStateChangedInner(int scrollState) {
         this.scrollState = scrollState;
-        if (isListViewIdle()) {
-            onListViewIdle();
-        } else if (isListViewFling()) {
-            onListViewFling();
-        } else if (isListViewTouchScroll()) {
-            onListViewTouchScroll();
+        if (!hasBindDataIdle && isListViewIdle()) {
+            hasBindDataIdle = true;
+            bindDataIdle(data, position, totalCount);
         }
         onScrollStateChanged(scrollState);
-    }
-
-    protected void onListViewTouchScroll() {
-    }
-
-    protected void onListViewFling() {
-    }
-
-    protected void onListViewIdle() {
     }
 
     protected void onScrollStateChanged(int scrollState) {
