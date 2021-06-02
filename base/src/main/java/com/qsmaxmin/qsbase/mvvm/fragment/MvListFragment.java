@@ -27,11 +27,11 @@ import androidx.annotation.Nullable;
  * @Description
  */
 public abstract class MvListFragment<D> extends MvFragment implements MvIListView<D> {
-    protected final List<D>     mList = new ArrayList<>();
-    private         ListView    mListView;
-    private         BaseAdapter mListAdapter;
-    private         View        headerView;
-    private         View        footerView;
+    protected final List<D>          mList = new ArrayList<>();
+    private         ListView         mListView;
+    private         MvListAdapter<D> mListAdapter;
+    private         View             headerView;
+    private         View             footerView;
 
     @Override public int layoutId() {
         return R.layout.qs_listview;
@@ -276,6 +276,7 @@ public abstract class MvListFragment<D> extends MvFragment implements MvIListVie
     }
 
     @Override public void onScrollStateChanged(AbsListView view, int scrollState) {
+        if (mListAdapter != null) mListAdapter.onScrollStateChanged(view, scrollState);
     }
 
     @Override public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {

@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.utils.ViewHelper;
@@ -22,6 +23,10 @@ import androidx.fragment.app.FragmentActivity;
  */
 public abstract class MvListAdapterItem<D> implements IView {
     private MvIListView<D> viewLayer;
+    private D              data;
+    private int            position;
+    private int            totalCount;
+    private int            scrollState;
 
     protected String initTag() {
         return L.isEnable() ? getClass().getSimpleName() : "MvListAdapterItem";
@@ -44,7 +49,50 @@ public abstract class MvListAdapterItem<D> implements IView {
 
     public abstract View onCreateItemView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent);
 
-    public abstract void bindData(D data, int position, int count);
+    final void bindDataInner(D data, int position, int count) {
+        this.data = data;
+        this.position = position;
+        this.totalCount = count;
+        bindData(data, position, count);
+    }
+
+    public abstract void bindData(D data, int position, int totalCount);
+
+    final void onScrollStateChangedInner(int scrollState) {
+        this.scrollState = scrollState;
+        onScrollStateChanged(scrollState);
+    }
+
+    protected void onScrollStateChanged(int scrollState) {
+    }
+
+    public final int getPosition() {
+        return position;
+    }
+
+    public final int getTotalCount() {
+        return totalCount;
+    }
+
+    public final D getData() {
+        return data;
+    }
+
+    public final int getScrollState() {
+        return scrollState;
+    }
+
+    public final boolean isListViewIdle() {
+        return scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE;
+    }
+
+    public final boolean isListViewFling() {
+        return scrollState == AbsListView.OnScrollListener.SCROLL_STATE_FLING;
+    }
+
+    public final boolean isListViewTouchScroll() {
+        return scrollState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL;
+    }
 
     public final void setViewLayer(MvIListView<D> viewLayer) {
         this.viewLayer = viewLayer;

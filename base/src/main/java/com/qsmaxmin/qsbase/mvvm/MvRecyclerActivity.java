@@ -11,6 +11,7 @@ import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.common.widget.recyclerview.HeaderFooterRecyclerView;
 import com.qsmaxmin.qsbase.common.widget.recyclerview.QsItemDecoration;
 import com.qsmaxmin.qsbase.mvvm.adapter.MvRecycleAdapterItem;
+import com.qsmaxmin.qsbase.mvvm.adapter.MvRecycleViewHolder;
 import com.qsmaxmin.qsbase.mvvm.adapter.MvRecyclerAdapter;
 
 import java.util.ArrayList;
@@ -94,6 +95,15 @@ public abstract class MvRecyclerActivity<D> extends MvActivity implements MvIRec
         }
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                int childCount = recyclerView.getChildCount();
+                for (int i = 0; i < childCount; i++) {
+                    View childView = recyclerView.getChildAt(i);
+                    RecyclerView.ViewHolder holder = recyclerView.getChildViewHolder(childView);
+                    if (holder instanceof MvRecycleViewHolder) {
+                        ((MvRecycleViewHolder) holder).onScrollStateChanged(newState);
+                    }
+                }
+
                 MvRecyclerActivity.this.onScrollStateChanged(recyclerView, newState);
             }
 

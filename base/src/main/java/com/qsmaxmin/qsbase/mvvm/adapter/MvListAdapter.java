@@ -3,6 +3,7 @@ package com.qsmaxmin.qsbase.mvvm.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 
 import com.qsmaxmin.qsbase.mvvm.MvIListView;
@@ -62,9 +63,22 @@ public class MvListAdapter<D> extends BaseAdapter {
         } else {
             item = (MvListAdapterItem) convertView.getTag();
         }
+
         if (item != null) {
-            item.bindData(getItem(position), position, getCount());
+            item.bindDataInner(getItem(position), position, getCount());
         }
         return convertView;
+    }
+
+    public final void onScrollStateChanged(AbsListView view, int scrollState) {
+        int childCount = view.getChildCount();
+        for (int i = 0; i < childCount; i++) {
+            View childView = view.getChildAt(i);
+            Object tag = childView.getTag();
+            if (tag instanceof MvListAdapterItem) {
+                MvListAdapterItem item = (MvListAdapterItem) tag;
+                item.onScrollStateChangedInner(scrollState);
+            }
+        }
     }
 }

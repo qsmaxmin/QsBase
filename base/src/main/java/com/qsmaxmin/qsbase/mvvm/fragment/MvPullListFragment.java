@@ -138,6 +138,7 @@ public abstract class MvPullListFragment<D> extends MvListFragment<D> implements
     }
 
     @Override public void onScrollStateChanged(AbsListView view, int scrollState) {
+        super.onScrollStateChanged(view, scrollState);
         if (onLoadTriggerCondition() == LOAD_WHEN_SCROLL_TO_BOTTOM && scrollState == SCROLL_STATE_IDLE && !canListScrollUp()) {
             loadingMoreData();
         }

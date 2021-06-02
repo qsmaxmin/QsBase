@@ -14,6 +14,7 @@ import com.qsmaxmin.qsbase.mvvm.MvIRecyclerView;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.fragment.app.FragmentActivity;
+import androidx.recyclerview.widget.RecyclerView;
 
 
 /**
@@ -24,6 +25,10 @@ import androidx.fragment.app.FragmentActivity;
 public abstract class MvRecycleAdapterItem<D> implements IView {
     private final View               itemView;
     private       MvIRecyclerView<D> viewLayer;
+    private       D                  data;
+    private       int                position;
+    private       int                totalCount;
+    private       int                scrollState;
 
     public MvRecycleAdapterItem(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
         itemView = onCreateItemView(inflater, parent);
@@ -35,7 +40,50 @@ public abstract class MvRecycleAdapterItem<D> implements IView {
 
     protected abstract View onCreateItemView(LayoutInflater inflater, ViewGroup parent);
 
+    final void onBindItemDataInner(D data, int position, int totalCount) {
+        this.data = data;
+        this.position = position;
+        this.totalCount = totalCount;
+        onBindItemData(data, position, totalCount);
+    }
+
     protected abstract void onBindItemData(D data, int position, int totalCount);
+
+    final void onScrollStateChangedInner(int scrollState) {
+        this.scrollState = scrollState;
+        onScrollStateChanged(scrollState);
+    }
+
+    protected void onScrollStateChanged(int scrollState) {
+    }
+
+    public final D getData() {
+        return data;
+    }
+
+    public final int getPosition() {
+        return position;
+    }
+
+    public final int getTotalCount() {
+        return totalCount;
+    }
+
+    public final int getScrollState() {
+        return scrollState;
+    }
+
+    public final boolean isRecyclerViewIdle() {
+        return scrollState == RecyclerView.SCROLL_STATE_IDLE;
+    }
+
+    public final boolean isRecyclerViewDragging() {
+        return scrollState == RecyclerView.SCROLL_STATE_DRAGGING;
+    }
+
+    public final boolean isRecyclerViewSettling() {
+        return scrollState == RecyclerView.SCROLL_STATE_SETTLING;
+    }
 
     public final View getItemView() {
         return itemView;

@@ -18,10 +18,10 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 public class HeaderFooterRecyclerAdapter extends RecyclerView.Adapter {
     private final static int                              HEADER_VIEW_TYPE = 1 << 31;
     private final static int                              FOOTER_VIEW_TYPE = 1 << 30;
-    private              List<View>                       headerView;
-    private              List<View>                       footerView;
-    private              RecyclerView.Adapter             innerAdapter;
-    private              RecyclerView.AdapterDataObserver dataObserver;
+    private final        List<View>                       headerView;
+    private final        List<View>                       footerView;
+    private final        RecyclerView.Adapter             innerAdapter;
+    private final        RecyclerView.AdapterDataObserver dataObserver;
 
     public HeaderFooterRecyclerAdapter(RecyclerView.Adapter innerAdapter, List<View> headerViews, List<View> footerViews) {
         this.innerAdapter = innerAdapter;

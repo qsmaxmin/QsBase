@@ -11,8 +11,8 @@ import androidx.recyclerview.widget.RecyclerView;
  * @Description RecyclerView holder
  */
 public class MvRecycleViewHolder<D> extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
-    private final MvRecycleAdapterItem<D> mAdapterItem;
-    private       int                     mPosition;
+    private final MvRecycleAdapterItem<D>             mAdapterItem;
+    private       int                                 mPosition;
     public        int                                 mTotalCount;
     private       AdapterView.OnItemClickListener     mClickListener;
     private       AdapterView.OnItemLongClickListener mLongClickListener;
@@ -24,18 +24,22 @@ public class MvRecycleViewHolder<D> extends RecyclerView.ViewHolder implements V
         adapterItem.getItemView().setOnLongClickListener(this);
     }
 
-    public void onBindData(D t, int position, int totalCount) {
+    public final void onBindData(D d, int position, int totalCount) {
         this.mPosition = position;
         this.mTotalCount = totalCount;
-        mAdapterItem.onBindItemData(t, position, totalCount);
+        this.mAdapterItem.onBindItemDataInner(d, position, totalCount);
     }
 
-    @Override public void onClick(View v) {
+    public final void onScrollStateChanged(int scrollState) {
+        this.mAdapterItem.onScrollStateChangedInner(scrollState);
+    }
+
+    @Override public final void onClick(View v) {
         if (mClickListener != null) mClickListener.onItemClick(null, v, mPosition, -1);
     }
 
-    @Override public boolean onLongClick(View v) {
-        return mLongClickListener.onItemLongClick(null, v, mPosition, -1);
+    @Override public final boolean onLongClick(View v) {
+        return mLongClickListener != null && mLongClickListener.onItemLongClick(null, v, mPosition, -1);
     }
 
     public void setOnItemClickListener(AdapterView.OnItemClickListener onItemClickListener) {
