@@ -81,7 +81,6 @@
     <declare-styleable name="PercentLayout_Layout">
         <attr name="layout_widthPercent" format="string" />
         <attr name="layout_heightPercent" format="string" />
-        <attr name="layout_percentDimensionRatio" format="string" />
     </declare-styleable>
 
     <declare-styleable name="HeaderScrollView">

@@ -25,112 +25,103 @@ class LayoutInfo {
     private static final int    BASE_HEIGHT        = 2;
     private static final int    BASE_SCREEN_WIDTH  = 3;
     private static final int    BASE_SCREEN_HEIGHT = 4;
-    private              float  dimensionRatio     = -1;
     private              int    screenWidth;
     private              int    screenHeight;
     private              int    horMode;
     private              int    verticalMode;
 
-    final ViewGroup.MarginLayoutParams preservedParams;
+    int   preservedParamsWidth;
+    int   preservedParamsHeight;
     float widthPercent  = -1;
     float heightPercent = -1;
 
-    LayoutInfo(String widthPercentStr, String heightPercentStr, String dimensionRatioStr) {
-        preservedParams = new ViewGroup.MarginLayoutParams(0, 0);
-
-        if (!TextUtils.isEmpty(dimensionRatioStr)) {
-            int index = dimensionRatioStr.indexOf(':');
-            if (index == -1) {
-                throw new IllegalArgumentException("the value of layout_percentDimensionRatio=" + dimensionRatioStr + " invalid!, such as: '50:40'");
-            }
-            try {
-                String horValueStr = dimensionRatioStr.substring(0, index);
-                String verValueStr = dimensionRatioStr.substring(index + 1);
-                float horPercentRatio = Float.parseFloat(horValueStr);
-                float verPercentRatio = Float.parseFloat(verValueStr);
-                dimensionRatio = horPercentRatio / verPercentRatio;
-
-            } catch (Exception e) {
-                throw new IllegalArgumentException("the value of layout_percentDimensionRatio=" + dimensionRatioStr + " invalid!, such as: '50:40'");
-            }
-        }
-
+    LayoutInfo(String widthPercentStr, String heightPercentStr) {
         Pattern pattern = Pattern.compile(REGEX_PERCENT);
         if (!TextUtils.isEmpty(widthPercentStr)) {
-            if (widthPercentStr.endsWith(SW)) {
-                horMode = BASE_SCREEN_WIDTH;
-            } else if (widthPercentStr.endsWith(SH)) {
-                horMode = BASE_SCREEN_HEIGHT;
-            } else if (widthPercentStr.endsWith(PERCENT)) {
-                horMode = BASE_WIDTH;
-            } else if (widthPercentStr.endsWith(W)) {
-                horMode = BASE_WIDTH;
-            } else if (widthPercentStr.endsWith(H)) {
-                horMode = BASE_HEIGHT;
+            int splitIndex = widthPercentStr.indexOf(':');
+            if (splitIndex == -1) {
+                splitIndex = widthPercentStr.indexOf('/');
+            }
+            if (splitIndex == -1) {
+                if (widthPercentStr.endsWith(SW)) {
+                    horMode = BASE_SCREEN_WIDTH;
+                } else if (widthPercentStr.endsWith(SH)) {
+                    horMode = BASE_SCREEN_HEIGHT;
+                } else if (widthPercentStr.endsWith(PERCENT)) {
+                    horMode = BASE_WIDTH;
+                } else if (widthPercentStr.endsWith(W)) {
+                    horMode = BASE_WIDTH;
+                } else if (widthPercentStr.endsWith(H)) {
+                    horMode = BASE_HEIGHT;
+                } else {
+                    throw new IllegalArgumentException("the " + widthPercentStr + " must be endWith [%|w|h|sw|sh]");
+                }
+                Matcher matcher = pattern.matcher(widthPercentStr);
+                if (!matcher.matches()) {
+                    throw new IllegalArgumentException("the value of layout_widthPercent:" + widthPercentStr + " invalid! such as: '80%','80%h'");
+                }
+                String floatVal = matcher.group(1);
+                widthPercent = Float.parseFloat(floatVal) / 100f;
             } else {
-                throw new IllegalArgumentException("the " + widthPercentStr + " must be endWith [%|w|h|sw|sh]");
+                horMode = BASE_HEIGHT;
+                try {
+                    String horValueStr = widthPercentStr.substring(0, splitIndex);
+                    String verValueStr = widthPercentStr.substring(splitIndex + 1);
+                    this.widthPercent = Float.parseFloat(horValueStr) / Float.parseFloat(verValueStr);
+                } catch (Exception e) {
+                    throw new IllegalArgumentException("the value of layout_widthPercent=" + widthPercentStr + " invalid!, such as: '50:40'");
+                }
             }
-            Matcher matcher = pattern.matcher(widthPercentStr);
-            if (!matcher.matches()) {
-                throw new RuntimeException("the value of layout_xxxPercent:" + widthPercentStr + " invalid! such as: '80%','80%h'");
-            }
-            String floatVal = matcher.group(1);
-            widthPercent = Float.parseFloat(floatVal) / 100f;
         }
 
         if (!TextUtils.isEmpty(heightPercentStr)) {
-            if (heightPercentStr.endsWith(SW)) {
-                verticalMode = BASE_SCREEN_WIDTH;
-            } else if (heightPercentStr.endsWith(SH)) {
-                verticalMode = BASE_SCREEN_HEIGHT;
-            } else if (heightPercentStr.endsWith(PERCENT)) {
-                verticalMode = BASE_HEIGHT;
-            } else if (heightPercentStr.endsWith(W)) {
-                verticalMode = BASE_WIDTH;
-            } else if (heightPercentStr.endsWith(H)) {
-                verticalMode = BASE_HEIGHT;
+            int splitIndex = heightPercentStr.indexOf(':');
+            if (splitIndex == -1) {
+                splitIndex = heightPercentStr.indexOf('/');
+            }
+            if (splitIndex == -1) {
+                if (heightPercentStr.endsWith(SW)) {
+                    verticalMode = BASE_SCREEN_WIDTH;
+                } else if (heightPercentStr.endsWith(SH)) {
+                    verticalMode = BASE_SCREEN_HEIGHT;
+                } else if (heightPercentStr.endsWith(PERCENT)) {
+                    verticalMode = BASE_HEIGHT;
+                } else if (heightPercentStr.endsWith(W)) {
+                    verticalMode = BASE_WIDTH;
+                } else if (heightPercentStr.endsWith(H)) {
+                    verticalMode = BASE_HEIGHT;
+                } else {
+                    throw new IllegalArgumentException("the " + heightPercentStr + " must be endWith [%|w|h|sw|sh]");
+                }
+                Matcher matcher = pattern.matcher(heightPercentStr);
+                if (!matcher.matches()) {
+                    throw new IllegalArgumentException("the value of layout_heightPercent:" + heightPercentStr + " invalid! such as: '80%', '80%w'");
+                }
+                String floatVal = matcher.group(1);
+                heightPercent = Float.parseFloat(floatVal) / 100f;
             } else {
-                throw new IllegalArgumentException("the " + heightPercentStr + " must be endWith [%|w|h|sw|sh]");
+                verticalMode = BASE_WIDTH;
+                try {
+                    String horValueStr = heightPercentStr.substring(0, splitIndex);
+                    String verValueStr = heightPercentStr.substring(splitIndex + 1);
+                    this.heightPercent = Float.parseFloat(horValueStr) / Float.parseFloat(verValueStr);
+                } catch (Exception e) {
+                    throw new IllegalArgumentException("the value of layout_heightPercent=" + heightPercentStr + " invalid!, such as: '50:40'");
+                }
             }
-
-            Matcher matcher = pattern.matcher(heightPercentStr);
-            if (!matcher.matches()) {
-                throw new RuntimeException("the value of layout_xxxPercent:" + heightPercentStr + " invalid! such as: '80%', '80%w'");
-            }
-            String floatVal = matcher.group(1);
-            heightPercent = Float.parseFloat(floatVal) / 100f;
         }
     }
 
-    void fillLayoutParams(Context context, ViewGroup.LayoutParams params, int widthHint, int heightHint) {
-        preservedParams.width = params.width;
-        preservedParams.height = params.height;
-
+    void fillLayoutParams(Context context, ViewGroup.LayoutParams params, int parentWidth, int parentHeight) {
+        preservedParamsWidth = params.width;
+        preservedParamsHeight = params.height;
         if (widthPercent != -1) {
-            int base = getBaseByModeAndVal(context, widthHint, heightHint, horMode);
+            int base = getBaseByModeAndVal(context, parentWidth, parentHeight, horMode);
             params.width = (int) (base * widthPercent);
         }
         if (heightPercent != -1) {
-            int base = getBaseByModeAndVal(context, widthHint, heightHint, verticalMode);
+            int base = getBaseByModeAndVal(context, parentWidth, parentHeight, verticalMode);
             params.height = (int) (base * heightPercent);
-        }
-
-        if (dimensionRatio != -1) {
-            boolean widthExactly = params.width == ViewGroup.LayoutParams.MATCH_PARENT || params.width > 0;
-            boolean heightExactly = params.height == ViewGroup.LayoutParams.MATCH_PARENT || params.height > 0;
-            if (widthExactly && !heightExactly) {
-                int childWidth = params.width == ViewGroup.LayoutParams.MATCH_PARENT ? widthHint : params.width;
-                if (childWidth > 0) {
-                    params.width = childWidth;
-                    params.height = (int) (childWidth / dimensionRatio);
-                }
-            } else if (!widthExactly && heightExactly) {
-                int childHeight = params.height == ViewGroup.LayoutParams.MATCH_PARENT ? heightHint : params.height;
-                if (childHeight > 0) {
-                    params.height = childHeight;
-                    params.width = (int) (childHeight * dimensionRatio);
-                }
-            }
         }
     }
 
@@ -139,8 +130,8 @@ class LayoutInfo {
      * this method only makes sense if you previously called
      */
     void restoreLayoutParams(ViewGroup.LayoutParams params) {
-        params.width = preservedParams.width;
-        params.height = preservedParams.height;
+        params.width = preservedParamsWidth;
+        params.height = preservedParamsHeight;
     }
 
     private int getBaseByModeAndVal(Context context, int widthHint, int heightHint, int mode) {

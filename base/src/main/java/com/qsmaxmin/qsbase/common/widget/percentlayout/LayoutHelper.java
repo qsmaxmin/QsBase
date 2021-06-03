@@ -53,11 +53,9 @@ class LayoutHelper {
         TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.PercentLayout_Layout);
         String widthPercentStr = array.getString(R.styleable.PercentLayout_Layout_layout_widthPercent);
         String heightPercentStr = array.getString(R.styleable.PercentLayout_Layout_layout_heightPercent);
-        String dimensionRatioStr = array.getString(R.styleable.PercentLayout_Layout_layout_percentDimensionRatio);
         array.recycle();
-
-        if (!TextUtils.isEmpty(widthPercentStr) || !TextUtils.isEmpty(heightPercentStr) || !TextUtils.isEmpty(dimensionRatioStr)) {
-            return new LayoutInfo(widthPercentStr, heightPercentStr, dimensionRatioStr);
+        if (!TextUtils.isEmpty(widthPercentStr) || !TextUtils.isEmpty(heightPercentStr)) {
+            return new LayoutInfo(widthPercentStr, heightPercentStr);
         }
         return null;
     }
@@ -139,7 +137,7 @@ class LayoutHelper {
         int state = view.getMeasuredWidthAndState() & View.MEASURED_STATE_MASK;
         return state == View.MEASURED_STATE_TOO_SMALL
                 && info.widthPercent >= 0
-                && info.preservedParams.width == ViewGroup.LayoutParams.WRAP_CONTENT;
+                && info.preservedParamsWidth == ViewGroup.LayoutParams.WRAP_CONTENT;
     }
 
     private boolean shouldHandleMeasuredHeightTooSmall(View view, LayoutInfo info) {
@@ -149,7 +147,7 @@ class LayoutHelper {
         int state = view.getMeasuredHeightAndState() & View.MEASURED_STATE_MASK;
         return state == View.MEASURED_STATE_TOO_SMALL
                 && info.heightPercent >= 0
-                && info.preservedParams.height == ViewGroup.LayoutParams.WRAP_CONTENT;
+                && info.preservedParamsHeight == ViewGroup.LayoutParams.WRAP_CONTENT;
     }
 
     public interface PercentLayoutParams {
