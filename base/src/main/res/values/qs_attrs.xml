@@ -4,6 +4,7 @@
     <!-- viewpager -->
     <declare-styleable name="PagerSlidingTabStrip">
         <attr name="psts_TextSize" format="dimension" />
+        <attr name="psts_SelectedTextSize" format="dimension" />
         <attr name="psts_IndicatorColor" format="color" />
         <attr name="psts_IndicatorWidth" format="dimension" />
         <attr name="psts_IndicatorHeight" format="dimension" />
