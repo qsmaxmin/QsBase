@@ -3,7 +3,6 @@ package com.qsmaxmin.qsbase.mvvm.fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 
 import com.qsmaxmin.qsbase.R;
 import com.qsmaxmin.qsbase.common.log.L;
@@ -283,13 +282,6 @@ public abstract class MvRecyclerFragment<D> extends MvFragment implements MvIRec
         }
     }
 
-    @Override public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-    }
-
-    @Override public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-        return false;
-    }
-
     @Override public boolean canRecyclerScrollStart() {
         return canRecyclerScrollInner(-1);
     }
@@ -316,8 +308,8 @@ public abstract class MvRecyclerFragment<D> extends MvFragment implements MvIRec
         //for custom logic
     }
 
-    @Override public final MvRecycleAdapterItem<D> getRecycleAdapterItemInner(@NonNull LayoutInflater mInflater, @NonNull ViewGroup parent, int type) {
-        MvRecycleAdapterItem<D> adapterItem = getRecycleAdapterItem(mInflater, parent, type);
+    @Override public final MvRecycleAdapterItem<D> getRecycleAdapterItemInner(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent, int type) {
+        MvRecycleAdapterItem<D> adapterItem = getRecycleAdapterItem(inflater, parent, type);
         adapterItem.setViewLayer(this);
         return adapterItem;
     }

@@ -3,7 +3,6 @@ package com.qsmaxmin.qsbase.mvvm;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 
 import com.qsmaxmin.qsbase.common.widget.recyclerview.HeaderFooterRecyclerView;
 import com.qsmaxmin.qsbase.common.widget.recyclerview.QsItemDecoration;
@@ -19,7 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
  * @Date 17/7/2  上午10:58
  * @Description
  */
-public interface MvIRecyclerView<D> extends MvIView, AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
+public interface MvIRecyclerView<D> extends MvIView {
 
     MvRecycleAdapterItem<D> getRecycleAdapterItemInner(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent, int type);
 

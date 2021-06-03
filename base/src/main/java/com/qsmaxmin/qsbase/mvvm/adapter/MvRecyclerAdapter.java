@@ -1,9 +1,7 @@
 package com.qsmaxmin.qsbase.mvvm.adapter;
 
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 
 import com.qsmaxmin.qsbase.mvvm.MvIRecyclerView;
 
@@ -30,23 +28,12 @@ public class MvRecyclerAdapter<D> extends RecyclerView.Adapter<MvRecycleViewHold
 
     @NonNull @Override public MvRecycleViewHolder<D> onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         MvRecycleAdapterItem<D> adapterItem = recyclerLayer.getRecycleAdapterItemInner(mInflater, parent, viewType);
-        MvRecycleViewHolder<D> holder = new MvRecycleViewHolder<>(adapterItem);
-        holder.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                recyclerLayer.onItemClick(parent, view, position, id);
-            }
-        });
-        holder.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                return recyclerLayer.onItemLongClick(parent, view, position, id);
-            }
-        });
-        return holder;
+        return new MvRecycleViewHolder<>(adapterItem);
     }
 
     @Override public void onBindViewHolder(@NonNull MvRecycleViewHolder<D> holder, int position) {
         recyclerLayer.onAdapterGetView(position, getItemCount());
-        holder.onBindData(mList.get(position), position, mList.size());
+        holder.onBindViewHolder(mList.get(position), position, mList.size());
     }
 
     @Override public int getItemViewType(int position) {
