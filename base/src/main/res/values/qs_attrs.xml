@@ -75,9 +75,13 @@
     </declare-styleable>
 
     <!--百分比布局自定义属性-->
+    <declare-styleable name="PercentLayout">
+        <attr name="percentDimensionRatio" format="string" />
+    </declare-styleable>
     <declare-styleable name="PercentLayout_Layout">
         <attr name="layout_widthPercent" format="string" />
         <attr name="layout_heightPercent" format="string" />
+        <attr name="layout_percentDimensionRatio" format="string" />
     </declare-styleable>
 
     <declare-styleable name="HeaderScrollView">
