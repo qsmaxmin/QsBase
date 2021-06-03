@@ -127,6 +127,9 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
             selectedTabTextSize = typedArray.getDimension(R.styleable.PagerSlidingTabStrip_psts_SelectedTextSize, selectedTabTextSize);
             tabTextColor = typedArray.getColor(R.styleable.PagerSlidingTabStrip_psts_UnSelectedTextColor, tabTextColor);
             selectedTabTextColor = typedArray.getColor(R.styleable.PagerSlidingTabStrip_psts_SelectedTextColor, getResources().getColor(R.color.colorAccent));
+            tabTypefaceStyle = typedArray.getInt(R.styleable.PagerSlidingTabStrip_psts_TextStyle, tabTypefaceStyle);
+            selectedTabTypefaceStyle = typedArray.getInt(R.styleable.PagerSlidingTabStrip_psts_SelectedTextStyle, selectedTabTypefaceStyle);
+
             indicatorColor = typedArray.getColor(R.styleable.PagerSlidingTabStrip_psts_IndicatorColor, indicatorColor);
             indicatorWidth = typedArray.getDimension(R.styleable.PagerSlidingTabStrip_psts_IndicatorWidth, 0);
             indicatorHeight = typedArray.getDimension(R.styleable.PagerSlidingTabStrip_psts_IndicatorHeight, indicatorHeight);
@@ -142,6 +145,8 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
             shouldExpand = typedArray.getBoolean(R.styleable.PagerSlidingTabStrip_psts_ShouldExpand, shouldExpand);
             scrollOffset = typedArray.getDimension(R.styleable.PagerSlidingTabStrip_psts_ScrollOffset, scrollOffset);
             textAllCaps = typedArray.getBoolean(R.styleable.PagerSlidingTabStrip_psts_TextAllCaps, textAllCaps);
+
+
             typedArray.recycle();
         }
 

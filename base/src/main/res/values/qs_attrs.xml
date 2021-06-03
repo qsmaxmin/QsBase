@@ -25,6 +25,18 @@
         <attr name="psts_ScrollOffset" format="dimension" />
         <attr name="psts_ShouldExpand" format="boolean" />
         <attr name="psts_TextAllCaps" format="boolean" />
+        <attr name="psts_TextStyle" format="enum">
+            <enum name="normal" value="0" />
+            <enum name="bold" value="1" />
+            <enum name="italic" value="2" />
+            <enum name="bold_italic" value="3" />
+        </attr>
+        <attr name="psts_SelectedTextStyle" format="enum">
+            <enum name="normal" value="0" />
+            <enum name="bold" value="1" />
+            <enum name="italic" value="2" />
+            <enum name="bold_italic" value="3" />
+        </attr>
 
     </declare-styleable>
 
