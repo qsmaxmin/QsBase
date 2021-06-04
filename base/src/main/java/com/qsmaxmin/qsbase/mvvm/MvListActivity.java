@@ -118,7 +118,7 @@ public abstract class MvListActivity<D> extends MvActivity implements MvIListVie
 
 
     @Override public final void setData(List<D> list) {
-        mListAdapter.setData(list, true);
+        setData(list, true);
     }
 
     @Override public void setData(final List<D> list, final boolean showEmptyView) {
