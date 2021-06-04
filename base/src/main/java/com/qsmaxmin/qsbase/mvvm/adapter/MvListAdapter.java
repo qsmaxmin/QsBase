@@ -23,8 +23,10 @@ public class MvListAdapter<D> extends BaseAdapter {
     private final MvIListView<D>                    listLayer;
     private final List<D>                           mList;
     private final int                               preloadSize;
+    private       int                               realPreloadSize;
     private       boolean                           hasInitPreload;
     private       SparseArray<MvListAdapterItem<D>> preloadCache;
+
 
     public MvListAdapter(MvIListView<D> listLayer) {
         this.listLayer = listLayer;
@@ -62,6 +64,9 @@ public class MvListAdapter<D> extends BaseAdapter {
                 item = getPreloadItem(position);
             }
             if (item != null) {
+                if (L.isEnable()) {
+                    L.i("MvListAdapter", "getView from preload, position:" + position + ", cacheSize:" + (preloadCache == null ? 0 : preloadCache.size()));
+                }
                 convertView = item.getPreloadedView();
             } else {
                 item = createListAdapterItem(position);
@@ -71,6 +76,11 @@ public class MvListAdapter<D> extends BaseAdapter {
             convertView.setTag(item);
         } else {
             item = (MvListAdapterItem) convertView.getTag();
+        }
+
+        if (preloadCache != null && position >= (realPreloadSize - 1)) {
+            preloadCache = null;
+            if (L.isEnable()) L.i("MvListAdapter", "clean cached preloaded AdapterItem......");
         }
 
         if (item != null) {
@@ -83,11 +93,6 @@ public class MvListAdapter<D> extends BaseAdapter {
         if (preloadCache != null) {
             MvListAdapterItem<D> item = preloadCache.get(position);
             preloadCache.remove(position);
-            if (L.isEnable()) L.i("MvListAdapter", "getView from preload, position:" + position + ", cacheSize:" + preloadCache.size());
-            if (preloadCache.size() == 0 || position >= preloadSize) {
-                preloadCache = null;
-                if (L.isEnable()) L.i("MvListAdapter", "clean cached preloaded AdapterItem......");
-            }
             return item;
         }
         return null;
@@ -138,7 +143,7 @@ public class MvListAdapter<D> extends BaseAdapter {
                     mList.clear();
                     mList.addAll(list);
                 }
-                int realPreloadSize = Math.min(preloadSize, list.size());
+                realPreloadSize = Math.min(preloadSize, list.size());
                 preloadCache = new SparseArray<>(realPreloadSize);
                 LayoutInflater inflater = LayoutInflater.from(listLayer.getContext());
                 for (int i = 0; i < realPreloadSize; i++) {
