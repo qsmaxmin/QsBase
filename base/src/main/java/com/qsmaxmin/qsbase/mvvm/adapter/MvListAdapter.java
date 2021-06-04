@@ -1,6 +1,5 @@
 package com.qsmaxmin.qsbase.mvvm.adapter;
 
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -84,9 +83,10 @@ public class MvListAdapter<D> extends BaseAdapter {
         if (preloadCache != null) {
             MvListAdapterItem<D> item = preloadCache.get(position);
             preloadCache.remove(position);
-            Log.e("MvListAdapter", "getView from preload, position:" + position + ", cacheSize:" + preloadCache.size());
+            if (L.isEnable()) L.i("MvListAdapter", "getView from preload, position:" + position + ", cacheSize:" + preloadCache.size());
             if (preloadCache.size() == 0 || position >= preloadSize) {
                 preloadCache = null;
+                if (L.isEnable()) L.i("MvListAdapter", "clean cached preloaded AdapterItem......");
             }
             return item;
         }
