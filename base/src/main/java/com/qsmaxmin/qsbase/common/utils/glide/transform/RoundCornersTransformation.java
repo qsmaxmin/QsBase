@@ -8,13 +8,14 @@ import android.graphics.Path;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
-import androidx.annotation.NonNull;
 
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
 import com.bumptech.glide.load.resource.bitmap.BitmapTransformation;
 
 import java.security.MessageDigest;
 import java.util.Arrays;
+
+import androidx.annotation.NonNull;
 
 /**
  * @CreateBy qsmaxmin
@@ -25,8 +26,7 @@ import java.util.Arrays;
 public class RoundCornersTransformation extends BitmapTransformation {
 
     private static final String CUSTOM_ID = "com.qsmaxmin.qsbase.common.utils.glide.transform.RoundCornersTransformation";
-
-    private int[] mCorners;
+    private final        int[]  mCorners;
 
     public RoundCornersTransformation(@NonNull int... corners) {
         mCorners = new int[4];
@@ -67,7 +67,7 @@ public class RoundCornersTransformation extends BitmapTransformation {
         return bitmap;
     }
 
-    @Override public String toString() {
+    @NonNull @Override public String toString() {
         return "RoundCornersTransformation(mCorners=" + Arrays.toString(mCorners) + ")";
     }
 
@@ -83,8 +83,8 @@ public class RoundCornersTransformation extends BitmapTransformation {
                     }
                     return true;
                 }
-            } else if (transformation.mCorners == null && mCorners == null) {
-                return true;
+            } else {
+                return transformation.mCorners == null && mCorners == null;
             }
         }
         return false;

@@ -116,6 +116,7 @@ public class ImageHelper {
         private       Drawable                placeholderDrawable;
         private       Drawable                errorDrawable;
         private       int                     scaleType;
+        private       int                     mCorner;
         private       int[]                   mCorners;
         private       int                     mWidth;
         private       int                     mHeight;
@@ -233,6 +234,11 @@ public class ImageHelper {
 
         public Builder centerInside() {
             this.scaleType = 3;
+            return this;
+        }
+
+        public Builder roundedCorner(int corner) {
+            this.mCorner = corner;
             return this;
         }
 
@@ -457,6 +463,7 @@ public class ImageHelper {
             return placeholderDrawable != null
                     || errorDrawable != null
                     || scaleType > 0
+                    || mCorner > 0
                     || mCorners != null
                     || (mWidth > 0 && mHeight > 0)
                     || noMemoryCache
@@ -483,25 +490,19 @@ public class ImageHelper {
             if (mTransformation != null) {
                 if (mIsCircleCrop) {
                     requestOptions = requestOptions.transform(new CircleCrop(), mTransformation);
+                } else if (mCorner > 0) {
+                    requestOptions = requestOptions.transform(new RoundedCorners(mCorner), mTransformation);
                 } else if (mCorners != null) {
-                    if (mCorners.length == 1) {
-                        if (mCorners[0] > 0) {
-                            requestOptions = requestOptions.transform(new RoundedCorners(mCorners[0]), mTransformation);
-                        }
-                    } else {
-                        requestOptions = requestOptions.transform(new RoundCornersTransformation(mCorners), mTransformation);
-                    }
+                    requestOptions = requestOptions.transform(new RoundCornersTransformation(mCorners), mTransformation);
                 } else {
                     requestOptions = requestOptions.optionalTransform(mTransformation);
                 }
             } else if (mIsCircleCrop) {
                 requestOptions = requestOptions.optionalCircleCrop();
+            } else if (mCorner > 0) {
+                requestOptions = requestOptions.optionalTransform(new RoundedCorners(mCorner));
             } else if (mCorners != null) {
-                if (mCorners.length == 1) {
-                    if (mCorners[0] > 0) requestOptions = requestOptions.optionalTransform(new RoundedCorners(mCorners[0]));
-                } else {
-                    requestOptions = requestOptions.optionalTransform(new RoundCornersTransformation(mCorners));
-                }
+                requestOptions = requestOptions.optionalTransform(new RoundCornersTransformation(mCorners));
             }
             if (mWidth > 0 && mHeight > 0) {
                 requestOptions = requestOptions.override(mWidth, mHeight);
