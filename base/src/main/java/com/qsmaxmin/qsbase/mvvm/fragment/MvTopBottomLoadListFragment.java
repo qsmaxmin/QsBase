@@ -131,14 +131,14 @@ public abstract class MvTopBottomLoadListFragment<D> extends MvListFragment<D> i
             final int topMargin = (childAt == null) ? 0 : childAt.getHeight() + childAt.getTop();
 
             if (QsHelper.isMainThread()) {
-                mList.addAll(0, list);
+                getData().addAll(0, list);
                 updateAdapter(true);
                 getListView().setSelectionFromTop(list.size() + index + 1, topMargin);
                 setTopLoadingStateByData(list);
             } else {
                 post(new Runnable() {
                     @Override public void run() {
-                        mList.addAll(0, list);
+                        getData().addAll(0, list);
                         updateAdapter(true);
                         getListView().setSelectionFromTop(list.size() + index + 1, topMargin);
                         setTopLoadingStateByData(list);

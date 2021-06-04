@@ -27,6 +27,8 @@ public interface MvIListView<D> extends MvIView, AdapterView.OnItemClickListener
 
     @NonNull MvListAdapterItem<D> getListAdapterItem(int type);
 
+    int getAdapterItemPreloadSize();
+
     int getHeaderLayout();
 
     int getFooterLayout();

@@ -28,6 +28,7 @@ public abstract class MvListAdapterItem<D> implements IView {
     private int            totalCount;
     private int            scrollState;
     private boolean        hasBindDataIdle;
+    private View           preloadedView;
 
     protected String initTag() {
         return L.isEnable() ? getClass().getSimpleName() : "MvListAdapterItem";
@@ -46,6 +47,14 @@ public abstract class MvListAdapterItem<D> implements IView {
     }
 
     public void init(@NonNull View contentView) {
+    }
+
+    final void preCreateItemView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
+        preloadedView = onCreateItemView(inflater, parent);
+    }
+
+    final View getPreloadedView() {
+        return preloadedView;
     }
 
     public abstract View onCreateItemView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent);

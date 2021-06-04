@@ -10,12 +10,10 @@ import android.widget.ListView;
 
 import com.qsmaxmin.qsbase.R;
 import com.qsmaxmin.qsbase.common.log.L;
-import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.mvvm.MvIListView;
 import com.qsmaxmin.qsbase.mvvm.adapter.MvListAdapter;
 import com.qsmaxmin.qsbase.mvvm.adapter.MvListAdapterItem;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -27,11 +25,10 @@ import androidx.annotation.Nullable;
  * @Description
  */
 public abstract class MvListFragment<D> extends MvFragment implements MvIListView<D> {
-    protected final List<D>          mList = new ArrayList<>();
-    private         ListView         mListView;
-    private         MvListAdapter<D> mListAdapter;
-    private         View             headerView;
-    private         View             footerView;
+    private final MvListAdapter<D> mListAdapter = new MvListAdapter<>(this, getAdapterItemPreloadSize());
+    private       ListView         mListView;
+    private       View             headerView;
+    private       View             footerView;
 
     @Override public int layoutId() {
         return R.layout.qs_listview;
@@ -87,7 +84,7 @@ public abstract class MvListFragment<D> extends MvFragment implements MvIListVie
         }
         mListView.setOnItemClickListener(this);
         mListView.setOnItemLongClickListener(this);
-        mListAdapter = new MvListAdapter<>(this, mList);
+
         mListView.setAdapter(mListAdapter);
         mListView.setOnScrollListener(this);
         return rootView;
@@ -103,6 +100,15 @@ public abstract class MvListFragment<D> extends MvFragment implements MvIListVie
         L.i(initTag(), "onReceiveAdapterItemEvent......eventType:" + eventType + ", position:" + position);
     }
 
+    /**
+     * @see #setData(List)
+     * @see MvListAdapterItem
+     * listView首次显示前，预加载多少个适配器项
+     */
+    @Override public int getAdapterItemPreloadSize() {
+        return 0;
+    }
+
     @Override public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         L.i(initTag(), "onItemClick()... position : " + position);
     }
@@ -116,159 +122,55 @@ public abstract class MvListFragment<D> extends MvFragment implements MvIListVie
         setData(list, true);
     }
 
-    @Override public void setData(final List<D> list, final boolean showEmptyView) {
-        if (QsHelper.isMainThread()) {
-            if (list != mList) {
-                mList.clear();
-                if (list != null && !list.isEmpty()) mList.addAll(list);
-            }
-            updateAdapter(showEmptyView);
-        } else {
-            post(new Runnable() {
-                @Override public void run() {
-                    if (list != mList) {
-                        mList.clear();
-                        if (list != null && !list.isEmpty()) mList.addAll(list);
-                    }
-                    updateAdapter(showEmptyView);
-                }
-            });
-        }
+    @Override public void setData(List<D> list, boolean showEmptyView) {
+        mListAdapter.setData(list, showEmptyView);
     }
 
-    @Override public final void addData(final D d) {
-        if (d != null) {
-            if (QsHelper.isMainThread()) {
-                mList.add(d);
-                updateAdapter(true);
-            } else {
-                post(new Runnable() {
-                    @Override public void run() {
-                        mList.add(d);
-                        updateAdapter(true);
-                    }
-                });
-            }
-        }
+    @Override public final void addData(D d) {
+        mListAdapter.addData(d);
     }
 
-    @Override public final void addData(final int position, final D d) {
-        if (d != null) {
-            if (QsHelper.isMainThread()) {
-                mList.add(position, d);
-                updateAdapter(true);
-            } else {
-                post(new Runnable() {
-                    @Override public void run() {
-                        mList.add(position, d);
-                        updateAdapter(true);
-                    }
-                });
-            }
-        }
+    @Override public final void addData(int position, final D d) {
+        mListAdapter.addData(position, d);
     }
 
-    @Override public final void addData(final List<D> list) {
-        addData(list, mList.size());
+    @Override public final void addData(List<D> list) {
+        mListAdapter.addData(list);
     }
 
-    @Override public void addData(final List<D> list, int position) {
-        if (list != null && !list.isEmpty() && position >= 0) {
-            if (QsHelper.isMainThread()) {
-                position = Math.min(position, mList.size());
-                mList.addAll(position, list);
-                updateAdapter(true);
-            } else {
-                final int finalPosition = Math.min(position, mList.size());
-                post(new Runnable() {
-                    @Override public void run() {
-                        mList.addAll(finalPosition, list);
-                        updateAdapter(true);
-                    }
-                });
-            }
-        }
+    @Override public void addData(List<D> list, int position) {
+        mListAdapter.addData(list, position);
     }
 
     @Override public final void delete(final int position) {
-        if (position >= 0 && position < mList.size()) {
-            if (QsHelper.isMainThread()) {
-                mList.remove(position);
-                updateAdapter(true);
-            } else {
-                post(new Runnable() {
-                    @Override public void run() {
-                        mList.remove(position);
-                        updateAdapter(true);
-                    }
-                });
-            }
-        }
+        mListAdapter.delete(position);
     }
 
     @Override public final void delete(final D d) {
-        if (d != null) {
-            if (QsHelper.isMainThread()) {
-                boolean success;
-                success = mList.remove(d);
-                if (success) updateAdapter(true);
-            } else {
-                post(new Runnable() {
-                    @Override public void run() {
-                        boolean success;
-                        success = mList.remove(d);
-                        if (success) updateAdapter(true);
-                    }
-                });
-            }
-        }
+        mListAdapter.delete(d);
     }
 
     @Override public final void deleteAll() {
-        if (!mList.isEmpty()) {
-            if (QsHelper.isMainThread()) {
-                mList.clear();
-                updateAdapter(true);
-            } else {
-                post(new Runnable() {
-                    @Override public void run() {
-                        mList.clear();
-                        updateAdapter(true);
-                    }
-                });
-            }
-        }
+        mListAdapter.deleteAll();
     }
 
     @NonNull @Override public final List<D> getData() {
-        return mList;
+        return mListAdapter.getData();
     }
 
     @NonNull @Override public final List<D> copyData() {
-        ArrayList<D> list = new ArrayList<>();
-        if (!mList.isEmpty()) list.addAll(mList);
-        return list;
+        return mListAdapter.copyData();
     }
 
     @Override public D getData(int position) {
-        if (position >= 0 && position < mList.size()) {
-            return mList.get(position);
-        }
-        return null;
+        return mListAdapter.getData(position);
     }
 
     /**
      * 该方法必须在主线程中执行
      */
     @Override public void updateAdapter(final boolean showEmptyView) {
-        if (mListAdapter != null) {
-            mListAdapter.notifyDataSetChanged();
-            if (mList.isEmpty() && showEmptyView) {
-                showEmptyView();
-            } else {
-                showContentView();
-            }
-        }
+        mListAdapter.updateAdapter(showEmptyView);
     }
 
     @Override public final BaseAdapter getAdapter() {
@@ -276,7 +178,7 @@ public abstract class MvListFragment<D> extends MvFragment implements MvIListVie
     }
 
     @Override public void onScrollStateChanged(AbsListView view, int scrollState) {
-        if (mListAdapter != null) mListAdapter.onScrollStateChanged(view, scrollState);
+        mListAdapter.onScrollStateChanged(view, scrollState);
     }
 
     @Override public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
