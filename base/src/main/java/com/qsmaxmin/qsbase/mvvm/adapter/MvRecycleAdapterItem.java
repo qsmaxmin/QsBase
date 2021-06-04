@@ -116,6 +116,10 @@ public abstract class MvRecycleAdapterItem<D> implements IView {
     public final void setViewLayer(final MvIRecyclerView<D> viewLayer) {
         this.viewLayer = viewLayer;
         this.itemView = onCreateItemView(inflater, parent);
+        init(itemView);
+    }
+
+    protected void init(View itemView) {
     }
 
     @NonNull protected final MvIRecyclerView<D> getViewLayer() {

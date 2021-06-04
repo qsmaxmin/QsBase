@@ -17,15 +17,19 @@ import androidx.annotation.NonNull;
  * @Description RecyclerView holder
  */
 public abstract class QsRecycleAdapterItem<D> extends MvRecycleAdapterItem<D> implements QsIBindView {
+
     public QsRecycleAdapterItem(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
         super(inflater, parent);
-        bindViewByQsPlugin(getItemView());
     }
 
     /**
      * for QsTransform
      */
     @CallSuper @Override public void bindViewByQsPlugin(View view) {
+    }
+
+    @CallSuper @Override protected void init(View itemView) {
+        bindViewByQsPlugin(getItemView());
     }
 
     @Override protected View onCreateItemView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
