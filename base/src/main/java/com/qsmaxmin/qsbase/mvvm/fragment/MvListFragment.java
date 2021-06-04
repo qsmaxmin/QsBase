@@ -25,7 +25,7 @@ import androidx.annotation.Nullable;
  * @Description
  */
 public abstract class MvListFragment<D> extends MvFragment implements MvIListView<D> {
-    private final MvListAdapter<D> mListAdapter = new MvListAdapter<>(this, getAdapterItemPreloadSize());
+    private final MvListAdapter<D> mListAdapter = new MvListAdapter<>(this);
     private       ListView         mListView;
     private       View             headerView;
     private       View             footerView;

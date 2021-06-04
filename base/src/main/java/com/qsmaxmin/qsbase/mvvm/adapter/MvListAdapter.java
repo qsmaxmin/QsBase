@@ -28,13 +28,9 @@ public class MvListAdapter<D> extends BaseAdapter {
     private       SparseArray<MvListAdapterItem<D>> preloadCache;
 
     public MvListAdapter(MvIListView<D> listLayer) {
-        this(listLayer, 0);
-    }
-
-    public MvListAdapter(MvIListView<D> listLayer, int preloadSize) {
         this.listLayer = listLayer;
         this.mList = new ArrayList<>();
-        this.preloadSize = preloadSize;
+        this.preloadSize = listLayer.getAdapterItemPreloadSize();
     }
 
     @Override public int getCount() {

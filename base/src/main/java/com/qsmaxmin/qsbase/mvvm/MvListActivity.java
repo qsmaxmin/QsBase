@@ -22,7 +22,7 @@ import androidx.annotation.NonNull;
  * @Description
  */
 public abstract class MvListActivity<D> extends MvActivity implements MvIListView<D> {
-    private final MvListAdapter<D> mListAdapter = new MvListAdapter<>(this, getAdapterItemPreloadSize());
+    private final MvListAdapter<D> mListAdapter = new MvListAdapter<>(this);
     private       ListView         mListView;
     private       View             headerView;
     private       View             footerView;
