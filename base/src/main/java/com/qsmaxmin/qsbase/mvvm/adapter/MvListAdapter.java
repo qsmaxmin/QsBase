@@ -85,7 +85,7 @@ public class MvListAdapter<D> extends BaseAdapter {
             MvListAdapterItem<D> item = preloadCache.get(position);
             preloadCache.remove(position);
             Log.e("MvListAdapter", "getView from preload, position:" + position + ", cacheSize:" + preloadCache.size());
-            if (preloadCache.size() == 0) {
+            if (preloadCache.size() == 0 || position >= preloadSize) {
                 preloadCache = null;
             }
             return item;
@@ -126,6 +126,7 @@ public class MvListAdapter<D> extends BaseAdapter {
             updateAdapter(showEmptyView);
             if (!hasInitPreload && preloadSize > 0 && L.isEnable()) {
                 hasInitPreload = true;
+                preloadCache = null;
                 L.e("MvListAdapter", "setData(xxx)方法必须在异步线程中执行才能开启 [首次加载异步预初始化] 功能’");
             }
         } else {
