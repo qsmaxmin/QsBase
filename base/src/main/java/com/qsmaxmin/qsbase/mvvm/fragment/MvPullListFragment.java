@@ -108,7 +108,7 @@ public abstract class MvPullListFragment<D> extends MvListFragment<D> implements
         return loadingFooter == null ? null : loadingFooter.getState();
     }
 
-    @Override public void setData(List<D> list, boolean showEmptyView) {
+    @Override public final void setData(List<D> list, boolean showEmptyView) {
         super.setData(list, showEmptyView);
         if (mPtrFrameLayout != null) mPtrFrameLayout.post(new Runnable() {
             @Override public void run() {
@@ -118,7 +118,7 @@ public abstract class MvPullListFragment<D> extends MvListFragment<D> implements
         setFooterStateByData(list);
     }
 
-    @Override public void addData(List<D> list, int position) {
+    @Override public final void addData(List<D> list, int position) {
         super.addData(list, position);
         setFooterStateByData(list);
     }

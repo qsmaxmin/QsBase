@@ -135,7 +135,7 @@ public abstract class MvListFragment<D> extends MvFragment implements MvIListVie
     }
 
     @Override public final void addData(List<D> list) {
-        mListAdapter.addData(list);
+        addData(list, getData().size());
     }
 
     @Override public void addData(List<D> list, int position) {

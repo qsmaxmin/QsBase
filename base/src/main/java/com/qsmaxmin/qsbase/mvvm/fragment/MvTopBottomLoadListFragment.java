@@ -124,7 +124,7 @@ public abstract class MvTopBottomLoadListFragment<D> extends MvListFragment<D> i
         return true;
     }
 
-    @Override public void addTopData(final List<D> list) {
+    @Override public final void addTopData(final List<D> list) {
         if (list != null && !list.isEmpty()) {
             final int index = getListView().getFirstVisiblePosition();
             View childAt = getListView().getChildAt(0);
@@ -148,11 +148,11 @@ public abstract class MvTopBottomLoadListFragment<D> extends MvListFragment<D> i
         }
     }
 
-    @Override public void addBottomData(List<D> list) {
+    @Override public final void addBottomData(List<D> list) {
         addData(list);
     }
 
-    @Override public void addData(List<D> list, int position) {
+    @Override public final void addData(List<D> list, int position) {
         super.addData(list, position);
         setBottomLoadingStateByData(list);
     }
