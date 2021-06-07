@@ -6,7 +6,8 @@ import android.view.ViewGroup;
 
 import com.qsmaxmin.qsbase.R;
 import com.qsmaxmin.qsbase.common.log.L;
-import com.qsmaxmin.qsbase.common.widget.listview.LoadingFooter;
+import com.qsmaxmin.qsbase.common.widget.listview.BaseLoadingFooter;
+import com.qsmaxmin.qsbase.common.widget.listview.LoadingState;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrDefaultHandler;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrUIHandler;
@@ -26,9 +27,9 @@ import androidx.recyclerview.widget.RecyclerView;
  * @Description
  */
 public abstract class MvPullRecyclerFragment<D> extends MvRecyclerFragment<D> implements MvIPullToRefreshView {
-    private   boolean        canLoadingMore = true;
-    private   PtrFrameLayout mPtrFrameLayout;
-    protected LoadingFooter  mLoadingFooter;
+    private   boolean           canLoadingMore = true;
+    private   PtrFrameLayout    mPtrFrameLayout;
+    protected BaseLoadingFooter mLoadingFooter;
 
     @Override public int layoutId() {
         return canPullRefreshing() ? R.layout.qs_pull_recyclerview : super.layoutId();
@@ -48,14 +49,14 @@ public abstract class MvPullRecyclerFragment<D> extends MvRecyclerFragment<D> im
             initPtrFrameLayout(view);
         }
         View footerView = getFooterView();
-        if (footerView instanceof LoadingFooter) {
-            mLoadingFooter = (LoadingFooter) footerView;
+        if (footerView instanceof BaseLoadingFooter) {
+            mLoadingFooter = (BaseLoadingFooter) footerView;
         } else if (footerView != null) {
             mLoadingFooter = footerView.findViewById(R.id.loading_footer);
         }
 
         if (!canPullLoading()) {
-            setLoadingState(LoadingFooter.State.TheEnd);
+            setLoadingState(LoadingState.TheEnd);
         }
         return view;
     }
@@ -93,12 +94,12 @@ public abstract class MvPullRecyclerFragment<D> extends MvRecyclerFragment<D> im
         }
     }
 
-    @Override public void setLoadingState(final LoadingFooter.State state) {
+    @Override public void setLoadingState(final LoadingState state) {
         L.i(initTag(), "setLoadingState:" + state);
         if (mLoadingFooter != null) mLoadingFooter.setState(state);
     }
 
-    @Override public LoadingFooter.State getLoadingState() {
+    @Override public LoadingState getLoadingState() {
         return mLoadingFooter == null ? null : mLoadingFooter.getState();
     }
 
@@ -123,9 +124,9 @@ public abstract class MvPullRecyclerFragment<D> extends MvRecyclerFragment<D> im
 
     protected void setFooterStateByData(List<D> list) {
         if (!canPullLoading() || list == null || list.isEmpty()) {
-            setLoadingState(LoadingFooter.State.TheEnd);
-        } else if (canLoadingMore && getLoadingState() != LoadingFooter.State.Normal) {
-            setLoadingState(LoadingFooter.State.Normal);
+            setLoadingState(LoadingState.TheEnd);
+        } else if (canLoadingMore && getLoadingState() != LoadingState.Normal) {
+            setLoadingState(LoadingState.Normal);
         }
     }
 
@@ -144,17 +145,17 @@ public abstract class MvPullRecyclerFragment<D> extends MvRecyclerFragment<D> im
 
     private void loadingMoreData() {
         if (canPullLoading() && mLoadingFooter != null) {
-            LoadingFooter.State state = mLoadingFooter.getState();
+            LoadingState state = mLoadingFooter.getState();
             if (!canLoadingMore) {
                 return;
-            } else if (state == LoadingFooter.State.Loading) {
+            } else if (state == LoadingState.Loading) {
                 if (L.isEnable()) L.i(initTag(), "Under loading..........");
                 return;
-            } else if (state == LoadingFooter.State.TheEnd) {
+            } else if (state == LoadingState.TheEnd) {
                 if (L.isEnable()) L.i(initTag(), "no more data...........");
                 return;
             }
-            setLoadingState(LoadingFooter.State.Loading);
+            setLoadingState(LoadingState.Loading);
             onLoad();
         }
     }

@@ -4,96 +4,37 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.FrameLayout;
+import android.view.ViewGroup;
 
 import com.qsmaxmin.qsbase.R;
-import com.qsmaxmin.qsbase.common.log.L;
 
 /**
  * ListView/GridView/RecyclerView 分页加载时使用到的FooterView
  */
-public class LoadingFooter extends FrameLayout {
-    private static final String         TAG = "LoadingFooter";
-    private              State          mState;
-    private              View           mNormalView;
-    private              View           mLoadingView;
-    private              View           mNetworkErrorView;
-    private              View           mTheEndView;
-    private              LayoutInflater inflater;
+public class LoadingFooter extends BaseLoadingFooter {
 
     public LoadingFooter(Context context) {
         super(context);
-        init();
     }
 
     public LoadingFooter(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init();
     }
 
     public LoadingFooter(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init();
     }
 
-    public void init() {
-        setState(State.Normal);
-        inflater = LayoutInflater.from(getContext());
-    }
-
-    @Override protected void onAttachedToWindow() {
-        super.onAttachedToWindow();
-        if (mState != null) {
-            setViewState(mState);
+    @Override protected View onCreateStateView(LoadingState state, LayoutInflater inflater, ViewGroup parent) {
+        if (state == LoadingState.Normal) {
+            return inflater.inflate(R.layout.qs_layout_footer_init, parent, false);
+        } else if (state == LoadingState.Loading) {
+            return inflater.inflate(R.layout.qs_layout_footer_loading, parent, false);
+        } else if (state == LoadingState.TheEnd) {
+            return inflater.inflate(R.layout.qs_layout_footer_end, parent, false);
+        } else if (state == LoadingState.NetWorkError) {
+            return inflater.inflate(R.layout.qs_layout_footer_error, parent, false);
         }
-    }
-
-    public State getState() {
-        return mState;
-    }
-
-    public void setState(State status) {
-        L.i(TAG, "setState  state :" + status);
-        if (status != null) {
-            this.mState = status;
-            post(new Runnable() {
-                @Override public void run() {
-                    setViewState(mState);
-                }
-            });
-        }
-    }
-
-    private void setViewState(State status) {
-        mLoadingView = showView(mLoadingView, status == State.Loading, R.layout.qs_layout_footer_loading);
-
-        mNormalView = showView(mNormalView, status == State.Normal, R.layout.qs_layout_footer_init);
-
-        mTheEndView = showView(mTheEndView, status == State.TheEnd, R.layout.qs_layout_footer_end);
-
-        mNetworkErrorView = showView(mNetworkErrorView, status == State.NetWorkError, R.layout.qs_layout_footer_error);
-    }
-
-    private View showView(View view, boolean show, int layoutId) {
-        if (show) {
-            if (view == null) {
-                view = inflater.inflate(layoutId, this, false);
-                addView(view);
-            } else {
-                view.setVisibility(VISIBLE);
-            }
-        } else {
-            if (view != null) {
-                view.setVisibility(GONE);
-            }
-        }
-        return view;
-    }
-
-    public enum State {
-        Normal,
-        TheEnd,
-        Loading,
-        NetWorkError
+        return null;
     }
 }

@@ -8,7 +8,8 @@ import android.widget.AbsListView;
 import com.qsmaxmin.qsbase.R;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
-import com.qsmaxmin.qsbase.common.widget.listview.LoadingFooter;
+import com.qsmaxmin.qsbase.common.widget.listview.BaseLoadingFooter;
+import com.qsmaxmin.qsbase.common.widget.listview.LoadingState;
 
 import java.util.List;
 
@@ -21,10 +22,10 @@ import androidx.annotation.Nullable;
  * @Description listView滑动到顶部和底部都能加载更多数据
  */
 public abstract class MvTopBottomLoadListFragment<D> extends MvListFragment<D> implements MvITopBottomLoadView<D> {
-    private boolean       isTopLoadingOpen    = true;
-    private boolean       isBottomLoadingOpen = true;
-    private LoadingFooter topLoadingView;
-    private LoadingFooter bottomLoadingView;
+    private boolean           isTopLoadingOpen    = true;
+    private boolean           isBottomLoadingOpen = true;
+    private BaseLoadingFooter topLoadingView;
+    private BaseLoadingFooter bottomLoadingView;
 
     @Override public int getHeaderLayout() {
         return R.layout.qs_loading_footer;
@@ -37,18 +38,18 @@ public abstract class MvTopBottomLoadListFragment<D> extends MvListFragment<D> i
     @Override protected View initView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container) {
         View view = super.initView(inflater, container);
         View headerView = getHeaderView();
-        if (headerView instanceof LoadingFooter) {
-            this.topLoadingView = (LoadingFooter) headerView;
+        if (headerView instanceof BaseLoadingFooter) {
+            this.topLoadingView = (BaseLoadingFooter) headerView;
         }
         View footerView = getFooterView();
-        if (footerView instanceof LoadingFooter) {
-            this.bottomLoadingView = (LoadingFooter) footerView;
+        if (footerView instanceof BaseLoadingFooter) {
+            this.bottomLoadingView = (BaseLoadingFooter) footerView;
         }
         if (!canTopLoading()) {
-            setTopLoadingState(LoadingFooter.State.TheEnd);
+            setTopLoadingState(LoadingState.TheEnd);
         }
         if (!canBottomLoading()) {
-            setBottomLoadingState(LoadingFooter.State.TheEnd);
+            setBottomLoadingState(LoadingState.TheEnd);
         }
         return view;
     }
@@ -78,25 +79,25 @@ public abstract class MvTopBottomLoadListFragment<D> extends MvListFragment<D> i
         }
     }
 
-    @Override public void setTopLoadingState(LoadingFooter.State state) {
+    @Override public void setTopLoadingState(LoadingState state) {
         L.i(initTag(), "setTopLoadingState:" + state);
         if (topLoadingView != null) {
             topLoadingView.setState(state);
         }
     }
 
-    @Override public void setBottomLoadingState(LoadingFooter.State state) {
+    @Override public void setBottomLoadingState(LoadingState state) {
         L.i(initTag(), "setBottomLoadingState:" + state);
         if (bottomLoadingView != null) {
             bottomLoadingView.setState(state);
         }
     }
 
-    @Override public LoadingFooter.State getTopLoadingState() {
+    @Override public LoadingState getTopLoadingState() {
         return topLoadingView == null ? null : topLoadingView.getState();
     }
 
-    @Override public LoadingFooter.State getBottomLoadingState() {
+    @Override public LoadingState getBottomLoadingState() {
         return bottomLoadingView == null ? null : bottomLoadingView.getState();
     }
 
@@ -159,17 +160,17 @@ public abstract class MvTopBottomLoadListFragment<D> extends MvListFragment<D> i
 
     protected void setBottomLoadingStateByData(List<D> list) {
         if (list == null || list.isEmpty()) {
-            setBottomLoadingState(LoadingFooter.State.TheEnd);
-        } else if (isBottomLoadingOpen && getBottomLoadingState() != LoadingFooter.State.Normal) {
-            setBottomLoadingState(LoadingFooter.State.Normal);
+            setBottomLoadingState(LoadingState.TheEnd);
+        } else if (isBottomLoadingOpen && getBottomLoadingState() != LoadingState.Normal) {
+            setBottomLoadingState(LoadingState.Normal);
         }
     }
 
     protected void setTopLoadingStateByData(List<D> list) {
         if (list == null || list.isEmpty()) {
-            setTopLoadingState(LoadingFooter.State.TheEnd);
-        } else if (isTopLoadingOpen && getTopLoadingState() != LoadingFooter.State.Normal) {
-            setTopLoadingState(LoadingFooter.State.Normal);
+            setTopLoadingState(LoadingState.TheEnd);
+        } else if (isTopLoadingOpen && getTopLoadingState() != LoadingState.Normal) {
+            setTopLoadingState(LoadingState.Normal);
         }
     }
 
@@ -179,30 +180,30 @@ public abstract class MvTopBottomLoadListFragment<D> extends MvListFragment<D> i
 
     private void loadingBottomData() {
         if (isBottomLoadingOpen && bottomLoadingView != null) {
-            LoadingFooter.State state = bottomLoadingView.getState();
-            if (state == LoadingFooter.State.Loading) {
+            LoadingState state = bottomLoadingView.getState();
+            if (state == LoadingState.Loading) {
                 L.i(initTag(), "Under bottom loading..........");
                 return;
-            } else if (state == LoadingFooter.State.TheEnd) {
+            } else if (state == LoadingState.TheEnd) {
                 L.i(initTag(), "no more data...........");
                 return;
             }
-            setBottomLoadingState(LoadingFooter.State.Loading);
+            setBottomLoadingState(LoadingState.Loading);
             onBottomLoading();
         }
     }
 
     private void loadingTopData() {
         if (isTopLoadingOpen && topLoadingView != null) {
-            LoadingFooter.State state = topLoadingView.getState();
-            if (state == LoadingFooter.State.Loading) {
+            LoadingState state = topLoadingView.getState();
+            if (state == LoadingState.Loading) {
                 L.i(initTag(), "Under top loading..........");
                 return;
-            } else if (state == LoadingFooter.State.TheEnd) {
+            } else if (state == LoadingState.TheEnd) {
                 L.i(initTag(), "no more data...........");
                 return;
             }
-            setTopLoadingState(LoadingFooter.State.Loading);
+            setTopLoadingState(LoadingState.Loading);
             onTopLoading();
         }
     }

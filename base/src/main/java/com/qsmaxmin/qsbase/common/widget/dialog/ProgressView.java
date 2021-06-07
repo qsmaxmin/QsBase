@@ -54,8 +54,8 @@ public class ProgressView extends FrameLayout {
     public void initView(QsProgressDialog dialog) {
         this.progressDialog = dialog;
         if (progressDialog != null) {
-            LayoutInflater factory = LayoutInflater.from(getContext());
-            View view = progressDialog.onCreateContentView(factory, this);
+            LayoutInflater inflater = LayoutInflater.from(getContext());
+            View view = progressDialog.onCreateContentView(inflater, this);
             ViewHelper.addToParent(view, this);
         }
     }

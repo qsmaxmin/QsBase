@@ -1,6 +1,6 @@
 package com.qsmaxmin.qsbase.mvvm.fragment;
 
-import com.qsmaxmin.qsbase.common.widget.listview.LoadingFooter;
+import com.qsmaxmin.qsbase.common.widget.listview.LoadingState;
 
 import java.util.List;
 
@@ -17,13 +17,13 @@ public interface MvITopBottomLoadView<D> {
 
     void onBottomLoading();
 
-    void setTopLoadingState(LoadingFooter.State state);
+    void setTopLoadingState(LoadingState state);
 
-    void setBottomLoadingState(LoadingFooter.State state);
+    void setBottomLoadingState(LoadingState state);
 
-    LoadingFooter.State getTopLoadingState();
+    LoadingState getTopLoadingState();
 
-    LoadingFooter.State getBottomLoadingState();
+    LoadingState getBottomLoadingState();
 
     void openTopLoading();
 

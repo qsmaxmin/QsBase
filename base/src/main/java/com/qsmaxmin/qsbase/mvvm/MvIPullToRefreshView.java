@@ -1,6 +1,6 @@
 package com.qsmaxmin.qsbase.mvvm;
 
-import com.qsmaxmin.qsbase.common.widget.listview.LoadingFooter;
+import com.qsmaxmin.qsbase.common.widget.listview.LoadingState;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrUIHandler;
 
@@ -26,9 +26,9 @@ public interface MvIPullToRefreshView extends MvIView {
 
     void stopRefreshing();
 
-    void setLoadingState(LoadingFooter.State state);
+    void setLoadingState(LoadingState state);
 
-    LoadingFooter.State getLoadingState();
+    LoadingState getLoadingState();
 
     boolean canPullRefreshing();
 

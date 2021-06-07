@@ -7,7 +7,7 @@ import android.widget.ScrollView;
 
 import com.qsmaxmin.qsbase.R;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
-import com.qsmaxmin.qsbase.common.widget.listview.LoadingFooter;
+import com.qsmaxmin.qsbase.common.widget.listview.LoadingState;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrDefaultHandler;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrFrameLayout;
 import com.qsmaxmin.qsbase.common.widget.ptr.PtrUIHandler;
@@ -144,11 +144,11 @@ public abstract class MvPullFragment extends MvFragment implements MvIPullView {
         return false;
     }
 
-    @Override public final void setLoadingState(LoadingFooter.State state) {
+    @Override public final void setLoadingState(LoadingState state) {
         // do nothing
     }
 
-    @Override public LoadingFooter.State getLoadingState() {
+    @Override public LoadingState getLoadingState() {
         return null;
     }
 
