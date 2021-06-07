@@ -23,19 +23,21 @@ import androidx.recyclerview.widget.RecyclerView;
  * @Description RecyclerView holder
  */
 public abstract class MvRecycleAdapterItem<D> implements IView {
-    private final LayoutInflater     inflater;
-    private final ViewGroup          parent;
-    private       MvIRecyclerView<D> viewLayer;
-    private       View               itemView;
-    private       D                  data;
-    private       int                position;
-    private       int                totalCount;
-    private       int                scrollState;
-    private       boolean            hasBindDataIdle;
+    private MvIRecyclerView<D> viewLayer;
+    private View               itemView;
+    private D                  data;
+    private int                position;
+    private int                totalCount;
+    private int                scrollState;
+    private boolean            hasBindDataIdle;
 
+    /**
+     * @deprecated
+     */
     public MvRecycleAdapterItem(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
-        this.inflater = inflater;
-        this.parent = parent;
+    }
+
+    public MvRecycleAdapterItem() {
     }
 
     protected final String initTag() {
@@ -113,7 +115,7 @@ public abstract class MvRecycleAdapterItem<D> implements IView {
         return itemView;
     }
 
-    public final void setViewLayer(final MvIRecyclerView<D> viewLayer) {
+    public final void setViewLayer(final MvIRecyclerView<D> viewLayer, LayoutInflater inflater, ViewGroup parent) {
         this.viewLayer = viewLayer;
         this.itemView = onCreateItemView(inflater, parent);
         init(itemView);

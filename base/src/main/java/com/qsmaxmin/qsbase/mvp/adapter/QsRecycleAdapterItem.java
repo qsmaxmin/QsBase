@@ -18,8 +18,13 @@ import androidx.annotation.NonNull;
  */
 public abstract class QsRecycleAdapterItem<D> extends MvRecycleAdapterItem<D> implements QsIBindView {
 
+    /**
+     * @deprecated
+     */
     public QsRecycleAdapterItem(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
-        super(inflater, parent);
+    }
+
+    public QsRecycleAdapterItem() {
     }
 
     /**

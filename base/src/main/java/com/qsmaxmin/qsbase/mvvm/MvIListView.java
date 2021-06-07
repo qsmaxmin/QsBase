@@ -86,4 +86,6 @@ public interface MvIListView<D> extends MvIView, AdapterView.OnItemClickListener
     FragmentActivity getActivity();
 
     void onReceiveAdapterItemEvent(int eventType, D data, int position);
+
+    LayoutInflater getLayoutInflater();
 }

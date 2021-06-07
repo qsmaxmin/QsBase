@@ -70,7 +70,7 @@ public class MvListAdapter<D> extends BaseAdapter {
                 convertView = item.getPreloadedView();
             } else {
                 item = createListAdapterItem(position);
-                convertView = item.onCreateItemView(LayoutInflater.from(parent.getContext()), parent);
+                convertView = item.onCreateItemView(listLayer.getLayoutInflater(), parent);
             }
             item.init(convertView);
             convertView.setTag(item);

@@ -20,7 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
  */
 public interface MvIRecyclerView<D> extends MvIView {
 
-    MvRecycleAdapterItem<D> getRecycleAdapterItemInner(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent, int type);
+    MvRecycleAdapterItem<D> getRecycleAdapterItemInner(@NonNull ViewGroup parent, int type);
 
     MvRecycleAdapterItem<D> getRecycleAdapterItem(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent, int type);
 

@@ -6,7 +6,6 @@ import android.view.ViewGroup;
 
 import com.qsmaxmin.qsbase.R;
 import com.qsmaxmin.qsbase.common.log.L;
-import com.qsmaxmin.qsbase.common.utils.QsHelper;
 import com.qsmaxmin.qsbase.common.widget.recyclerview.HeaderFooterRecyclerView;
 import com.qsmaxmin.qsbase.common.widget.recyclerview.QsItemDecoration;
 import com.qsmaxmin.qsbase.mvvm.MvIRecyclerView;
@@ -14,7 +13,6 @@ import com.qsmaxmin.qsbase.mvvm.adapter.MvRecycleAdapterItem;
 import com.qsmaxmin.qsbase.mvvm.adapter.MvRecycleViewHolder;
 import com.qsmaxmin.qsbase.mvvm.adapter.MvRecyclerAdapter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -29,9 +27,8 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
  * @Description RecyclerView视图
  */
 public abstract class MvRecyclerFragment<D> extends MvFragment implements MvIRecyclerView<D> {
-    private final List<D>                  mList = new ArrayList<>();
+    private final MvRecyclerAdapter<D>     recyclerViewAdapter = new MvRecyclerAdapter<>(this);
     private       HeaderFooterRecyclerView recyclerView;
-    private       RecyclerView.Adapter     recyclerViewAdapter;
     private       View                     headerView;
     private       View                     footerView;
 
@@ -110,8 +107,6 @@ public abstract class MvRecyclerFragment<D> extends MvFragment implements MvIRec
             }
         });
         recyclerView.setLayoutManager(getLayoutManager());
-
-        recyclerViewAdapter = new MvRecyclerAdapter<>(this, mList, inflater);
         recyclerView.setAdapter(recyclerViewAdapter);
     }
 
@@ -124,162 +119,54 @@ public abstract class MvRecyclerFragment<D> extends MvFragment implements MvIRec
     }
 
     @Override public void setData(final List<D> list, final boolean showEmptyView) {
-        if (QsHelper.isMainThread()) {
-            if (list != mList) {
-                mList.clear();
-                if (list != null && !list.isEmpty()) mList.addAll(list);
-            }
-            updateAdapter(showEmptyView);
-        } else {
-            post(new Runnable() {
-                @Override public void run() {
-                    if (list != mList) {
-                        mList.clear();
-                        if (list != null && !list.isEmpty()) mList.addAll(list);
-                    }
-                    updateAdapter(showEmptyView);
-                }
-            });
-        }
+        recyclerViewAdapter.setData(list, showEmptyView);
     }
 
     @Override public final void addData(final D d) {
-        if (d != null) {
-            if (QsHelper.isMainThread()) {
-                mList.add(d);
-                updateAdapter(true);
-            } else {
-                post(new Runnable() {
-                    @Override public void run() {
-                        mList.add(d);
-                        updateAdapter(true);
-                    }
-                });
-            }
-        }
+        recyclerViewAdapter.addData(d);
     }
 
     @Override public final void addData(final int position, final D d) {
-        if (d != null) {
-            if (QsHelper.isMainThread()) {
-                mList.add(position, d);
-                updateAdapter(true);
-            } else {
-                post(new Runnable() {
-                    @Override public void run() {
-                        mList.add(position, d);
-                        updateAdapter(true);
-                    }
-                });
-            }
-        }
+        recyclerViewAdapter.addData(position, d);
     }
 
     @Override public final void addData(final List<D> list) {
-        addData(list, mList.size());
+        addData(list, getData().size());
     }
 
     @Override public void addData(final List<D> list, int position) {
-        if (list != null && !list.isEmpty() && position >= 0) {
-            if (QsHelper.isMainThread()) {
-                position = Math.min(position, mList.size());
-                if (recyclerViewAdapter != null) recyclerViewAdapter.notifyItemRangeInserted(position, list.size());
-                mList.addAll(position, list);
-                updateAdapter(true);
-            } else {
-                final int finalPosition = Math.min(position, mList.size());
-                post(new Runnable() {
-                    @Override public void run() {
-                        if (recyclerViewAdapter != null) recyclerViewAdapter.notifyItemRangeInserted(finalPosition, list.size());
-                        mList.addAll(finalPosition, list);
-                        updateAdapter(true);
-                    }
-                });
-            }
-        }
+        recyclerViewAdapter.addData(list, position);
     }
 
     @Override public final void delete(final int position) {
-        if (position >= 0 && position < mList.size()) {
-            if (QsHelper.isMainThread()) {
-                if (recyclerViewAdapter != null) recyclerViewAdapter.notifyItemRemoved(position);
-                mList.remove(position);
-                updateAdapter(true);
-            } else {
-                post(new Runnable() {
-                    @Override public void run() {
-                        if (recyclerViewAdapter != null) recyclerViewAdapter.notifyItemRemoved(position);
-                        mList.remove(position);
-                        updateAdapter(true);
-                    }
-                });
-            }
-        }
+        recyclerViewAdapter.delete(position);
     }
 
     @Override public final void delete(final D d) {
-        if (d != null) {
-            if (QsHelper.isMainThread()) {
-                boolean success;
-                success = mList.remove(d);
-                if (success) updateAdapter(true);
-            } else {
-                post(new Runnable() {
-                    @Override public void run() {
-                        boolean success;
-                        success = mList.remove(d);
-                        if (success) updateAdapter(true);
-                    }
-                });
-            }
-        }
+        recyclerViewAdapter.delete(d);
     }
 
     @Override public final void deleteAll() {
-        if (!mList.isEmpty()) {
-            if (QsHelper.isMainThread()) {
-                mList.clear();
-                updateAdapter(true);
-            } else {
-                post(new Runnable() {
-                    @Override public void run() {
-                        mList.clear();
-                        updateAdapter(true);
-                    }
-                });
-            }
-        }
+        recyclerViewAdapter.deleteAll();
     }
 
     @NonNull @Override public final List<D> getData() {
-        return mList;
+        return recyclerViewAdapter.getData();
     }
 
     @NonNull @Override public final List<D> copyData() {
-        ArrayList<D> list = new ArrayList<>();
-        if (!mList.isEmpty()) list.addAll(mList);
-        return list;
+        return recyclerViewAdapter.copyData();
     }
 
     @Override public final D getData(int position) {
-        if (position >= 0 && position < mList.size()) {
-            return mList.get(position);
-        }
-        return null;
+        return recyclerViewAdapter.getData(position);
     }
 
     /**
      * 该方法必须在主线程中执行
      */
     @Override public void updateAdapter(boolean showEmptyView) {
-        if (recyclerViewAdapter != null) {
-            recyclerViewAdapter.notifyDataSetChanged();
-            if (mList.isEmpty() && showEmptyView) {
-                showEmptyView();
-            } else {
-                showContentView();
-            }
-        }
+        recyclerViewAdapter.updateAdapter(showEmptyView);
     }
 
     @Override public boolean canRecyclerScrollStart() {
@@ -308,9 +195,9 @@ public abstract class MvRecyclerFragment<D> extends MvFragment implements MvIRec
         //for custom logic
     }
 
-    @Override public final MvRecycleAdapterItem<D> getRecycleAdapterItemInner(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent, int type) {
-        MvRecycleAdapterItem<D> adapterItem = getRecycleAdapterItem(inflater, parent, type);
-        adapterItem.setViewLayer(this);
+    @Override public final MvRecycleAdapterItem<D> getRecycleAdapterItemInner(@NonNull ViewGroup parent, int type) {
+        MvRecycleAdapterItem<D> adapterItem = getRecycleAdapterItem(getLayoutInflater(), parent, type);
+        adapterItem.setViewLayer(this, getLayoutInflater(), parent);
         return adapterItem;
     }
 
