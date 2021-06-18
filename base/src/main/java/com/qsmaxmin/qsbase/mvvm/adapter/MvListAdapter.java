@@ -60,7 +60,7 @@ public class MvListAdapter<D> extends BaseAdapter {
         listLayer.onAdapterGetView(position, getCount());
         MvListAdapterItem<D> item = null;
         if (convertView == null) {
-            if (preloadCache != null) {
+            if (preloadCache != null && preloadCache.size() > 0) {
                 item = getPreloadItem(position);
             }
             if (item != null) {
@@ -149,7 +149,7 @@ public class MvListAdapter<D> extends BaseAdapter {
                 for (int i = 0; i < realPreloadSize; i++) {
                     MvListAdapterItem<D> item = createListAdapterItem(i);
                     item.preCreateItemView(inflater, listLayer.getListView());
-                    preloadCache.put(i, item);
+                    if (preloadCache != null) preloadCache.put(i, item);
                 }
                 if (L.isEnable()) {
                     long useTime = System.currentTimeMillis() - st;
