@@ -3,6 +3,8 @@ package com.qsmaxmin.qsbase.common.widget.recyclerview;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.qsmaxmin.qsbase.common.log.L;
+
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -71,10 +73,26 @@ public class HeaderFooterRecyclerAdapter extends RecyclerView.Adapter {
 
     @NonNull @Override public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         switch (viewType) {
-            case HEADER_VIEW_TYPE:
-                return new HeaderFooterViewHolder(headerView.get(0));
-            case FOOTER_VIEW_TYPE:
-                return new HeaderFooterViewHolder(footerView.get(0));
+            case HEADER_VIEW_TYPE: {
+                View view = headerView.get(0);
+                if (L.isEnable()) {
+                    L.i("HeaderFooterRecyclerAdapter", "onCreateViewHolder....HEADER_VIEW_TYPE, parent:" + view.getParent());
+                }
+                if (view.getParent() != null) {
+                    parent.removeView(view);
+                }
+                return new HeaderFooterViewHolder(view);
+            }
+            case FOOTER_VIEW_TYPE: {
+                View view = footerView.get(0);
+                if (L.isEnable()) {
+                    L.i("HeaderFooterRecyclerAdapter", "onCreateViewHolder....FOOTER_VIEW_TYPE, parent:" + view.getParent());
+                }
+                if (view.getParent() != null) {
+                    parent.removeView(view);
+                }
+                return new HeaderFooterViewHolder(view);
+            }
             default:
                 return innerAdapter.onCreateViewHolder(parent, viewType);
         }
