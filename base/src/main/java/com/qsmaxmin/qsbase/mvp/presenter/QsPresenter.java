@@ -33,8 +33,7 @@ import androidx.lifecycle.LifecycleOwner;
  * @Description base presenter
  */
 public class QsPresenter<V extends MvIView> implements NetworkErrorReceiver, QsNotProguard, LifecycleEventObserver {
-    private V      vLayer;
-    private Object requestTag;
+    private V vLayer;
 
     /**
      * 该方法由QsTransform唤起，不可修改
@@ -75,7 +74,6 @@ public class QsPresenter<V extends MvIView> implements NetworkErrorReceiver, QsN
                 onStop();
                 break;
             case ON_DESTROY:
-                cancelAllHttpRequest();
                 onDestroy();
                 break;
         }
@@ -129,31 +127,15 @@ public class QsPresenter<V extends MvIView> implements NetworkErrorReceiver, QsN
     }
 
     protected final <D> D execute(@NonNull HttpCall<D> call) throws Exception {
-        if (requestTag == null) requestTag = new Object();
-        return call.execute(requestTag);
+        return call.execute();
     }
 
     @Nullable protected final <D> D executeSafely(@NonNull HttpCall<D> call) {
-        if (requestTag == null) requestTag = new Object();
-        return call.executeSafely(requestTag);
+        return call.executeSafely();
     }
 
     protected final <D> void enqueue(@NonNull HttpCall<D> call, @NonNull HttpCallback<D> callback) {
-        if (requestTag == null) requestTag = new Object();
-        call.enqueue(requestTag, callback);
-    }
-
-    /**
-     * 取消由当前presenter发起的http请求
-     */
-    protected final void cancelHttpRequest(Object requestTag) {
-        if (requestTag != null) {
-            QsHelper.getHttpHelper().cancelRequest(requestTag);
-        }
-    }
-
-    private void cancelAllHttpRequest() {
-        cancelHttpRequest(requestTag);
+        call.as(vLayer.getLifecycle()).enqueue(callback);
     }
 
     public boolean isSuccess(QsIModel baseModel) {

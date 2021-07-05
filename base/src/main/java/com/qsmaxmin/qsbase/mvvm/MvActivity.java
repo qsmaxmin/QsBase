@@ -56,7 +56,6 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
     private   boolean                        isViewCreated;
     private   ISlidingViewGroup              slidingView;
     private   OnTouchListener                touchListener;
-    private   Object                         requestTag;
 
     @CallSuper @Override public void bindBundleByQsPlugin(Bundle bundle) {
     }
@@ -90,7 +89,6 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
         super.onDestroy();
         isViewCreated = false;
         unbindEventByQsPlugin();
-        cancelAllHttpRequest();
     }
 
     @Override public final String initTag() {
@@ -643,28 +641,21 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
     }
 
     @Override public final <D> D execute(@NonNull HttpCall<D> call) throws Exception {
-        if (requestTag == null) requestTag = new Object();
-        return call.execute(requestTag);
+        return call.execute();
     }
 
     @Override @Nullable public final <D> D executeSafely(@NonNull HttpCall<D> call) {
-        if (requestTag == null) requestTag = new Object();
-        return call.executeSafely(requestTag);
+        return call.executeSafely();
     }
 
     @Override public final <D> void enqueue(@NonNull HttpCall<D> call, @NonNull HttpCallback<D> callback) {
-        if (requestTag == null) requestTag = new Object();
-        call.enqueue(requestTag, callback);
+        call.as(this).enqueue(callback);
     }
 
     @Override public final void cancelHttpRequest(Object requestTag) {
         if (requestTag != null) {
             QsHelper.getHttpHelper().cancelRequest(requestTag);
         }
-    }
-
-    private void cancelAllHttpRequest() {
-        cancelHttpRequest(requestTag);
     }
 
     @Override public final boolean isViewDestroyed() {
