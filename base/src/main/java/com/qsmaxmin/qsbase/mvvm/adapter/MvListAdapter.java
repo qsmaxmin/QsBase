@@ -135,19 +135,16 @@ public class MvListAdapter<D> extends BaseAdapter {
                 L.e("MvListAdapter", "setData(xxx)方法必须在异步线程中执行才能开启 [首次加载异步预初始化] 功能’");
             }
         } else {
-            if (!hasInitPreload && preloadSize > 0 && list != null && list.size() > 0) {
+            if (!hasInitPreload && preloadSize > 0 && getViewTypeCount() <= 1 && list != null && list.size() > 0) {
                 hasInitPreload = true;
                 long st = 0;
                 if (L.isEnable()) st = System.currentTimeMillis();
-                if (list != mList) {
-                    mList.clear();
-                    mList.addAll(list);
-                }
+
                 realPreloadSize = Math.min(preloadSize, list.size());
                 preloadCache = new SparseArray<>(realPreloadSize);
                 LayoutInflater inflater = LayoutInflater.from(listLayer.getContext());
                 for (int i = 0; i < realPreloadSize; i++) {
-                    MvListAdapterItem<D> item = createListAdapterItem(i);
+                    MvListAdapterItem<D> item = listLayer.getListAdapterItemInner(0);
                     item.preCreateItemView(inflater, listLayer.getListView());
                     if (preloadCache != null) preloadCache.put(i, item);
                 }
@@ -157,6 +154,10 @@ public class MvListAdapter<D> extends BaseAdapter {
                 }
                 listLayer.post(new Runnable() {
                     @Override public void run() {
+                        if (list != mList) {
+                            mList.clear();
+                            mList.addAll(list);
+                        }
                         updateAdapter(showEmptyView);
                     }
                 });

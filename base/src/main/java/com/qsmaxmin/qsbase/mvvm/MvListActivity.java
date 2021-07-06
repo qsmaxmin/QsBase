@@ -101,6 +101,7 @@ public abstract class MvListActivity<D> extends MvActivity implements MvIListVie
 
     /**
      * @see #setData(List)
+     * @see #getViewTypeCount() 必须为1
      * @see MvListAdapterItem
      * listView首次显示前，预加载多少个适配器项
      */
