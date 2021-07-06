@@ -6,7 +6,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.Looper;
 import android.text.TextUtils;
 import android.text.format.Formatter;
 import android.view.View;
@@ -31,6 +30,7 @@ import com.bumptech.glide.request.target.Target;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.utils.glide.transform.PhotoFrameTransform;
 import com.qsmaxmin.qsbase.common.utils.glide.transform.RoundCornersTransformation;
+import com.qsmaxmin.qsbase.plugin.threadpoll.QsThreadPollHelper;
 
 import java.io.File;
 import java.util.HashMap;
@@ -343,13 +343,20 @@ public class ImageHelper {
                     }
                 });
             }
-            if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
-                requestBuilder.into(view);
+            if (QsThreadPollHelper.isMainThread()) {
+                try {
+                    requestBuilder.into(view);
+                } catch (Exception ignored) {
+                }
+
             } else {
                 final RequestBuilder<Drawable> finalRequestBuilder = requestBuilder;
                 QsHelper.post(new Runnable() {
                     @Override public void run() {
-                        finalRequestBuilder.into(view);
+                        try {
+                            finalRequestBuilder.into(view);
+                        } catch (Exception ignored) {
+                        }
                     }
                 });
             }
