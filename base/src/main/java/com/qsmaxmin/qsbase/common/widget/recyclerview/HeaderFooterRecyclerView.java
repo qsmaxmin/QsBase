@@ -93,7 +93,6 @@ public class HeaderFooterRecyclerView extends RecyclerView {
 
     @Override public void setAdapter(Adapter adapter) {
         mAdapter.bindAdapter(adapter);
-        mAdapter.setHasStableIds(true);
         super.setAdapter(adapter == null ? null : mAdapter);
     }
 }
