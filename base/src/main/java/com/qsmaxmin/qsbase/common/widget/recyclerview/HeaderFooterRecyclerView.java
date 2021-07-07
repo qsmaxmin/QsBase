@@ -95,4 +95,9 @@ public class HeaderFooterRecyclerView extends RecyclerView {
         mAdapter.bindAdapter(adapter);
         super.setAdapter(adapter == null ? null : mAdapter);
     }
+
+    @Nullable @Override public Adapter getAdapter() {
+        Adapter adapter = super.getAdapter();
+        return adapter == null ? null : mAdapter.getInnerAdapter();
+    }
 }

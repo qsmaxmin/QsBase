@@ -192,6 +192,10 @@ public class HeaderFooterRecyclerAdapter extends RecyclerView.Adapter {
         return footerView;
     }
 
+    public RecyclerView.Adapter getInnerAdapter() {
+        return innerAdapter;
+    }
+
     private static class HeaderFooterViewHolder extends RecyclerView.ViewHolder {
         public HeaderFooterViewHolder(@NonNull View itemView) {
             super(itemView);
