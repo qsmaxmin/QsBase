@@ -79,10 +79,6 @@ public class HeaderFooterRecyclerAdapter extends RecyclerView.Adapter {
         }
     }
 
-    @Override public long getItemId(int position) {
-        return position;
-    }
-
     @NonNull @Override public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         switch (viewType) {
             case HEADER_VIEW_TYPE: {
