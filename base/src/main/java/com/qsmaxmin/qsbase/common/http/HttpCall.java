@@ -30,7 +30,7 @@ public class HttpCall<D> extends BaseCall<D> {
                 })
                 .subscribe(new Consumer<D>() {//提交接口请求
                     @Override public void accept(D d) {
-                        if (callback != null && d != null) {
+                        if (callback != null) {
                             callback.onSuccess(d);
                         }
                     }
