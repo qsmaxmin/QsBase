@@ -2,7 +2,6 @@ package com.qsmaxmin.qsbase.common.http;
 
 import com.qsmaxmin.annotation.thread.ThreadType;
 import com.qsmaxmin.qsbase.common.log.L;
-import com.qsmaxmin.qsbase.plugin.threadpoll.QsThreadPollHelper;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,13 +20,12 @@ public class HttpCall<D> extends BaseCall<D> {
         this.request = request;
     }
 
-    public final void enqueue(@NonNull final HttpCallback<D> callback) {
+    public final void enqueue(final HttpCallback<D> callback) {
         subscribeOn(ThreadType.HTTP)//在Http线程执行接口请求
                 .observeOn(ThreadType.MAIN)//在Main线程回调结果
-                .onErrorReturn(new Function<Throwable, D>() {//请求发生错误时返回null，并在Main线程回调结果
-                    @Override public D apply(@NonNull final Throwable t) {
-                        postFailed(callback, t);
-                        return null;
+                .doOnError(new Consumer<Throwable>() {
+                    @Override public void accept(Throwable throwable) {
+                        if (callback != null) callback.onFailed(throwable);
                     }
                 })
                 .subscribe(new Consumer<D>() {//提交接口请求
@@ -39,28 +37,17 @@ public class HttpCall<D> extends BaseCall<D> {
                 });
     }
 
-    private void postFailed(final HttpCallback<D> callback, final Throwable t) {
-        if (callback != null) {
-            QsThreadPollHelper.post(new Runnable() {
-                @Override public void run() {
-                    callback.onFailed(t);
-                }
-            });
-        }
-    }
-
     @Nullable final public D executeSafely() {
         try {
-            return execute();
+            return onExecute();
         } catch (Throwable t) {
             if (L.isEnable()) L.e("HttpCall", t);
         }
         return null;
     }
 
-    @SuppressWarnings("unchecked")
     public final D execute() throws Exception {
-        return (D) HttpHelper.getInstance().startRequest(request);
+        return onExecute();
     }
 
     /**
@@ -77,5 +64,10 @@ public class HttpCall<D> extends BaseCall<D> {
     @NonNull @Override public HttpCall<D> as(Lifecycle lifecycle) {
         super.as(lifecycle);
         return this;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override protected final D onExecute() throws Exception {
+        return (D) HttpHelper.getInstance().startRequest(request);
     }
 }

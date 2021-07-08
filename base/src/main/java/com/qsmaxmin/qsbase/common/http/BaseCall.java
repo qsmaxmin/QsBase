@@ -21,6 +21,7 @@ public abstract class BaseCall<D> {
     private ThreadType                               observerThreadType;
     private ThreadType                               subscribeThreadType;
     private Consumer<D>                              consumer;
+    private Consumer<? super Throwable>              errorConsumer;
     private Function<? super Throwable, ? extends D> errorReturnFunction;
     private D                                        errorReturnItem;
     private Lifecycle                                lifecycle;
@@ -56,13 +57,18 @@ public abstract class BaseCall<D> {
     private void subscribeInner() {
         try {
             if (isDestroy) return;
-            D data = execute();
+            D data = onExecute();
             if (isDestroy) return;
-            observerInner(data);
+            observerInner(consumer, data);
+
         } catch (Exception e) {
             if (isDestroy) return;
-            if (errorReturnItem != null) {
-                observerInner(errorReturnItem);
+            if (errorConsumer != null) {
+                observerInner(errorConsumer, e);
+
+            } else if (errorReturnItem != null) {
+                observerInner(consumer, errorReturnItem);
+
             } else if (errorReturnFunction != null) {
                 D d = null;
                 try {
@@ -70,46 +76,43 @@ public abstract class BaseCall<D> {
                 } catch (Exception e1) {
                     L.e("HttpCall", e1);
                 } finally {
-                    observerInner(d);
+                    observerInner(consumer, d);
                 }
             } else {
-                observerInner(null);
+                if (L.isEnable()) L.e("HttpCall", "错误未处理，请使用BaseCall.doOnError(Consumer<? extends Throwable> consumer)接收并处理错误\n" + e);
             }
-            if (L.isEnable()) L.e("HttpCall", e);
         }
     }
 
-    private void observerInner(final D d) {
-        if (isDestroy) return;
+    private <T> void observerInner(final Consumer<T> c, final T t) {
+        if (isDestroy || c == null) return;
         if (observerThreadType == null) {
-            consumeSafely(consumer, d);
+            consumeSafely(c, t);
 
         } else if (observerThreadType == ThreadType.MAIN) {
             if (QsThreadPollHelper.isMainThread()) {
-                consumeSafely(consumer, d);
+                consumeSafely(c, t);
 
             } else {
                 QsThreadPollHelper.post(new Runnable() {
                     @Override public void run() {
-                        consumeSafely(consumer, d);
+                        consumeSafely(c, t);
                     }
                 });
             }
         } else {
             getExecutor(observerThreadType).execute(new Runnable() {
                 @Override public void run() {
-                    consumeSafely(consumer, d);
+                    consumeSafely(c, t);
                 }
             });
         }
     }
 
-    private void consumeSafely(Consumer<D> consumer, D d) {
+    private <T> void consumeSafely(@NonNull Consumer<T> consumer, T d) {
         try {
             if (isDestroy) return;
-            if (consumer != null) {
-                consumer.accept(d);
-            }
+            consumer.accept(d);
         } catch (Exception e) {
             if (L.isEnable()) L.e("HttpCall", e);
         } finally {
@@ -155,6 +158,10 @@ public abstract class BaseCall<D> {
         return this;
     }
 
+    public static <T> BaseCall<T> onAssembly(@NonNull BaseCall<T> source) {
+        return source;
+    }
+
     /**
      * 当请求发生错误时，返回什么数据实体给Consumer
      *
@@ -172,6 +179,11 @@ public abstract class BaseCall<D> {
      */
     @NonNull public BaseCall<D> onErrorReturnItem(D d) {
         this.errorReturnItem = d;
+        return this;
+    }
+
+    @NonNull public BaseCall<D> doOnError(Consumer<? super Throwable> consumer) {
+        this.errorConsumer = consumer;
         return this;
     }
 
@@ -227,5 +239,5 @@ public abstract class BaseCall<D> {
         return this;
     }
 
-    protected abstract D execute() throws Exception;
+    protected abstract D onExecute() throws Exception;
 }
