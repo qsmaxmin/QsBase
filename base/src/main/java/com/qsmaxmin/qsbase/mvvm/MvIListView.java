@@ -88,4 +88,6 @@ public interface MvIListView<D> extends MvIView, AdapterView.OnItemClickListener
     void onReceiveAdapterItemEvent(int eventType, D data, int position);
 
     LayoutInflater getLayoutInflater();
+
+    void setOnScrollListener(AbsListView.OnScrollListener listener);
 }

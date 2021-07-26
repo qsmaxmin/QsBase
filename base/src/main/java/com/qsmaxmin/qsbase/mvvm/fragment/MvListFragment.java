@@ -25,10 +25,11 @@ import androidx.annotation.Nullable;
  * @Description
  */
 public abstract class MvListFragment<D> extends MvFragment implements MvIListView<D> {
-    private final MvListAdapter<D> mListAdapter = new MvListAdapter<>(this);
-    private       ListView         mListView;
-    private       View             headerView;
-    private       View             footerView;
+    private final MvListAdapter<D>             mListAdapter = new MvListAdapter<>(this);
+    private       ListView                     mListView;
+    private       View                         headerView;
+    private       View                         footerView;
+    private       AbsListView.OnScrollListener mScrollListener;
 
     @Override public int layoutId() {
         return R.layout.qs_listview;
@@ -98,6 +99,10 @@ public abstract class MvListFragment<D> extends MvFragment implements MvIListVie
 
     @Override public void onReceiveAdapterItemEvent(int eventType, D data, int position) {
         L.i(initTag(), "onReceiveAdapterItemEvent......eventType:" + eventType + ", position:" + position);
+    }
+
+    @Override public void setOnScrollListener(AbsListView.OnScrollListener listener) {
+        this.mScrollListener = listener;
     }
 
     /**
@@ -180,9 +185,11 @@ public abstract class MvListFragment<D> extends MvFragment implements MvIListVie
 
     @Override public void onScrollStateChanged(AbsListView view, int scrollState) {
         mListAdapter.onScrollStateChanged(view, scrollState);
+        if (mScrollListener != null) mScrollListener.onScrollStateChanged(view, scrollState);
     }
 
     @Override public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+        if (mScrollListener != null) mScrollListener.onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
     }
 
     @Override public boolean canListScrollDown() {
