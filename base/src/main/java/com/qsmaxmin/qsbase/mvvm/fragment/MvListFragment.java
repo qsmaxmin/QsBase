@@ -28,10 +28,11 @@ import androidx.annotation.Nullable;
  * @Description
  */
 public abstract class MvListFragment<D> extends MvFragment implements MvIListView<D> {
-    private final MvListAdapter<D> mListAdapter = new MvListAdapter<>(this);
-    private       ListView         mListView;
-    private       View             headerView;
-    private       View             footerView;
+    private final MvListAdapter<D>        mListAdapter = new MvListAdapter<>(this);
+    private       ListView                mListView;
+    private       View                    headerView;
+    private       View                    footerView;
+    private       OnScrollChangedListener scrollChangedListener;
 
     @Override public int layoutId() {
         return R.layout.qs_listview;
@@ -77,6 +78,9 @@ public abstract class MvListFragment<D> extends MvFragment implements MvIListVie
         View rootView = super.initView(inflater, container);
         mListView = rootView.findViewById(android.R.id.list);
         if (mListView == null) throw new RuntimeException("ListView is not exit or its id not 'android.R.id.list' in current layout!!");
+        if (scrollChangedListener != null) {
+            setOnScrollChangeListener(scrollChangedListener);
+        }
         headerView = onCreateListHeaderView(inflater);
         if (headerView != null) {
             mListView.addHeaderView(headerView);
@@ -222,18 +226,22 @@ public abstract class MvListFragment<D> extends MvFragment implements MvIListVie
     }
 
     @Override public void setOnScrollChangeListener(final OnScrollChangedListener listener) {
-        if (mListView instanceof QsListView) {
-            ((QsListView) mListView).setOnScrollChangeListener(listener);
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            mListView.setOnScrollChangeListener(new View.OnScrollChangeListener() {
-                @Override public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-                    if (listener != null) {
-                        listener.onScrollChanged(scrollX, scrollY, oldScrollX, oldScrollY);
-                    }
-                }
-            });
+        if (mListView == null) {
+            this.scrollChangedListener = listener;
         } else {
-            L.e(initTag(), "setOnScrollChangeListener.....not supported!!");
+            if (mListView instanceof QsListView) {
+                ((QsListView) mListView).setOnScrollChangeListener(listener);
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                mListView.setOnScrollChangeListener(new View.OnScrollChangeListener() {
+                    @Override public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                        if (listener != null) {
+                            listener.onScrollChanged(scrollX, scrollY, oldScrollX, oldScrollY);
+                        }
+                    }
+                });
+            } else {
+                L.e(initTag(), "setOnScrollChangeListener.....not supported!!");
+            }
         }
     }
 }
