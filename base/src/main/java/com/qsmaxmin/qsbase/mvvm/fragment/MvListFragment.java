@@ -1,5 +1,6 @@
 package com.qsmaxmin.qsbase.mvvm.fragment;
 
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,8 @@ import android.widget.ListView;
 
 import com.qsmaxmin.qsbase.R;
 import com.qsmaxmin.qsbase.common.log.L;
+import com.qsmaxmin.qsbase.common.widget.listview.OnScrollChangedListener;
+import com.qsmaxmin.qsbase.common.widget.listview.QsListView;
 import com.qsmaxmin.qsbase.mvvm.MvIListView;
 import com.qsmaxmin.qsbase.mvvm.adapter.MvListAdapter;
 import com.qsmaxmin.qsbase.mvvm.adapter.MvListAdapterItem;
@@ -25,11 +28,10 @@ import androidx.annotation.Nullable;
  * @Description
  */
 public abstract class MvListFragment<D> extends MvFragment implements MvIListView<D> {
-    private final MvListAdapter<D>             mListAdapter = new MvListAdapter<>(this);
-    private       ListView                     mListView;
-    private       View                         headerView;
-    private       View                         footerView;
-    private       AbsListView.OnScrollListener mScrollListener;
+    private final MvListAdapter<D> mListAdapter = new MvListAdapter<>(this);
+    private       ListView         mListView;
+    private       View             headerView;
+    private       View             footerView;
 
     @Override public int layoutId() {
         return R.layout.qs_listview;
@@ -99,10 +101,6 @@ public abstract class MvListFragment<D> extends MvFragment implements MvIListVie
 
     @Override public void onReceiveAdapterItemEvent(int eventType, D data, int position) {
         L.i(initTag(), "onReceiveAdapterItemEvent......eventType:" + eventType + ", position:" + position);
-    }
-
-    @Override public void setOnScrollListener(AbsListView.OnScrollListener listener) {
-        this.mScrollListener = listener;
     }
 
     /**
@@ -185,11 +183,9 @@ public abstract class MvListFragment<D> extends MvFragment implements MvIListVie
 
     @Override public void onScrollStateChanged(AbsListView view, int scrollState) {
         mListAdapter.onScrollStateChanged(view, scrollState);
-        if (mScrollListener != null) mScrollListener.onScrollStateChanged(view, scrollState);
     }
 
     @Override public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-        if (mScrollListener != null) mScrollListener.onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
     }
 
     @Override public boolean canListScrollDown() {
@@ -223,5 +219,21 @@ public abstract class MvListFragment<D> extends MvFragment implements MvIListVie
 
     @Override public View getScrollableView() {
         return getListView();
+    }
+
+    @Override public void setOnScrollChangeListener(final OnScrollChangedListener listener) {
+        if (mListView instanceof QsListView) {
+            ((QsListView) mListView).setOnScrollChangeListener(listener);
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            mListView.setOnScrollChangeListener(new View.OnScrollChangeListener() {
+                @Override public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                    if (listener != null) {
+                        listener.onScrollChanged(scrollX, scrollY, oldScrollX, oldScrollY);
+                    }
+                }
+            });
+        } else {
+            L.e(initTag(), "setOnScrollChangeListener.....not supported!!");
+        }
     }
 }

@@ -8,6 +8,7 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 
+import com.qsmaxmin.qsbase.common.widget.listview.OnScrollChangedListener;
 import com.qsmaxmin.qsbase.mvvm.adapter.MvListAdapterItem;
 
 import java.util.List;
@@ -89,5 +90,5 @@ public interface MvIListView<D> extends MvIView, AdapterView.OnItemClickListener
 
     LayoutInflater getLayoutInflater();
 
-    void setOnScrollListener(AbsListView.OnScrollListener listener);
+    void setOnScrollChangeListener(OnScrollChangedListener listener);
 }
