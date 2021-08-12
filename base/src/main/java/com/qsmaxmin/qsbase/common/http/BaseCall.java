@@ -239,5 +239,9 @@ public abstract class BaseCall<D> {
         return this;
     }
 
+    protected final boolean isDestroy() {
+        return isDestroy;
+    }
+
     protected abstract D onExecute() throws Exception;
 }

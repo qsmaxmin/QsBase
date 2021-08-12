@@ -20,6 +20,11 @@ public class HttpCall<D> extends BaseCall<D> {
         this.request = request;
     }
 
+    /**
+     * 如果View层销毁，则收不到回调事件
+     *
+     * @see #as(Lifecycle)
+     */
     public final void enqueue(final HttpCallback<D> callback) {
         subscribeOn(ThreadType.HTTP)//在Http线程执行接口请求
                 .observeOn(ThreadType.MAIN)//在Main线程回调结果
@@ -37,6 +42,11 @@ public class HttpCall<D> extends BaseCall<D> {
                 });
     }
 
+    /**
+     * 如果View层销毁，则返回null
+     *
+     * @see #as(Lifecycle)
+     */
     @Nullable final public D executeSafely() {
         try {
             return onExecute();
@@ -46,6 +56,11 @@ public class HttpCall<D> extends BaseCall<D> {
         return null;
     }
 
+    /**
+     * 如果View层销毁，则返回null
+     *
+     * @see #as(Lifecycle)
+     */
     public final D execute() throws Exception {
         return onExecute();
     }
@@ -66,8 +81,13 @@ public class HttpCall<D> extends BaseCall<D> {
         return this;
     }
 
+    public HttpCall<D> requestTag(Object requestTag) {
+        request.setRequestTag(requestTag);
+        return this;
+    }
+
     @SuppressWarnings("unchecked")
     @Override protected final D onExecute() throws Exception {
-        return (D) HttpHelper.getInstance().startRequest(request);
+        return (D) HttpHelper.getInstance().startRequest(request, this);
     }
 }

@@ -127,11 +127,11 @@ public class QsPresenter<V extends MvIView> implements NetworkErrorReceiver, QsN
     }
 
     protected final <D> D execute(@NonNull HttpCall<D> call) throws Exception {
-        return call.execute();
+        return call.as(vLayer.getLifecycle()).execute();
     }
 
     @Nullable protected final <D> D executeSafely(@NonNull HttpCall<D> call) {
-        return call.executeSafely();
+        return call.as(vLayer.getLifecycle()).executeSafely();
     }
 
     protected final <D> void enqueue(@NonNull HttpCall<D> call, @NonNull HttpCallback<D> callback) {

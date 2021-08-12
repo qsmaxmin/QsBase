@@ -41,7 +41,7 @@ public class HttpHandler implements InvocationHandler {
                 HttpHelper helper = HttpHelper.getInstance();
                 Gson gson = helper.getJson();
                 HttpRequest httpRequest = new HttpRequest(method, args, gson, method.getGenericReturnType());
-                return helper.startRequest(httpRequest);
+                return helper.startRequest(httpRequest, null);
             } catch (Throwable t) {
                 if (errorReceiver != null) errorReceiver.methodError(t);
                 if (L.isEnable()) L.e("HttpHelper", t);
@@ -59,7 +59,7 @@ public class HttpHandler implements InvocationHandler {
 
     private Type getParameterUpperBound(ParameterizedType type) throws Exception {
         Type[] types = type.getActualTypeArguments();
-        if (types != null && types.length > 0) {
+        if (types.length > 0) {
             Type paramType = types[0];
             if (paramType instanceof WildcardType) {
                 return ((WildcardType) paramType).getUpperBounds()[0];

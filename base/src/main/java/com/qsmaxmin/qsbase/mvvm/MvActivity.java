@@ -641,17 +641,22 @@ public abstract class MvActivity extends FragmentActivity implements MvIActivity
     }
 
     @Override public final <D> D execute(@NonNull HttpCall<D> call) throws Exception {
-        return call.execute();
+        return call.as(this).execute();
     }
 
     @Override @Nullable public final <D> D executeSafely(@NonNull HttpCall<D> call) {
-        return call.executeSafely();
+        return call.as(this).executeSafely();
     }
 
     @Override public final <D> void enqueue(@NonNull HttpCall<D> call, @NonNull HttpCallback<D> callback) {
         call.as(this).enqueue(callback);
     }
 
+    /**
+     * 取消http请求
+     *
+     * @see HttpCall#requestTag(Object)
+     */
     @Override public final void cancelHttpRequest(Object requestTag) {
         if (requestTag != null) {
             QsHelper.getHttpHelper().cancelRequest(requestTag);

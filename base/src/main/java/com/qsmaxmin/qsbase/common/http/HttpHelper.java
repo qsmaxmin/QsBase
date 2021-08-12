@@ -128,7 +128,13 @@ public class HttpHelper {
         }
     }
 
-    Object startRequest(HttpRequest httpRequest) throws Exception {
+    private boolean isViewLayerDestroy(BaseCall baseCall) {
+        return baseCall != null && baseCall.isDestroy();
+    }
+
+    Object startRequest(HttpRequest httpRequest, BaseCall baseCall) throws Exception {
+        if (isViewLayerDestroy(baseCall)) return null;
+
         Chain chain = new Chain(httpRequest, getHttpClient());
         Response response;
         if (httpInterceptor != null) {
@@ -136,10 +142,12 @@ public class HttpHelper {
         } else {
             response = chain.process();
         }
+        if (isViewLayerDestroy(baseCall)) return null;
+
         return createResult(httpRequest, response);
     }
 
-    Object createResult(HttpRequest request, Response response) throws Exception {
+    private Object createResult(HttpRequest request, Response response) throws Exception {
         try {
             if (response == null) {
                 throw new Exception("http error... method:" + request.getMethodName() + ", http response is null !!");
