@@ -27,11 +27,11 @@ public abstract class BaseCall<D> {
     private Lifecycle                                lifecycle;
     private LifecycleEventObserver                   lifecycleObserver;
 
-    public void subscribe() {
+    public final void subscribe() {
         subscribe(null);
     }
 
-    public void subscribe(Consumer<D> c) {
+    public final void subscribe(Consumer<D> c) {
         this.consumer = c;
         if (subscribeThreadType == null) {
             subscribeInner();
@@ -158,16 +158,12 @@ public abstract class BaseCall<D> {
         return this;
     }
 
-    public static <T> BaseCall<T> onAssembly(@NonNull BaseCall<T> source) {
-        return source;
-    }
-
     /**
      * 当请求发生错误时，返回什么数据实体给Consumer
      *
      * @see Consumer#accept(Object)
      */
-    @NonNull public BaseCall<D> onErrorReturn(Function<? super Throwable, ? extends D> function) {
+    @NonNull public final BaseCall<D> onErrorReturn(Function<? super Throwable, ? extends D> function) {
         this.errorReturnFunction = function;
         return this;
     }
@@ -177,29 +173,29 @@ public abstract class BaseCall<D> {
      *
      * @see Consumer#accept(Object)
      */
-    @NonNull public BaseCall<D> onErrorReturnItem(D d) {
+    @NonNull public final BaseCall<D> onErrorReturnItem(D d) {
         this.errorReturnItem = d;
         return this;
     }
 
-    @NonNull public BaseCall<D> doOnError(Consumer<? super Throwable> consumer) {
+    @NonNull public final BaseCall<D> doOnError(Consumer<? super Throwable> consumer) {
         this.errorConsumer = consumer;
         return this;
     }
 
-    @NonNull public BaseCall<D> observeOnMainThread() {
+    @NonNull public final BaseCall<D> observeOnMainThread() {
         return observeOn(ThreadType.MAIN);
     }
 
-    @NonNull public BaseCall<D> observeOnHttpThread() {
+    @NonNull public final BaseCall<D> observeOnHttpThread() {
         return observeOn(ThreadType.HTTP);
     }
 
-    @NonNull public BaseCall<D> observeOnWorkThread() {
+    @NonNull public final BaseCall<D> observeOnWorkThread() {
         return observeOn(ThreadType.WORK);
     }
 
-    @NonNull public BaseCall<D> observeOnSingleThread() {
+    @NonNull public final BaseCall<D> observeOnSingleThread() {
         return observeOn(ThreadType.SINGLE_WORK);
     }
 
@@ -209,24 +205,24 @@ public abstract class BaseCall<D> {
      *
      * @see Consumer#accept(Object)
      */
-    @NonNull public BaseCall<D> observeOn(ThreadType threadType) {
+    @NonNull public final BaseCall<D> observeOn(ThreadType threadType) {
         this.observerThreadType = threadType;
         return this;
     }
 
-    @NonNull public BaseCall<D> subscribeOnMainThread() {
+    @NonNull public final BaseCall<D> subscribeOnMainThread() {
         return subscribeOn(ThreadType.MAIN);
     }
 
-    @NonNull public BaseCall<D> subscribeOnHttpThread() {
+    @NonNull public final BaseCall<D> subscribeOnHttpThread() {
         return subscribeOn(ThreadType.HTTP);
     }
 
-    @NonNull public BaseCall<D> subscribeOnWorkThread() {
+    @NonNull public final BaseCall<D> subscribeOnWorkThread() {
         return subscribeOn(ThreadType.WORK);
     }
 
-    @NonNull public BaseCall<D> subscribeOnSingleThread() {
+    @NonNull public final BaseCall<D> subscribeOnSingleThread() {
         return subscribeOn(ThreadType.SINGLE_WORK);
     }
 
@@ -234,7 +230,7 @@ public abstract class BaseCall<D> {
      * 指定 ‘接口请求逻辑’ 被执行的线程
      * 若不指定则在原线程执行
      */
-    @NonNull public BaseCall<D> subscribeOn(ThreadType threadType) {
+    @NonNull public final BaseCall<D> subscribeOn(ThreadType threadType) {
         this.subscribeThreadType = threadType;
         return this;
     }
