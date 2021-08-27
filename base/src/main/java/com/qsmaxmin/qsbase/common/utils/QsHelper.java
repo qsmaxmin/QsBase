@@ -18,12 +18,14 @@ import com.qsmaxmin.qsbase.common.http.HttpHelper;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.plugin.event.EventHelper;
 import com.qsmaxmin.qsbase.plugin.permission.PermissionHelper;
+import com.qsmaxmin.qsbase.plugin.route.RouteDataHolder;
 import com.qsmaxmin.qsbase.plugin.threadpoll.QsThreadPollHelper;
 
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.HashMap;
 
 import androidx.annotation.ColorRes;
 import androidx.annotation.DimenRes;
@@ -90,6 +92,10 @@ public class QsHelper {
     public static void init(QsIApplication iApp) {
         QsHelper instance = getInstance();
         instance.mApplication = iApp;
+
+        HashMap<String, Class<?>> map = RouteDataHolder.getData();
+        if (map.isEmpty()) iApp.bindRouteByQsPlugin(map);
+
         Application app = iApp.getApplication();
         app.unregisterActivityLifecycleCallbacks(instance.lifeCycleCallback);
         app.registerActivityLifecycleCallbacks(instance.lifeCycleCallback);

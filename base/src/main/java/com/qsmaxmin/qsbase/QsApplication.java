@@ -12,6 +12,8 @@ import com.qsmaxmin.qsbase.common.widget.dialog.DefaultProgressDialog;
 import com.qsmaxmin.qsbase.common.widget.dialog.QsProgressDialog;
 import com.qsmaxmin.qsbase.mvvm.MvIView;
 
+import java.util.HashMap;
+
 import androidx.annotation.LayoutRes;
 
 /**
@@ -115,5 +117,12 @@ public abstract class QsApplication extends Application implements QsIApplicatio
      */
     @Override public boolean viewStateAnimateFirstView() {
         return true;
+    }
+
+    /**
+     * 绑定路由，用户无需修改
+     * for QsTransform
+     */
+    @Override public void bindRouteByQsPlugin(HashMap<String, Class<?>> map) {
     }
 }

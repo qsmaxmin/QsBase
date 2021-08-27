@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 
+import com.qsmaxmin.annotation.route.QsIRoute;
 import com.qsmaxmin.qsbase.common.http.HttpInterceptor;
 import com.qsmaxmin.qsbase.common.utils.ImageHelper;
 import com.qsmaxmin.qsbase.common.widget.dialog.QsProgressDialog;
@@ -19,7 +20,7 @@ import androidx.annotation.LayoutRes;
  * @Date 2019/7/24 15:02
  * @Description
  */
-public interface QsIApplication {
+public interface QsIApplication extends QsIRoute {
 
     Application getApplication();
 
