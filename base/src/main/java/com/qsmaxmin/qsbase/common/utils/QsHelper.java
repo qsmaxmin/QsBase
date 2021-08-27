@@ -310,5 +310,6 @@ public class QsHelper {
         PermissionHelper.release();
         HttpHelper.release();
         QsDownloadHelper.releaseAll();
+        RouteDataHolder.release();
     }
 }

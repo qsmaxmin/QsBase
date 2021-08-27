@@ -17,4 +17,8 @@ public class RouteDataHolder {
     public static HashMap<String, Class<?>> getData() {
         return classHolder;
     }
+
+    public static void release() {
+        classHolder.clear();
+    }
 }
