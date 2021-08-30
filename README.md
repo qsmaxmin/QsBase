@@ -25,7 +25,7 @@ MVP(或MVVM)架构+AOP面向切面编程，摒弃反射、代理等操作，稳�
 
             dependencies {
                 ...
-                classpath 'com.github.qsmaxmin:QsTransform:10.10.11'
+                classpath 'com.github.qsmaxmin:QsTransform:10.10.18'
             }
         }
         
