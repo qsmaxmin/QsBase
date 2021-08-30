@@ -2,11 +2,13 @@ package com.qsmaxmin.qsbase.plugin.permission;
 
 import android.app.Activity;
 import android.content.pm.PackageManager;
+import android.text.TextUtils;
 import android.util.SparseArray;
 
 import com.qsmaxmin.qsbase.LifeCycleCallbacksAdapter;
 import com.qsmaxmin.qsbase.common.log.L;
 import com.qsmaxmin.qsbase.common.utils.QsHelper;
+import com.qsmaxmin.qsbase.common.widget.toast.QsToast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -55,6 +57,10 @@ public class PermissionHelper {
     }
 
     public void startRequestPermission(PermissionCallbackListener listener, String... permissions) {
+        startRequestPermission(listener, false, null, permissions);
+    }
+
+    public void startRequestPermission(PermissionCallbackListener listener, boolean showToastWhenReject, String toastText, String... permissions) {
         Activity activity = QsHelper.getScreenHelper().currentActivity();
         if (permissions == null || permissions.length == 0 || activity == null) return;
         L.i(TAG, "startRequestPermission:" + Arrays.toString(permissions));
@@ -85,6 +91,8 @@ public class PermissionHelper {
             DataItem builder = new DataItem();
             builder.setActivity(activity);
             builder.setListener(listener);
+            builder.setShowToastWhenReject(showToastWhenReject);
+            builder.setToastText(toastText);
             maps.put(requestCode, builder);
 
             ActivityCompat.requestPermissions(builder.getActivity(), unGrantedPermissions, requestCode);
@@ -133,7 +141,10 @@ public class PermissionHelper {
             }
         }
 
-        boolean shouldShowDialog = shouldShowRequestPermissionRationale(builder.getActivity(), unGrantedList);
+        boolean shouldShowDialog = !grantedAll && shouldShowRequestPermissionRationale(builder.getActivity(), unGrantedList);
+        if (shouldShowDialog && builder.isShowToastWhenReject() && !TextUtils.isEmpty(builder.getToastText())) {
+            QsToast.show(builder.getToastText());
+        }
         if (builder.getListener() != null) {
             builder.getListener().onPermissionCallback(grantedAll, shouldShowDialog, permissions, grantResults);
         }

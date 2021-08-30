@@ -11,6 +11,8 @@ import android.app.Activity;
 class DataItem {
     private PermissionCallbackListener mListener;
     private Activity                   mActivity;
+    private boolean                    showToastWhenReject;
+    private String                     toastText;
 
     public PermissionCallbackListener getListener() {
         return mListener;
@@ -28,5 +30,21 @@ class DataItem {
     public DataItem setActivity(Activity activity) {
         this.mActivity = activity;
         return this;
+    }
+
+    public boolean isShowToastWhenReject() {
+        return showToastWhenReject;
+    }
+
+    public void setShowToastWhenReject(boolean showToastWhenReject) {
+        this.showToastWhenReject = showToastWhenReject;
+    }
+
+    public String getToastText() {
+        return toastText;
+    }
+
+    public void setToastText(String toastText) {
+        this.toastText = toastText;
     }
 }
