@@ -142,7 +142,7 @@ public class PermissionHelper {
         }
 
         boolean shouldShowDialog = !grantedAll && shouldShowRequestPermissionRationale(builder.getActivity(), unGrantedList);
-        if (shouldShowDialog && builder.isShowToastWhenReject() && !TextUtils.isEmpty(builder.getToastText())) {
+        if (!grantedAll && builder.isShowToastWhenReject() && !TextUtils.isEmpty(builder.getToastText())) {
             QsToast.show(builder.getToastText());
         }
         if (builder.getListener() != null) {
