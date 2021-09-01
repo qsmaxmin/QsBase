@@ -61,11 +61,11 @@ public class QsRoute {
         return this;
     }
 
-    private Class<?> findClass() throws Exception {
+    public Class<?> findClass() throws ClassNotFoundException {
         if (targetClass != null) return targetClass;
         Class<?> clazz = RouteDataHolder.findClass(targetPath);
         if (clazz == null) {
-            throw new Exception("class not found, path:" + targetPath);
+            throw new ClassNotFoundException("class not found, path:" + targetPath);
         }
         targetClass = clazz;
         return clazz;
