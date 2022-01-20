@@ -1,4 +1,4 @@
-#![项目已迁移到Gitee](https://gitee.com/qsolmaxmin/QsBase)
+#[项目已迁移到Gitee](https://gitee.com/qsolmaxmin/QsBase)
 
 # QsBase
 ## 基于AOP面向切面编程的Android高效开发框架(transform + javassist)
